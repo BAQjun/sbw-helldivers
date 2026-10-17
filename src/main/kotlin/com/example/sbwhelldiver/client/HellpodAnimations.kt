@@ -20,6 +20,8 @@ object HellpodAnimations {
         var entryStopped = false
         var entryStarted = false
         var impactStarted = false
+        var playerRetroStarted=false
+        var playerRetroLoop=false
     }
     private val states = WeakHashMap<AbstractHellpodEntity, State>()
     private const val IGNITE = "animation.hellpod.retro_ignite"
@@ -39,7 +41,8 @@ object HellpodAnimations {
         if (airborne && !s.entryStarted) {
             s.entryStarted = true
             SoundTimeline.schedule(entity,
-                SoundTimeline.cues(entity, "animation.hellpod.retro_landing_preview").filter { it.time <= 0.3 },
+                if(entity is com.example.sbwhelldiver.entity.PlayerHellpodEntity && PlayerDropClient.belongsToLocalPlayer(entity)) PlayerDropAudio.entryCues
+                else SoundTimeline.cues(entity, "animation.hellpod.retro_landing_preview").filter { it.time <= 0.3 },
                 entity.phaseAge, group = "entry", catchUp = true)
         }
         if (!airborne && !s.entryStopped) {
@@ -51,6 +54,16 @@ object HellpodAnimations {
         if (s.entryStarted && entity.scheduledFlight && flightTime >= entity.impactDeadline && !s.impactStarted) {
             s.impactStarted = true
             SoundTimeline.schedule(entity, "animation.hellpod.impact")
+        }
+        if(airborne && entity.braking && entity is com.example.sbwhelldiver.entity.PlayerHellpodEntity){
+            if(!s.playerRetroStarted){
+                SoundTimeline.schedule(entity,PlayerDropAudio.ignitionCues(entity),entity.brakeAge,group="player_retro",catchUp=true)
+                s.playerRetroStarted=true
+            }
+            if(!s.playerRetroLoop){
+                SoundTimeline.schedule(entity,"animation.hellpod.audio_retro_loop_start",group="player_retro")
+                s.playerRetroLoop=true
+            }
         }
         val ctx = entity.getAnimationInstance()?.context
         if (ctx == null) { SoundTimeline.tick(entity); return }
@@ -123,6 +136,7 @@ object HellpodAnimations {
                 ctx.playAnimation(BURN, AnimationPlayType.LOOP, 0)
                 s.jet = 2
             }
+            if(entity !is com.example.sbwhelldiver.entity.PlayerHellpodEntity || entity.brakeAge>=com.example.sbwhelldiver.entity.PlayerHellpodEntity.JET_START_TICKS)
             entity.profile.nozzles.forEachIndexed { index, outlet ->
                 val direction = entity.profile.nozzleDirections[index]
                 repeat(3) { sample -> HellpodJetParticle.emit(entity, outlet, sample, direction) }
@@ -140,8 +154,9 @@ object HellpodAnimations {
 
     private fun stopDescentAudio(entity: AbstractHellpodEntity) {
         SoundTimeline.cancel(entity, "entry")
-        SoundTimeline.stopMatching(entity) {
-            it.startsWith("sfx_hellpod_entry_") || it.startsWith("sfx_hellpod_retro") ||
+        SoundTimeline.cancel(entity, "player_retro")
+        SoundTimeline.stopMatching(entity,if(entity is com.example.sbwhelldiver.entity.PlayerHellpodEntity) 2 else 0) {
+            it.startsWith("sfx_hellpod_entry_") || it.startsWith("sfx_hellpod_player_") || it.startsWith("sfx_hellpod_retro") ||
                 it.startsWith("sfx_hellpod_thruster")
         }
     }

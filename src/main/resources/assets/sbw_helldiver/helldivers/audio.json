@@ -2038,6 +2038,318 @@
       "fade_out": 0,
       "duration": 13,
       "stop_effects": []
+    },
+    "sfx_hellpod_player_entry_01": {
+      "kind": "loop",
+      "audible": true,
+      "fade_in": 1,
+      "fade_out": 0.1,
+      "duration": 5.5,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_entry_02": {
+      "kind": "loop",
+      "audible": true,
+      "fade_in": 1,
+      "fade_out": 0.1,
+      "duration": 5.5,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_entry_03": {
+      "kind": "loop",
+      "audible": true,
+      "fade_in": 1.5,
+      "fade_out": 0.1,
+      "duration": 5.5,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_818907540": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 0.481333,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_543460207": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 0.481333,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_615994157": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 0.481333,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_843585913": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 0.481333,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_132689528": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 1.982667,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_671197063": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 4.993333,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_155994434": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 0.74,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_542178730": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 2.145333,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_488008774": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 1.98,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_285985730": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 0.74,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_1030103225": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 2.142667,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_247279640": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 4.993333,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_350618895": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 1.993333,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_383447513": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 2.113333,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_446005351": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 0.74,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_728741464": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 4.985333,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_466892807": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 1.988,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_202045820": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 2.132,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_140445567": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 4.985333,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_841671311": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 0.74,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_573789364": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 4.993333,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_666751694": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 1.98,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_252597339": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 4.985333,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_883065754": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 1.993333,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_831868407": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 4.985333,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_1059572712": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 1.988,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_500250841": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 4.993333,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_167967654": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 1.982667,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_794932393": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 1.982667,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_102019018": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 4.993333,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_604695048": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 1.98,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_590911161": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 4.993333,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_1014649650": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 1.988,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_919350494": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 4.985333,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_868652295": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 4.985333,
+      "stop_effects": []
+    },
+    "sfx_hellpod_player_thruster_975271063": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 1.993333,
+      "stop_effects": []
     }
   },
   "models": {

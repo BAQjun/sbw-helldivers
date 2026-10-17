@@ -24,6 +24,8 @@ import kotlin.math.*
 /** HUD projection deliberately ignores world depth, so an established mark remains visible through walls. */
 @Mod.EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
 object TargetMarkClient {
+ var enabled=true;private set
+ fun setEnabled(value:Boolean){enabled=value;if(!value){entries=emptyList();labels=emptyList()}}
  const val COMPACT_SCALE=.72f
  val KEY=KeyMapping("key.sbw_helldiver.mark",KeyConflictContext.IN_GAME,InputConstants.Type.KEYSYM,GLFW.GLFW_KEY_X,"key.categories.sbw_helldiver")
  private val ICON=ResourceLocation(MOD_ID,"textures/gui/target_mark.png")
@@ -43,11 +45,11 @@ object TargetMarkClient {
   if(level.dimension().location()!=packet.dimension)return
   entries=packet.marks;receivedAt=level.gameTime
  }
- @SubscribeEvent fun disconnect(e:ClientPlayerNetworkEvent.LoggingOut){entries=emptyList();labels=emptyList()}
+ @SubscribeEvent fun disconnect(e:ClientPlayerNetworkEvent.LoggingOut){entries=emptyList();labels=emptyList();enabled=true}
  @SubscribeEvent fun tick(e:TickEvent.ClientTickEvent){
   if(e.phase!=TickEvent.Phase.END)return
   val mc=Minecraft.getInstance();val player=mc.player ?: return
-  if(mc.screen!=null){while(KEY.consumeClick()){};return}
+  if(mc.screen!=null||!enabled){while(KEY.consumeClick()){};return}
   while(KEY.consumeClick()){
    val camera=mc.gameRenderer.mainCamera
    val direction=Vec3.directionFromRotation(camera.xRot,camera.yRot)
@@ -59,7 +61,7 @@ object TargetMarkClient {
  @SubscribeEvent fun project(e:RenderLevelStageEvent){
   if(e.stage!=RenderLevelStageEvent.Stage.AFTER_LEVEL)return
   labels=emptyList();val mc=Minecraft.getInstance();val level=mc.level ?: return
-  if(mc.options.hideGui||mc.screen!=null)return
+  if(!enabled||mc.options.hideGui||mc.screen!=null)return
   val view=Matrix4f().rotationY(PI.toFloat()).rotate(Quaternionf(e.camera.rotation()).conjugate())
   val matrix=Matrix4f(e.projectionMatrix).mul(view);val camera=e.camera.position
   val w=mc.window.guiScaledWidth;val h=mc.window.guiScaledHeight
@@ -79,7 +81,7 @@ object TargetMarkClient {
   labels=projected.map {it.copy(hovered=it===focus)}
  }
  @SubscribeEvent fun hud(e:RenderGuiEvent.Post){
-  val mc=Minecraft.getInstance();if(mc.options.hideGui||mc.screen!=null)return
+  val mc=Minecraft.getInstance();if(!enabled||mc.options.hideGui||mc.screen!=null)return
   val g=e.guiGraphics
   for(l in labels){
    val x=l.x;val y=l.y;val red=l.mark.hostile

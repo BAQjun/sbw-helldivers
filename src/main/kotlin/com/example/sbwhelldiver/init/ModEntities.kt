@@ -19,6 +19,8 @@ object ModEntities {
     val ENTITIES: DeferredRegister<EntityType<*>> =
         DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MOD_ID)
 
+    val PLAYER_HELLPOD=ENTITIES.register("player_hellpod"){vehicle{t,l->com.example.sbwhelldiver.entity.PlayerHellpodEntity(t,l)}.sized(2.65f,.2f).build("player_hellpod")}
+
     val EAGLE=ENTITIES.register("eagle") { EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.EagleEntity(t,l)},MobCategory.MISC).sized(17.8f,8.3f).clientTrackingRange(64).updateInterval(1).fireImmune().build("eagle") }
     val EAGLE_BOMB=ENTITIES.register("eagle_bomb") { EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.EagleBombEntity(t,l)},MobCategory.MISC).sized(.3f,.8f).clientTrackingRange(32).updateInterval(1).build("eagle_bomb") }
     val EAGLE_CANNON_ROUND=ENTITIES.register("eagle_cannon_round") { EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.EagleCannonRoundEntity(t,l)},MobCategory.MISC).sized(.12f,.12f).clientTrackingRange(32).updateInterval(1).build("eagle_cannon_round") }

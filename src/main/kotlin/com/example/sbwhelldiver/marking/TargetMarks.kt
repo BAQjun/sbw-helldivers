@@ -63,6 +63,7 @@ object TargetMarks {
     }
     fun input(player:ServerPlayer,start:Vec3,direction:Vec3,cancelCurrent:Boolean){
         val level=player.serverLevel();val now=level.gameTime
+        if(!MarkSettings.get(level.server).enabled)return
         if(java.lang.Boolean.getBoolean("sbw_helldiver.markSmokeTest"))com.example.sbwhelldiver.LOGGER.info("MARK_SERVER playerEye={} start={} dir={} cancel={}",player.eyePosition,start,direction,cancelCurrent)
         if(!player.isAlive||player.isSpectator||!finite(start)||!finite(direction)||direction.lengthSqr() !in .99..1.01)return
         // The actual third-person camera can be behind an occupied emplacement.
@@ -91,6 +92,7 @@ object TargetMarks {
         return marker.uuid==owner.uuid || owner.team==null || owner.isAlliedTo(marker)
     }
     fun preferred(sentry:SentryHellpodEntity):Mark? {
+        if(sentry.level() is ServerLevel && !MarkSettings.get((sentry.level() as ServerLevel).server).enabled)return null
         val level=sentry.level() as? ServerLevel ?: return null
         return all(level).asSequence().filter {compatible(sentry,it)}.sortedWith(
             compareByDescending<Mark>{it.owner==sentry.owner?.uuid}.thenByDescending{it.serial}
@@ -122,6 +124,6 @@ object TargetMarks {
     }
     @SubscribeEvent fun logout(e:PlayerEvent.PlayerLoggedOutEvent)=leaving(e.entity)
     @SubscribeEvent fun dimension(e:PlayerEvent.PlayerChangedDimensionEvent){leaving(e.entity);(e.entity as? ServerPlayer)?.serverLevel()?.let(::sync)}
-    @SubscribeEvent fun login(e:PlayerEvent.PlayerLoggedInEvent){(e.entity as? ServerPlayer)?.serverLevel()?.let(::sync)}
+    @SubscribeEvent fun login(e:PlayerEvent.PlayerLoggedInEvent){(e.entity as? ServerPlayer)?.let {MarkSettings.sync(it);sync(it.serverLevel())}}
     @SubscribeEvent fun stop(e:net.minecraftforge.event.server.ServerStoppedEvent)=clear()
 }

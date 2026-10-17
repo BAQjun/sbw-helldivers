@@ -46,6 +46,10 @@ abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAi
     open val retractAnimation = "animation.hellpod.retract"
     open val deployTicks get() = profile.deployTicks
     open val retractTicks get() = profile.retractTicks
+    protected open val scheduledBrakingTicks get() = SCHEDULED_BRAKE_TICKS
+    protected open val scheduledBrakingHeight get() = descentBrakeHeight()
+    protected open fun remainingBrakeDistance(remaining:Double,distance:Double,ticks:Long,approachSpeed:Double)=
+        distance*(0.28*remaining+0.72*remaining*remaining)
     protected var activeTicks = 0
     private var phaseTicks = 0
     private var restY = Double.NaN
@@ -70,11 +74,16 @@ abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAi
         syncFlight()
     }
 
+    protected fun retargetSurface(surfaceY:Double){
+        restY=surfaceY-HelldiversConfig.effectiveBurialDepth()+profile.podHeight
+        entityData.set(DATA_REST_Y,restY.toFloat())
+    }
+
     private fun syncFlight() {
         entityData.set(DATA_LAUNCH, scheduledLaunch)
         entityData.set(DATA_ARRIVAL, scheduledArrival)
         entityData.set(DATA_START_Y, scheduledStartY.toFloat())
-        entityData.set(DATA_BRAKE_DISTANCE, descentBrakeHeight().toFloat())
+        entityData.set(DATA_BRAKE_DISTANCE, scheduledBrakingHeight.toFloat())
     }
 
     /** Both sides evaluate one monotonic descent, rather than predicting vehicle gravity. */
@@ -83,7 +92,7 @@ abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAi
         val arrival = impactDeadline
         val duration = (arrival - launch).coerceAtLeast(1)
         val age = (gameTime - launch).coerceIn(0.0, duration.toDouble())
-        val brakeTicks = minOf(SCHEDULED_BRAKE_TICKS.toLong(), maxOf(1L, duration - 1))
+        val brakeTicks = minOf(scheduledBrakingTicks.toLong(), maxOf(1L, duration - 1))
         val fastTicks = duration - brakeTicks
         val fullDistance = (entityData.get(DATA_START_Y).toDouble() - landingY).coerceAtLeast(0.0)
         val brakeDistance = minOf(entityData.get(DATA_BRAKE_DISTANCE).toDouble(), fullDistance)
@@ -92,7 +101,8 @@ abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAi
         else {
             val remaining = ((duration - age) / brakeTicks).coerceIn(0.0, 1.0)
             // Keep a substantial terminal speed: braking is not a soft landing.
-            brakeDistance * (0.28 * remaining + 0.72 * remaining * remaining)
+            remainingBrakeDistance(remaining,brakeDistance,brakeTicks,
+                if(fastTicks>0)(fullDistance-brakeDistance)/fastTicks else 0.0)
         }
         return landingY + distance
     }
@@ -228,7 +238,7 @@ abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAi
     private fun tickScheduledFall() {
         val duration = (scheduledArrival - scheduledLaunch).coerceAtLeast(1)
         val age = (level().gameTime - scheduledLaunch).coerceIn(0, duration)
-        val brakeTicks = minOf(SCHEDULED_BRAKE_TICKS.toLong(), maxOf(1L, duration - 1))
+        val brakeTicks = minOf(scheduledBrakingTicks.toLong(), maxOf(1L, duration - 1))
         val fastTicks = duration - brakeTicks
         if (age >= fastTicks) {
             if (!braking) {

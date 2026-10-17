@@ -60,8 +60,13 @@ data class BeaconFailurePacket(val stratagemId: String, val loadoutIds: List<Str
 }
 
 object BeaconNetwork {
-    val CHANNEL = NetworkRegistry.newSimpleChannel(ResourceLocation(MOD_ID, "beacon"), { "6" }, { it == "6" }, { it == "6" })
+    val CHANNEL = NetworkRegistry.newSimpleChannel(ResourceLocation(MOD_ID, "beacon"), { "7" }, { it == "7" }, { it == "7" })
     fun register() {
+        CHANNEL.registerMessage(11,DropSteerPacket::class.java,{p,b->p.encode(b)},DropSteerPacket::decode,DropSteerPacket::handle,Optional.of(NetworkDirection.PLAY_TO_SERVER))
+        CHANNEL.registerMessage(8,DropPreparePacket::class.java,{p,b->p.encode(b)},DropPreparePacket::decode,DropPreparePacket::handle,Optional.of(NetworkDirection.PLAY_TO_CLIENT))
+        CHANNEL.registerMessage(9,DropReadyPacket::class.java,{p,b->p.encode(b)},DropReadyPacket::decode,DropReadyPacket::handle,Optional.of(NetworkDirection.PLAY_TO_SERVER))
+        CHANNEL.registerMessage(10,DropCancelPacket::class.java,{p,b->p.encode(b)},DropCancelPacket::decode,DropCancelPacket::handle,Optional.of(NetworkDirection.PLAY_TO_CLIENT))
+        CHANNEL.registerMessage(7,MarkEnabledPacket::class.java,{p,b->p.encode(b)},MarkEnabledPacket::decode,MarkEnabledPacket::handle,Optional.of(NetworkDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(6,MarkFeedbackPacket::class.java,{p,b->p.encode(b)},MarkFeedbackPacket::decode,MarkFeedbackPacket::handle,Optional.of(NetworkDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(4,MarkRequestPacket::class.java,{p,b->p.encode(b)},MarkRequestPacket::decode,MarkRequestPacket::handle,Optional.of(NetworkDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(5,MarkSnapshotPacket::class.java,{p,b->p.encode(b)},MarkSnapshotPacket::decode,MarkSnapshotPacket::handle,Optional.of(NetworkDirection.PLAY_TO_CLIENT))

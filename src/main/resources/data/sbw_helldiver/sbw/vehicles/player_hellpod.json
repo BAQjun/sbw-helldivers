@@ -1,0 +1,22 @@
+{
+  "ID": "sbw_helldiver:player_hellpod",
+  "MaxHealth": 100,
+  "Mass": 5,
+  "HasLowHealthWarning": false,
+  "HudType": "@Empty",
+  "Seats": [
+    {
+      "Position": [
+        0,
+        -4.25,
+        0
+      ],
+      "BanHand": true,
+      "CanRotateBody": false,
+      "CanRotateHead": false,
+      "Weapons": [],
+      "IsEnclosed": true,
+      "DamageAbsorbRate": 1.0
+    }
+  ]
+}

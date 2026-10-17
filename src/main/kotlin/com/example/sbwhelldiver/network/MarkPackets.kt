@@ -40,3 +40,14 @@ data class MarkFeedbackPacket(val kind:Int){
   };c.packetHandled=true}
  }
 }
+
+/** World marking permission is sent on login and every command change. */
+data class MarkEnabledPacket(val enabled:Boolean){
+ fun encode(b:FriendlyByteBuf){b.writeBoolean(enabled)}
+ companion object {
+  fun decode(b:FriendlyByteBuf)=MarkEnabledPacket(b.readBoolean())
+  fun handle(p:MarkEnabledPacket,s:Supplier<NetworkEvent.Context>){val c=s.get();c.enqueueWork{
+   net.minecraftforge.fml.DistExecutor.unsafeRunWhenOn(net.minecraftforge.api.distmarker.Dist.CLIENT){Runnable{com.example.sbwhelldiver.client.TargetMarkClient.setEnabled(p.enabled)}}
+  };c.packetHandled=true}
+ }
+}

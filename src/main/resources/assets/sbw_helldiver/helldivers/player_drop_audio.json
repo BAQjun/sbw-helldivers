@@ -1,0 +1,320 @@
+{
+  "event_id": 10682639,
+  "bank": "vehicle_shared",
+  "reference_gain_db": -10,
+  "startup_groups": [
+    {
+      "action_id": 752027174,
+      "container": 339282960,
+      "variants": [
+        [
+          {
+            "time": 0.07,
+            "effect": "sfx_hellpod_player_thruster_818907540",
+            "locator": "sfx_pod_lid",
+            "source_id": 818907540,
+            "native_gain_db": 6.4
+          }
+        ],
+        [
+          {
+            "time": 0.07,
+            "effect": "sfx_hellpod_player_thruster_543460207",
+            "locator": "sfx_pod_lid",
+            "source_id": 543460207,
+            "native_gain_db": 6.0
+          }
+        ],
+        [
+          {
+            "time": 0.07,
+            "effect": "sfx_hellpod_player_thruster_615994157",
+            "locator": "sfx_pod_lid",
+            "source_id": 615994157,
+            "native_gain_db": 7.0
+          }
+        ],
+        [
+          {
+            "time": 0.07,
+            "effect": "sfx_hellpod_player_thruster_843585913",
+            "locator": "sfx_pod_lid",
+            "source_id": 843585913,
+            "native_gain_db": 6.5
+          }
+        ]
+      ],
+      "listener_route": 0
+    },
+    {
+      "action_id": 942461352,
+      "container": 82192678,
+      "variants": [
+        [
+          {
+            "time": 0.24,
+            "effect": "sfx_hellpod_player_thruster_132689528",
+            "locator": "sfx_pod_lid",
+            "source_id": 132689528,
+            "native_gain_db": 3.6
+          },
+          {
+            "time": 0.57,
+            "effect": "sfx_hellpod_player_thruster_671197063",
+            "locator": "sfx_pod_lid",
+            "source_id": 671197063,
+            "native_gain_db": -4.0
+          },
+          {
+            "time": 0.24,
+            "effect": "sfx_hellpod_player_thruster_155994434",
+            "locator": "sfx_pod_lid",
+            "source_id": 155994434,
+            "native_gain_db": 3.5
+          },
+          {
+            "time": 0.24,
+            "effect": "sfx_hellpod_player_thruster_542178730",
+            "locator": "sfx_pod_lid",
+            "source_id": 542178730,
+            "native_gain_db": 2.2
+          }
+        ],
+        [
+          {
+            "time": 0.24,
+            "effect": "sfx_hellpod_player_thruster_488008774",
+            "locator": "sfx_pod_lid",
+            "source_id": 488008774,
+            "native_gain_db": 3.7
+          },
+          {
+            "time": 0.24,
+            "effect": "sfx_hellpod_player_thruster_285985730",
+            "locator": "sfx_pod_lid",
+            "source_id": 285985730,
+            "native_gain_db": 3.7
+          },
+          {
+            "time": 0.24,
+            "effect": "sfx_hellpod_player_thruster_1030103225",
+            "locator": "sfx_pod_lid",
+            "source_id": 1030103225,
+            "native_gain_db": 3.7
+          },
+          {
+            "time": 0.57,
+            "effect": "sfx_hellpod_player_thruster_247279640",
+            "locator": "sfx_pod_lid",
+            "source_id": 247279640,
+            "native_gain_db": -3.3
+          }
+        ],
+        [
+          {
+            "time": 0.24,
+            "effect": "sfx_hellpod_player_thruster_350618895",
+            "locator": "sfx_pod_lid",
+            "source_id": 350618895,
+            "native_gain_db": 3.8
+          },
+          {
+            "time": 0.24,
+            "effect": "sfx_hellpod_player_thruster_383447513",
+            "locator": "sfx_pod_lid",
+            "source_id": 383447513,
+            "native_gain_db": 1.4
+          },
+          {
+            "time": 0.24,
+            "effect": "sfx_hellpod_player_thruster_446005351",
+            "locator": "sfx_pod_lid",
+            "source_id": 446005351,
+            "native_gain_db": 3.7
+          },
+          {
+            "time": 0.57,
+            "effect": "sfx_hellpod_player_thruster_728741464",
+            "locator": "sfx_pod_lid",
+            "source_id": 728741464,
+            "native_gain_db": -3.9
+          }
+        ],
+        [
+          {
+            "time": 0.24,
+            "effect": "sfx_hellpod_player_thruster_466892807",
+            "locator": "sfx_pod_lid",
+            "source_id": 466892807,
+            "native_gain_db": 4.0
+          },
+          {
+            "time": 0.24,
+            "effect": "sfx_hellpod_player_thruster_202045820",
+            "locator": "sfx_pod_lid",
+            "source_id": 202045820,
+            "native_gain_db": 2.4
+          },
+          {
+            "time": 0.57,
+            "effect": "sfx_hellpod_player_thruster_140445567",
+            "locator": "sfx_pod_lid",
+            "source_id": 140445567,
+            "native_gain_db": -3.0
+          },
+          {
+            "time": 0.24,
+            "effect": "sfx_hellpod_player_thruster_841671311",
+            "locator": "sfx_pod_lid",
+            "source_id": 841671311,
+            "native_gain_db": 4.0
+          }
+        ]
+      ],
+      "listener_route": 0
+    },
+    {
+      "action_id": 285054792,
+      "container": 253284437,
+      "variants": [
+        [
+          {
+            "time": 0.57,
+            "effect": "sfx_hellpod_player_thruster_573789364",
+            "locator": "sfx_pod_lid",
+            "source_id": 573789364,
+            "native_gain_db": -9.0
+          },
+          {
+            "time": 0.24,
+            "effect": "sfx_hellpod_player_thruster_666751694",
+            "locator": "sfx_pod_lid",
+            "source_id": 666751694,
+            "native_gain_db": -2.0
+          }
+        ],
+        [
+          {
+            "time": 0.57,
+            "effect": "sfx_hellpod_player_thruster_252597339",
+            "locator": "sfx_pod_lid",
+            "source_id": 252597339,
+            "native_gain_db": -9.0
+          },
+          {
+            "time": 0.24,
+            "effect": "sfx_hellpod_player_thruster_883065754",
+            "locator": "sfx_pod_lid",
+            "source_id": 883065754,
+            "native_gain_db": -1.3
+          }
+        ],
+        [
+          {
+            "time": 0.57,
+            "effect": "sfx_hellpod_player_thruster_831868407",
+            "locator": "sfx_pod_lid",
+            "source_id": 831868407,
+            "native_gain_db": -9.0
+          },
+          {
+            "time": 0.24,
+            "effect": "sfx_hellpod_player_thruster_1059572712",
+            "locator": "sfx_pod_lid",
+            "source_id": 1059572712,
+            "native_gain_db": -2.0
+          }
+        ],
+        [
+          {
+            "time": 0.57,
+            "effect": "sfx_hellpod_player_thruster_500250841",
+            "locator": "sfx_pod_lid",
+            "source_id": 500250841,
+            "native_gain_db": -9.0
+          },
+          {
+            "time": 0.24,
+            "effect": "sfx_hellpod_player_thruster_167967654",
+            "locator": "sfx_pod_lid",
+            "source_id": 167967654,
+            "native_gain_db": -1.4
+          }
+        ]
+      ],
+      "listener_route": 1
+    },
+    {
+      "action_id": 978171622,
+      "container": 62369862,
+      "variants": [
+        [
+          {
+            "time": 0.24,
+            "effect": "sfx_hellpod_player_thruster_794932393",
+            "locator": "sfx_pod_lid",
+            "source_id": 794932393,
+            "native_gain_db": -0.4
+          },
+          {
+            "time": 0.57,
+            "effect": "sfx_hellpod_player_thruster_102019018",
+            "locator": "sfx_pod_lid",
+            "source_id": 102019018,
+            "native_gain_db": -8.0
+          }
+        ],
+        [
+          {
+            "time": 0.24,
+            "effect": "sfx_hellpod_player_thruster_604695048",
+            "locator": "sfx_pod_lid",
+            "source_id": 604695048,
+            "native_gain_db": -1.0
+          },
+          {
+            "time": 0.57,
+            "effect": "sfx_hellpod_player_thruster_590911161",
+            "locator": "sfx_pod_lid",
+            "source_id": 590911161,
+            "native_gain_db": -8.0
+          }
+        ],
+        [
+          {
+            "time": 0.24,
+            "effect": "sfx_hellpod_player_thruster_1014649650",
+            "locator": "sfx_pod_lid",
+            "source_id": 1014649650,
+            "native_gain_db": -1.0
+          },
+          {
+            "time": 0.57,
+            "effect": "sfx_hellpod_player_thruster_919350494",
+            "locator": "sfx_pod_lid",
+            "source_id": 919350494,
+            "native_gain_db": -8.0
+          }
+        ],
+        [
+          {
+            "time": 0.57,
+            "effect": "sfx_hellpod_player_thruster_868652295",
+            "locator": "sfx_pod_lid",
+            "source_id": 868652295,
+            "native_gain_db": -8.0
+          },
+          {
+            "time": 0.24,
+            "effect": "sfx_hellpod_player_thruster_975271063",
+            "locator": "sfx_pod_lid",
+            "source_id": 975271063,
+            "native_gain_db": -0.3
+          }
+        ]
+      ],
+      "listener_route": 2
+    }
+  ],
+  "source_notes": "All four sampled-media Play actions; action 440856163 uses plugin 0x00830402 with no sampled media and is not fabricated as audio. Random children are exclusive; siblings in a selected layer container play together. Leaf InitialDelay is added to action DelayTime. Mixer distance input is a Minecraft adaptation; the name of RTPC 3703045256 is unrecovered. Parent RTPC 1110697873 makes routes 0, 1 and 2 mutually exclusive. Minecraft maps occupant to 0, spectator following this pod to 1, and outside listener to 2."
+}

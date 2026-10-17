@@ -25,6 +25,11 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
     private val turnFrames = mutableMapOf<java.util.UUID, TurnFrame>()
     override fun render(entity: AutoAimableEntity, yaw: Float, partial: Float, pose: PoseStack,
         buffers: net.minecraft.client.renderer.MultiBufferSource, light: Int) {
+        if(entity is com.example.sbwhelldiver.entity.PlayerHellpodEntity && entity.phase==AbstractHellpodEntity.Phase.FALLING){
+            val actual=entity.visualOrigin(partial)
+            val rendered=net.minecraft.world.phys.Vec3(net.minecraft.util.Mth.lerp(partial.toDouble(),entity.xOld,entity.x),net.minecraft.util.Mth.lerp(partial.toDouble(),entity.yOld,entity.y),net.minecraft.util.Mth.lerp(partial.toDouble(),entity.zOld,entity.z))
+            pose.translate(actual.x-rendered.x,actual.y-rendered.y,actual.z-rendered.z)
+        }
         (entity as? AbstractHellpodEntity)?.let { PodInterior.render(it, partial, pose) }
         if (java.lang.Boolean.getBoolean("sbw_helldiver.clientSmokeTest") && entity.isWreck && !checkedWreckTextureCache) {
             val original = requireNotNull(getCurrentModelEntry(pose,entity)).texture

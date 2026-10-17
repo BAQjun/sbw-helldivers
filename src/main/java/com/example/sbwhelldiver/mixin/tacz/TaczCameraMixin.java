@@ -1,6 +1,7 @@
 package com.example.sbwhelldiver.mixin.tacz;
 
 import com.example.sbwhelldiver.entity.HmgEmplacementEntity;
+import com.example.sbwhelldiver.entity.PlayerHellpodEntity;
 import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
@@ -17,6 +18,6 @@ public abstract class TaczCameraMixin {
             "applyCameraRecoil", "onComputeMovementFov"}, at = @At("HEAD"), cancellable = true)
     private static void helldivers$camera(CallbackInfo ci) {
         var player = Minecraft.getInstance().player;
-        if (player != null && player.getVehicle() instanceof HmgEmplacementEntity) ci.cancel();
+        if (player != null && (player.getVehicle() instanceof HmgEmplacementEntity || player.getVehicle() instanceof PlayerHellpodEntity)) ci.cancel();
     }
 }

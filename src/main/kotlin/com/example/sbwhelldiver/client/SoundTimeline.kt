@@ -4,6 +4,7 @@ import com.example.sbwhelldiver.MOD_ID
 import com.example.sbwhelldiver.asset.AssetCatalog
 import com.example.sbwhelldiver.entity.AbstractHellpodEntity
 import com.example.sbwhelldiver.entity.SentryHellpodEntity
+import com.example.sbwhelldiver.entity.PlayerHellpodEntity
 import com.example.sbwhelldiver.entity.LaserClock
 import com.google.gson.JsonParser
 import net.minecraft.client.Minecraft
@@ -34,8 +35,10 @@ object SoundTimeline : ResourceManagerReloadListener {
     private val states = WeakHashMap<AbstractHellpodEntity, State>()
     private val started = mutableMapOf<String, Int>()
     private val allocatedChannels = mutableSetOf<String>()
-    internal fun startedCount(effect: String) = started[effect] ?: 0
-    internal fun allocatedChannel(effect: String) = effect in allocatedChannels
+    fun startedCount(effect: String) = started[effect] ?: 0
+    fun allocatedChannel(effect: String) = effect in allocatedChannels
+    fun activeMix(entity:AbstractHellpodEntity)=states[entity]?.sounds?.filter{!it.isStopped}?.associate{it.effect to it.mixVolume()}.orEmpty()
+    fun activeEffects(entity:AbstractHellpodEntity)=states[entity]?.sounds?.filter{!it.isStopped}?.map{it.effect}.orEmpty()
     fun debugReport() = "effects=${effects.size}, models=${models.size}, started=$started, loops=" +
         states.values.sumOf { state -> state.sounds.count { !it.isStopped && it.isLooping } }
 
@@ -51,6 +54,7 @@ object SoundTimeline : ResourceManagerReloadListener {
                 e.get("minimum_laser_heat")?.asFloat, e.get("requires_laser_firing")?.asBoolean ?: false,
                 e.get("requires_mine_rotation")?.asBoolean ?: false)
         }
+        PlayerDropAudio.reload(manager)
         models = root["models"].asJsonObject.entrySet().associate { (model, value) ->
             model to value.asJsonObject.entrySet().associate { (name, animation) ->
                 name to animation.asJsonObject["events"].asJsonArray.map {
@@ -61,6 +65,7 @@ object SoundTimeline : ResourceManagerReloadListener {
         }
     }
 
+    fun startedWithPrefix(prefix:String)=started.filterKeys{it.startsWith(prefix)}.values.sum()
     fun cues(entity: AbstractHellpodEntity, animation: String): List<Cue> =
         models[entity.profile.model]?.get(animation).orEmpty()
 
@@ -79,13 +84,19 @@ object SoundTimeline : ResourceManagerReloadListener {
     fun cancel(entity: AbstractHellpodEntity, group: String) {
         states[entity]?.pending?.removeAll { it.group == group }
     }
-    fun stopMatching(entity: AbstractHellpodEntity, predicate: (String) -> Boolean) {
+    fun stopMatching(entity: AbstractHellpodEntity, fadeTicks:Int=0, predicate: (String) -> Boolean) {
         val state = states[entity] ?: return
         state.pending.removeAll { predicate(it.cue.effect) }
         state.sounds.filter { predicate(it.effect) }.forEach {
-            it.finish()
-            // Stop the OpenAL channel now, rather than waiting for the sound tick.
-            Minecraft.getInstance().soundManager.stop(it)
+            // A naturally completed one-shot no longer receives sound ticks.
+            // Finish its bookkeeping now; only live channels can advance a fade.
+            if(fadeTicks>0 && Minecraft.getInstance().soundManager.isActive(it)){
+                if(!it.releasing)it.release(fadeTicks)
+            }else{
+                it.finish()
+                // Immediate stop is still used for damaged machinery and invalid state.
+                Minecraft.getInstance().soundManager.stop(it)
+            }
         }
     }
     private fun play(entity: AbstractHellpodEntity, cue: Cue, state: State) {
@@ -95,7 +106,7 @@ object SoundTimeline : ResourceManagerReloadListener {
         if (!definition.audible || cue.effect !in AssetCatalog.audibleEffects || !allowed(entity,definition)) return
         if (definition.kind == "loop" && state.sounds.any { it.effect == cue.effect && !it.isStopped && !it.releasing }) return
         val sound = NodeSound(entity, cue, definition)
-        if (java.lang.Boolean.getBoolean("sbw_helldiver.clientSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.mortarSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.statusMortarSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.flameSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.shieldSmokeTest")) started.merge(cue.effect, 1, Int::plus)
+        if (java.lang.Boolean.getBoolean("sbw_helldiver.playerDropSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.clientSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.mortarSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.statusMortarSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.flameSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.shieldSmokeTest")) started.merge(cue.effect, 1, Int::plus)
         state.sounds.add(sound)
         Minecraft.getInstance().soundManager.play(sound)
     }
@@ -142,6 +153,8 @@ object SoundTimeline : ResourceManagerReloadListener {
         private val reference = WeakReference(entity)
         private val locator = cue.locator
         private val fixed = if (definition.kind != "loop" && locator.contains("muzzle")) position(entity, locator) else null
+        private val playerDescent = entity is PlayerHellpodEntity && PlayerDropAudio.isDescent(effect)
+        private val onboard = playerDescent && PlayerDropClient.belongsToLocalPlayer(entity as PlayerHellpodEntity)
         private var age = 0
         private var releaseLeft = -1
         val releasing get() = releaseLeft >= 0
@@ -151,13 +164,15 @@ object SoundTimeline : ResourceManagerReloadListener {
             looping = definition.kind == "loop"
             delay = 0
             // Variant gains are already in sounds.json; applying them here would square the gain.
-            volume = if (definition.fade > 0) 0.001f else 1f
+            volume = if (definition.fade > 0 || playerDescent) 0.001f else 1f
+            if(onboard){relative=true;attenuation=net.minecraft.client.resources.sounds.SoundInstance.Attenuation.NONE}
             updatePosition(entity)
         }
         private fun updatePosition(entity: AbstractHellpodEntity) {
-            val p = fixed ?: position(entity, locator)
+            val p = if(onboard) Vec3.ZERO else fixed ?: position(entity, locator)
             x = p.x; y = p.y; z = p.z
         }
+        fun mixVolume()=volume
         fun finish() { volume = 0f; stop() }
         fun release(ticks: Int) {
             if (ticks <= 0) { stop(); return }
@@ -173,13 +188,14 @@ object SoundTimeline : ResourceManagerReloadListener {
             if(!allowed(entity,definition)) { finish();return }
             updatePosition(entity)
             age++
-            if(age in 2..10 && (java.lang.Boolean.getBoolean("sbw_helldiver.flameSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.shieldSmokeTest")) && Minecraft.getInstance().soundManager.isActive(this)) allocatedChannels.add(effect)
+            if(age in 2..10 && (java.lang.Boolean.getBoolean("sbw_helldiver.playerDropSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.flameSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.shieldSmokeTest")) && Minecraft.getInstance().soundManager.isActive(this)) allocatedChannels.add(effect)
             if (releaseLeft >= 0) {
                 volume = releaseVolume * releaseLeft-- / releaseLength
                 if (releaseLeft < 0) stop()
                 return
             }
-            volume = if (definition.fade > 0) (age.toFloat() / definition.fade).coerceAtMost(1f) else 1f
+            volume = (if (definition.fade > 0) (age.toFloat() / definition.fade).coerceAtMost(1f) else 1f) *
+                (if(playerDescent) PlayerDropAudio.gain(entity as PlayerHellpodEntity,effect,onboard) else 1f)
             if (!looping && age > definition.duration + 20) stop()
         }
     }

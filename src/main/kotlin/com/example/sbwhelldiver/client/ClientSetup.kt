@@ -67,6 +67,7 @@ object ClientSetup {
 
     @SubscribeEvent
     fun registerRenderers(event: EntityRenderersEvent.RegisterRenderers) {
+        event.registerEntityRenderer<AutoAimableEntity>(ModEntities.PLAYER_HELLPOD.get(),::HellpodRenderer)
         event.registerEntityRenderer(ModEntities.EAGLE.get(),::EagleRenderer)
         event.registerEntityRenderer(ModEntities.EAGLE_BOMB.get(),::EagleBombRenderer)
         event.registerEntityRenderer<com.atsuishio.superbwarfare.entity.projectile.SmallCannonShellEntity>(ModEntities.EAGLE_CANNON_ROUND.get(),::SentryCannonShellRenderer)

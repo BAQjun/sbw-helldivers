@@ -4473,5 +4473,449 @@
         "attenuation_distance": 256
       }
     ]
+  },
+  "sfx_hellpod_player_entry_01": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/192234288",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/880674252",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/21657499",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/66559305",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_entry_02": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/744927076",
+        "stream": false,
+        "volume": 0.354813,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/1019074071",
+        "stream": false,
+        "volume": 0.354813,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/400691910",
+        "stream": false,
+        "volume": 0.354813,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/941214319",
+        "stream": false,
+        "volume": 0.354813,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_entry_03": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/215015665",
+        "stream": false,
+        "volume": 0.446684,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/583672415",
+        "stream": false,
+        "volume": 0.446684,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/130268794",
+        "stream": false,
+        "volume": 0.446684,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/80104538",
+        "stream": false,
+        "volume": 0.446684,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_818907540": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/818907540",
+        "stream": false,
+        "volume": 0.660693,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_543460207": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/543460207",
+        "stream": false,
+        "volume": 0.630957,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_615994157": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/615994157",
+        "stream": false,
+        "volume": 0.707946,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_843585913": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/843585913",
+        "stream": false,
+        "volume": 0.668344,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_132689528": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/132689528",
+        "stream": false,
+        "volume": 0.47863,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_671197063": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/671197063",
+        "stream": false,
+        "volume": 0.199526,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_155994434": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/155994434",
+        "stream": false,
+        "volume": 0.473151,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_542178730": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/542178730",
+        "stream": false,
+        "volume": 0.40738,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_488008774": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/488008774",
+        "stream": false,
+        "volume": 0.484172,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_285985730": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/285985730",
+        "stream": false,
+        "volume": 0.484172,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_1030103225": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/1030103225",
+        "stream": false,
+        "volume": 0.484172,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_247279640": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/247279640",
+        "stream": false,
+        "volume": 0.216272,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_350618895": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/350618895",
+        "stream": false,
+        "volume": 0.489779,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_383447513": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/383447513",
+        "stream": false,
+        "volume": 0.371535,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_446005351": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/446005351",
+        "stream": false,
+        "volume": 0.484172,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_728741464": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/728741464",
+        "stream": false,
+        "volume": 0.201837,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_466892807": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/466892807",
+        "stream": false,
+        "volume": 0.501187,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_202045820": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/202045820",
+        "stream": false,
+        "volume": 0.416869,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_140445567": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/140445567",
+        "stream": false,
+        "volume": 0.223872,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_841671311": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/841671311",
+        "stream": false,
+        "volume": 0.501187,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_573789364": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/573789364",
+        "stream": false,
+        "volume": 0.112202,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_666751694": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/666751694",
+        "stream": false,
+        "volume": 0.251189,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_252597339": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/252597339",
+        "stream": false,
+        "volume": 0.112202,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_883065754": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/883065754",
+        "stream": false,
+        "volume": 0.27227,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_831868407": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/831868407",
+        "stream": false,
+        "volume": 0.112202,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_1059572712": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/1059572712",
+        "stream": false,
+        "volume": 0.251189,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_500250841": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/500250841",
+        "stream": false,
+        "volume": 0.112202,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_167967654": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/167967654",
+        "stream": false,
+        "volume": 0.269153,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_794932393": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/794932393",
+        "stream": false,
+        "volume": 0.301995,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_102019018": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/102019018",
+        "stream": false,
+        "volume": 0.125893,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_604695048": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/604695048",
+        "stream": false,
+        "volume": 0.281838,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_590911161": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/590911161",
+        "stream": false,
+        "volume": 0.125893,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_1014649650": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/1014649650",
+        "stream": false,
+        "volume": 0.281838,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_919350494": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/919350494",
+        "stream": false,
+        "volume": 0.125893,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_868652295": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/868652295",
+        "stream": false,
+        "volume": 0.125893,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_player_thruster_975271063": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/975271063",
+        "stream": false,
+        "volume": 0.305492,
+        "attenuation_distance": 256
+      }
+    ]
   }
 }

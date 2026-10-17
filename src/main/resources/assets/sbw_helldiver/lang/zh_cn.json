@@ -126,5 +126,11 @@
   "hud.sbw_helldiver.mark_distance": "%s米",
   "item.sbw_helldiver.eagle_airstrike_stratagem": "飞鹰空袭",
   "item.sbw_helldiver.eagle_strafing_run_stratagem": "飞鹰机枪扫射",
-  "hud.sbw_helldiver.arrived": "已抵达"
+  "hud.sbw_helldiver.arrived": "已抵达",
+  "entity.sbw_helldiver.player_hellpod": "玩家空投仓",
+  "commands.sbw_helldiver.drop.success": "正在空投 %s",
+  "commands.sbw_helldiver.drop.unavailable": "%s 无法空投（死亡、旁观者或正在空投）",
+  "commands.sbw_helldiver.drop.no_ground": "未找到适合 %s 空投的安全落点",
+  "commands.sbw_helldiver.marking.status": "标记功能：%s",
+  "commands.sbw_helldiver.marking.set": "标记功能已设为：%s"
 }

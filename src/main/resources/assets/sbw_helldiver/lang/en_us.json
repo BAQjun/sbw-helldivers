@@ -126,5 +126,11 @@
   "hud.sbw_helldiver.mark_distance": "%sm",
   "item.sbw_helldiver.eagle_airstrike_stratagem": "Eagle Airstrike",
   "item.sbw_helldiver.eagle_strafing_run_stratagem": "Eagle Strafing Run",
-  "hud.sbw_helldiver.arrived": "Arrived"
+  "hud.sbw_helldiver.arrived": "Arrived",
+  "entity.sbw_helldiver.player_hellpod": "Player Hellpod",
+  "commands.sbw_helldiver.drop.success": "Dropping %s",
+  "commands.sbw_helldiver.drop.unavailable": "%s cannot drop (dead, spectator, or already dropping)",
+  "commands.sbw_helldiver.drop.no_ground": "No safe landing surface found for %s",
+  "commands.sbw_helldiver.marking.status": "Target marking: %s",
+  "commands.sbw_helldiver.marking.set": "Target marking set to: %s"
 }
