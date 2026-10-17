@@ -154,4 +154,35 @@ object EagleGameTests {
   h.assertTrue(id!=null&&m.color==0xFF3434,"Did not dispatch red Eagle call")
   val n=CompoundTag();m.saveWithoutId(n);m.load(n);m.tick();h.assertTrue(m.podUUID==id,"Beacon dispatched a duplicate aircraft");h.runAfterDelay(5){(id?.let {h.level.getEntity(it)})?.discard();m.discard();h.succeed()}
  }
+ @JvmStatic @GameTest(template="eagle_test",batch="eagle_late_restore",timeoutTicks=40)
+ fun lateRestoredFlightReleasesEveryRoundBeforeRetiring(h:GameTestHelper){
+  val record=SpawnRecorder();net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(record)
+  try {
+   for(b in listOf(true,false)){
+    record.shots.clear();val e=eagle(h,b);val tag=CompoundTag();e.saveWithoutId(tag)
+    tag.putLong("StartedAt",h.level.gameTime-EagleFlight.end(b)-5);e.load(tag);e.tick()
+    val total=EagleFlight.payloadCount(b)
+    h.assertTrue(e.fired==total&&record.shots.size==total&&!e.isRemoved,"Retirement discarded the remaining salvo after a late restore")
+    record.shots.dropLast(1).forEach{it.discard()};e.tick()
+    h.assertTrue(!e.isRemoved&&!e.strikeComplete,"Aircraft tracking retired before the last projectile resolved")
+    record.shots.last().discard();e.tick();h.assertTrue(e.strikeComplete&&e.isRemoved,"Finished aircraft did not retire")
+   }
+  }finally{record.shots.forEach{it.discard()};record.aircraft.forEach{it.discard()};net.minecraftforge.common.MinecraftForge.EVENT_BUS.unregister(record)}
+  h.succeed()
+ }
+ @JvmStatic @GameTest(template="eagle_test",timeoutTicks=40)
+ fun preplannedTerrainClearanceIncludesFullAttackAndRecovery(h:GameTestHelper){
+  val target=Vec3(0.0,64.0,0.0);val forward=Vec3(0.0,0.0,1.0)
+  for(b in listOf(true,false))for(ground in listOf(64.0,180.0,310.0)){
+   val height=EagleFlight.terrainClearance(target,forward,b){ground}
+   for(t in EagleFlight.attackStart(b)-12..EagleFlight.end(b)){
+    val p=EagleFlight.position(target,forward,t.toDouble(),b,height)
+    h.assertTrue(p.y-ground>=17.5,"Terrain plan did not protect the entire pass/pullout at $t, bombing=$b, ground=$ground")
+   }
+   val last=EagleFlight.releaseAge(EagleFlight.payloadCount(b)-1,b)
+   h.assertTrue(last<EagleFlight.attackEnd(b),"Planned pull-up starts before the final release")
+  }
+  h.succeed()
+ }
+
 }

@@ -169,6 +169,7 @@ abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAi
                 deltaMovement = Vec3.ZERO
             }
             tickClient()
+            com.example.sbwhelldiver.client.WeaponLighting.tick(this)
             HellpodAnimations.tick(this)
             return
         }

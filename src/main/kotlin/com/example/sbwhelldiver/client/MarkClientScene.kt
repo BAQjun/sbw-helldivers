@@ -74,7 +74,7 @@ object MarkClientScene {
    238->{check(TargetMarks.current(l,p.uuid)?.fixed==lastPos);look(l,lastPos!!)}
    253->look(l,turret!!.position().add(0.0,.8,0.0))
    295->{val m=TargetMarks.current(l,p.uuid)!!;check(m.target==turret!!.uuid);check(TargetMarks.resolve(l,m) !is net.minecraft.world.entity.LivingEntity);checks.add("turret_mark_not_target");look(l,turret!!.boundingBox.center)}
-   450->{check(TargetMarks.current(l,p.uuid)==null);checks.add("mark_expired");clean(l);TargetMarks.sync(l);ready=false}
+   450->{check(TargetMarks.current(l,p.uuid)!=null&&TargetMarks.views(l).none {it.owner==p.uuid});checks.add("mark_hidden_instruction_retained");clean(l);TargetMarks.sync(l);ready=false}
   }
  }
  private fun press(){KeyMapping.click(InputConstants.getKey("key.keyboard.x"))}

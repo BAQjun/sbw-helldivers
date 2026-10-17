@@ -23,6 +23,11 @@ val taczTest = sourceSets.create("taczTest") {
     runtimeClasspath += output + sourceSets.main.get().output + sourceSets.main.get().runtimeClasspath
 }
 
+val combatTest = sourceSets.create("combatTest") {
+    compileClasspath += sourceSets.main.get().output + sourceSets.main.get().compileClasspath
+    runtimeClasspath += output + sourceSets.main.get().output + sourceSets.main.get().runtimeClasspath
+}
+
 minecraft {
     // 使用官方映射（Mojang），避免依赖连不上的 parchmentmc 仓库
     mappings("official", "1.20.1")
@@ -54,7 +59,8 @@ minecraft {
             if(project.hasProperty("hmgGameTests"))workingDirectory(project.file("run-gametest-hmg0342"))
             if(project.hasProperty("eagleGameTests"))workingDirectory(project.file("run-gametest-eagle0371"))
             if(project.hasProperty("shieldGameTests"))workingDirectory(project.file("run-gametest-shield0369"))
-            property("forge.enabledGameTestNamespaces", if(project.hasProperty("taczOnlyTests")) "sbw_helldiver_tacz" else if(project.hasProperty("taczCompatTests")) "sbw_helldiver_tacz,sbw_helldiver_shield,sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("eagleGameTests")) "sbw_helldiver_eagle,sbw_helldiver_shield,sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("markGameTests")) "sbw_helldiver_marks,sbw_helldiver_shield,sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("shieldGameTests")) "sbw_helldiver_shield,sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("hmgGameTests")) "sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("antiTankGameTests")) "sbw_helldiver_antitank,sbw_helldiver_elemental,sbw_helldiver_minefield" else if(project.hasProperty("elementalGameTests")) "sbw_helldiver_elemental" else if(project.hasProperty("minefieldGameTests")) "sbw_helldiver_minefield" else if(project.hasProperty("teslaGameTests")) "sbw_helldiver_tesla" else if (project.hasProperty("laserGameTests")) "sbw_helldiver_laser" else "${project.property("mod_id")},sbw_helldiver_laser")
+            if(project.hasProperty("combatFixGameTests"))workingDirectory(project.file("run-gametest-combat0374"))
+            property("forge.enabledGameTestNamespaces", if(project.hasProperty("combatFixGameTests")) "sbw_helldiver_eagle,sbw_helldiver_marks,sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("taczOnlyTests")) "sbw_helldiver_tacz" else if(project.hasProperty("taczCompatTests")) "sbw_helldiver_tacz,sbw_helldiver_shield,sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("eagleGameTests")) "sbw_helldiver_eagle,sbw_helldiver_shield,sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("markGameTests")) "sbw_helldiver_marks,sbw_helldiver_shield,sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("shieldGameTests")) "sbw_helldiver_shield,sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("hmgGameTests")) "sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("antiTankGameTests")) "sbw_helldiver_antitank,sbw_helldiver_elemental,sbw_helldiver_minefield" else if(project.hasProperty("elementalGameTests")) "sbw_helldiver_elemental" else if(project.hasProperty("minefieldGameTests")) "sbw_helldiver_minefield" else if(project.hasProperty("teslaGameTests")) "sbw_helldiver_tesla" else if (project.hasProperty("laserGameTests")) "sbw_helldiver_laser" else "${project.property("mod_id")},sbw_helldiver_laser")
             property("forge.logging.console.level", "info")
             property("mixin.env.remapRefMap", "true")
             property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
@@ -163,6 +169,7 @@ minecraft {
                 create(project.property("mod_id").toString()) {
                     source(sourceSets.main.get())
                     if(project.hasProperty("taczCompatTests"))source(taczTest)
+                    if(project.hasProperty("combatFixClientTests"))source(combatTest)
                 }
             }
         }

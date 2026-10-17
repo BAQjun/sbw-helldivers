@@ -24,11 +24,11 @@ import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.network.PacketDistributor
 import java.util.UUID
 
-/** Server owns selection, lifetime and moving target positions; clients send a view ray only. */
+/** Server owns selection, visual lifetime and moving target positions; clients send a view ray only. */
 @Mod.EventBusSubscriber(modid=MOD_ID)
 object TargetMarks {
     const val RANGE=300.0
-    const val LIFETIME=160 // Normal, unacknowledged native ping: eight seconds at 20 TPS.
+    const val LIFETIME=160 // Eight seconds of HUD visibility; the targeting instruction remains active.
     data class Mark(val owner:UUID,val dimension:ResourceKey<Level>,val target:UUID?,val fixed:Vec3,
                     val created:Long,val expires:Long,val serial:Long)
     data class View(val owner:UUID,val serial:Long,val entityId:Int,val target:UUID?,val point:Vec3,
@@ -38,12 +38,13 @@ object TargetMarks {
     private var serial=0L
     fun resolve(level:ServerLevel,m:Mark):Entity?=m.target?.let {level.getEntity(it)}
     fun point(level:ServerLevel,m:Mark):Vec3?=if(m.target==null)m.fixed else resolve(level,m)?.takeIf {it.isAlive&&!it.isRemoved}?.boundingBox?.center
-    fun current(level:ServerLevel,owner:UUID)=marks[owner]?.takeIf {it.dimension==level.dimension()&&it.expires>level.gameTime&&point(level,it)!=null}
-    fun all(level:ServerLevel)=marks.values.filter {it.dimension==level.dimension()&&it.expires>level.gameTime&&point(level,it)!=null}
+    fun current(level:ServerLevel,owner:UUID)=marks[owner]?.takeIf {it.dimension==level.dimension()&&point(level,it)!=null}
+    fun all(level:ServerLevel)=marks.values.filter {it.dimension==level.dimension()&&point(level,it)!=null}
     fun put(level:ServerLevel,owner:UUID,target:Entity?,position:Vec3):Mark {
         val m=Mark(owner,level.dimension(),target?.uuid,position,level.gameTime,level.gameTime+LIFETIME,++serial)
         marks[owner]=m;return m
     }
+    fun visible(level:ServerLevel,m:Mark)=m.expires>level.gameTime
     fun cancel(owner:UUID)=marks.remove(owner)
     fun clear(){marks.clear();lastInput.clear()}
     fun trace(level:ServerLevel,player:LivingEntity,start:Vec3,direction:Vec3):Pair<Entity?,Vec3>? {
@@ -69,8 +70,9 @@ object TargetMarks {
         if(lastInput[player.uuid]?.let {now-it<3}==true)return
         lastInput[player.uuid]=now
         var sound=3
-        if(cancelCurrent){
-            val m=current(level,player.uuid) ?: return;val toward=point(level,m)!!.subtract(start)
+        val existing=current(level,player.uuid)
+        if(cancelCurrent && existing!=null && visible(level,existing)){
+            val m=existing;val toward=point(level,m)!!.subtract(start)
             if(toward.lengthSqr()<1 || toward.normalize().dot(direction)>.985)cancel(player.uuid) else return
         }else {
             val hit=trace(level,player,start,direction)
@@ -97,7 +99,7 @@ object TargetMarks {
             else (resolve(level,m) as? LivingEntity)?.let {sentry.validTarget(it,true)}==true
         }
     }
-    fun views(level:ServerLevel):List<View> = all(level).map {m->
+    fun views(level:ServerLevel):List<View> = all(level).filter {visible(level,it)}.map {m->
         val e=resolve(level,m)
         View(m.owner,m.serial,e?.id ?: -1,m.target,point(level,m)!!,e is Enemy,
             e?.displayName ?: Component.translatable("hud.sbw_helldiver.special_location"),(m.expires-level.gameTime).toInt(),if(e is AbstractHellpodEntity && !e.profile.isSupply) "textures/item/${e.profile.id}_stratagem.png" else "")
@@ -109,9 +111,10 @@ object TargetMarks {
         val iter=marks.iterator()
         while(iter.hasNext()){
             val (_,m)=iter.next();val level=e.server.getLevel(m.dimension)
-            if(level==null||level.gameTime>=m.expires||point(level,m)==null){iter.remove();if(level!=null)changed.add(level)}
+            if(level==null||point(level,m)==null){iter.remove();if(level!=null)changed.add(level)}
+            else if(level.gameTime==m.expires)changed.add(level)
         }
-        e.server.allLevels.forEach {if(it in changed || (it.gameTime%2==0L&&all(it).isNotEmpty()))sync(it)}
+        e.server.allLevels.forEach {if(it in changed || (it.gameTime%2==0L&&all(it).any {m->visible(it,m)}))sync(it)}
     }
     private fun leaving(player:net.minecraft.world.entity.player.Player){
         val server=player.server ?: return;val old=cancel(player.uuid);lastInput.remove(player.uuid)

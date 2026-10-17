@@ -24,6 +24,7 @@ import kotlin.math.*
 /** HUD projection deliberately ignores world depth, so an established mark remains visible through walls. */
 @Mod.EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
 object TargetMarkClient {
+ const val COMPACT_SCALE=.72f
  val KEY=KeyMapping("key.sbw_helldiver.mark",KeyConflictContext.IN_GAME,InputConstants.Type.KEYSYM,GLFW.GLFW_KEY_X,"key.categories.sbw_helldiver")
  private val ICON=ResourceLocation(MOD_ID,"textures/gui/target_mark.png")
  private val LOCATION=ResourceLocation(MOD_ID,"textures/gui/target_mark_location.png")
@@ -82,6 +83,10 @@ object TargetMarkClient {
   val g=e.guiGraphics
   for(l in labels){
    val x=l.x;val y=l.y;val red=l.mark.hostile
+   // Scale about the arrow tip, so both presentations point at the same world point.
+   val scale=if(l.hovered)1f else COMPACT_SCALE
+   g.pose().pushPose();g.pose().translate(x.toDouble(),y+30.0,0.0)
+   g.pose().scale(scale,scale,1f);g.pose().translate(-x.toDouble(),-y-30.0,0.0)
    val color=if(red)0xffff7777.toInt() else 0xfff3f0dc.toInt()
    g.fill(x-11,y-11,x+12,y+12,0x58272727)
    g.flush();RenderSystem.enableBlend();RenderSystem.defaultBlendFunc()
@@ -114,6 +119,7 @@ object TargetMarkClient {
     }
     expanded++
    }else compact++
+   g.pose().popPose()
    rendered++
   }
  }

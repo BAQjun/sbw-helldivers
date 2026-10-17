@@ -19,8 +19,9 @@ import java.util.UUID
 @GameTestHolder("sbw_helldiver_marks")
 @PrefixGameTestTemplate(false)
 object MarkGameTests {
- private fun at(h:GameTestHelper)=Vec3.atBottomCenterOf(h.absolutePos(BlockPos(20,140,20)))
- private fun mob(h:GameTestHelper,p:Vec3):LivingEntity=EntityType.HUSK.create(h.level)!!.also {it.setPos(p);it.isNoAi=true;it.isNoGravity=true;it.isInvulnerable=true;h.level.addFreshEntity(it)}
+ // Keep actors inside the server spawn chunks, above all generated structures.
+ private fun at(h:GameTestHelper)=Vec3(8.5,300.0,8.5)
+ private fun mob(h:GameTestHelper,p:Vec3):LivingEntity=EntityType.HUSK.create(h.level)!!.also {h.level.getChunk(BlockPos.containing(p));it.setPos(p);it.isNoAi=true;it.isNoGravity=true;it.isInvulnerable=true;h.level.addFreshEntity(it)}
  private fun owner(h:GameTestHelper)=FakePlayerFactory.get(h.level,GameProfile(UUID.randomUUID(),"MarkOwner"))
  private fun turret(h:GameTestHelper,p:Vec3,type:net.minecraft.world.entity.EntityType<SentryHellpodEntity> = ModEntities.MACHINE_GUN_SENTRY.get()):SentryHellpodEntity {
   h.level.getChunk(BlockPos.containing(p));val t=type.create(h.level)!!;t.setPos(p);h.level.addFreshEntity(t)
@@ -37,13 +38,13 @@ object MarkGameTests {
  }
  @JvmStatic @GameTest(template="mark_test",batch="mark_tracking",timeoutTicks=15)
  fun markFollowsMovingLivingEntityAndEndsAtDeath(h:GameTestHelper){
-  clear(h);val enemy=mob(h,at(h).add(0.0,0.0,8.0));val id=UUID.randomUUID();val m=TargetMarks.put(h.level,id,enemy,enemy.position());enemy.setPos(enemy.position().add(8.0,2.0,3.0))
-  h.assertTrue(TargetMarks.point(h.level,m)==enemy.boundingBox.center,"Moving target mark stayed at initial point")
+  clear(h);val enemy=mob(h,at(h).add(0.0,0.0,8.0));val id=UUID.randomUUID();val m=TargetMarks.put(h.level,id,enemy,enemy.position());h.level.getChunk(BlockPos.containing(enemy.position().add(8.0,2.0,3.0)));enemy.setPos(enemy.position().add(8.0,2.0,3.0))
+  h.assertTrue(TargetMarks.point(h.level,m)==enemy.boundingBox.center,"Moving target lookup=${TargetMarks.resolve(h.level,m)}, point=${TargetMarks.point(h.level,m)}, expected=${enemy.boundingBox.center}, removed=${enemy.isRemoved}")
   enemy.discard();h.assertTrue(TargetMarks.current(h.level,id)==null,"Dead or removed entity kept its mark");clear(h);h.succeed()
  }
  @JvmStatic @GameTest(template="mark_test",batch="mark_expiry",timeoutTicks=175)
- fun normalMarkExpiresAtExactly160Ticks(h:GameTestHelper){
-  clear(h);val id=UUID.randomUUID();TargetMarks.put(h.level,id,null,at(h));h.runAtTickTime(159){h.assertTrue(TargetMarks.current(h.level,id)!=null,"Mark expired early")};h.runAtTickTime(160){h.assertTrue(TargetMarks.current(h.level,id)==null,"Mark didn't expire at native normal lifetime");TargetMarks.cancel(id);h.succeed()}
+ fun normalMarkHidesAt160TicksButItsInstructionRemains(h:GameTestHelper){
+  clear(h);val id=UUID.randomUUID();TargetMarks.put(h.level,id,null,at(h));h.runAtTickTime(159){h.assertTrue(TargetMarks.current(h.level,id)!=null,"Mark expired early")};h.runAtTickTime(160){h.assertTrue(TargetMarks.current(h.level,id)!=null&&TargetMarks.views(h.level).none {it.owner==id},"HUD expiry deleted the instruction or left it visible");TargetMarks.cancel(id);h.succeed()}
  }
  @JvmStatic @GameTest(template="mark_test",batch="mark_priority",timeoutTicks=15)
  fun markedFartherEnemyPreemptsAndCancelRestoresNearest(h:GameTestHelper){
@@ -91,6 +92,37 @@ object MarkGameTests {
   h.assertTrue(v.icon=="textures/item/autocannon_sentry_stratagem.png","Turret mark didn't publish its own icon")
   h.assertTrue(TargetMarks.preferred(a)==null&&TargetMarks.preferred(b)==null,"Marked turret became a sentry attack candidate")
   val hit=TargetMarks.trace(h.level,owner(h),p.add(0.0,.8,5.0),Vec3(0.0,0.0,1.0));h.assertTrue(hit?.first===b,"Turret could not be marked by the camera ray");clear(h);h.succeed()
+ }
+
+ @JvmStatic @GameTest(template="mark_test",batch="mark_hidden",timeoutTicks=195)
+ fun hiddenGroundMarkStillDirectsMortarAndCannotBeCanceledByStaleHud(h:GameTestHelper){
+  clear(h);val p=at(h);val user=owner(h);user.setPos(p)
+  val t=turret(h,p,ModEntities.MORTAR_SENTRY.get());val m=TargetMarks.put(h.level,user.uuid,null,p.add(0.0,0.0,35.0))
+  h.runAfterDelay(165){
+   h.assertTrue(TargetMarks.current(h.level,user.uuid)===m&&TargetMarks.preferred(t)===m,"Hidden ground order stopped directing the mortar")
+   h.assertTrue(TargetMarks.views(h.level).none {it.owner==user.uuid},"Hidden order still has a HUD entry")
+   // Above the build ceiling this ray cannot select an overhead fixture.
+   user.setPos(p.x,h.level.maxBuildHeight+20.0,p.z)
+   h.assertTrue(TargetMarks.trace(h.level,user,user.eyePosition,Vec3(0.0,1.0,0.0))==null,"Stale HUD fixture ray must miss")
+   TargetMarks.input(user,user.eyePosition,Vec3(0.0,1.0,0.0),true)
+   h.assertTrue(TargetMarks.current(h.level,user.uuid)===m,"Hidden instruction was canceled by a stale/forged HUD request")
+   val replacement=TargetMarks.put(h.level,user.uuid,null,p.add(8.0,0.0,26.0))
+   h.assertTrue(TargetMarks.current(h.level,user.uuid)===replacement&&TargetMarks.preferred(t)===replacement,"A new ping did not replace the old hidden instruction")
+   TargetMarks.cancel(user.uuid);h.assertTrue(TargetMarks.preferred(t)==null,"Explicit cancellation left an order active")
+   clear(h);h.succeed()
+  }
+ }
+ @JvmStatic @GameTest(template="mark_test",batch="mark_hidden_entity",timeoutTicks=195)
+ fun hiddenCreatureRemainsPriorityAndTracksMovement(h:GameTestHelper){
+  clear(h);val p=at(h);val t=turret(h,p);val near=mob(h,p.add(0.0,0.0,8.0));val far=mob(h,p.add(0.0,0.0,22.0));val id=UUID.randomUUID()
+  val m=TargetMarks.put(h.level,id,far,far.position())
+  h.runAfterDelay(165){
+   h.level.getChunk(BlockPos.containing(p.add(3.0,0.0,25.0)));far.setPos(p.add(3.0,0.0,25.0));t.tick()
+   h.assertTrue(TargetMarks.current(h.level,id)===m&&TargetMarks.point(h.level,m)==far.boundingBox.center,"Hidden moving entity lost its mark")
+   h.assertTrue(t.selectedTarget===far&&TargetMarks.views(h.level).none{it.owner==id},"Hidden target selected=${t.selectedTarget?.uuid}, expected=${far.uuid}, preferred=${TargetMarks.preferred(t)?.serial}, phase=${t.phase}, valid=${t.validTarget(far,true)}, clip=${t.clipRemaining}")
+   TargetMarks.cancel(id);repeat(10){t.tick()};h.assertTrue(t.selectedTarget===near,"Canceling hidden priority did not restore ordinary targeting")
+   clear(h);h.succeed()
+  }
  }
 
 }

@@ -80,6 +80,23 @@ object EagleFlight {
   if(age<=attackEnd(airstrike))return if(airstrike)0f else (ENTRY_PITCH+(end-ENTRY_PITCH)*(age-attackStart(airstrike))/30).toFloat()
   return (end-PULL_UP_DEGREES_PER_TICK*(age-attackEnd(airstrike))).coerceAtLeast(-MAX_CLIMB_DEGREES).toFloat()
  }
+ /** Fit the complete firing and pull-out corridor before committing to the pass. */
+ fun terrainClearance(target:Vec3,forward:Vec3,bombing:Boolean,groundAt:(Vec3)->Double):Double {
+  var height=if(bombing)HEIGHT else STRAFE_HEIGHT
+  val across=Vec3(-forward.z,0.0,forward.x)
+  repeat(4) {
+   var deficit=0.0
+   for(t in attackStart(bombing)-12..end(bombing) step 2) {
+    val p=position(target,forward,t.toDouble(),bombing,height)
+    for(side in listOf(-9.0,0.0,9.0))deficit=max(deficit,groundAt(p.add(across.scale(side)))+18.0-p.y)
+   }
+   if(deficit<=.01)return height
+   height+=deficit+2.0
+  }
+  return height
+ }
+ fun payloadCount(airstrike:Boolean)=if(airstrike)BOMB_COUNT else STRAFE_ROUNDS
+ fun releaseAge(index:Int,airstrike:Boolean)=attackStart(airstrike)+if(airstrike)index*BOMB_INTERVAL.toDouble() else index*30.0/STRAFE_ROUNDS
  fun bombOffset(index:Int)= -30.0+index*12.0
  fun strafeOffset(index:Int,height:Double=STRAFE_HEIGHT):Double {
   val t=attackStart(false)+index*30.0/STRAFE_ROUNDS;val p=local(t,false,height);return p.first+p.second/tan(rad(pitch(t,false,height).toDouble()))

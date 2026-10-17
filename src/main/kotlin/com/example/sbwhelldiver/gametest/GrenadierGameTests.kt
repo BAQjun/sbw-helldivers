@@ -91,11 +91,12 @@ object GrenadierGameTests {
     }
     @JvmStatic @GameTest(template="sentry_test",batch="grenadier_blast",timeoutTicks=10)
     fun grenadeAppliesFiveDirectAndDualRadiusSixtyBlast(h:GameTestHelper) {
-        val pos=h.absolutePos(BlockPos(15,240,15));val origin=Vec3(pos.x+.5,pos.y.toDouble(),pos.z+.5)
+        // Spawn chunks keep fresh entities available to the immediate blast query.
+        val pos=BlockPos(8,300,8);h.level.getChunk(pos);val origin=Vec3(pos.x+.5,pos.y.toDouble(),pos.z+.5)
         val shell=ModEntities.GRENADIER_GRENADE.get().create(h.level)!!;shell.setPos(origin);shell.tickCount=1;shell.setExplosionDestroy(false);h.level.addFreshEntity(shell)
         fun target(distance:Double)=EntityType.RAVAGER.create(h.level)!!.also {
             it.isNoAi=true;it.isNoGravity=true;it.getAttribute(Attributes.ARMOR)!!.baseValue=0.0;it.getAttribute(Attributes.MAX_HEALTH)!!.baseValue=1000.0;it.health=1000f
-            it.setPos(origin.x+distance+it.bbWidth/2,origin.y-.5,origin.z);h.level.addFreshEntity(it)
+            it.setPos(origin.x+distance+it.bbWidth/2,origin.y-.5,origin.z);h.level.getChunk(it.blockPosition());h.level.addFreshEntity(it)
         }
         val mobs=listOf(target(0.0),target(3.5),target(5.5),target(7.6));val before=mobs.map{it.health}
         shell.onHitEntity(ExtendedEntityRayTraceResult(EntityResult(mobs[0],origin,false,false)))
