@@ -31,6 +31,10 @@ jobs:
         if: inputs.game_tests == true
         shell: pwsh
         run: ./gradlew.bat --no-daemon runGameTestServer -PeagleGameTests
+      - name: TACZ compatibility GameTest
+        if: inputs.game_tests == true
+        shell: pwsh
+        run: ./gradlew.bat --no-daemon runGameTestServer -PtaczCompatTests -PtaczOnlyTests
       - uses: actions/upload-artifact@v4
         with:
           name: sbw-helldivers

@@ -139,7 +139,7 @@ object GrenadierGameTests {
         h.assertTrue(markers.size==1,"Valid thrown beacon did not create exactly one marker: count=${markers.size}, pos=${ball.position()}, removed=${ball.isRemoved}, selected=${com.example.sbwhelldiver.stratagem.BeaconData.selected(ball.item)?.id}")
         val marker=markers.single();val expected=Math.toDegrees(atan2(-4.0,9.0)).toFloat()
         h.assertTrue(abs(marker.yRot-expected)<1e-5,"Impact used ball attitude or current owner position")
-        val tag=CompoundTag();marker.saveWithoutId(tag);tag.putLong("StartedAt",h.level.gameTime-1000);marker.load(tag);marker.tick()
+        val tag=CompoundTag();marker.saveWithoutId(tag);tag.putInt("Duration",20);tag.putInt("LandingGraceTicks",0);tag.putLong("StartedAt",(h.level.gameTime-20).coerceAtLeast(0));marker.load(tag);marker.tick()
         val podId=requireNotNull(marker.podUUID){"Restored marker did not spawn a pod; removed=${marker.isRemoved}, deadline=${marker.arrivalDeadline}, now=${h.level.gameTime}"}
         val pod=requireNotNull(h.level.getEntity(podId)){"Spawned pod is not in the loaded fixture chunk"} as GrenadierBattlementEntity
         h.assertTrue(abs(pod.yRot-expected)<1e-5,"Drop lost deployment bearing")

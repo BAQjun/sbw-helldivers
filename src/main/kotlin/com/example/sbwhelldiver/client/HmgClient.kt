@@ -82,7 +82,7 @@ object HmgClient {
     fun overlay(event: RenderGuiOverlayEvent.Pre) {
         if(mounted()==null)return
         val id=event.overlay.id
-        if(id==VanillaGuiOverlay.CROSSHAIR.id() || id.namespace=="superbwarfare")event.isCanceled=true
+        if(id==VanillaGuiOverlay.CROSSHAIR.id() || id.namespace=="superbwarfare" || id.namespace=="tacz")event.isCanceled=true
     }
     @SubscribeEvent fun hud(event: net.minecraftforge.client.event.RenderGuiEvent.Post) {
         val pod=mounted() ?: return

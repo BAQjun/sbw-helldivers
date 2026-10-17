@@ -17,6 +17,12 @@ java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
+// Integration tests use the installed TACZ runtime without shipping test classes.
+val taczTest = sourceSets.create("taczTest") {
+    compileClasspath += sourceSets.main.get().output + sourceSets.main.get().compileClasspath
+    runtimeClasspath += output + sourceSets.main.get().output + sourceSets.main.get().runtimeClasspath
+}
+
 minecraft {
     // 使用官方映射（Mojang），避免依赖连不上的 parchmentmc 仓库
     mappings("official", "1.20.1")
@@ -34,8 +40,10 @@ minecraft {
     // 一条有效条目**，不能只留注释。
 
     runs {
+        configureEach { args("--mixin", "sbw_helldiver.mixins.json") }
         create("gameTestServer") {
             workingDirectory(project.file("run-gametest-flame0313"))
+            if(project.hasProperty("taczCompatTests"))workingDirectory(project.file("run-gametest-tacz0373"))
             if(project.hasProperty("markGameTests"))workingDirectory(project.file("run-gametest-marks0370"))
             if (project.hasProperty("laserGameTests")) workingDirectory(project.file("run-gametest-laser0318"))
             if (project.hasProperty("teslaGameTests")) workingDirectory(project.file("run-gametest-tesla0320"))
@@ -46,12 +54,12 @@ minecraft {
             if(project.hasProperty("hmgGameTests"))workingDirectory(project.file("run-gametest-hmg0342"))
             if(project.hasProperty("eagleGameTests"))workingDirectory(project.file("run-gametest-eagle0371"))
             if(project.hasProperty("shieldGameTests"))workingDirectory(project.file("run-gametest-shield0369"))
-            property("forge.enabledGameTestNamespaces", if(project.hasProperty("eagleGameTests")) "sbw_helldiver_eagle,sbw_helldiver_shield,sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("markGameTests")) "sbw_helldiver_marks,sbw_helldiver_shield,sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("shieldGameTests")) "sbw_helldiver_shield,sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("hmgGameTests")) "sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("antiTankGameTests")) "sbw_helldiver_antitank,sbw_helldiver_elemental,sbw_helldiver_minefield" else if(project.hasProperty("elementalGameTests")) "sbw_helldiver_elemental" else if(project.hasProperty("minefieldGameTests")) "sbw_helldiver_minefield" else if(project.hasProperty("teslaGameTests")) "sbw_helldiver_tesla" else if (project.hasProperty("laserGameTests")) "sbw_helldiver_laser" else "${project.property("mod_id")},sbw_helldiver_laser")
+            property("forge.enabledGameTestNamespaces", if(project.hasProperty("taczOnlyTests")) "sbw_helldiver_tacz" else if(project.hasProperty("taczCompatTests")) "sbw_helldiver_tacz,sbw_helldiver_shield,sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("eagleGameTests")) "sbw_helldiver_eagle,sbw_helldiver_shield,sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("markGameTests")) "sbw_helldiver_marks,sbw_helldiver_shield,sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("shieldGameTests")) "sbw_helldiver_shield,sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("hmgGameTests")) "sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("antiTankGameTests")) "sbw_helldiver_antitank,sbw_helldiver_elemental,sbw_helldiver_minefield" else if(project.hasProperty("elementalGameTests")) "sbw_helldiver_elemental" else if(project.hasProperty("minefieldGameTests")) "sbw_helldiver_minefield" else if(project.hasProperty("teslaGameTests")) "sbw_helldiver_tesla" else if (project.hasProperty("laserGameTests")) "sbw_helldiver_laser" else "${project.property("mod_id")},sbw_helldiver_laser")
             property("forge.logging.console.level", "info")
             property("mixin.env.remapRefMap", "true")
             property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
             mods {
-                create(project.property("mod_id").toString()) { source(sourceSets.main.get()) }
+                create(project.property("mod_id").toString()) { source(sourceSets.main.get()); if(project.hasProperty("taczCompatTests"))source(taczTest) }
             }
         }
         create("client") {
@@ -154,6 +162,7 @@ minecraft {
             mods {
                 create(project.property("mod_id").toString()) {
                     source(sourceSets.main.get())
+                    if(project.hasProperty("taczCompatTests"))source(taczTest)
                 }
             }
         }
@@ -195,6 +204,8 @@ repositories {
         }
     }
     mavenCentral()
+    // Optional gun integration API; TACZ is never bundled into this mod.
+    maven { url = uri("https://api.modrinth.com/maven"); content { includeGroup("maven.modrinth") } }
     maven {
         name = "Kotlin for Forge"
         url = uri("https://thedarkcolour.github.io/KotlinForForge/")
@@ -234,6 +245,11 @@ dependencies {
                 project.property("superbwarfare_file_id")
         )
     )
+
+    compileOnly(fg.deobf("maven.modrinth:timeless-and-classics-zero:1.1.8-hotfix2"))
+    if (project.hasProperty("taczCompatTests")) {
+        runtimeOnly(fg.deobf("maven.modrinth:timeless-and-classics-zero:1.1.8-hotfix2"))
+    }
 
     // ---- 以下三个库都不打进我们的 jar，只为了让编译与开发运行能跑起来 ----
     //
@@ -316,6 +332,7 @@ tasks.named<Jar>("jar") {
             "Specification-Vendor" to project.property("mod_authors"),
             "Implementation-Title" to project.name,
             "Implementation-Version" to project.version,
+            "MixinConfigs" to "sbw_helldiver.mixins.json",
         )
     }
     finalizedBy("reobfJar")

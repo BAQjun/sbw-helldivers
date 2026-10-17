@@ -53,3 +53,11 @@ mandatory = true
 versionRange = "[2.5.1,)"
 ordering = "NONE"
 side = "BOTH"
+
+# Optional integration; installations without TACZ keep the native projectile path.
+[[dependencies.${mod_id}]]
+modId = "tacz"
+mandatory = false
+versionRange = "[1.1.8,1.2)"
+ordering = "AFTER"
+side = "BOTH"

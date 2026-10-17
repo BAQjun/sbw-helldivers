@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.example.sbwhelldiver.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "tacz.TaczEntityUtilMixin",
+    "tacz.TaczBulletMixin"
+  ],
+  "client": [
+    "tacz.TaczInputMixin",
+    "tacz.TaczCameraMixin",
+    "tacz.TaczCrosshairMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

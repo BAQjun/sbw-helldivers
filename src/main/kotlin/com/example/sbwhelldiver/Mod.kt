@@ -43,6 +43,7 @@ class Mod {
 
     init {
         val bus = MOD_BUS
+        com.example.sbwhelldiver.compat.TaczBootstrap.register()
         com.example.sbwhelldiver.init.ModBlocks.BLOCKS.register(bus)
         ModItems.ITEMS.register(bus)
         ModEntities.ENTITIES.register(bus)
