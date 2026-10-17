@@ -12,10 +12,10 @@
 git clone https://github.com/BAQjun/sbw-helldivers.git
 cd sbw-helldivers
 git lfs pull
-.\gradlew.bat --no-daemon build
+.\build.ps1 -Online
 ```
 
-首次构建需要网络下载 Gradle 和依赖；完成后可增加 `--offline`。输出为 `build/libs/sbw_helldiver-0.3.72-mc1.20.1.jar`。Linux 使用 `./gradlew`。
+首次构建需要网络下载 Gradle 和依赖；完成后执行 `./build.ps1` 可使用 D 盘项目缓存离线构建。输出为 `build/libs/sbw_helldiver-0.3.72-mc1.20.1.jar`。Linux 使用 `./gradlew`。
 
 `libs/geckolib-forge-1.20.1-4.4.6-sbw-api.jar` 是卓越前线内嵌版本的编译用接口依赖，已纳入版本管理，不打进最终附属模组；游戏内沿用卓越前线自带版本。
 
