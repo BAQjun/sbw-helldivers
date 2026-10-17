@@ -65,7 +65,7 @@ object PlayerDropClient {
  }
  @SubscribeEvent fun interaction(e:InputEvent.InteractionKeyMappingTriggered){if(mounted()!=null||loading()){e.isCanceled=true;e.setSwingHand(false)}}
  @SubscribeEvent fun hide(e:RenderPlayerEvent.Pre){val pod=e.entity.vehicle as? PlayerHellpodEntity?:return
-  if(pod.phase==Phase.FALLING||pod.phase==Phase.IMPACT||(pod.phase==Phase.DEPLOYING&&(pod.phaseAge<10||(e.entity===Minecraft.getInstance().player&&pod.phaseAge>=37))))e.isCanceled=true
+  if(pod.phase==Phase.FALLING||pod.phase==Phase.IMPACT||(pod.phase==Phase.DEPLOYING&&(pod.phaseAge<10||(e.entity===Minecraft.getInstance().player&&pod.visualPhaseAge(1f)>=44))))e.isCanceled=true
  }
  data class View(val eye:Vec3,val look:Vec3)
  private fun smooth(t:Double)=t.coerceIn(0.0,1.0).let{it*it*(3-2*it)}
@@ -74,7 +74,7 @@ object PlayerDropClient {
   val forward=Vec3.directionFromRotation(0f,pod.yRot)
   val top=base.add(0.0,22.0,0.0)
   if(pod.phase==Phase.FALLING||pod.phase==Phase.IMPACT)return View(top,base.add(0.0,-1.0,0.0))
-  val age=if(pod.phase==Phase.DEPLOYING)pod.phaseAge+partial.toDouble() else 48.0
+  val age=if(pod.phase==Phase.DEPLOYING)pod.visualPhaseAge(partial) else 48.0
   val level=smooth((age-10)/16.0)
   val push=smooth((age-30)/18.0)
   val rider=pod.riderPosition(partial)

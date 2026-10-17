@@ -33,6 +33,9 @@ object PlayerDropClientScene {
  private var pod:PlayerHellpodEntity?=null
  private var frames=0
  private var centeredFrames=0
+ private var exitClockFrames=0
+ private var exitClockPod=-1
+ private var previousExitAge=-1.0
  private var standingFrames=0
  private var steeringMoved=false
  private var stoppedAtImpact=false
@@ -114,6 +117,7 @@ object PlayerDropClientScene {
    check(SoundTimeline.startedWithPrefix("sfx_hellpod_player_thruster_")==10){"Incomplete occupant startup event"}
    check(stoppedAtImpact&&SoundTimeline.startedCount("sfx_hellpod_retro_start")==2&&SoundTimeline.startedCount("sfx_hellpod_retro_layer_01")==2)
    check(SoundTimeline.allocatedChannel("sfx_hellpod_retro_start")&&SoundTimeline.allocatedChannel("sfx_hellpod_retro_layer_03")){"Native thruster sound did not acquire playback channels"}
+   check(exitClockFrames>40){"Exit clock was not sampled during the live transition"}
    check(steeringMoved&&frames>150&&standingFrames>8&&centeredFrames>60&&exitChecks==2&&markDisabled&&markEnabled)
    Files.writeString(out.resolve("result.json"),"""{"first_and_repeated_drop":true,"drop_commands":2,"camera_frames":$frames,"centered_flight_frames":$centeredFrames,"standing_exit_frames":$standingFrames,"smooth_first_person_exit":true,"marking_setting_synced":true,"safe_exit":true,"movement_keys_adjust_landing":true,"thruster_start_and_loop_channels":true,"thrusters_stopped_at_impact":true,"scene_cleaned":true,"captures":${captures.size}}""")
    LOGGER.info("PLAYER_DROP_CLIENT_PASSED frames={} captures={}",frames,captures.size);mc.stop()
@@ -129,6 +133,11 @@ object PlayerDropClientScene {
  @SubscribeEvent fun projected(e:net.minecraftforge.client.event.RenderLevelStageEvent){
   if(!enabled||e.stage!=net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_LEVEL)return
   val d=Minecraft.getInstance().player?.vehicle as? PlayerHellpodEntity?:return
+  if(d.phase==AbstractHellpodEntity.Phase.DEPLOYING){
+   val age=d.visualPhaseAge(e.partialTick)
+   if(exitClockPod==d.id)check(age+1e-5>=previousExitAge){"Exit render clock rewound: $previousExitAge -> $age"}
+   exitClockPod=d.id;previousExitAge=age;exitClockFrames++
+  }
   if(d.phase!=AbstractHellpodEntity.Phase.FALLING||d.phaseAge<3)return
   val v=PlayerDropClient.view(d,e.partialTick)
   val actual=Vec3.directionFromRotation(e.camera.xRot,e.camera.yRot)

@@ -28,6 +28,7 @@ abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAi
         get() = Phase.entries[entityData.get(DATA_PHASE).coerceIn(0, Phase.entries.lastIndex)]
         private set(value) { entityData.set(DATA_PHASE, value.ordinal) }
     val phaseAge get() = if (level().isClientSide) entityData.get(DATA_PHASE_AGE) else phaseTicks
+    val phaseStartTime get()=entityData.get(DATA_PHASE_START)
     val braking get() = entityData.get(DATA_BRAKING)
     val brakeAge get() = if (level().isClientSide) entityData.get(DATA_BRAKE_AGE) else
         (level().gameTime - entityData.get(DATA_BRAKE_START)).coerceAtLeast(0).toInt()

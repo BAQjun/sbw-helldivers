@@ -82,8 +82,23 @@ class PlayerHellpodEntity(type:EntityType<*>,level:Level):AbstractHellpodEntity(
  override fun interact(p:Player,hand:net.minecraft.world.InteractionHand)=net.minecraft.world.InteractionResult.PASS
  override fun hurt(source:net.minecraft.world.damagesource.DamageSource,amount:Float)=false
  override fun shouldRetract()=released&&activeTicks>=60
+ private var visualPhase:Phase?=null
+ private var visualPhaseTick=0
+ private var visualPhaseOffset=0.0
+ /** The server's age packets are samples, not the render clock. Anchor once per
+  * phase, then advance with the same local tick and partial tick as rendering.
+  * Re-reading packet age every frame can rewind between asynchronous updates.
+  */
+ fun visualPhaseAge(partial:Float):Double {
+  if(!level().isClientSide)return phaseAge+partial.toDouble()
+  if(visualPhase!=phase){
+   visualPhase=phase;visualPhaseTick=tickCount
+   visualPhaseOffset=(level().gameTime-phaseStartTime).coerceAtLeast(0).toDouble()
+  }
+  return (visualPhaseOffset+tickCount-visualPhaseTick-1+partial).coerceAtLeast(0.0)
+ }
  fun riderPosition(partial:Float=1f):Vec3 {
-  val lift=if(phase==Phase.DEPLOYING)((phaseAge+partial-9)/12.0).coerceIn(0.0,1.0) else if(phase==Phase.ACTIVE)1.0 else 0.0
+  val lift=if(phase==Phase.DEPLOYING)((visualPhaseAge(partial)-9)/12.0).coerceIn(0.0,1.0) else if(phase==Phase.ACTIVE)1.0 else 0.0
   return getPosition(partial).add(0.0,-4.25+4.49*lift,0.0)
  }
  override fun positionRider(passenger:Entity,move:Entity.MoveFunction){
