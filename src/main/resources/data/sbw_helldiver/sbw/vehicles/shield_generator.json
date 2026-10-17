@@ -1,0 +1,53 @@
+{
+  "ID": "sbw_helldiver:shield_generator",
+  "Type": "Defense",
+  "MaxHealth": 100,
+  "Mass": 5,
+  "MaxEnergy": 0,
+  "TurretPos": [
+    0,
+    0,
+    0
+  ],
+  "BarrelPos": [
+    0,
+    0,
+    0
+  ],
+  "TurretTurnSpeed": [
+    0,
+    0
+  ],
+  "TurretPitchRange": [
+    -35,
+    45
+  ],
+  "SeekInfo": {
+    "MinSeekRange": 0,
+    "MaxSeekRange": 0,
+    "ChangeTargetTime": 60,
+    "SeekIterative": 20,
+    "MinTargetSize": 0.2,
+    "SeekEnergyCost": 0
+  },
+  "Weapons": {},
+  "ApplyDefaultDamageModifiers": false,
+  "RepairAmount": 0,
+  "SelfHurtAmount": 20,
+  "DestroyInfo": {
+    "NoWreck": false,
+    "ExplodeBlocks": false,
+    "ExplosionDamage": 0,
+    "ExplosionRadius": 0,
+    "SympatheticDetonation": false
+  },
+  "SelfHurtPercent": 0.2,
+  "TurretYawRange": [
+    -60,
+    60
+  ],
+  "TurretControllerIndex": -1,
+  "HasLowHealthWarning": false,
+  "HudType": "@Empty",
+  "Seats": []
+}

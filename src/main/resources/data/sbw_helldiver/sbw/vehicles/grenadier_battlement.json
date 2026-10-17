@@ -1,0 +1,85 @@
+{
+  "ID": "sbw_helldiver:grenadier_battlement",
+  "Type": "Defense",
+  "MaxHealth": 500,
+  "Mass": 5,
+  "MaxEnergy": 0,
+  "TurretPos": [
+    0,
+    1.289608,
+    -0.11895225
+  ],
+  "BarrelPos": [
+    0,
+    0.09355156,
+    0.0003191875
+  ],
+  "TurretTurnSpeed": [
+    19.625,
+    19.625
+  ],
+  "TurretPitchRange": [
+    -35,
+    45
+  ],
+  "SeekInfo": {
+    "MinSeekRange": 0,
+    "MaxSeekRange": 100,
+    "ChangeTargetTime": 60,
+    "SeekIterative": 20,
+    "MinTargetSize": 0.2,
+    "SeekEnergyCost": 0
+  },
+  "Weapons": {},
+  "ApplyDefaultDamageModifiers": false,
+  "RepairAmount": 0,
+  "SelfHurtAmount": 20,
+  "DestroyInfo": {
+    "NoWreck": false,
+    "ExplodeBlocks": false,
+    "ExplosionDamage": 0,
+    "ExplosionRadius": 0,
+    "SympatheticDetonation": false
+  },
+  "SelfHurtPercent": 0.2,
+  "TurretYawRange": [
+    -60,
+    60
+  ],
+  "TurretControllerIndex": -1,
+  "HasLowHealthWarning": false,
+  "HudType": "@Empty",
+  "Seats": [
+    {
+      "Position": [
+        0,
+        0.0109441256,
+        -0.6459492445
+      ],
+      "Pose": "MachineGunStand",
+      "BanHand": true,
+      "CanRotateBody": false,
+      "CanRotateHead": true,
+      "Weapons": [],
+      "IsEnclosed": false,
+      "DamageAbsorbRate": 0,
+      "MinYaw": -1000000,
+      "MaxYaw": 1000000,
+      "CameraPos": {
+        "Transform": "GrenadierOptic",
+        "Position": [
+          0,
+          0,
+          0
+        ],
+        "Direction": "Default",
+        "ZoomPosition": [
+          -0.00031694,
+          0.24681094,
+          -0.29422906
+        ],
+        "ZoomDirection": "GrenadierBore"
+      }
+    }
+  ]
+}

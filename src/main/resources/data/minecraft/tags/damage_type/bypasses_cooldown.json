@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "sbw_helldiver:gas",
+    "sbw_helldiver:flame_jet",
+    "sbw_helldiver:sentry_burning",
+    "sbw_helldiver:laser_beam",
+    "sbw_helldiver:tesla_arc"
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "ID": "sbw_helldiver:autocannon_sentry",
+  "Type": "Defense",
+  "MaxHealth": 120,
+  "Mass": 5,
+  "MaxEnergy": 0,
+  "TurretPos": [
+    0,
+    0.697768125,
+    0
+  ],
+  "BarrelPos": [
+    0,
+    0.9845987500000001,
+    -0.13197375
+  ],
+  "TurretTurnSpeed": [
+    2.4,
+    2.4
+  ],
+  "TurretPitchRange": [
+    -80,
+    85
+  ],
+  "SeekInfo": {
+    "MinSeekRange": 0,
+    "MaxSeekRange": 100,
+    "ChangeTargetTime": 60,
+    "SeekIterative": 20,
+    "MinTargetSize": 0.2,
+    "SeekEnergyCost": 0
+  },
+  "Weapons": {
+    "Main": {
+      "DefaultFireMode": "Auto",
+      "AvailableFireModes": "Auto",
+      "Projectile": "sbw_helldiver:sentry_cannon_shell",
+      "RPM": 90,
+      "Velocity": 12,
+      "Gravity": 0.03,
+      "Damage": 70,
+      "Spread": 0.35,
+      "Magazine": 36,
+      "NormalReloadTime": 0,
+      "EmptyReloadTime": 0,
+      "AmmoType": "superbwarfare:small_shell_ap",
+      "ShootPos": {
+        "Transform": "Barrel",
+        "Positions": [
+          [
+            0,
+            0.26138312500000005,
+            2.81197375
+          ]
+        ],
+        "Directions": [
+          "Barrel"
+        ]
+      },
+      "SoundRadius": 12,
+      "SoundInfo": {},
+      "RecoilForce": 0,
+      "RecoilTime": 0,
+      "Recoil": 0,
+      "RecoilX": 0,
+      "RecoilY": 0,
+      "ExplosionDamage": 20,
+      "ExplosionRadius": 5,
+      "Headshot": 1
+    }
+  },
+  "ApplyDefaultDamageModifiers": false,
+  "RepairAmount": 0,
+  "SelfHurtAmount": 20,
+  "DestroyInfo": {
+    "NoWreck": false,
+    "ExplodeBlocks": false,
+    "ExplosionDamage": 0,
+    "ExplosionRadius": 0,
+    "SympatheticDetonation": false
+  },
+  "SelfHurtPercent": 0.2
+}

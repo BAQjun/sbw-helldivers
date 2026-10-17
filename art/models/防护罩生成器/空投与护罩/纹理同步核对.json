@@ -1,0 +1,12 @@
+{
+  "0_shield_boss.png": {
+    "max_alpha_difference": 0.0,
+    "max_visible_rgb_difference": 0.0,
+    "user_texture_preserved": true
+  },
+  "1_shield_fan_rotator.png": {
+    "max_alpha_difference": 0.0,
+    "max_visible_rgb_difference": 0.0,
+    "user_texture_preserved": true
+  }
+}

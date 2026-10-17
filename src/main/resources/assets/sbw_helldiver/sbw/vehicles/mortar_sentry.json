@@ -1,0 +1,9 @@
+{
+  "Animation": "sbw_helldiver:animations/bedrock/vehicle/mortar_hellpod_v1.animation.json",
+  "Models": [
+    {
+      "Model": "sbw_helldiver:models/bedrock/vehicle/mortar_hellpod_v1.geo.json",
+      "Texture": "sbw_helldiver:textures/bedrock/vehicle/mortar_hellpod_v1.png"
+    }
+  ]
+}

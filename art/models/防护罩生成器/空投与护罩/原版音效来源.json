@@ -1,0 +1,428 @@
+{
+  "unit": "energy_shield",
+  "unfold_event": 2025645866,
+  "retract_event": 4209715797,
+  "online_event": 4053303041,
+  "break_event": 3459901555,
+  "unavailable_plugin": "0x00830402: recorded voices retained, proprietary procedural Wwise voice unavailable",
+  "recipes": [
+    {
+      "label": "unfold",
+      "layers": [
+        {
+          "media": 312431647,
+          "gain": 0,
+          "delay": 0,
+          "loop": false
+        },
+        {
+          "media": 409930589,
+          "gain": 0,
+          "delay": 0,
+          "loop": false
+        }
+      ],
+      "duration": 1.2253333333333334,
+      "peak": 0.538482666015625,
+      "clipping_compensation": 1
+    },
+    {
+      "label": "unfold",
+      "layers": [
+        {
+          "media": 931379593,
+          "gain": 0,
+          "delay": 0,
+          "loop": false
+        },
+        {
+          "media": 169067221,
+          "gain": 0,
+          "delay": 0,
+          "loop": false
+        }
+      ],
+      "duration": 1.3506666666666667,
+      "peak": 0.49560546875,
+      "clipping_compensation": 1
+    },
+    {
+      "label": "unfold",
+      "layers": [
+        {
+          "media": 51763317,
+          "gain": 0,
+          "delay": 0,
+          "loop": false
+        },
+        {
+          "media": 169067221,
+          "gain": 0,
+          "delay": 0,
+          "loop": false
+        }
+      ],
+      "duration": 1.3506666666666667,
+      "peak": 0.45770263671875,
+      "clipping_compensation": 1
+    },
+    {
+      "label": "unfold",
+      "layers": [
+        {
+          "media": 809496843,
+          "gain": 0,
+          "delay": 0,
+          "loop": false
+        },
+        {
+          "media": 169067221,
+          "gain": 0,
+          "delay": 0,
+          "loop": false
+        }
+      ],
+      "duration": 1.3506666666666667,
+      "peak": 0.4696044921875,
+      "clipping_compensation": 1
+    },
+    {
+      "label": "retract",
+      "layers": [
+        {
+          "media": 91657208,
+          "gain": 0,
+          "delay": 0,
+          "loop": false
+        },
+        {
+          "media": 893505259,
+          "gain": 0,
+          "delay": 0,
+          "loop": false
+        }
+      ],
+      "duration": 0.8973333333333333,
+      "peak": 0.45257568359375,
+      "clipping_compensation": 1
+    },
+    {
+      "label": "retract",
+      "layers": [
+        {
+          "media": 508704583,
+          "gain": 0,
+          "delay": 0,
+          "loop": false
+        },
+        {
+          "media": 725363680,
+          "gain": 0,
+          "delay": 0,
+          "loop": false
+        }
+      ],
+      "duration": 0.86,
+      "peak": 0.52532958984375,
+      "clipping_compensation": 1
+    },
+    {
+      "label": "retract",
+      "layers": [
+        {
+          "media": 43077882,
+          "gain": 0,
+          "delay": 0,
+          "loop": false
+        },
+        {
+          "media": 725363680,
+          "gain": 0,
+          "delay": 0,
+          "loop": false
+        }
+      ],
+      "duration": 1.012,
+      "peak": 0.43096923828125,
+      "clipping_compensation": 1
+    },
+    {
+      "label": "retract",
+      "layers": [
+        {
+          "media": 764980417,
+          "gain": 0,
+          "delay": 0,
+          "loop": false
+        },
+        {
+          "media": 725363680,
+          "gain": 0,
+          "delay": 0,
+          "loop": false
+        }
+      ],
+      "duration": 1.0253333333333334,
+      "peak": 0.446197509765625,
+      "clipping_compensation": 1
+    },
+    {
+      "label": "break",
+      "layers": [
+        {
+          "media": 872039144,
+          "gain": 0,
+          "delay": 0,
+          "loop": false
+        },
+        {
+          "media": 281392373,
+          "gain": -1.0,
+          "delay": 0,
+          "loop": false
+        },
+        {
+          "media": 494851144,
+          "gain": -3.0,
+          "delay": 0,
+          "loop": false
+        }
+      ],
+      "duration": 3.006666666666667,
+      "peak": 0.7770243883132935,
+      "clipping_compensation": 1
+    },
+    {
+      "label": "break",
+      "layers": [
+        {
+          "media": 858920346,
+          "gain": 0,
+          "delay": 0,
+          "loop": false
+        },
+        {
+          "media": 49360412,
+          "gain": -1.0,
+          "delay": 0,
+          "loop": false
+        },
+        {
+          "media": 8081453,
+          "gain": -3.0,
+          "delay": 0,
+          "loop": false
+        }
+      ],
+      "duration": 2.958666666666667,
+      "peak": 0.5332472920417786,
+      "clipping_compensation": 1
+    },
+    {
+      "label": "break",
+      "layers": [
+        {
+          "media": 885772545,
+          "gain": 0,
+          "delay": 0,
+          "loop": false
+        },
+        {
+          "media": 49360412,
+          "gain": -1.0,
+          "delay": 0,
+          "loop": false
+        },
+        {
+          "media": 417618254,
+          "gain": -3.0,
+          "delay": 0,
+          "loop": false
+        }
+      ],
+      "duration": 2.958666666666667,
+      "peak": 0.527242124080658,
+      "clipping_compensation": 1
+    },
+    {
+      "label": "break",
+      "layers": [
+        {
+          "media": 973352786,
+          "gain": 0,
+          "delay": 0,
+          "loop": false
+        },
+        {
+          "media": 49360412,
+          "gain": -1.0,
+          "delay": 0,
+          "loop": false
+        },
+        {
+          "media": 417618254,
+          "gain": -3.0,
+          "delay": 0,
+          "loop": false
+        }
+      ],
+      "duration": 2.958666666666667,
+      "peak": 0.5747716426849365,
+      "clipping_compensation": 1
+    },
+    {
+      "label": "online",
+      "layers": [
+        {
+          "media": 1004516808,
+          "gain": -8.0,
+          "delay": 0.30000001192092896,
+          "loop": false
+        },
+        {
+          "media": 691634535,
+          "gain": -8.0,
+          "delay": 0.30000001192092896,
+          "loop": false
+        },
+        {
+          "media": 18511614,
+          "gain": -8.0,
+          "delay": 0,
+          "loop": false
+        },
+        {
+          "media": 65935482,
+          "gain": -8.0,
+          "delay": 0.5,
+          "loop": false
+        }
+      ],
+      "duration": 3.976,
+      "peak": 0.2913515567779541,
+      "clipping_compensation": 1
+    },
+    {
+      "label": "online",
+      "layers": [
+        {
+          "media": 85372379,
+          "gain": -8.0,
+          "delay": 0.30000001192092896,
+          "loop": false
+        },
+        {
+          "media": 480082854,
+          "gain": -8.0,
+          "delay": 0.30000001192092896,
+          "loop": false
+        },
+        {
+          "media": 723713165,
+          "gain": -8.0,
+          "delay": 0,
+          "loop": false
+        },
+        {
+          "media": 65935482,
+          "gain": -8.0,
+          "delay": 0.5,
+          "loop": false
+        }
+      ],
+      "duration": 4.317333333333333,
+      "peak": 0.2623087465763092,
+      "clipping_compensation": 1
+    },
+    {
+      "label": "online",
+      "layers": [
+        {
+          "media": 570482567,
+          "gain": -8.0,
+          "delay": 0.30000001192092896,
+          "loop": false
+        },
+        {
+          "media": 480082854,
+          "gain": -8.0,
+          "delay": 0.30000001192092896,
+          "loop": false
+        },
+        {
+          "media": 580303965,
+          "gain": -8.0,
+          "delay": 0,
+          "loop": false
+        },
+        {
+          "media": 65935482,
+          "gain": -8.0,
+          "delay": 0.5,
+          "loop": false
+        }
+      ],
+      "duration": 4.317333333333333,
+      "peak": 0.2655404508113861,
+      "clipping_compensation": 1
+    },
+    {
+      "label": "online",
+      "layers": [
+        {
+          "media": 198440245,
+          "gain": -8.0,
+          "delay": 0.30000001192092896,
+          "loop": false
+        },
+        {
+          "media": 480082854,
+          "gain": -8.0,
+          "delay": 0.30000001192092896,
+          "loop": false
+        },
+        {
+          "media": 580303965,
+          "gain": -8.0,
+          "delay": 0,
+          "loop": false
+        },
+        {
+          "media": 1033848342,
+          "gain": -8.0,
+          "delay": 0.5,
+          "loop": false
+        }
+      ],
+      "duration": 4.317333333333333,
+      "peak": 0.3143562078475952,
+      "clipping_compensation": 1
+    },
+    {
+      "label": "maintain",
+      "layers": [
+        {
+          "media": 725510779,
+          "gain": -6.0,
+          "delay": 0,
+          "loop": true
+        },
+        {
+          "media": 834088439,
+          "gain": -6.0,
+          "delay": 0,
+          "loop": true
+        },
+        {
+          "media": 170811885,
+          "gain": -12.0,
+          "delay": 0,
+          "loop": true
+        }
+      ],
+      "duration": 5.241333333333333,
+      "peak": 0.12403833866119385,
+      "clipping_compensation": 1
+    }
+  ]
+}

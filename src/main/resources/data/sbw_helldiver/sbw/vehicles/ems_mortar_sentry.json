@@ -1,0 +1,84 @@
+{
+  "ID": "sbw_helldiver:ems_mortar_sentry",
+  "Type": "Defense",
+  "MaxHealth": 120,
+  "Mass": 5,
+  "MaxEnergy": 0,
+  "TurretPos": [
+    4.687534804759252e-10,
+    0.7204344272613525,
+    1.962078765722886e-16
+  ],
+  "BarrelPos": [
+    -6.603259272708328e-9,
+    0.21818405389785767,
+    0.04914644733071308
+  ],
+  "TurretTurnSpeed": [
+    4.125,
+    4.125
+  ],
+  "TurretPitchRange": [
+    35,
+    89
+  ],
+  "SeekInfo": {
+    "MinSeekRange": 10,
+    "MaxSeekRange": 125,
+    "ChangeTargetTime": 60,
+    "SeekIterative": 20,
+    "MinTargetSize": 0.2,
+    "SeekEnergyCost": 0
+  },
+  "Weapons": {
+    "Main": {
+      "DefaultFireMode": "Auto",
+      "AvailableFireModes": "Auto",
+      "Projectile": "sbw_helldiver:ems_mortar_shell",
+      "RPM": 10,
+      "Velocity": 4,
+      "Gravity": 0.12,
+      "Damage": 2,
+      "Spread": 0,
+      "Magazine": 23,
+      "NormalReloadTime": 0,
+      "EmptyReloadTime": 0,
+      "AmmoType": "superbwarfare:small_shell_ap",
+      "ShootPos": {
+        "Transform": "Barrel",
+        "Positions": [
+          [
+            6.134505792232403e-9,
+            -0.05661606788635254,
+            1.989498820155859
+          ]
+        ],
+        "Directions": [
+          "Barrel"
+        ]
+      },
+      "SoundRadius": 12,
+      "SoundInfo": {},
+      "RecoilForce": 0,
+      "RecoilTime": 0,
+      "Recoil": 0,
+      "RecoilX": 0,
+      "RecoilY": 0,
+      "ExplosionDamage": 15,
+      "ExplosionRadius": 2,
+      "Headshot": 1,
+      "Life": 200
+    }
+  },
+  "ApplyDefaultDamageModifiers": false,
+  "RepairAmount": 0,
+  "SelfHurtAmount": 20,
+  "DestroyInfo": {
+    "NoWreck": false,
+    "ExplodeBlocks": false,
+    "ExplosionDamage": 0,
+    "ExplosionRadius": 0,
+    "SympatheticDetonation": false
+  },
+  "SelfHurtPercent": 0.2
+}

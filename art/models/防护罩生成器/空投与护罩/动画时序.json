@@ -1,0 +1,11 @@
+{
+  "lift": -60.0,
+  "lift_end": 1.1,
+  "deploy_length": 2.483333365122477,
+  "deploy_ticks": 50,
+  "fold_length": 1.4500001271565754,
+  "retract_length": 2.3500001271565756,
+  "retract_ticks": 47,
+  "radius": 15,
+  "user_texture_preserved": true
+}

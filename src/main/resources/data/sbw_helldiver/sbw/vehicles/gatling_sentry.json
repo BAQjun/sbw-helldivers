@@ -1,0 +1,80 @@
+{
+  "ID": "sbw_helldiver:gatling_sentry",
+  "Type": "Defense",
+  "MaxHealth": 120,
+  "Mass": 6,
+  "MaxEnergy": 0,
+  "TurretPos": [
+    0,
+    0.697768125,
+    0
+  ],
+  "BarrelPos": [
+    -0.00100125,
+    0.9845987500000001,
+    -0.1324375
+  ],
+  "TurretTurnSpeed": [
+    8,
+    8
+  ],
+  "TurretPitchRange": [
+    -80,
+    85
+  ],
+  "SeekInfo": {
+    "MinSeekRange": 0,
+    "MaxSeekRange": 75,
+    "ChangeTargetTime": 60,
+    "SeekIterative": 20,
+    "MinTargetSize": 0.2,
+    "SeekEnergyCost": 0
+  },
+  "Weapons": {
+    "Main": {
+      "DefaultFireMode": "Auto",
+      "AvailableFireModes": "Auto",
+      "Projectile": "sbw_helldiver:sentry_bullet",
+      "RPM": 1600,
+      "Velocity": 20,
+      "Gravity": 0.03,
+      "Damage": 8,
+      "Spread": 1.4,
+      "Magazine": 750,
+      "NormalReloadTime": 0,
+      "EmptyReloadTime": 0,
+      "AmmoType": "@HeavyAmmo",
+      "ShootPos": {
+        "Transform": "Barrel",
+        "Positions": [
+          [
+            0.00100125,
+            0.05610187499999997,
+            1.654625
+          ]
+        ],
+        "Directions": [
+          "Barrel"
+        ]
+      },
+      "SoundRadius": 14,
+      "SoundInfo": {},
+      "RecoilForce": 0,
+      "RecoilTime": 0,
+      "Recoil": 0,
+      "RecoilX": 0,
+      "RecoilY": 0
+    }
+  },
+  "ApplyDefaultDamageModifiers": false,
+  "RepairAmount": 0,
+  "SelfHurtAmount": 20,
+  "DestroyInfo": {
+    "NoWreck": false,
+    "ExplodeBlocks": false,
+    "ExplosionDamage": 0,
+    "ExplosionRadius": 0,
+    "SympatheticDetonation": false
+  },
+  "SelfHurtPercent": 0.2
+}

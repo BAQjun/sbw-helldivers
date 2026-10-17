@@ -1,0 +1,4477 @@
+{
+  "sfx_hellpod_retro_start": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/437252326",
+        "stream": false,
+        "volume": 0.446684,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/466632769",
+        "stream": false,
+        "volume": 0.446684,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/575413160",
+        "stream": false,
+        "volume": 0.446684,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/995036306",
+        "stream": false,
+        "volume": 0.446684,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_impact": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/weapons_superearth/936256053",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/weapons_superearth/587120015",
+        "stream": false,
+        "volume": 0.384592,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/weapons_superearth/850611770",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/weapons_superearth/430321357",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/weapons_superearth/808153259",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/weapons_superearth/326667109",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/weapons_superearth/979257872",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/weapons_superearth/947032293",
+        "stream": false,
+        "volume": 0.371535,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/weapons_superearth/780676093",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/weapons_superearth/659654420",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_hellpod_cap_release": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/991190436",
+        "stream": false,
+        "volume": 0.27227,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/150551912",
+        "stream": false,
+        "volume": 0.260016,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/865202699",
+        "stream": false,
+        "volume": 0.266073,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/187293295",
+        "stream": false,
+        "volume": 0.25704,
+        "attenuation_distance": 32
+      }
+    ]
+  },
+  "sfx_mg_fire_start": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_machine_gun/213803787",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_machine_gun/698241077",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_machine_gun/14529500",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_machine_gun/216874528",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_mg_fire_stop": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_machine_gun/888543127",
+        "stream": false,
+        "volume": 0.199526,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_machine_gun/384739108",
+        "stream": false,
+        "volume": 0.199526,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_machine_gun/701342290",
+        "stream": false,
+        "volume": 0.199526,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_machine_gun/157823664",
+        "stream": false,
+        "volume": 0.199526,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_gatling_wind_up": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_gatling/725999846",
+        "stream": false,
+        "volume": 0.125893,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_gatling/894949674",
+        "stream": false,
+        "volume": 0.141254,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_gatling/587034285",
+        "stream": false,
+        "volume": 0.177828,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_gatling/199721999",
+        "stream": false,
+        "volume": 0.158489,
+        "attenuation_distance": 32
+      }
+    ]
+  },
+  "sfx_gatling_wind_down": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_gatling/176071137",
+        "stream": false,
+        "volume": 0.158489,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_gatling/150128688",
+        "stream": false,
+        "volume": 0.11885,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_gatling/120052619",
+        "stream": false,
+        "volume": 0.158489,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_gatling/115005708",
+        "stream": false,
+        "volume": 0.133352,
+        "attenuation_distance": 32
+      }
+    ]
+  },
+  "sfx_gatling_fire_start": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_gatling/747494403",
+        "stream": false,
+        "volume": 0.177828,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_gatling/397107182",
+        "stream": false,
+        "volume": 0.177828,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_gatling/43560270",
+        "stream": false,
+        "volume": 0.177828,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_gatling/598161037",
+        "stream": false,
+        "volume": 0.177828,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_gatling_fire_loop": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_gatling/415062923",
+        "stream": false,
+        "volume": 0.125893,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_gatling/155041360",
+        "stream": false,
+        "volume": 0.125893,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_gatling/159869488",
+        "stream": false,
+        "volume": 0.125893,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_gatling/101137775",
+        "stream": false,
+        "volume": 0.125893,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_gatling_fire_stop": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_gatling/1071275498",
+        "stream": false,
+        "volume": 0.281838,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_gatling/981170536",
+        "stream": false,
+        "volume": 0.281838,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_gatling/298733928",
+        "stream": false,
+        "volume": 0.251189,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_gatling/602030092",
+        "stream": false,
+        "volume": 0.281838,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_hellpod_bolts_layer_a": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/755719683",
+        "stream": false,
+        "volume": 0.354813,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/390981851",
+        "stream": false,
+        "volume": 0.354813,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/708837183",
+        "stream": false,
+        "volume": 0.354813,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/251293470",
+        "stream": false,
+        "volume": 0.354813,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/413433671",
+        "stream": false,
+        "volume": 0.354813,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/639096707",
+        "stream": false,
+        "volume": 0.354813,
+        "attenuation_distance": 32
+      }
+    ]
+  },
+  "sfx_hellpod_bolts_layer_b": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/899338658",
+        "stream": false,
+        "volume": 0.186209,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/79020237",
+        "stream": false,
+        "volume": 0.17378,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/998298968",
+        "stream": false,
+        "volume": 0.177828,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/955210200",
+        "stream": false,
+        "volume": 0.184077,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/1050909716",
+        "stream": false,
+        "volume": 0.184077,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/944254596",
+        "stream": false,
+        "volume": 0.199526,
+        "attenuation_distance": 32
+      }
+    ]
+  },
+  "sfx_hellpod_retro_layer_01": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/192234288",
+        "stream": false,
+        "volume": 0.630957,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/880674252",
+        "stream": false,
+        "volume": 0.630957,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/21657499",
+        "stream": false,
+        "volume": 0.630957,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/66559305",
+        "stream": false,
+        "volume": 0.630957,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_retro_layer_02": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/744927076",
+        "stream": false,
+        "volume": 0.549541,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/1019074071",
+        "stream": false,
+        "volume": 0.562341,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/400691910",
+        "stream": false,
+        "volume": 0.530884,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/941214319",
+        "stream": false,
+        "volume": 0.446684,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_retro_layer_03": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/445750222",
+        "stream": false,
+        "volume": 0.501187,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/756690542",
+        "stream": false,
+        "volume": 0.501187,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/273653732",
+        "stream": false,
+        "volume": 0.501187,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/1022205732",
+        "stream": false,
+        "volume": 0.501187,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_retro_layer_04": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/554751201",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/275999103",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/329543291",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/131034876",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_retro_layer_05": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/879845090",
+        "stream": false,
+        "volume": 0.609537,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/831580792",
+        "stream": false,
+        "volume": 0.595662,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/602315419",
+        "stream": false,
+        "volume": 0.595662,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/539423359",
+        "stream": false,
+        "volume": 0.595662,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_retro_layer_06": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/215015665",
+        "stream": false,
+        "volume": 0.794328,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/583672415",
+        "stream": false,
+        "volume": 0.794328,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/130268794",
+        "stream": false,
+        "volume": 0.794328,
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/80104538",
+        "stream": false,
+        "volume": 0.630957,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_entry_layer_01": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/547577395",
+        "stream": false,
+        "volume": 0.158489,
+        "attenuation_distance": 1024
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/128603628",
+        "stream": false,
+        "volume": 0.158489,
+        "attenuation_distance": 1024
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/656535427",
+        "stream": false,
+        "volume": 0.158489,
+        "attenuation_distance": 1024
+      }
+    ]
+  },
+  "sfx_hellpod_entry_layer_02": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/394062176",
+        "stream": false,
+        "volume": 0.158489,
+        "attenuation_distance": 1024
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/34424922",
+        "stream": false,
+        "volume": 0.158489,
+        "attenuation_distance": 1024
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/935325740",
+        "stream": false,
+        "volume": 0.158489,
+        "attenuation_distance": 1024
+      }
+    ]
+  },
+  "sfx_hellpod_entry_layer_03": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/475161438",
+        "stream": false,
+        "volume": 0.467735,
+        "attenuation_distance": 1024
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/442640076",
+        "stream": false,
+        "volume": 0.501187,
+        "attenuation_distance": 1024
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/741581009",
+        "stream": false,
+        "volume": 0.446684,
+        "attenuation_distance": 1024
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/571278995",
+        "stream": false,
+        "volume": 0.489779,
+        "attenuation_distance": 1024
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/603054248",
+        "stream": false,
+        "volume": 0.484172,
+        "attenuation_distance": 1024
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/13513086",
+        "stream": false,
+        "volume": 0.501187,
+        "attenuation_distance": 1024
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/400215547",
+        "stream": false,
+        "volume": 0.446684,
+        "attenuation_distance": 1024
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/999625017",
+        "stream": false,
+        "volume": 0.501187,
+        "attenuation_distance": 1024
+      }
+    ]
+  },
+  "sfx_hellpod_thruster_choice_1_a": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/794932393",
+        "stream": false,
+        "volume": 0.301995,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_thruster_choice_1_b": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/102019018",
+        "stream": false,
+        "volume": 0.125893,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_thruster_choice_2_a": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/604695048",
+        "stream": false,
+        "volume": 0.281838,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_thruster_choice_2_b": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/590911161",
+        "stream": false,
+        "volume": 0.125893,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_thruster_choice_3_a": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/1014649650",
+        "stream": false,
+        "volume": 0.281838,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_thruster_choice_3_b": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/919350494",
+        "stream": false,
+        "volume": 0.125893,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_thruster_choice_4_a": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/868652295",
+        "stream": false,
+        "volume": 0.125893,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_thruster_choice_4_b": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/975271063",
+        "stream": false,
+        "volume": 0.305492,
+        "attenuation_distance": 256
+      }
+    ]
+  },
+  "sfx_hellpod_preimpact_media": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/840415884",
+        "stream": false,
+        "volume": 0.421697,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/727699012",
+        "stream": false,
+        "volume": 0.421697,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/830139569",
+        "stream": false,
+        "volume": 0.421697,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/182065238",
+        "stream": false,
+        "volume": 0.421697,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/1009367340",
+        "stream": false,
+        "volume": 0.421697,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/440672763",
+        "stream": false,
+        "volume": 0.421697,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/975058720",
+        "stream": false,
+        "volume": 0.421697,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/920035166",
+        "stream": false,
+        "volume": 0.421697,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_hellpod_entry_woosh_end_tail": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/vehicle_shared/550791031",
+        "stream": false,
+        "volume": 0.125893,
+        "attenuation_distance": 384
+      }
+    ]
+  },
+  "sfx_sentry_deploy_common_layer": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_machine_gun/232037740",
+        "stream": false,
+        "volume": 0.416869,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_machine_gun/450260669",
+        "stream": false,
+        "volume": 0.334965,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_machine_gun/38073558",
+        "stream": false,
+        "volume": 0.298538,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_machine_gun/901331668",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_rocket_event_1311579407": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_rocket/1041198228",
+        "stream": false,
+        "volume": 0.089125,
+        "weight": 1,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_rocket/996112203",
+        "stream": false,
+        "volume": 0.089125,
+        "weight": 1,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_rocket/242383957",
+        "stream": false,
+        "volume": 0.089125,
+        "weight": 1,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_rocket/97740436",
+        "stream": false,
+        "volume": 0.089125,
+        "weight": 1,
+        "attenuation_distance": 32
+      }
+    ]
+  },
+  "sfx_rocket_fire_layer_a": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_rocket/725471908",
+        "stream": false,
+        "volume": 0.199526,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_rocket/686696377",
+        "stream": false,
+        "volume": 0.223872,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_rocket/736480498",
+        "stream": false,
+        "volume": 0.223872,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_rocket/904471682",
+        "stream": false,
+        "volume": 0.211349,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_rocket/22151183",
+        "stream": false,
+        "volume": 0.223872,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_rocket_fire_layer_b": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_rocket/503642986",
+        "stream": false,
+        "volume": 0.112202,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_rocket/679611238",
+        "stream": false,
+        "volume": 0.112202,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_rocket/251535529",
+        "stream": false,
+        "volume": 0.112202,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_rocket/745293544",
+        "stream": false,
+        "volume": 0.125893,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_rocket/477894646",
+        "stream": false,
+        "volume": 0.112202,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_rocket_fire_delayed": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_rocket/53158528",
+        "stream": false,
+        "volume": 0.354813,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_rocket/627754482",
+        "stream": false,
+        "volume": 0.354813,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_rocket/1071311764",
+        "stream": false,
+        "volume": 0.354813,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_rocket/581815808",
+        "stream": false,
+        "volume": 0.354813,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_rocket/421724189",
+        "stream": false,
+        "volume": 0.354813,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_rocket_deploy_common_layer": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_rocket/719329833",
+        "stream": false,
+        "volume": 0.421697,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_rocket/617040373",
+        "stream": false,
+        "volume": 0.334965,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_rocket/555944448",
+        "stream": false,
+        "volume": 0.298538,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_rocket/245603530",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 32
+      }
+    ]
+  },
+  "sfx_autocannon_fire_a": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/818069339",
+        "stream": false,
+        "volume": 0.125893,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/512424580",
+        "stream": false,
+        "volume": 0.133352,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/429542620",
+        "stream": false,
+        "volume": 0.125893,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/691042857",
+        "stream": false,
+        "volume": 0.141254,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/548015398",
+        "stream": false,
+        "volume": 0.125893,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/902163884",
+        "stream": false,
+        "volume": 0.133352,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/290079713",
+        "stream": false,
+        "volume": 0.149624,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/729861885",
+        "stream": false,
+        "volume": 0.125893,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/378580363",
+        "stream": false,
+        "volume": 0.125893,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_autocannon_fire_b": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/130721110",
+        "stream": false,
+        "volume": 0.177828,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/578517891",
+        "stream": false,
+        "volume": 0.177828,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/80166666",
+        "stream": false,
+        "volume": 0.177828,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/626793946",
+        "stream": false,
+        "volume": 0.177828,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/440686187",
+        "stream": false,
+        "volume": 0.177828,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/309785711",
+        "stream": false,
+        "volume": 0.177828,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/764096651",
+        "stream": false,
+        "volume": 0.177828,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/916783531",
+        "stream": false,
+        "volume": 0.177828,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/840837301",
+        "stream": false,
+        "volume": 0.177828,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_autocannon_fire_delayed": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/741287245",
+        "stream": false,
+        "volume": 0.177828,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/693509922",
+        "stream": false,
+        "volume": 0.177828,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/312604301",
+        "stream": false,
+        "volume": 0.177828,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_autocannon_fire_mechanism": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/899214418",
+        "stream": false,
+        "volume": 0.1,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/818139649",
+        "stream": false,
+        "volume": 0.1,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/248549068",
+        "stream": false,
+        "volume": 0.1,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/1054251945",
+        "stream": false,
+        "volume": 0.1,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/238661352",
+        "stream": false,
+        "volume": 0.1,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/756463825",
+        "stream": false,
+        "volume": 0.1,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/126813426",
+        "stream": false,
+        "volume": 0.1,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_autocannon_deploy_mechanism": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/191198107",
+        "stream": false,
+        "volume": 0.288403,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/969561960",
+        "stream": false,
+        "volume": 0.275423,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/828593637",
+        "stream": false,
+        "volume": 0.291743,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/1013703909",
+        "stream": false,
+        "volume": 0.278612,
+        "attenuation_distance": 32
+      }
+    ]
+  },
+  "beacon_ready": {
+    "subtitle": "subtitle.sbw_helldiver.beacon_ready",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:beacon/beacon_ready",
+        "stream": false
+      }
+    ]
+  },
+  "beacon_deploy": {
+    "subtitle": "subtitle.sbw_helldiver.beacon_deploy",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:beacon/beacon_deploy",
+        "stream": false,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "beacon_arrow_input_1": {
+    "subtitle": "subtitle.sbw_helldiver.beacon_arrow_input",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:beacon/arrow_input_1",
+        "stream": false
+      }
+    ]
+  },
+  "beacon_arrow_input_2": {
+    "subtitle": "subtitle.sbw_helldiver.beacon_arrow_input",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:beacon/arrow_input_2",
+        "stream": false
+      }
+    ]
+  },
+  "beacon_arrow_input_3": {
+    "subtitle": "subtitle.sbw_helldiver.beacon_arrow_input",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:beacon/arrow_input_3",
+        "stream": false
+      }
+    ]
+  },
+  "beacon_arrow_input_4": {
+    "subtitle": "subtitle.sbw_helldiver.beacon_arrow_input",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:beacon/arrow_input_4",
+        "stream": false
+      }
+    ]
+  },
+  "beacon_arrow_input_5": {
+    "subtitle": "subtitle.sbw_helldiver.beacon_arrow_input",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:beacon/arrow_input_5",
+        "stream": false
+      }
+    ]
+  },
+  "beacon_arrow_input_6": {
+    "subtitle": "subtitle.sbw_helldiver.beacon_arrow_input",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:beacon/arrow_input_6",
+        "stream": false
+      }
+    ]
+  },
+  "beacon_arrow_input_7": {
+    "subtitle": "subtitle.sbw_helldiver.beacon_arrow_input",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:beacon/arrow_input_7",
+        "stream": false
+      }
+    ]
+  },
+  "beacon_arrow_input_8": {
+    "subtitle": "subtitle.sbw_helldiver.beacon_arrow_input",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:beacon/arrow_input_8",
+        "stream": false
+      }
+    ]
+  },
+  "beacon_input_error": {
+    "subtitle": "subtitle.sbw_helldiver.beacon_input_error",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:beacon/input_error_1",
+        "stream": false
+      },
+      {
+        "name": "sbw_helldiver:beacon/input_error_2",
+        "stream": false
+      }
+    ]
+  },
+  "sfx_mortar_fire_1_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:mortar/264350881",
+        "volume": 0.3981071705534972,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:mortar/1020880445",
+        "volume": 0.33496543915782767,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:mortar/684981173",
+        "volume": 0.28183829312644537,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:mortar/330948974",
+        "volume": 0.3981071705534972,
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ],
+    "subtitle": "subtitle.sbw_helldiver.mortar_fire"
+  },
+  "sfx_mortar_fire_2_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:mortar/432060068",
+        "volume": 0.6309573444801932,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:mortar/644526756",
+        "volume": 0.6309573444801932,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:mortar/863374845",
+        "volume": 0.5623413251903491,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:mortar/51162391",
+        "volume": 0.5623413251903491,
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ],
+    "subtitle": "subtitle.sbw_helldiver.mortar_fire"
+  },
+  "sfx_mortar_fire_3_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:mortar/950562211",
+        "volume": 0.5623413251903491,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:mortar/713341889",
+        "volume": 0.5623413251903491,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:mortar/125063291",
+        "volume": 0.5623413251903491,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:mortar/1057615637",
+        "volume": 0.5623413251903491,
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ],
+    "subtitle": "subtitle.sbw_helldiver.mortar_fire"
+  },
+  "sfx_mortar_fire_4_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:mortar/21998033",
+        "volume": 0.5623413251903491,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:mortar/294487530",
+        "volume": 0.5623413251903491,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:mortar/817006525",
+        "volume": 0.5623413251903491,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:mortar/637858525",
+        "volume": 0.5623413251903491,
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ],
+    "subtitle": "subtitle.sbw_helldiver.mortar_fire"
+  },
+  "sfx_mortar_deploy": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:mortar/759322321",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:mortar/777912252",
+        "volume": 0.8413951416451951,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:mortar/320784744",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:mortar/613524158",
+        "volume": 0.7079457843841379,
+        "stream": false,
+        "attenuation_distance": 32
+      }
+    ],
+    "subtitle": "subtitle.sbw_helldiver.mortar_deploy"
+  },
+  "sfx_mortar_retract": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:mortar/894015766",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:mortar/1018756368",
+        "volume": 0.8413951416451951,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:mortar/639305070",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:mortar/770481714",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 32
+      }
+    ],
+    "subtitle": "subtitle.sbw_helldiver.mortar_retract"
+  },
+  "sfx_mortar_feed": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:mortar/809663379",
+        "volume": 0.31622776601683794,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:mortar/14050216",
+        "volume": 0.31622776601683794,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:mortar/723197760",
+        "volume": 0.31622776601683794,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:mortar/448271394",
+        "volume": 0.31622776601683794,
+        "stream": false,
+        "attenuation_distance": 32
+      }
+    ],
+    "subtitle": "subtitle.sbw_helldiver.mortar_feed"
+  },
+  "sfx_gas_mortar_impact_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/91056053",
+        "stream": false,
+        "volume": 0.3981071705534972,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/266903728",
+        "stream": false,
+        "volume": 0.3981071705534972,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/445659776",
+        "stream": false,
+        "volume": 0.3981071705534972,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/252751818",
+        "stream": false,
+        "volume": 0.3981071705534972,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/191149374",
+        "stream": false,
+        "volume": 0.3981071705534972,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/631935158",
+        "stream": false,
+        "volume": 0.3981071705534972,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_gas_mortar_impact_2": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/308246642",
+        "stream": false,
+        "volume": 0.22387211385683395,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/352024135",
+        "stream": false,
+        "volume": 0.22387211385683395,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/123366041",
+        "stream": false,
+        "volume": 0.22387211385683395,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/229564420",
+        "stream": false,
+        "volume": 0.22387211385683395,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/215917325",
+        "stream": false,
+        "volume": 0.22387211385683395,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_gas_mortar_impact_3": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/738478962",
+        "stream": false,
+        "volume": 0.3758374042884442,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/343066337",
+        "stream": false,
+        "volume": 0.3758374042884442,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/1058602740",
+        "stream": false,
+        "volume": 0.3758374042884442,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/861280927",
+        "stream": false,
+        "volume": 0.3758374042884442,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/250788803",
+        "stream": false,
+        "volume": 0.3758374042884442,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/297210986",
+        "stream": false,
+        "volume": 0.3758374042884442,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_gas_mortar_impact_4": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/662856506",
+        "stream": false,
+        "volume": 0.21134890398366465,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/466127135",
+        "stream": false,
+        "volume": 0.21134890398366465,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/629102220",
+        "stream": false,
+        "volume": 0.21134890398366465,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/987079816",
+        "stream": false,
+        "volume": 0.21134890398366465,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/841471182",
+        "stream": false,
+        "volume": 0.21134890398366465,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/182236238",
+        "stream": false,
+        "volume": 0.21134890398366465,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_gas_mortar_impact_5": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/61572785",
+        "stream": false,
+        "volume": 0.3758374042884442,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/403452359",
+        "stream": false,
+        "volume": 0.3758374042884442,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/1065550683",
+        "stream": false,
+        "volume": 0.3758374042884442,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/1002636963",
+        "stream": false,
+        "volume": 0.3758374042884442,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/77295258",
+        "stream": false,
+        "volume": 0.3758374042884442,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_gas_mortar_impact_6": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/324244313",
+        "stream": false,
+        "volume": 0.29853826189179594,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/77224260",
+        "stream": false,
+        "volume": 0.29853826189179594,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/107059526",
+        "stream": false,
+        "volume": 0.29853826189179594,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/420705315",
+        "stream": false,
+        "volume": 0.29853826189179594,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/818275885",
+        "stream": false,
+        "volume": 0.29853826189179594,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/289347905",
+        "stream": false,
+        "volume": 0.29853826189179594,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_ems_mortar_impact_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/836522049",
+        "stream": false,
+        "volume": 0.28183829312644537,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/884028834",
+        "stream": false,
+        "volume": 0.28183829312644537,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/806825753",
+        "stream": false,
+        "volume": 0.28183829312644537,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/668195080",
+        "stream": false,
+        "volume": 0.28183829312644537,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_ems_mortar_field_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/394543704",
+        "stream": false,
+        "volume": 0.35481338923357547,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/41331202",
+        "stream": false,
+        "volume": 0.35481338923357547,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/388183680",
+        "stream": false,
+        "volume": 0.35481338923357547,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/152218075",
+        "stream": false,
+        "volume": 0.35481338923357547,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/307007220",
+        "stream": false,
+        "volume": 0.35481338923357547,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/400530702",
+        "stream": false,
+        "volume": 0.35481338923357547,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/142286960",
+        "stream": false,
+        "volume": 0.35481338923357547,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/1062325598",
+        "stream": false,
+        "volume": 0.35481338923357547,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/916066163",
+        "stream": false,
+        "volume": 0.35481338923357547,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_ems_mortar_field_2": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/575938181",
+        "stream": false,
+        "volume": 0.5623413251903491,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/511183359",
+        "stream": false,
+        "volume": 0.5623413251903491,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/136332618",
+        "stream": false,
+        "volume": 0.5623413251903491,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_ems_mortar_field_3": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/708773750",
+        "stream": false,
+        "volume": 0.5623413251903491,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/770304308",
+        "stream": false,
+        "volume": 0.5623413251903491,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/931926550",
+        "stream": false,
+        "volume": 0.5623413251903491,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/633931912",
+        "stream": false,
+        "volume": 0.5623413251903491,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/819531460",
+        "stream": false,
+        "volume": 0.5623413251903491,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/1051755306",
+        "stream": false,
+        "volume": 0.5623413251903491,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_ems_mortar_field_4": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/430042367",
+        "stream": false,
+        "volume": 0.35481338923357547,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/1032957472",
+        "stream": false,
+        "volume": 0.35481338923357547,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/688415852",
+        "stream": false,
+        "volume": 0.35481338923357547,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/973777004",
+        "stream": false,
+        "volume": 0.35481338923357547,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/706141073",
+        "stream": false,
+        "volume": 0.35481338923357547,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/493145342",
+        "stream": false,
+        "volume": 0.35481338923357547,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/1013753124",
+        "stream": false,
+        "volume": 0.35481338923357547,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_static_field/108832402",
+        "stream": false,
+        "volume": 0.35481338923357547,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_gas_mortar_loop": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/994280156",
+        "stream": true,
+        "volume": 0.18836490894898006,
+        "attenuation_distance": 32
+      }
+    ]
+  },
+  "sfx_flame_ignition_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/flame_sentry/226001639",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/flame_sentry/764443144",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/flame_sentry/311732945",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 32
+      }
+    ]
+  },
+  "sfx_flame_fire_start_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/flame_sentry/159430019",
+        "volume": 0.6309573444801932,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/flame_sentry/1002345087",
+        "volume": 0.6309573444801932,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/flame_sentry/636715414",
+        "volume": 0.6309573444801932,
+        "stream": false,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_flame_fire_start_2": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/flame_sentry/1017940935",
+        "volume": 0.8912509381337456,
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_flame_fire_start_3": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/flame_sentry/81878761",
+        "volume": 0.35481338923357547,
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_flame_fire_start_4": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/flame_sentry/855665544",
+        "volume": 1.0,
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_flame_fire_stop_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/flame_sentry/619679415",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/flame_sentry/797455607",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/flame_sentry/15423341",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_flame_yaw_start_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/flame_sentry/899719403",
+        "volume": 0.35481338923357547,
+        "stream": true,
+        "attenuation_distance": 32
+      }
+    ]
+  },
+  "sfx_flame_yaw_start_2": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/flame_sentry/1029095425",
+        "volume": 0.6309573444801932,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/flame_sentry/872899162",
+        "volume": 0.6309573444801932,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/flame_sentry/644610683",
+        "volume": 0.5623413251903491,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/flame_sentry/709761443",
+        "volume": 0.5623413251903491,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/flame_sentry/803028819",
+        "volume": 0.5956621435290105,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/flame_sentry/528415197",
+        "volume": 0.6309573444801932,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/flame_sentry/362023796",
+        "volume": 0.7943282347242815,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/flame_sentry/871686090",
+        "volume": 0.7943282347242815,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/flame_sentry/336105898",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 32
+      }
+    ]
+  },
+  "sfx_flame_yaw_stop_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/flame_sentry/1029095425",
+        "volume": 0.6309573444801932,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/flame_sentry/872899162",
+        "volume": 0.6309573444801932,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/flame_sentry/644610683",
+        "volume": 0.5623413251903491,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/flame_sentry/709761443",
+        "volume": 0.5623413251903491,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/flame_sentry/803028819",
+        "volume": 0.5956621435290105,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/flame_sentry/528415197",
+        "volume": 0.6309573444801932,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/flame_sentry/362023796",
+        "volume": 0.7943282347242815,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/flame_sentry/871686090",
+        "volume": 0.7943282347242815,
+        "stream": false,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/flame_sentry/336105898",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 32
+      }
+    ]
+  },
+  "sfx_native_machine_gun_sentry_deploy_81997979_0": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/232037740",
+        "volume": 0.4168693837564011,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/450260669",
+        "volume": 0.33496543915782767,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/38073558",
+        "volume": 0.29853826189179594,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/901331668",
+        "volume": 0.3981071705534972,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_native_machine_gun_sentry_retract_915630413_0": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/670439201",
+        "volume": 0.3801893960596662,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/1043580129",
+        "volume": 0.33496543915782767,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/239816353",
+        "volume": 0.36307805427179574,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/890058738",
+        "volume": 0.38459178151752144,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_native_gatling_sentry_deploy_398981227_0": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_gatling/232037740",
+        "volume": 0.4168693837564011,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_gatling/450260669",
+        "volume": 0.33496543915782767,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_gatling/38073558",
+        "volume": 0.29853826189179594,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_gatling/901331668",
+        "volume": 0.3981071705534972,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_native_gatling_sentry_retract_246522464_0": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_gatling/670439201",
+        "volume": 0.3801893960596662,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_gatling/1043580129",
+        "volume": 0.33496543915782767,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_gatling/239816353",
+        "volume": 0.36307805427179574,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_gatling/890058738",
+        "volume": 0.38459178151752144,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_native_autocannon_sentry_deploy_633699812_0": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_auto_cannon/191198107",
+        "volume": 0.28840314991684235,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_auto_cannon/969561960",
+        "volume": 0.2754228688218027,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_auto_cannon/828593637",
+        "volume": 0.29174270180051826,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_auto_cannon/1013703909_delay150",
+        "volume": 0.2786121160982159,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_native_autocannon_sentry_retract_227733484_0": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_auto_cannon/411899901",
+        "volume": 0.31622776601683794,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_auto_cannon/289297334",
+        "volume": 0.28183829312644537,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_auto_cannon/202769163",
+        "volume": 0.2951209218565625,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_auto_cannon/74126433",
+        "volume": 0.29853826189179594,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_native_rocket_sentry_deploy_866338877_0": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_rocket/719329833",
+        "volume": 0.4216965034285822,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_rocket/617040373",
+        "volume": 0.33496543915782767,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_rocket/555944448",
+        "volume": 0.29853826189179594,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_rocket/245603530",
+        "volume": 0.3981071705534972,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_native_rocket_sentry_retract_901064394_0": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_rocket/745609321",
+        "volume": 0.3235936587060897,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_rocket/301004051",
+        "volume": 0.3758374042884442,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_rocket/317046668",
+        "volume": 0.35481338923357547,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_rocket/236095411",
+        "volume": 0.3672823010021604,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_native_mortar_sentry_deploy_934266405_0": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/759322321",
+        "volume": 0.3981071705534972,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/777912252",
+        "volume": 0.33496543915782767,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/320784744",
+        "volume": 0.3981071705534972,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/613524158",
+        "volume": 0.28183829312644537,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_native_mortar_sentry_retract_69715883_0": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/894015766",
+        "volume": 0.3981071705534972,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/1018756368",
+        "volume": 0.33496543915782767,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/639305070",
+        "volume": 0.3981071705534972,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/770481714",
+        "volume": 0.3981071705534972,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_native_gas_mortar_sentry_deploy_934266405_0": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar_gas/759322321",
+        "volume": 0.3981071705534972,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar_gas/777912252",
+        "volume": 0.33496543915782767,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar_gas/320784744",
+        "volume": 0.3981071705534972,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar_gas/613524158",
+        "volume": 0.28183829312644537,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_native_gas_mortar_sentry_retract_69715883_0": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/894015766",
+        "volume": 0.3981071705534972,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/1018756368",
+        "volume": 0.33496543915782767,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/639305070",
+        "volume": 0.3981071705534972,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/770481714",
+        "volume": 0.3981071705534972,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_native_ems_mortar_sentry_deploy_934266405_0": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/759322321",
+        "volume": 0.3981071705534972,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/777912252",
+        "volume": 0.33496543915782767,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/320784744",
+        "volume": 0.3981071705534972,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/613524158",
+        "volume": 0.28183829312644537,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_native_ems_mortar_sentry_retract_69715883_0": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/894015766",
+        "volume": 0.3981071705534972,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/1018756368",
+        "volume": 0.33496543915782767,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/639305070",
+        "volume": 0.3981071705534972,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/770481714",
+        "volume": 0.3981071705534972,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_native_flame_sentry_deploy_270327796_0": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_flamethrower/901331668",
+        "volume": 0.3981071705534972,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_flamethrower/232037740",
+        "volume": 0.4168693837564011,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_flamethrower/38073558",
+        "volume": 0.29853826189179594,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_flamethrower/450260669",
+        "volume": 0.33496543915782767,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_native_flame_sentry_retract_56101207_0": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_flamethrower/745609321",
+        "volume": 0.3235936587060897,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_flamethrower/301004051",
+        "volume": 0.3758374042884442,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_flamethrower/236095411",
+        "volume": 0.3672823010021604,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_flamethrower/317046668",
+        "volume": 0.35481338923357547,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_laser_warmup_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/235573636",
+        "volume": 1.0,
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_fire_start_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/107928561",
+        "volume": 0.19952623149688797,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/462854606",
+        "volume": 0.19952623149688797,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/359167803",
+        "volume": 0.19952623149688797,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/351690389",
+        "volume": 0.19952623149688797,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/834888458",
+        "volume": 0.19952623149688797,
+        "stream": false,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_fire_start_2": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/808499794",
+        "volume": 0.7079457843841379,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/816994166",
+        "volume": 0.7079457843841379,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/629030848",
+        "volume": 0.7079457843841379,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/171939747",
+        "volume": 0.7079457843841379,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/788338207",
+        "volume": 0.7079457843841379,
+        "stream": false,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_fire_start_3": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/510322318",
+        "volume": 0.7943282347242815,
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_fire_start_4": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/529893479",
+        "volume": 0.31622776601683794,
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_fire_start_5": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/856156481",
+        "volume": 0.6309573444801932,
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_fire_start_6": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/861935839",
+        "volume": 0.31622776601683794,
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_fire_start_7": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/985093421",
+        "volume": 0.3981071705534972,
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_fire_start_8": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/876788751",
+        "volume": 1.0,
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_fire_start_9": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/426954112",
+        "volume": 0.35481338923357547,
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_fire_start_10": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/249057412",
+        "volume": 0.35481338923357547,
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_fire_start_11": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/373959350",
+        "volume": 0.039810717055349734,
+        "stream": true,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/984551001",
+        "volume": 0.039810717055349734,
+        "stream": true,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/901371199",
+        "volume": 0.039810717055349734,
+        "stream": true,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/345094866",
+        "volume": 0.039810717055349734,
+        "stream": true,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/462830824",
+        "volume": 0.039810717055349734,
+        "stream": true,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/629149738",
+        "volume": 0.039810717055349734,
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_fire_start_12": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/8180331",
+        "volume": 0.3981071705534972,
+        "stream": false,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_fire_start_13": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/154688724",
+        "volume": 0.08912509381337455,
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_fire_start_14": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/570318954",
+        "volume": 0.6309573444801932,
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_fire_start_15": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/1034017649",
+        "volume": 0.00707945784384138,
+        "stream": true,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/114219940",
+        "volume": 0.00707945784384138,
+        "stream": true,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/518200854",
+        "volume": 0.00707945784384138,
+        "stream": true,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/1017603438",
+        "volume": 0.00707945784384138,
+        "stream": true,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/161169319",
+        "volume": 0.00707945784384138,
+        "stream": true,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/1060965145",
+        "volume": 0.00707945784384138,
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_fire_stop_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/107928561",
+        "volume": 0.35481338923357547,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/462854606",
+        "volume": 0.35481338923357547,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/359167803",
+        "volume": 0.35481338923357547,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/351690389",
+        "volume": 0.35481338923357547,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/834888458",
+        "volume": 0.35481338923357547,
+        "stream": false,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_fire_stop_2": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/327620804",
+        "volume": 0.7079457843841379,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/1023315364",
+        "volume": 0.7079457843841379,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/280783382",
+        "volume": 0.7079457843841379,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/12774862",
+        "volume": 0.7079457843841379,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/390889176",
+        "volume": 0.7079457843841379,
+        "stream": false,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_fire_stop_3": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/268118471",
+        "volume": 0.5011872336272722,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/313673185",
+        "volume": 0.5011872336272722,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/186736609",
+        "volume": 0.5011872336272722,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/1032576411",
+        "volume": 0.5011872336272722,
+        "stream": false,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_fire_stop_4": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/428353485",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/484862462",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/492479153",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/1042130591",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/633820057",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_deploy_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/38073558",
+        "volume": 0.7161434097214673,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/901331668",
+        "volume": 0.9549925853660973,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/232037740",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/450260669",
+        "volume": 0.8035261216342185,
+        "stream": false,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_retract_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/317046668",
+        "volume": 0.9440608762859234,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/745609321",
+        "volume": 0.8609937569112761,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/236095411",
+        "volume": 0.9772372222970176,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/301004051",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_heat_alarm": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/22298096",
+        "volume": 0.7943282347242815,
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_overheat_shutdown": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/272077663",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_heat_alarm_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/876788751",
+        "volume": 1.0,
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_heat_alarm_2": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/426954112",
+        "volume": 0.35481338923357547,
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_heat_fire_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/249057412",
+        "volume": 0.35481338923357547,
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_heat_fire_2": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/373959350",
+        "volume": 0.039810717055349734,
+        "stream": true,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/984551001",
+        "volume": 0.039810717055349734,
+        "stream": true,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/901371199",
+        "volume": 0.039810717055349734,
+        "stream": true,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/345094866",
+        "volume": 0.039810717055349734,
+        "stream": true,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/462830824",
+        "volume": 0.039810717055349734,
+        "stream": true,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/629149738",
+        "volume": 0.039810717055349734,
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_heat_fire_3": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/8180331",
+        "volume": 0.3981071705534972,
+        "stream": false,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_heat_fire_4": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/154688724",
+        "volume": 0.08912509381337455,
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_heat_fire_5": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/570318954",
+        "volume": 0.6309573444801932,
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_laser_heat_fire_6": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/laser_sentry/1034017649",
+        "volume": 0.00707945784384138,
+        "stream": true,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/114219940",
+        "volume": 0.00707945784384138,
+        "stream": true,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/518200854",
+        "volume": 0.00707945784384138,
+        "stream": true,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/1017603438",
+        "volume": 0.00707945784384138,
+        "stream": true,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/161169319",
+        "volume": 0.00707945784384138,
+        "stream": true,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/laser_sentry/1060965145",
+        "volume": 0.00707945784384138,
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_tesla_deploy_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/tesla_tower/49840267",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/739860147",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/592294010",
+        "volume": 0.8912509381337456,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/314930401",
+        "volume": 0.8912509381337456,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/957439613",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_tesla_activate_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/tesla_tower/615777299",
+        "volume": 1.0,
+        "stream": true,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_tesla_activate_2": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/tesla_tower/810698293",
+        "volume": 1.0,
+        "stream": true,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/398991475",
+        "volume": 1.0,
+        "stream": true,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/936597116",
+        "volume": 1.0,
+        "stream": true,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/887901895",
+        "volume": 1.0,
+        "stream": true,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/922268032",
+        "volume": 1.0,
+        "stream": true,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/940175504",
+        "volume": 1.0,
+        "stream": true,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/883410790",
+        "volume": 1.0,
+        "stream": true,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/757510066",
+        "volume": 1.0,
+        "stream": true,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/284222402",
+        "volume": 1.0,
+        "stream": true,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/439763284",
+        "volume": 1.0,
+        "stream": true,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/573233571",
+        "volume": 1.0,
+        "stream": true,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_tesla_activate_3": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/tesla_tower/629370229",
+        "volume": 1.0,
+        "stream": true,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_tesla_activate_4": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/tesla_tower/215730216",
+        "volume": 1.0,
+        "stream": true,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_tesla_activate_5": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/tesla_tower/25773220",
+        "volume": 0.7943282347242815,
+        "stream": true,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_tesla_activate_6": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/tesla_tower/185188617",
+        "volume": 0.7943282347242815,
+        "stream": true,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_tesla_activate_7": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/tesla_tower/710414182",
+        "volume": 0.7943282347242815,
+        "stream": true,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_tesla_retract_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/tesla_tower/49840267",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/739860147",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/592294010",
+        "volume": 0.8912509381337456,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/314930401",
+        "volume": 0.8912509381337456,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/957439613",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_tesla_discharge_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/tesla_tower/35364710",
+        "volume": 0.8912509381337456,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/609547682",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/336348342",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/1769567",
+        "volume": 0.7943282347242815,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/206464006",
+        "volume": 0.8912509381337456,
+        "stream": false,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_tesla_idle_arc_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/tesla_tower/65694676",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/894665771",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/327821616",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/374364121",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/947913849",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/tesla_tower/179631994",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_tesla_charge_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/tesla_tower/648915428",
+        "volume": 0.7943282347242815,
+        "stream": true,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_ap_mine_deploy_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/ap_mine/671106268",
+        "volume": 0.35,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/906361877",
+        "volume": 0.35,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/516417899",
+        "volume": 0.35,
+        "stream": false,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_ap_mine_deploy_2": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/ap_mine/610010459",
+        "volume": 0.2780148821534985,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/214063535",
+        "volume": 0.24778102453444825,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/694800652",
+        "volume": 0.2780148821534985,
+        "stream": false,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_ap_mine_deploy_3": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/ap_mine/940777151",
+        "volume": 0.35,
+        "stream": false,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_ap_mine_spin_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/ap_mine/578350274",
+        "volume": 0.35,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/131934231",
+        "volume": 0.31193782834681094,
+        "stream": false,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_ap_mine_spin_2": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/ap_mine/spin_shuffle4_0",
+        "volume": 0.35,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/spin_shuffle4_1",
+        "volume": 0.35,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/spin_shuffle4_2",
+        "volume": 0.35,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/spin_shuffle4_3",
+        "volume": 0.35,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/spin_shuffle4_4",
+        "volume": 0.35,
+        "stream": false,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_ap_mine_land_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/ap_mine/217835974",
+        "volume": 0.2,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/987223241",
+        "volume": 0.2,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/662045881",
+        "volume": 0.2,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/181683705",
+        "volume": 0.2,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/1030564183",
+        "volume": 0.2,
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/192972041",
+        "volume": 0.2,
+        "stream": false,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_ap_mine_explosion_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/ap_mine/blast_mix_00",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/blast_mix_01",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/blast_mix_02",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/blast_mix_03",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/blast_mix_04",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/blast_mix_05",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/blast_mix_06",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/blast_mix_07",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/blast_mix_08",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/blast_mix_09",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/blast_mix_10",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/blast_mix_11",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_ap_mine_hellpod_impact": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/weapons_superearth/936256053",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/weapons_superearth/587120015",
+        "stream": false,
+        "volume": 0.384592,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/weapons_superearth/850611770",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/weapons_superearth/430321357",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/weapons_superearth/808153259",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/weapons_superearth/326667109",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/weapons_superearth/979257872",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/weapons_superearth/947032293",
+        "stream": false,
+        "volume": 0.371535,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/weapons_superearth/780676093",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/weapons_superearth/659654420",
+        "stream": false,
+        "volume": 0.398107,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_ap_mine_trigger_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/ap_mine/77716358",
+        "volume": 0.10619186765762069,
+        "stream": false,
+        "attenuation_distance": 16
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/794374172",
+        "volume": 0.08148755017121456,
+        "stream": false,
+        "attenuation_distance": 16
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/373652548",
+        "volume": 0.15,
+        "stream": false,
+        "attenuation_distance": 16
+      },
+      {
+        "name": "sbw_helldiver:original/ap_mine/738734068",
+        "volume": 0.12620927124677928,
+        "stream": false,
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "sfx_ap_mine_pod_bolts_layer_a": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/755719683",
+        "stream": false,
+        "volume": 0.354813,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/390981851",
+        "stream": false,
+        "volume": 0.354813,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/708837183",
+        "stream": false,
+        "volume": 0.354813,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/251293470",
+        "stream": false,
+        "volume": 0.354813,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/413433671",
+        "stream": false,
+        "volume": 0.354813,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/639096707",
+        "stream": false,
+        "volume": 0.354813,
+        "attenuation_distance": 32
+      }
+    ]
+  },
+  "sfx_ap_mine_pod_bolts_layer_b": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/899338658",
+        "stream": false,
+        "volume": 0.186209,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/79020237",
+        "stream": false,
+        "volume": 0.17378,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/998298968",
+        "stream": false,
+        "volume": 0.177828,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/955210200",
+        "stream": false,
+        "volume": 0.184077,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/1050909716",
+        "stream": false,
+        "volume": 0.184077,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/944254596",
+        "stream": false,
+        "volume": 0.199526,
+        "attenuation_distance": 32
+      }
+    ]
+  },
+  "sfx_ap_mine_pod_cap_release": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/991190436",
+        "stream": false,
+        "volume": 0.27227,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/150551912",
+        "stream": false,
+        "volume": 0.260016,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/865202699",
+        "stream": false,
+        "volume": 0.266073,
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/stratagems_shared/187293295",
+        "stream": false,
+        "volume": 0.25704,
+        "attenuation_distance": 32
+      }
+    ]
+  },
+  "sfx_incendiary_mine_explosion": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/elemental_mine/fire_blast_0",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/elemental_mine/fire_blast_1",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/elemental_mine/fire_blast_2",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/elemental_mine/fire_blast_3",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_gas_mine_release": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/elemental_mine/gas_0",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/elemental_mine/gas_1",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/elemental_mine/gas_2",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/elemental_mine/gas_3",
+        "volume": 1.0,
+        "stream": false,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_hmg_fire_shot": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/hmg_emplacement/fire_1",
+        "volume": 1,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/hmg_emplacement/fire_2",
+        "volume": 1,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/hmg_emplacement/fire_3",
+        "volume": 1,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/hmg_emplacement/fire_4",
+        "volume": 1,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/hmg_emplacement/fire_5",
+        "volume": 1,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/hmg_emplacement/fire_6",
+        "volume": 1,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/hmg_emplacement/fire_7",
+        "volume": 1,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/hmg_emplacement/fire_8",
+        "volume": 1,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_at_emplacement_fire_shot": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/anti_tank_emplacement/fire_1",
+        "volume": 1,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/anti_tank_emplacement/fire_2",
+        "volume": 1,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/anti_tank_emplacement/fire_3",
+        "volume": 1,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/anti_tank_emplacement/fire_4",
+        "volume": 1,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/anti_tank_emplacement/fire_5",
+        "volume": 1,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/anti_tank_emplacement/fire_6",
+        "volume": 1,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/anti_tank_emplacement/fire_7",
+        "volume": 1,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/anti_tank_emplacement/fire_8",
+        "volume": 1,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_at_emplacement_deploy": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/anti_tank_emplacement/deploy",
+        "volume": 1,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_emplacement_retract_mechanism": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/670439201",
+        "volume": 0.3801893960596662,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/1043580129",
+        "volume": 0.33496543915782767,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/239816353",
+        "volume": 0.36307805427179574,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/890058738",
+        "volume": 0.38459178151752144,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_grenadier_fire_shot": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/grenadier_battlement/fire_1",
+        "volume": 1,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/grenadier_battlement/fire_2",
+        "volume": 1,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/grenadier_battlement/fire_3",
+        "volume": 1,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/grenadier_battlement/fire_4",
+        "volume": 1,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/grenadier_battlement/fire_5",
+        "volume": 1,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/grenadier_battlement/fire_6",
+        "volume": 1,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/grenadier_battlement/fire_7",
+        "volume": 1,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/grenadier_battlement/fire_8",
+        "volume": 1,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_grenadier_unfold": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/grenadier_battlement/unfold",
+        "volume": 1,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_shield_unfold": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/shield_generator/unfold_1",
+        "volume": 1,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/shield_generator/unfold_2",
+        "volume": 1,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/shield_generator/unfold_3",
+        "volume": 1,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/shield_generator/unfold_4",
+        "volume": 1,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_shield_retract": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/shield_generator/retract_1",
+        "volume": 1,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/shield_generator/retract_2",
+        "volume": 1,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/shield_generator/retract_3",
+        "volume": 1,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/shield_generator/retract_4",
+        "volume": 1,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_shield_break": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/shield_generator/break_1",
+        "volume": 1,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/shield_generator/break_2",
+        "volume": 1,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/shield_generator/break_3",
+        "volume": 1,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/shield_generator/break_4",
+        "volume": 1,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_shield_online": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/shield_generator/online_1",
+        "volume": 1,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/shield_generator/online_2",
+        "volume": 1,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/shield_generator/online_3",
+        "volume": 1,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/shield_generator/online_4",
+        "volume": 1,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_shield_maintain": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/shield_generator/maintain_1",
+        "volume": 1,
+        "attenuation_distance": 28
+      }
+    ]
+  },
+  "sfx_mark_cancel": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/target_marks/cancel_1",
+        "volume": 0.11220184543019636
+      },
+      {
+        "name": "sbw_helldiver:original/target_marks/cancel_2",
+        "volume": 0.11220184543019636
+      },
+      {
+        "name": "sbw_helldiver:original/target_marks/cancel_3",
+        "volume": 0.11885022274370183
+      },
+      {
+        "name": "sbw_helldiver:original/target_marks/cancel_4",
+        "volume": 0.11220184543019636
+      }
+    ]
+  },
+  "sfx_mark_enemy": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/target_marks/enemy_1",
+        "volume": 0.1445439771241875
+      },
+      {
+        "name": "sbw_helldiver:original/target_marks/enemy_2",
+        "volume": 0.1445439771241875
+      },
+      {
+        "name": "sbw_helldiver:original/target_marks/enemy_3",
+        "volume": 0.15848931924611134
+      },
+      {
+        "name": "sbw_helldiver:original/target_marks/enemy_4",
+        "volume": 0.1479108389183207
+      }
+    ]
+  },
+  "sfx_mark_location": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/target_marks/location_1",
+        "volume": 0.3467368503335621
+      },
+      {
+        "name": "sbw_helldiver:original/target_marks/location_2",
+        "volume": 0.3427677860760195
+      },
+      {
+        "name": "sbw_helldiver:original/target_marks/location_3",
+        "volume": 0.4216965034285822
+      },
+      {
+        "name": "sbw_helldiver:original/target_marks/location_4",
+        "volume": 0.35481338923357547
+      }
+    ]
+  },
+  "sfx_mark_generic": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/target_marks/generic_1",
+        "volume": 0.33496543915782767
+      },
+      {
+        "name": "sbw_helldiver:original/target_marks/generic_2",
+        "volume": 0.3388441559066796
+      },
+      {
+        "name": "sbw_helldiver:original/target_marks/generic_3",
+        "volume": 0.3801893973641413
+      },
+      {
+        "name": "sbw_helldiver:original/target_marks/generic_4",
+        "volume": 0.3388441559066796
+      }
+    ]
+  },
+  "sfx_eagle_flyby": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/eagle/flyby_1",
+        "attenuation_distance": 192
+      },
+      {
+        "name": "sbw_helldiver:original/eagle/flyby_2",
+        "attenuation_distance": 192
+      },
+      {
+        "name": "sbw_helldiver:original/eagle/flyby_3",
+        "attenuation_distance": 192
+      }
+    ]
+  },
+  "sfx_eagle_strafe": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/eagle/strafe_1",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "sbw_helldiver:original/eagle/strafe_2",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "sbw_helldiver:original/eagle/strafe_3",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "sbw_helldiver:original/eagle/strafe_4",
+        "attenuation_distance": 128
+      }
+    ]
+  },
+  "sfx_eagle_engine": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/eagle/engine_1",
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/eagle/engine_2",
+        "attenuation_distance": 256
+      },
+      {
+        "name": "sbw_helldiver:original/eagle/engine_3",
+        "attenuation_distance": 256
+      }
+    ]
+  }
+}

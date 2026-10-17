@@ -1,0 +1,40 @@
+{
+  "valid": true,
+  "errors": [],
+  "meshes": 13,
+  "groups": 19,
+  "faces": 30912,
+  "textures": [
+    [
+      "机身与机翼.png",
+      1024,
+      1024
+    ],
+    [
+      "座舱玻璃.png",
+      64,
+      64
+    ],
+    [
+      "仪表显示.png",
+      64,
+      64
+    ],
+    [
+      "驾驶舱内饰.png",
+      256,
+      256
+    ]
+  ],
+  "dimensions_m": [
+    17.71646125,
+    13.195611875,
+    8.294976875
+  ],
+  "glb_bounds_max_error": 1.7395019558108515e-07,
+  "emblem_pixel_symmetry": true,
+  "sha256": {
+    "飞鹰.bbmodel": "2af0ecf4cd79bb9d714c295534445a8e7b7ef50b54cc515d40beae049bc2c17e",
+    "飞鹰.glb": "c9d2d151d8f5e0f0902103aa6079017b1e1351d2d30e43f7a9585576dfd8d891"
+  }
+}

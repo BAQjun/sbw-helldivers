@@ -1,0 +1,37 @@
+name: Build and verify
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      game_tests:
+        description: Run the current Eagle/shield/emplacement GameTest suite
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build
+        shell: pwsh
+        run: ./gradlew.bat --no-daemon build
+      - name: GameTest
+        if: inputs.game_tests == true
+        shell: pwsh
+        run: ./gradlew.bat --no-daemon runGameTestServer -PeagleGameTests
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sbw-helldivers
+          path: build/libs/*.jar

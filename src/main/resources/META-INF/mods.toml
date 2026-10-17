@@ -1,0 +1,55 @@
+modLoader = "kotlinforforge"
+loaderVersion = "[4.11.0,)"
+license = "${mod_license}"
+
+[[mods]]
+modId = "${mod_id}"
+version = "${mod_version}"
+displayName = "${mod_name}"
+authors = "${mod_authors}"
+description = '''${mod_description}'''
+
+[[dependencies.${mod_id}]]
+modId = "forge"
+mandatory = true
+versionRange = "[47.2.0,)"
+ordering = "NONE"
+side = "BOTH"
+
+# Kotlin 运行时。本模组用 Kotlin 写，缺了它什么都不会加载。
+# 上面的 `modLoader` 已经隐含了这项依赖，这里再显式声明一次，
+# 是为了前置缺失时能给出清楚的报错，而不是一堆找不到类的堆栈。
+[[dependencies.${mod_id}]]
+modId = "kotlinforforge"
+mandatory = true
+versionRange = "[4.11.0,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.1,1.21)"
+ordering = "NONE"
+side = "BOTH"
+
+# 卓越前线本体。本模组深度依赖它的载具内部契约
+# （AutoAimableEntity、VehicleAnimationInstance、双层载具数据文件），
+# 版本上限收得比较紧：换版本前先验证这几项仍然存在。
+[[dependencies.${mod_id}]]
+modId = "superbwarfare"
+mandatory = true
+versionRange = "[${superbwarfare_version},)"
+ordering = "NONE"
+side = "BOTH"
+
+# 卓越前线的载具模型与动画跑在这个库上（Bedrock 几何解析 + 动画求值）。
+# 本模组要驱动空投仓的展开 / 收舱动画，直接引用了它的类型，所以是硬前置。
+# 卓越前线自己也把 ≥2.5.1 声明成强制前置，这里跟着声明一次，
+# 是为了缺失时能给出「缺哪个前置」的明确提示，而不是一堆找不到类的堆栈。
+[[dependencies.${mod_id}]]
+modId = "simplebedrockmodel"
+mandatory = true
+versionRange = "[2.5.1,)"
+ordering = "NONE"
+side = "BOTH"

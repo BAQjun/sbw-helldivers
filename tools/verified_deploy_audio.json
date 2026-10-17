@@ -1,0 +1,910 @@
+{
+  "effects": {
+    "sfx_native_machine_gun_sentry_deploy_81997979_0": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0.0,
+      "fade_out": 0,
+      "duration": 1.453125,
+      "stop_effects": []
+    },
+    "sfx_native_machine_gun_sentry_retract_915630413_0": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0.0,
+      "fade_out": 0,
+      "duration": 1.4918541666666667,
+      "stop_effects": []
+    },
+    "sfx_native_gatling_sentry_deploy_398981227_0": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0.0,
+      "fade_out": 0,
+      "duration": 1.453125,
+      "stop_effects": []
+    },
+    "sfx_native_gatling_sentry_retract_246522464_0": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0.0,
+      "fade_out": 0,
+      "duration": 1.4918541666666667,
+      "stop_effects": []
+    },
+    "sfx_native_autocannon_sentry_deploy_stop_1055782905": {
+      "kind": "control",
+      "audible": false,
+      "fade_in": 0,
+      "fade_out": 0.0,
+      "duration": 0,
+      "stop_effects": [
+        "sfx_native_autocannon_sentry_retract_227733484_0"
+      ]
+    },
+    "sfx_native_autocannon_sentry_deploy_633699812_0": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0.0,
+      "fade_out": 0,
+      "duration": 1.6404375059604646,
+      "stop_effects": []
+    },
+    "sfx_native_autocannon_sentry_deploy_stop_26197232": {
+      "kind": "control",
+      "audible": false,
+      "fade_in": 0,
+      "fade_out": 0.1,
+      "duration": 0,
+      "stop_effects": []
+    },
+    "sfx_native_autocannon_sentry_retract_stop_64528038": {
+      "kind": "control",
+      "audible": false,
+      "fade_in": 0,
+      "fade_out": 0.1,
+      "duration": 0,
+      "stop_effects": []
+    },
+    "sfx_native_autocannon_sentry_retract_227733484_0": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0.0,
+      "fade_out": 0,
+      "duration": 3.1262916666666665,
+      "stop_effects": []
+    },
+    "sfx_native_autocannon_sentry_retract_stop_520943968": {
+      "kind": "control",
+      "audible": false,
+      "fade_in": 0,
+      "fade_out": 0.0,
+      "duration": 0,
+      "stop_effects": []
+    },
+    "sfx_native_autocannon_sentry_retract_stop_605233284": {
+      "kind": "control",
+      "audible": false,
+      "fade_in": 0,
+      "fade_out": 0.1,
+      "duration": 0,
+      "stop_effects": []
+    },
+    "sfx_native_autocannon_sentry_retract_stop_745966527": {
+      "kind": "control",
+      "audible": false,
+      "fade_in": 0,
+      "fade_out": 0.2,
+      "duration": 0,
+      "stop_effects": []
+    },
+    "sfx_native_autocannon_sentry_retract_stop_174128729": {
+      "kind": "control",
+      "audible": false,
+      "fade_in": 0,
+      "fade_out": 0.2,
+      "duration": 0,
+      "stop_effects": []
+    },
+    "sfx_native_autocannon_sentry_retract_stop_415134319": {
+      "kind": "control",
+      "audible": false,
+      "fade_in": 0,
+      "fade_out": 0.0,
+      "duration": 0,
+      "stop_effects": [
+        "sfx_autocannon_deploy_mechanism",
+        "sfx_native_autocannon_sentry_deploy_633699812_0"
+      ]
+    },
+    "sfx_native_rocket_sentry_deploy_866338877_0": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0.0,
+      "fade_out": 0,
+      "duration": 1.453125,
+      "stop_effects": []
+    },
+    "sfx_native_rocket_sentry_retract_901064394_0": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0.0,
+      "fade_out": 0,
+      "duration": 1.4918541666666667,
+      "stop_effects": []
+    },
+    "sfx_native_mortar_sentry_deploy_934266405_0": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0.0,
+      "fade_out": 0,
+      "duration": 1.453125,
+      "stop_effects": []
+    },
+    "sfx_native_mortar_sentry_retract_69715883_0": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0.0,
+      "fade_out": 0,
+      "duration": 1.4918541666666667,
+      "stop_effects": []
+    },
+    "sfx_native_gas_mortar_sentry_deploy_934266405_0": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0.0,
+      "fade_out": 0,
+      "duration": 1.453125,
+      "stop_effects": []
+    },
+    "sfx_native_gas_mortar_sentry_retract_69715883_0": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0.0,
+      "fade_out": 0,
+      "duration": 1.4918541666666667,
+      "stop_effects": []
+    },
+    "sfx_native_ems_mortar_sentry_deploy_934266405_0": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0.0,
+      "fade_out": 0,
+      "duration": 1.453125,
+      "stop_effects": []
+    },
+    "sfx_native_ems_mortar_sentry_retract_69715883_0": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0.0,
+      "fade_out": 0,
+      "duration": 1.4918541666666667,
+      "stop_effects": []
+    },
+    "sfx_native_flame_sentry_deploy_270327796_0": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0.0,
+      "fade_out": 0,
+      "duration": 1.453125,
+      "stop_effects": []
+    },
+    "sfx_native_flame_sentry_retract_56101207_0": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0.0,
+      "fade_out": 0,
+      "duration": 1.4918541666666667,
+      "stop_effects": []
+    }
+  },
+  "registry": {
+    "sfx_native_machine_gun_sentry_deploy_81997979_0": {
+      "sounds": [
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/232037740",
+          "volume": 0.4168693837564011,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/450260669",
+          "volume": 0.33496543915782767,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/38073558",
+          "volume": 0.29853826189179594,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/901331668",
+          "volume": 0.3981071705534972,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        }
+      ]
+    },
+    "sfx_native_machine_gun_sentry_retract_915630413_0": {
+      "sounds": [
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/670439201",
+          "volume": 0.3801893960596662,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/1043580129",
+          "volume": 0.33496543915782767,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/239816353",
+          "volume": 0.36307805427179574,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/890058738",
+          "volume": 0.38459178151752144,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        }
+      ]
+    },
+    "sfx_native_gatling_sentry_deploy_398981227_0": {
+      "sounds": [
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_gatling/232037740",
+          "volume": 0.4168693837564011,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_gatling/450260669",
+          "volume": 0.33496543915782767,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_gatling/38073558",
+          "volume": 0.29853826189179594,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_gatling/901331668",
+          "volume": 0.3981071705534972,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        }
+      ]
+    },
+    "sfx_native_gatling_sentry_retract_246522464_0": {
+      "sounds": [
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_gatling/670439201",
+          "volume": 0.3801893960596662,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_gatling/1043580129",
+          "volume": 0.33496543915782767,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_gatling/239816353",
+          "volume": 0.36307805427179574,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_gatling/890058738",
+          "volume": 0.38459178151752144,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        }
+      ]
+    },
+    "sfx_native_autocannon_sentry_deploy_633699812_0": {
+      "sounds": [
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_auto_cannon/191198107",
+          "volume": 0.28840314991684235,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_auto_cannon/969561960",
+          "volume": 0.2754228688218027,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_auto_cannon/828593637",
+          "volume": 0.29174270180051826,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_auto_cannon/1013703909_delay150",
+          "volume": 0.2786121160982159,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        }
+      ]
+    },
+    "sfx_native_autocannon_sentry_retract_227733484_0": {
+      "sounds": [
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_auto_cannon/411899901",
+          "volume": 0.31622776601683794,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_auto_cannon/289297334",
+          "volume": 0.28183829312644537,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_auto_cannon/202769163",
+          "volume": 0.2951209218565625,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_auto_cannon/74126433",
+          "volume": 0.29853826189179594,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        }
+      ]
+    },
+    "sfx_native_rocket_sentry_deploy_866338877_0": {
+      "sounds": [
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_rocket/719329833",
+          "volume": 0.4216965034285822,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_rocket/617040373",
+          "volume": 0.33496543915782767,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_rocket/555944448",
+          "volume": 0.29853826189179594,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_rocket/245603530",
+          "volume": 0.3981071705534972,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        }
+      ]
+    },
+    "sfx_native_rocket_sentry_retract_901064394_0": {
+      "sounds": [
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_rocket/745609321",
+          "volume": 0.3235936587060897,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_rocket/301004051",
+          "volume": 0.3758374042884442,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_rocket/317046668",
+          "volume": 0.35481338923357547,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_rocket/236095411",
+          "volume": 0.3672823010021604,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        }
+      ]
+    },
+    "sfx_native_mortar_sentry_deploy_934266405_0": {
+      "sounds": [
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/759322321",
+          "volume": 0.3981071705534972,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/777912252",
+          "volume": 0.33496543915782767,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/320784744",
+          "volume": 0.3981071705534972,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/613524158",
+          "volume": 0.28183829312644537,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        }
+      ]
+    },
+    "sfx_native_mortar_sentry_retract_69715883_0": {
+      "sounds": [
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/894015766",
+          "volume": 0.3981071705534972,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/1018756368",
+          "volume": 0.33496543915782767,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/639305070",
+          "volume": 0.3981071705534972,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/770481714",
+          "volume": 0.3981071705534972,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        }
+      ]
+    },
+    "sfx_native_gas_mortar_sentry_deploy_934266405_0": {
+      "sounds": [
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar_gas/759322321",
+          "volume": 0.3981071705534972,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar_gas/777912252",
+          "volume": 0.33496543915782767,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar_gas/320784744",
+          "volume": 0.3981071705534972,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar_gas/613524158",
+          "volume": 0.28183829312644537,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        }
+      ]
+    },
+    "sfx_native_gas_mortar_sentry_retract_69715883_0": {
+      "sounds": [
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/894015766",
+          "volume": 0.3981071705534972,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/1018756368",
+          "volume": 0.33496543915782767,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/639305070",
+          "volume": 0.3981071705534972,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/770481714",
+          "volume": 0.3981071705534972,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        }
+      ]
+    },
+    "sfx_native_ems_mortar_sentry_deploy_934266405_0": {
+      "sounds": [
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/759322321",
+          "volume": 0.3981071705534972,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/777912252",
+          "volume": 0.33496543915782767,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/320784744",
+          "volume": 0.3981071705534972,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/613524158",
+          "volume": 0.28183829312644537,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        }
+      ]
+    },
+    "sfx_native_ems_mortar_sentry_retract_69715883_0": {
+      "sounds": [
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/894015766",
+          "volume": 0.3981071705534972,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/1018756368",
+          "volume": 0.33496543915782767,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/639305070",
+          "volume": 0.3981071705534972,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_mortar/770481714",
+          "volume": 0.3981071705534972,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        }
+      ]
+    },
+    "sfx_native_flame_sentry_deploy_270327796_0": {
+      "sounds": [
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_flamethrower/901331668",
+          "volume": 0.3981071705534972,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_flamethrower/232037740",
+          "volume": 0.4168693837564011,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_flamethrower/38073558",
+          "volume": 0.29853826189179594,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_flamethrower/450260669",
+          "volume": 0.33496543915782767,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        }
+      ]
+    },
+    "sfx_native_flame_sentry_retract_56101207_0": {
+      "sounds": [
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_flamethrower/745609321",
+          "volume": 0.3235936587060897,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_flamethrower/301004051",
+          "volume": 0.3758374042884442,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_flamethrower/236095411",
+          "volume": 0.3672823010021604,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        },
+        {
+          "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_flamethrower/317046668",
+          "volume": 0.35481338923357547,
+          "pitch": 1.0,
+          "stream": false,
+          "attenuation_distance": 96
+        }
+      ]
+    }
+  },
+  "profiles": {
+    "machine_gun_sentry": {
+      "model": "amg43_hellpod_v3",
+      "cues": {
+        "deploy": [
+          {
+            "time": 0.0,
+            "effect": "sfx_native_machine_gun_sentry_deploy_81997979_0",
+            "locator": "pitch_axis"
+          }
+        ],
+        "retract": [
+          {
+            "time": 0.0,
+            "effect": "sfx_native_machine_gun_sentry_retract_915630413_0",
+            "locator": "pitch_axis"
+          }
+        ]
+      }
+    },
+    "gatling_sentry": {
+      "model": "gatling_hellpod_v3",
+      "cues": {
+        "deploy": [
+          {
+            "time": 0.0,
+            "effect": "sfx_native_gatling_sentry_deploy_398981227_0",
+            "locator": "pitch_axis"
+          }
+        ],
+        "retract": [
+          {
+            "time": 0.0,
+            "effect": "sfx_native_gatling_sentry_retract_246522464_0",
+            "locator": "pitch_axis"
+          }
+        ]
+      }
+    },
+    "autocannon_sentry": {
+      "model": "autocannon_hellpod_v1",
+      "cues": {
+        "deploy": [
+          {
+            "time": 0.0,
+            "effect": "sfx_native_autocannon_sentry_deploy_stop_1055782905",
+            "locator": "pitch_axis"
+          },
+          {
+            "time": 0.0,
+            "effect": "sfx_native_autocannon_sentry_deploy_stop_26197232",
+            "locator": "pitch_axis"
+          },
+          {
+            "time": 0.6,
+            "effect": "sfx_native_autocannon_sentry_deploy_633699812_0",
+            "locator": "pitch_axis"
+          }
+        ],
+        "retract": [
+          {
+            "time": 0.0,
+            "effect": "sfx_native_autocannon_sentry_retract_stop_64528038",
+            "locator": "pitch_axis"
+          },
+          {
+            "time": 0.0,
+            "effect": "sfx_native_autocannon_sentry_retract_227733484_0",
+            "locator": "pitch_axis"
+          },
+          {
+            "time": 0.0,
+            "effect": "sfx_native_autocannon_sentry_retract_stop_520943968",
+            "locator": "pitch_axis"
+          },
+          {
+            "time": 0.0,
+            "effect": "sfx_native_autocannon_sentry_retract_stop_605233284",
+            "locator": "pitch_axis"
+          },
+          {
+            "time": 0.0,
+            "effect": "sfx_native_autocannon_sentry_retract_stop_745966527",
+            "locator": "pitch_axis"
+          },
+          {
+            "time": 0.0,
+            "effect": "sfx_native_autocannon_sentry_retract_stop_174128729",
+            "locator": "pitch_axis"
+          },
+          {
+            "time": 0.0,
+            "effect": "sfx_native_autocannon_sentry_retract_stop_415134319",
+            "locator": "pitch_axis"
+          }
+        ]
+      }
+    },
+    "rocket_sentry": {
+      "model": "rocket_hellpod_v1",
+      "cues": {
+        "deploy": [
+          {
+            "time": 0.0,
+            "effect": "sfx_native_rocket_sentry_deploy_866338877_0",
+            "locator": "pitch_axis"
+          }
+        ],
+        "retract": [
+          {
+            "time": 0.0,
+            "effect": "sfx_native_rocket_sentry_retract_901064394_0",
+            "locator": "pitch_axis"
+          }
+        ]
+      }
+    },
+    "mortar_sentry": {
+      "model": "mortar_hellpod_v1",
+      "cues": {
+        "deploy": [
+          {
+            "time": 0.0,
+            "effect": "sfx_native_mortar_sentry_deploy_934266405_0",
+            "locator": "pitch_axis"
+          }
+        ],
+        "retract": [
+          {
+            "time": 0.0,
+            "effect": "sfx_native_mortar_sentry_retract_69715883_0",
+            "locator": "pitch_axis"
+          }
+        ]
+      }
+    },
+    "gas_mortar_sentry": {
+      "model": "gas_mortar_hellpod_v1",
+      "cues": {
+        "deploy": [
+          {
+            "time": 0.0,
+            "effect": "sfx_native_gas_mortar_sentry_deploy_934266405_0",
+            "locator": "pitch_axis"
+          }
+        ],
+        "retract": [
+          {
+            "time": 0.0,
+            "effect": "sfx_native_gas_mortar_sentry_retract_69715883_0",
+            "locator": "pitch_axis"
+          }
+        ]
+      }
+    },
+    "ems_mortar_sentry": {
+      "model": "ems_mortar_hellpod_v1",
+      "cues": {
+        "deploy": [
+          {
+            "time": 0.0,
+            "effect": "sfx_native_ems_mortar_sentry_deploy_934266405_0",
+            "locator": "pitch_axis"
+          }
+        ],
+        "retract": [
+          {
+            "time": 0.0,
+            "effect": "sfx_native_ems_mortar_sentry_retract_69715883_0",
+            "locator": "pitch_axis"
+          }
+        ]
+      }
+    },
+    "flame_sentry": {
+      "model": "flame_hellpod_v1",
+      "cues": {
+        "deploy": [
+          {
+            "time": 0.0,
+            "effect": "sfx_native_flame_sentry_deploy_270327796_0",
+            "locator": "pitch_axis"
+          }
+        ],
+        "retract": [
+          {
+            "time": 0.0,
+            "effect": "sfx_native_flame_sentry_retract_56101207_0",
+            "locator": "pitch_axis"
+          }
+        ]
+      },
+      "deploymentTimingOverride": "User requested removal of the native 0.9-second internal delay in 0.3.17; animation anchor retained."
+    }
+  }
+}

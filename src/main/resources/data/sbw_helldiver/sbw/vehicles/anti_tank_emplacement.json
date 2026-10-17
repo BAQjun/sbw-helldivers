@@ -1,0 +1,70 @@
+{
+  "ID": "sbw_helldiver:anti_tank_emplacement",
+  "Type": "Defense",
+  "MaxHealth": 50,
+  "Mass": 5,
+  "MaxEnergy": 0,
+  "TurretPos": [
+    0,
+    0.4353073,
+    0
+  ],
+  "BarrelPos": [
+    0.0298997853,
+    1.220963,
+    -0.160337929
+  ],
+  "TurretTurnSpeed": [
+    8.003125,
+    8.003125
+  ],
+  "TurretPitchRange": [
+    -75,
+    65
+  ],
+  "SeekInfo": {
+    "MinSeekRange": 0,
+    "MaxSeekRange": 100,
+    "ChangeTargetTime": 60,
+    "SeekIterative": 20,
+    "MinTargetSize": 0.2,
+    "SeekEnergyCost": 0
+  },
+  "Weapons": {},
+  "ApplyDefaultDamageModifiers": false,
+  "RepairAmount": 0,
+  "SelfHurtAmount": 20,
+  "DestroyInfo": {
+    "NoWreck": false,
+    "ExplodeBlocks": false,
+    "ExplosionDamage": 0,
+    "ExplosionRadius": 0,
+    "SympatheticDetonation": false
+  },
+  "SelfHurtPercent": 0.2,
+  "TurretYawRange": [
+    -1000000,
+    1000000
+  ],
+  "TurretControllerIndex": -1,
+  "HasLowHealthWarning": false,
+  "HudType": "@Empty",
+  "Seats": [
+    {
+      "Position": [
+        1.2115366,
+        0.059375,
+        -0.9247971
+      ],
+      "Pose": "Default",
+      "BanHand": true,
+      "CanRotateBody": false,
+      "CanRotateHead": true,
+      "Weapons": [],
+      "IsEnclosed": false,
+      "DamageAbsorbRate": 0,
+      "MinYaw": -1000000,
+      "MaxYaw": 1000000
+    }
+  ]
+}

@@ -1,0 +1,173 @@
+{
+  "ID": "sbw_helldiver:rocket_sentry",
+  "Type": "Defense",
+  "MaxHealth": 120,
+  "Mass": 5,
+  "MaxEnergy": 0,
+  "TurretPos": [
+    0,
+    0.697768125,
+    0
+  ],
+  "BarrelPos": [
+    0,
+    0.9845987500000001,
+    -0.04947375
+  ],
+  "TurretTurnSpeed": [
+    2.4,
+    2.4
+  ],
+  "TurretPitchRange": [
+    -80,
+    85
+  ],
+  "SeekInfo": {
+    "MinSeekRange": 10,
+    "MaxSeekRange": 100,
+    "ChangeTargetTime": 60,
+    "SeekIterative": 20,
+    "MinTargetSize": 0.2,
+    "SeekEnergyCost": 0
+  },
+  "Weapons": {
+    "Main": {
+      "DefaultFireMode": "Auto",
+      "AvailableFireModes": "Auto",
+      "Projectile": "sbw_helldiver:sentry_rocket",
+      "RPM": 90,
+      "Velocity": 11,
+      "Gravity": 0.001,
+      "Damage": 80,
+      "Spread": 0.3,
+      "Magazine": 16,
+      "NormalReloadTime": 0,
+      "EmptyReloadTime": 0,
+      "AmmoType": "superbwarfare:small_rocket",
+      "ShootPos": {
+        "Transform": "Barrel",
+        "Positions": [
+          [
+            0.17875875,
+            -0.17435375000000009,
+            0.59384875
+          ],
+          [
+            0.05939,
+            -0.17435375000000009,
+            0.59384875
+          ],
+          [
+            -0.05939125,
+            -0.17435375000000009,
+            0.59384875
+          ],
+          [
+            -0.17875875,
+            -0.17435375000000009,
+            0.59384875
+          ],
+          [
+            0.17875875,
+            -0.05498500000000006,
+            0.59384875
+          ],
+          [
+            0.05939,
+            -0.05498500000000006,
+            0.59384875
+          ],
+          [
+            -0.05939125,
+            -0.05498500000000006,
+            0.59384875
+          ],
+          [
+            -0.17875875,
+            -0.05498500000000006,
+            0.59384875
+          ],
+          [
+            0.17875875,
+            0.09116875000000002,
+            0.59384875
+          ],
+          [
+            0.05939,
+            0.09116875000000002,
+            0.59384875
+          ],
+          [
+            -0.05939125,
+            0.09116875000000002,
+            0.59384875
+          ],
+          [
+            -0.17875875,
+            0.09116875000000002,
+            0.59384875
+          ],
+          [
+            0.17875875,
+            0.21053750000000004,
+            0.59384875
+          ],
+          [
+            0.05939,
+            0.21053750000000004,
+            0.59384875
+          ],
+          [
+            -0.05939125,
+            0.21053750000000004,
+            0.59384875
+          ],
+          [
+            -0.17875875,
+            0.21053750000000004,
+            0.59384875
+          ]
+        ],
+        "Directions": [
+          "Barrel",
+          "Barrel",
+          "Barrel",
+          "Barrel",
+          "Barrel",
+          "Barrel",
+          "Barrel",
+          "Barrel",
+          "Barrel",
+          "Barrel",
+          "Barrel",
+          "Barrel",
+          "Barrel",
+          "Barrel",
+          "Barrel",
+          "Barrel"
+        ]
+      },
+      "SoundRadius": 12,
+      "SoundInfo": {},
+      "RecoilForce": 0,
+      "RecoilTime": 0,
+      "Recoil": 0,
+      "RecoilX": 0,
+      "RecoilY": 0,
+      "ExplosionDamage": 20,
+      "ExplosionRadius": 4,
+      "Headshot": 1
+    }
+  },
+  "ApplyDefaultDamageModifiers": false,
+  "RepairAmount": 0,
+  "SelfHurtAmount": 20,
+  "DestroyInfo": {
+    "NoWreck": false,
+    "ExplodeBlocks": false,
+    "ExplosionDamage": 0,
+    "ExplosionRadius": 0,
+    "SympatheticDetonation": false
+  },
+  "SelfHurtPercent": 0.2
+}

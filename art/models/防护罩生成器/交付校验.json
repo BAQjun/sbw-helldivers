@@ -1,0 +1,19 @@
+{
+  "user_embedded_textures_preserved": true,
+  "bbmodel_sha256": "902c25a9f0be91ac37dd5f63e64a7f1539894661c22453df5f3bcd51777efb6d",
+  "glb_sha256": "d8c0b4ec36e8b39b04385697c7a84efb9229b7baa706dc9ac04001fe519a33f9",
+  "textures": {
+    "0_shield_boss.png": "2a3b9c81c29a5757b9fe3b46769d1f527884849ae51bfcc3a63fd8fc45cd0a20",
+    "1_shield_fan_rotator.png": "3e4f3ad682256303c3d17bf9458ed9046f2efa2eb627fe9220c90822bd155b1a"
+  },
+  "geometry": {
+    "mesh_objects": 25,
+    "triangles": 34950,
+    "embedded_textures": 2,
+    "dimensions_blocks": [
+      1.44506,
+      1.35653,
+      1.80479
+    ]
+  }
+}

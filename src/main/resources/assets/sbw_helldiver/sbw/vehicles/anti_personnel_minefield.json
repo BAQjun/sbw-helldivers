@@ -1,0 +1,9 @@
+{
+  "Animation": "sbw_helldiver:animations/bedrock/vehicle/ap_mine_hellpod_v1.animation.json",
+  "Models": [
+    {
+      "Model": "sbw_helldiver:models/bedrock/vehicle/ap_mine_hellpod_v1.geo.json",
+      "Texture": "sbw_helldiver:textures/bedrock/vehicle/ap_mine_hellpod_v1.png"
+    }
+  ]
+}

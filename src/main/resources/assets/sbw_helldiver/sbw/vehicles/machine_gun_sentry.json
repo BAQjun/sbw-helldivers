@@ -1,0 +1,9 @@
+{
+  "Animation": "sbw_helldiver:animations/bedrock/vehicle/amg43_hellpod_v3.animation.json",
+  "Models": [
+    {
+      "Model": "sbw_helldiver:models/bedrock/vehicle/amg43_hellpod_v3.geo.json",
+      "Texture": "sbw_helldiver:textures/bedrock/vehicle/amg43_hellpod_v3.png"
+    }
+  ]
+}
