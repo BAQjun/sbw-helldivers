@@ -14,3 +14,5 @@
 
 - Eagle red stratagem cards: use the native R channel for the red-orange aircraft and G channel for the cream payload/effect; never merge them into one white silhouette. User reference codex-clipboard-35cb2745-2ae5-4eff-9246-262792014994.png palette: aircraft/border RGB 220,100,85; payload RGB 255,255,238; background RGB 25,3,1.
 
+
+- User-facing changelogs and release notes describe features, fixes, balance and compatibility only. Keep test counts, build success, server/client verification results and QA process details in internal records, not release notes.
