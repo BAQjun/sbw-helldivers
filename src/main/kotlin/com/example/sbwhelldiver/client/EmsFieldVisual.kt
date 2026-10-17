@@ -17,16 +17,12 @@ object EmsFieldVisual {
         }
     }
     fun render(e:MortarFieldEntity,partial:Float,pose:PoseStack,buffers:MultiBufferSource) {
+        if(ShaderPackCompat.active()||ShaderPackCompat.shadowPass())return
+        val fade=min((e.tickCount+partial)/6.0,e.remainingTicks/12.0).coerceIn(0.0,1.0)
         if(!TeslaRenderTypes.isReady())return
-        val t=(e.tickCount+partial)/20.0;val fade=min((e.tickCount+partial)/6.0,e.remainingTicks/12.0).coerceIn(0.0,1.0)
-        val mist=buffers.getBuffer(AreaEffectRenderTypes.MIST)
-        for(i in 0 until 38) {
-            val a=i*2.39996323;val r=e.radius*sqrt((i+.3)/38)*.9
-            quad(pose,mist,Vec3(cos(a)*r+sin(t+i)*.25,1.15+sin(t*.7+i)*.18,sin(a)*r),5.1,2.8,floatArrayOf(.58f,.73f,.84f,(.46*fade).toFloat()))
-        }
         val arcs=buffers.getBuffer(TeslaRenderTypes.ARC);val matrix=pose.last().pose()
         val camera=Minecraft.getInstance().gameRenderer.mainCamera.position.subtract(e.position())
-        fun segment(a:Vec3,b:Vec3,width:Double,alpha:Double) {
+        fun drawSegment(a:Vec3,b:Vec3,width:Double,alpha:Double) {
             val axis=b.subtract(a);val len=axis.length();if(len<.001)return
             val tangent=axis.scale(1/len);var side=tangent.cross(camera.subtract(a)).normalize();if(side.lengthSqr()<.01)side=Vec3(1.0,0.0,0.0)
             val packed=((log2(len/width)+5)/12*255).roundToInt().coerceIn(0,255);val aspect=2.0.pow(packed/255.0*12-5);val half=len/aspect
@@ -35,6 +31,17 @@ object EmsFieldVisual {
             vertex(start.subtract(side),0.0,0f);vertex(start.add(side),0.0,1f);vertex(end.add(side),aspect+2,1f);vertex(end.subtract(side),aspect+2,0f)
         }
         val flashes=mutableListOf<Vec3>()
+        collect(e,partial,object:FieldArcGeometry.Sink {
+            override fun segment(a:Vec3,b:Vec3,width:Double,alpha:Double)=drawSegment(a,b,width,alpha)
+            override fun flash(at:Vec3,size:Double,alpha:Double){flashes.add(at)}
+        })
+        val plasma=buffers.getBuffer(TeslaRenderTypes.PLASMA)
+        if(e.tickCount<9)quad(pose,plasma,Vec3(0.0,1.0,0.0),8.0,5.0,floatArrayOf(1f,1f,1f,((1-(e.tickCount+partial)/9.0)*.5).toFloat()))
+        flashes.forEach{quad(pose,plasma,it,.40,.40,floatArrayOf(1f,1f,1f,(fade*.60).toFloat()))}
+    }
+    /** Shared branching/timing; compatible rendering changes only the material. */
+    fun collect(e:MortarFieldEntity,partial:Float,sink:FieldArcGeometry.Sink) {
+        val fade=min((e.tickCount+partial)/6.0,e.remainingTicks/12.0).coerceIn(0.0,1.0)
         for(i in 0 until 64) {
             val period=17+i%19;val age=(e.tickCount+i*11)%period
             if(age>=8)continue
@@ -50,15 +57,19 @@ object EmsFieldVisual {
             val points=branch(base,end,.9,4)
             val pulse=(.65+.35*sin(age*3.1+i)).coerceIn(.15,1.0)
             val alpha=(1-age/8.0).pow(.5)*fade*pulse
-            points.zipWithNext().forEach{(p,q)->segment(p,q,.18,alpha)}
+            points.zipWithNext().forEach{(p,q)->sink.segment(p,q,.18,alpha)}
             for(j in listOf(5,10)) {
                 val origin=points[j];val tip=origin.add((rng.nextDouble()-.5)*1.5,.4+rng.nextDouble()*.7,(rng.nextDouble()-.5)*1.5)
-                branch(origin,tip,.45,3).zipWithNext().forEach{(p,q)->segment(p,q,.08,alpha*.7)}
+                branch(origin,tip,.45,3).zipWithNext().forEach{(p,q)->sink.segment(p,q,.08,alpha*.7)}
             }
-            if(age<3)flashes.add(points[8])
+            if(age<3)sink.flash(points[8],.40,fade*.60)
         }
-        val plasma=buffers.getBuffer(TeslaRenderTypes.PLASMA)
-        if(e.tickCount<9)quad(pose,plasma,Vec3(0.0,1.0,0.0),8.0,5.0,floatArrayOf(1f,1f,1f,((1-(e.tickCount+partial)/9.0)*.5).toFloat()))
-        flashes.forEach{quad(pose,plasma,it,.40,.40,floatArrayOf(1f,1f,1f,(fade*.60).toFloat()))}
     }
+
+}
+
+@net.minecraftforge.fml.common.Mod.EventBusSubscriber(modid="sbw_helldiver",value=[net.minecraftforge.api.distmarker.Dist.CLIENT])
+object FieldVolumePass {
+    @net.minecraftforge.eventbus.api.SubscribeEvent
+    fun render(event:net.minecraftforge.client.event.RenderLevelStageEvent) { FieldVolumeRenderer.render(event) }
 }

@@ -41,17 +41,8 @@ class GroundFireRenderer(context:EntityRendererProvider.Context):AreaEffectRende
 class MortarFieldRenderer(context:EntityRendererProvider.Context):AreaEffectRenderer<MortarFieldEntity>(context) {
     override fun radius(entity:MortarFieldEntity)=entity.radius
     override fun render(e:MortarFieldEntity,yaw:Float,partial:Float,pose:PoseStack,buffers:MultiBufferSource,light:Int) {
-        if(!AreaEffectRenderTypes.isReady())return
+        if(ShaderPackCompat.shadowPass())return
         if(e.kind==MortarFieldEntity.Kind.EMS){EmsFieldVisual.render(e,partial,pose,buffers);return}
-        val mist=buffers.getBuffer(AreaEffectRenderTypes.MIST);val time=(e.tickCount+partial)/20.0
-        val fade=min((e.tickCount+partial)/7.0,e.remainingTicks/20.0).coerceIn(0.0,1.0).toFloat()
-        val count=(e.radius*e.radius*.65).toInt().coerceIn(9,38)
-        for(i in 0 until count) {
-            val a=i*2.39996323;val r=e.radius*sqrt((i+.35)/count)*.85
-            val drift=sin(time*.45+i)*.18
-            val brightness=.92f+.08f*sin(i*3.1).toFloat()
-            // Vertical billboard: actual lower/upper bounds are ground and ground + 3 m.
-            quad(pose,mist,Vec3(cos(a)*r+drift,1.5,sin(a)*r-drift),3.3,3.0,floatArrayOf(.53f*brightness,.58f*brightness,.23f*brightness,.82f*fade),false)
-        }
+        // Gas volume is integrated after the world (FieldVolumeRenderer).
     }
 }

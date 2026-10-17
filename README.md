@@ -1,6 +1,6 @@
 # SBW Helldivers
 
-面向 Minecraft Java 1.20.1 的《绝地潜兵》战备附属模组，基于卓越前线（Superb Warfare）。当前版本：**0.3.76**。
+面向 Minecraft Java 1.20.1 的《绝地潜兵》战备附属模组，基于卓越前线（Superb Warfare）。当前版本：**0.3.77**。
 
 ## 内容
 
