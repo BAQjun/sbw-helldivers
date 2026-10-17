@@ -19,11 +19,12 @@
 # The exact SBW embedded API jar is required for a portable compile-only dependency.
 /libs/*
 !/libs/geckolib-forge-1.20.1-4.4.6-sbw-api.jar
-# Generated map and audit outputs
-/maps/ashen_outpost/world/
-/maps/ashen_outpost/*.npy
-/maps/ashen_outpost/*.json
-/maps/ashen_outpost/*.log
+# Local-only test scenes and operational notes
+/maps/
+/test-scenes/
+/AGENTS.md
+/docs/STORAGE*.md
+
 # Temporary files and credentials
 **/__pycache__/
 *.pyc
