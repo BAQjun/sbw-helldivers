@@ -1,6 +1,5 @@
 package com.example.sbwhelldiver.gametest
 
-import com.example.sbwhelldiver.MOD_ID
 import com.example.sbwhelldiver.asset.AssetCatalog
 import com.example.sbwhelldiver.effect.FlameDamage
 import com.example.sbwhelldiver.entity.*
@@ -18,7 +17,7 @@ import net.minecraft.world.phys.Vec3
 import net.minecraftforge.gametest.*
 import kotlin.math.abs
 
-@GameTestHolder(MOD_ID)
+@GameTestHolder("sbw_helldiver_flame")
 @PrefixGameTestTemplate(false)
 object FlameGameTests {
     private fun origin(h: GameTestHelper): Vec3 {
@@ -41,6 +40,69 @@ object FlameGameTests {
         override fun isSpectator()=false
         override fun isCreative()=false
     }.also { it.isNoGravity=true;it.setPos(p);h.level.addFreshEntity(it) }
+
+    private fun deployed(h:GameTestHelper,p:Vec3):SentryHellpodEntity {
+        val pod=ModEntities.FLAME_SENTRY.get().create(h.level)!!;pod.setPos(p)
+        val tag=CompoundTag();pod.saveWithoutId(tag)
+        tag.putInt("HellpodPhase",AbstractHellpodEntity.Phase.ACTIVE.ordinal)
+        tag.putDouble("HellpodRestY",p.y);tag.putBoolean("HellpodCapReleased",true)
+        pod.load(tag);h.level.addFreshEntity(pod);return pod
+    }
+
+    @JvmStatic @GameTest(template="sentry_test",batch="flame_destruction_blast",timeoutTicks=20)
+    fun destructionBlastRadiiCooldownAndSingleDetonation(h:GameTestHelper) {
+        val p=origin(h);val pod=deployed(h,p)
+        val distances=listOf(0.0,.4,.41,2.2,4.0,4.1)
+        val victims=distances.map { d ->
+            mob(h,p).also { it.setPos(p.x+d+it.bbWidth/2.0,p.y,p.z) }
+        }
+        val protected=mob(h,p.add(0.0,0.0,.1)).also{it.isInvulnerable=true}
+        victims[1].hurt(h.level.damageSources().generic(),1f)
+        val before=victims.map{it.health}
+        pod.hurt(com.atsuishio.superbwarfare.init.ModDamageTypes.causeGunFireDamage(h.level.registryAccess(),null,EntityType.HUSK.create(h.level)!!),10000f)
+        h.assertTrue(pod.phase==AbstractHellpodEntity.Phase.SPENT && !pod.isWreck,"Destroyed flame sentry did not stop at its empty pod")
+        val expected=listOf(60f,60f,(59.0*(4.0-.41)/3.6).toFloat(),29.5f,0f,0f)
+        victims.forEachIndexed { i,v ->
+            h.assertTrue(abs(before[i]-v.health-expected[i])<.02f,"Fuel blast at ${distances[i]} m: expected ${expected[i]}, got ${before[i]-v.health}")
+        }
+        h.assertTrue(protected.health==200f,"Fuel blast bypassed entity invulnerability")
+        val after=victims.map{it.health}
+        pod.destroy();repeat(10){pod.tick()}
+        h.assertTrue(victims.map{it.health}==after,"Fuel blast repeated or native wreck damage stacked on top")
+        val saved=CompoundTag();pod.saveWithoutId(saved);pod.discard()
+        val restored=ModEntities.FLAME_SENTRY.get().create(h.level)!!;restored.load(saved);h.level.addFreshEntity(restored)
+        restored.destroy();restored.tick()
+        h.assertTrue(restored.phase==AbstractHellpodEntity.Phase.SPENT && victims.map{it.health}==after,"Reloading an empty pod detonated fuel again")
+        (victims+listOf(protected,restored)).forEach{it.discard()};h.succeed()
+    }
+
+    @JvmStatic @GameTest(template="sentry_test",batch="flame_destruction_fire",timeoutTicks=20)
+    fun destructionFireMatchesJetAndNormalRecoveryDoesNotIgnite(h:GameTestHelper) {
+        val p=origin(h)
+        for(dx in -5..5)for(dz in -5..5)h.level.setBlock(BlockPos.containing(p.add(dx.toDouble(),-1.0,dz.toDouble())),Blocks.STONE.defaultBlockState(),2)
+        val pod=deployed(h,p);val inside=mob(h,p.add(2.0,0.0,0.0));val outside=mob(h,p.add(4.6,0.0,0.0))
+        pod.hurt(com.atsuishio.superbwarfare.init.ModDamageTypes.causeGunFireDamage(h.level.registryAccess(),null,EntityType.HUSK.create(h.level)!!),10000f)
+        h.assertTrue(pod.phase==AbstractHellpodEntity.Phase.SPENT,"Lethal gun damage failed to destroy flame sentry: health=${pod.health}, phase=${pod.phase}")
+        fun fields()=h.level.getEntitiesOfClass(GroundFireEntity::class.java,net.minecraft.world.phys.AABB(p,p).inflate(6.0))
+        val field=fields().single()
+        h.assertTrue(field.radius in 3.0..4.0 && field.remainingTicks==300,"Fuel fire must have a 3-4 m radius and the jet's 15-second lifetime")
+        field.tick()
+        h.assertTrue(inside.getEffect(ModEffects.BURNING.get())?.duration==60 && !inside.hasEffect(ModEffects.PANIC.get()),"Fuel fire did not use the same burn as jet ground fire")
+        h.assertTrue(!outside.hasEffect(ModEffects.BURNING.get()) && outside.health==200f,"Fuel fire/blast crossed its outer radius")
+        val hp=inside.health;inside.invulnerableTime=0;FlameDamage.burn(inside)
+        h.assertTrue(abs(inside.health-(hp-16f))<.01f,"Fuel ground fire did not deal the jet ground fire's 16 HP per second")
+        pod.destroy();h.assertTrue(fields().size==1,"Destroyed fuel tank created duplicate fire fields")
+        val recovering=deployed(h,p.add(12.0,0.0,0.0));val rt=CompoundTag();recovering.saveWithoutId(rt)
+        rt.putInt("HellpodPhase",AbstractHellpodEntity.Phase.RETRACTING.ordinal);recovering.load(rt)
+        repeat(recovering.retractTicks+1){recovering.tick()}
+        h.assertTrue(recovering.phase==AbstractHellpodEntity.Phase.DONE && fields().size==1,"Normal recovery detonated fuel")
+        val saved=CompoundTag();field.saveWithoutId(saved);val restored=ModEntities.GROUND_FIRE.get().create(h.level)!!;restored.load(saved)
+        h.assertTrue(restored.radius==field.radius && restored.remainingTicks==299,"Reload reset fuel-fire radius or lifetime")
+        repeat(299){field.tick()};field.tick();h.assertTrue(field.isRemoved,"Fuel ground fire outlived jet ground fire")
+        listOf(pod,inside,outside,recovering,restored).forEach{it.discard()}
+        for(dx in -5..5)for(dz in -5..5){val at=BlockPos.containing(p.add(dx.toDouble(),0.0,dz.toDouble()));if(h.level.getBlockState(at).`is`(ModBlocks.SENTRY_FIRE.get()))h.level.removeBlock(at,false)}
+        h.succeed()
+    }
 
     @JvmStatic @GameTest(template="sentry_test",batch="flame",timeoutTicks=10)
     fun ignitionCadenceIdleResumeAndPersistence(h: GameTestHelper) {
@@ -104,12 +166,15 @@ object FlameGameTests {
         FlameJet.spray(h.level,sentry,p.add(0.0,1.0,0.0),Vec3(0.0,0.0,1.0))
         h.assertTrue(near.health==199f,"Flames burned through a wall")
         val ground=p.add(5.0,0.0,0.0);val stepping=mob(h,ground)
+        val support=BlockPos.containing(ground).below();val previousSupport=h.level.getBlockState(support)
+        h.level.setBlock(support,Blocks.STONE.defaultBlockState(),2)
         val field=GroundFireEntity.create(h.level,ground,sentry);field.tick()
         h.assertTrue(stepping.getEffect(ModEffects.BURNING.get())?.duration==60 && !stepping.hasEffect(ModEffects.PANIC.get()),"Ground flame does not refresh three seconds burn")
         val saved=CompoundTag();field.saveWithoutId(saved);val restored=ModEntities.GROUND_FIRE.get().create(h.level)!!;restored.load(saved)
         h.assertTrue(restored.remainingTicks==299,"Save reset ground flame lifetime")
         repeat(299) { field.tick() };field.tick();h.assertTrue(field.isRemoved,"Ground flame outlived fifteen seconds")
         for(dx in -1..1)for(y in 0..2)h.level.setBlock(BlockPos.containing(p.add(dx.toDouble(),y.toDouble(),4.0)),Blocks.AIR.defaultBlockState(),2)
+        h.level.setBlock(support,previousSupport,2)
         listOf(near,far,spread,outside,stepping,sentry,restored).forEach { it.discard() };h.succeed()
     }
 

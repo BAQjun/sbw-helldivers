@@ -22,13 +22,13 @@ import kotlin.math.abs
 @GameTestHolder(MOD_ID)
 @PrefixGameTestTemplate(false)
 object ExplosionGameTests {
-    @JvmStatic @GameTest(template = "sentry_test", timeoutTicks = 10)
+    @JvmStatic @GameTest(templateNamespace = "sbw_helldiver_flame", template = "sentry_test", timeoutTicks = 10)
     fun rocketDirectHitAndBlastRadii(helper: GameTestHelper) = verify(helper, 0)
 
-    @JvmStatic @GameTest(template = "sentry_test", timeoutTicks = 10)
+    @JvmStatic @GameTest(templateNamespace = "sbw_helldiver_flame", template = "sentry_test", timeoutTicks = 10)
     fun cannonDirectHitAndBlastRadii(helper: GameTestHelper) = verify(helper, 1)
 
-    @JvmStatic @GameTest(template = "sentry_test", timeoutTicks = 10)
+    @JvmStatic @GameTest(templateNamespace = "sbw_helldiver_flame", template = "sentry_test", timeoutTicks = 10)
     fun mortarDirectHitAndBlastRadii(helper: GameTestHelper) = verify(helper, 2)
 
     private fun verify(helper: GameTestHelper, variant: Int) {

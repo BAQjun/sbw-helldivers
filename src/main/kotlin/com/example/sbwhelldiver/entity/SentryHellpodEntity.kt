@@ -1,11 +1,15 @@
 package com.example.sbwhelldiver.entity
 
+import com.atsuishio.superbwarfare.tools.CustomExplosion
+import com.atsuishio.superbwarfare.tools.forceHurt
 import com.atsuishio.superbwarfare.data.gun.GunProp
 import com.atsuishio.superbwarfare.data.gun.ShootParameters
 import com.atsuishio.superbwarfare.data.gun.value.ReloadState
 import com.example.sbwhelldiver.config.HelldiversConfig
 import com.example.sbwhelldiver.marking.TargetMarks
 import com.example.sbwhelldiver.init.ModParticles
+import net.minecraft.core.Direction
+import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.tags.DamageTypeTags
 import net.minecraft.world.damagesource.DamageSource
@@ -21,6 +25,7 @@ import net.minecraft.world.entity.monster.Enemy
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.Level
+import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.HitResult
 import net.minecraft.world.phys.Vec3
 import kotlin.math.*
@@ -175,6 +180,17 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
 
     override fun destroy() {
         if (level().isClientSide || isRemoved || phase in listOf(Phase.DESTROYED, Phase.SPENT, Phase.DONE)) return
+        if (profile.isFlame) {
+            // Commit the terminal phase before damaging neighbours, so chain blasts
+            // and reloaded pods cannot detonate this fuel tank again.
+            target = null
+            isWreck = false
+            health = getMaxHealth()
+            enterPhase(Phase.SPENT)
+            burstFuel()
+            generateWreckageLoot()
+            return
+        }
         // Enter at 1 HP, then allow the native burning-wreck countdown to finish.
         isWreck = true
         health = 1f
@@ -185,6 +201,33 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
         teslaClock.reset();syncTesla()
         extinguishFlame()
         enterPhase(Phase.DESTROYED)
+    }
+
+    private fun burstFuel() {
+        val world = level() as? ServerLevel ?: return
+        val origin = position().add(0.0, .1, 0.0)
+        val source = world.damageSources().explosion(this, lastAttacker as? LivingEntity)
+        world.getEntities(this, AABB(origin, origin).inflate(4.0)) { !it.isRemoved && !it.ignoreExplosion() }
+            .forEach { victim ->
+                val damage = SentryExplosion.damageAt(SentryExplosion.distanceToBody(origin, victim.boundingBox), 60f, .4, 4.0)
+                if (damage <= 0f) return@forEach
+                val cooldown = victim.invulnerableTime
+                try {
+                    victim.invulnerableTime = 0
+                    victim.forceHurt(source, damage)
+                } finally {
+                    victim.invulnerableTime = cooldown
+                }
+            }
+        // Native sound/flash/smoke only: radial damage was already settled above.
+        CustomExplosion.Builder(this).attacker(lastAttacker).position(origin).radius(4f).damage(0f).keepBlock().explode()
+        world.sendParticles(ParticleTypes.FLAME, origin.x, origin.y + .3, origin.z, 48, .8, .4, .8, .08)
+        val floor = world.clip(ClipContext(position().add(0.0, .5, 0.0), position().add(0.0, -4.0, 0.0),
+            ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this))
+        if (floor.type == HitResult.Type.BLOCK && floor.direction == Direction.UP) {
+            // Share the jet's real fire blocks, 15-second lifetime and custom burn.
+            GroundFireEntity.create(world, floor.location, this, 3.0 + random.nextDouble())
+        }
     }
 
     override fun onActivated() {

@@ -17,7 +17,8 @@ object SentryExplosion {
     fun damageAt(distance: Double, damage: Float, inner: Double, outer: Double): Float {
         require(inner >= 0 && outer > inner)
         if (distance > outer || damage <= 0) return 0f
-        if (distance <= inner) return damage
+        // Body coordinates can put an exact boundary a few ULPs outside the sphere.
+        if (distance <= inner + 1e-7) return damage
         return ((damage - 1f).coerceAtLeast(0f) * (outer - distance) / (outer - inner)).toFloat()
     }
 

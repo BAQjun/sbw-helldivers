@@ -508,7 +508,7 @@ object SentryGameTests {
         pod.discard();helper.succeed()
     }
 
-    @JvmStatic @GameTest(template = "sentry_test", timeoutTicks = 240)
+    @JvmStatic @GameTest(templateNamespace = "sbw_helldiver_flame", template = "sentry_test", timeoutTicks = 240)
     fun destroyedSentriesSelfExplodeAndLeaveIntactPods(helper: GameTestHelper) {
         val p = helper.absolutePos(BlockPos(15, 200, 15))
         val pods = listOf(ModEntities.MACHINE_GUN_SENTRY.get(), ModEntities.GATLING_SENTRY.get(),
