@@ -251,6 +251,7 @@ abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAi
         setPos(x, if (age >= duration) restY else scheduledHeight(level().gameTime.toDouble()), z)
         if (age >= duration) {
             noPhysics = false
+            HellpodImpact.apply(this,restY + HelldiversConfig.effectiveBurialDepth() - profile.podHeight)
             onImpact()
             enterPhase(Phase.IMPACT)
         }

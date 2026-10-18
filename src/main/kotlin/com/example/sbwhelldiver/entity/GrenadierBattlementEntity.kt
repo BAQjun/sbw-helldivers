@@ -119,6 +119,9 @@ class GrenadierBattlementEntity(type: EntityType<*>,level: Level): HmgEmplacemen
     }
     override fun shouldRetract() = false
     private val panels = mutableListOf<GrenadierWallPanelEntity>()
+    override fun remove(reason:net.minecraft.world.entity.Entity.RemovalReason){
+        panels.forEach{it.discard()};panels.clear();super.remove(reason)
+    }
     private var explosionTick = Long.MIN_VALUE
     private val explosionHits = mutableMapOf<String,Float>()
     override fun operatorPosition(partial: Float): Vec3 {

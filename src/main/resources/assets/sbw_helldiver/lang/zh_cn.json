@@ -134,5 +134,7 @@
   "commands.sbw_helldiver.marking.status": "标记功能：%s",
   "commands.sbw_helldiver.marking.set": "标记功能已设为：%s",
   "entity.sbw_helldiver.ground_fire": "HD2火焰",
-  "block.sbw_helldiver.sentry_fire": "HD2火焰"
+  "block.sbw_helldiver.sentry_fire": "HD2火焰",
+  "death.attack.sbw_helldiver.hellpod_impact": "%1$s 被空投仓砸扁了",
+  "death.attack.sbw_helldiver.hellpod_impact.player": "%1$s 被空投仓砸扁了"
 }

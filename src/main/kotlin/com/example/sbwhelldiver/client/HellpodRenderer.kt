@@ -56,22 +56,14 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
             }
         }
         if(pod is SentryHellpodEntity && pod.profile.isTesla) TeslaTowerClient.render(pod,partial,pose,buffers)
-        if(pod is SentryHellpodEntity && pod.profile.isLaser) {
-            LaserSentryClient.renderBeam(pod,partial,pose,buffers)
-            if(pod.phase==AbstractHellpodEntity.Phase.ACTIVE && pod.laserHeat>0 && !pod.isWreck) {
-                val entry=getCurrentModelEntry(pose,entity)
-                if(entry!=null) {
-                    val texture=net.minecraft.resources.ResourceLocation("sbw_helldiver","textures/bedrock/vehicle/laser_hellpod_v1_emissive.png")
-                    pose.pushPose()
-                    try {
-                        rotateVehicleAxis(entity,pose,yaw,partial)
-                        pose.scale(renderScale(),renderScale(),renderScale())
-                        entry.instance.renderToBuffer(pose,buffers,
-                            net.minecraft.client.renderer.RenderType.entityTranslucent(texture),
-                            com.github.mcmodderanchor.simplebedrockmodel.v1.client.renderer.BedrockModelRenderTypes.polyMeshCutout(texture),
-                            15728880,net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY)
-                    } finally {pose.popPose()}
-                }
+        if(pod is SentryHellpodEntity && pod.profile.isLaser && !ShaderPackCompat.shadowPass()) {
+            getCurrentModelEntry(pose,entity)?.let { entry ->
+                pose.pushPose()
+                try {
+                    rotateVehicleAxis(entity,pose,yaw,partial)
+                    pose.scale(renderScale(),renderScale(),renderScale())
+                    LaserPostVisual.capture(pod,entry.instance,pose)
+                } finally { pose.popPose() }
             }
         }
         if (!pod.isWreck) return
@@ -156,9 +148,11 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
             MinefieldClientScene.checkLinkage(pod,instance)
         }
         if (pod is SentryHellpodEntity && pod.profile.isLaser) {
-            val lit = pod.phase == AbstractHellpodEntity.Phase.ACTIVE && pod.laserHeat > 0f
-            val count = kotlin.math.ceil(pod.laserHeat / 250.0 * 20).toInt().coerceIn(0,20)
-            for (i in 0 until 20) instance.getBone("laser_heat_%02d".format(i))?.visible = lit && i < count
+            // Progress is drawn once in an isolated emissive pass. Poly-mesh
+            // bones need zero scale as well as visibility to hide their main pass.
+            for (i in 0 until 20) instance.getBone("laser_heat_%02d".format(i))?.let {
+                it.visible=false;it.xScale=0f;it.yScale=0f;it.zScale=0f
+            }
         }
         if (pod is SentryHellpodEntity && pod.profile.isGatling) instance.getBone("rotor")?.rotation?.rotationZ(
             pod.interpolatedRotorAngle(partialTicks) * (Math.PI / 180).toFloat())

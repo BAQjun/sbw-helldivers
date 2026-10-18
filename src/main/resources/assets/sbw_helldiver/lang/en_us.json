@@ -134,5 +134,7 @@
   "commands.sbw_helldiver.marking.status": "Target marking: %s",
   "commands.sbw_helldiver.marking.set": "Target marking set to: %s",
   "entity.sbw_helldiver.ground_fire": "HD2 Fire",
-  "block.sbw_helldiver.sentry_fire": "HD2 Fire"
+  "block.sbw_helldiver.sentry_fire": "HD2 Fire",
+  "death.attack.sbw_helldiver.hellpod_impact": "%1$s was crushed by a hellpod",
+  "death.attack.sbw_helldiver.hellpod_impact.player": "%1$s was crushed by a hellpod"
 }

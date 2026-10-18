@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "sbw_helldiver:laser_beam",
+    "sbw_helldiver:sentry_burning",
+    "sbw_helldiver:flame_jet"
+  ]
+}

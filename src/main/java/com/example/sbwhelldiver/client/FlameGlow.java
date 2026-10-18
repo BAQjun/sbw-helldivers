@@ -46,6 +46,9 @@ final class FlameGlow {
     }
     interface Draw {void run()throws IOException;}
     static void render(int w,int h,Draw flame)throws IOException {
+        render(w,h,.52f,flame);
+    }
+    static void render(int w,int h,float bloomStrength,Draw flame)throws IOException {
         int destination=glGetInteger(GL_DRAW_FRAMEBUFFER_BINDING),active=glGetInteger(GL_ACTIVE_TEXTURE);
         glActiveTexture(GL_TEXTURE0);int previous0=glGetInteger(GL_TEXTURE_BINDING_2D);
         glActiveTexture(GL_TEXTURE1);int previous1=glGetInteger(GL_TEXTURE_BINDING_2D);
@@ -57,6 +60,7 @@ final class FlameGlow {
             flame.run();
             glUseProgram(program);glBindVertexArray(vao);glDisable(GL_BLEND);
             glUniform1i(glGetUniformLocation(program,"Flame"),0);glUniform1i(glGetUniformLocation(program,"Bloom"),1);
+            glUniform1f(glGetUniformLocation(program,"BloomStrength"),bloomStrength);
             int bw=Math.max(1,w/4),bh=Math.max(1,h/4);
             pass(targets[1],textures[0],bw,bh,0,0f,0f);
             pass(targets[2],textures[1],bw,bh,1,1.6f/bw,0f);

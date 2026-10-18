@@ -51,33 +51,48 @@ object LaserGameTests {
         h.succeed()
     }
 
-    @JvmStatic @GameTest(template="sentry_test",batch="laser",timeoutTicks=10)
+    @JvmStatic @GameTest(template="sentry_test",batch="laser",timeoutTicks=80)
     fun exactBeamDamageBurnOnlyAndBlockOcclusion(h: GameTestHelper) {
-        val bp=h.absolutePos(BlockPos(15,300,15));val start=Vec3(bp.x+.5,bp.y+1.0,bp.z+.5)
+        val bp=h.absolutePos(BlockPos(15,300,4096));val start=Vec3(bp.x+.5,bp.y+1.0,bp.z+.5)
         for(cx in ((bp.x-2) shr 4)..((bp.x+2) shr 4))for(cz in (bp.z shr 4)..((bp.z+202) shr 4)) {
             h.level.setChunkForced(cx,cz,true);h.level.getChunk(cx,cz)
         }
         for(z in 0..202)for(y in 0..2)h.level.setBlock(bp.offset(0,y,z),Blocks.AIR.defaultBlockState(),2)
         val sentry=ModEntities.LASER_SENTRY.get().create(h.level)!!
         val mob=EntityType.HUSK.create(h.level)!!.also {
-            it.isNoAi=true;it.isNoGravity=true;it.setPos(start.add(0.0,-.5,150.0))
+            it.isNoAi=true;it.setPersistenceRequired();it.isNoGravity=true;it.setPos(start.add(0.0,-.5,150.0))
             it.getAttribute(Attributes.MAX_HEALTH)!!.baseValue=500.0;it.health=500f
             it.getAttribute(Attributes.ARMOR)!!.baseValue=30.0
             it.addEffect(MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,1000,4));h.level.addFreshEntity(it)
         }
-        val direction=Vec3(0.0,0.0,1.0)
-        repeat(20) { LaserBeam.fire(sentry,LaserBeam.trace(sentry,start,direction)) }
-        h.assertTrue(mob.health==460f,"Beam must deal forty direct damage per second through armor/cooldown")
-        h.assertTrue(mob.getEffect(ModEffects.BURNING.get())?.duration==60 && !mob.hasEffect(ModEffects.PANIC.get()),"Laser burn duration or panic exclusion is wrong")
-        mob.tickCount=20;ModEffects.BURNING.get().applyEffectTick(mob,0)
-        h.assertTrue(mob.health==444f,"Custom burn is not sixteen damage per second")
-        h.level.setBlock(bp.offset(0,1,100),Blocks.STONE.defaultBlockState(),2)
-        val blocked=LaserBeam.trace(sentry,start,direction)
-        h.assertTrue(blocked.target==null && start.distanceTo(blocked.end)<101,"Laser passed through a solid wall")
-        h.level.setBlock(bp.offset(0,1,100),Blocks.AIR.defaultBlockState(),2);mob.discard()
-        val empty=LaserBeam.trace(sentry,start,direction)
-        h.assertTrue(abs(start.distanceTo(empty.end)-200.0)<1e-6,"Beam range is not two hundred meters")
-        h.assertTrue(h.level.getEntitiesOfClass(GroundFireEntity::class.java,sentry.boundingBox.inflate(200.0)).isEmpty(),"Laser created ground fire")
-        sentry.discard();h.succeed()
+        // Entity sections may still be loading on a fresh server. Run the ray
+        // check only once the actual target is registered in the world lookup.
+        h.startSequence().thenWaitUntil {
+            h.assertTrue(h.level.getEntity(mob.id)===mob,"Beam victim section is still loading")
+        }.thenExecute {
+            sentry.setPos(start)
+            val motion=Vec3(.13,.07,-.09);mob.deltaMovement=motion;mob.hasImpulse=false
+            val direction=Vec3(0.0,0.0,1.0)
+            repeat(20) { LaserBeam.fire(sentry,LaserBeam.trace(sentry,start,direction)) }
+            h.assertTrue(mob.health==460f,"Beam must deal forty direct damage per second through armor/cooldown")
+            h.assertTrue(mob.getEffect(ModEffects.BURNING.get())?.duration==60 && !mob.hasEffect(ModEffects.PANIC.get()),"Laser burn duration or panic exclusion is wrong")
+            h.assertTrue(mob.deltaMovement==motion && !mob.hasImpulse,"Beam added a physical hit impulse")
+            mob.tickCount=20;ModEffects.BURNING.get().applyEffectTick(mob,0)
+            h.assertTrue(mob.health==444f,"Custom burn is not sixteen damage per second")
+            h.assertTrue(mob.deltaMovement==motion && !mob.hasImpulse,"Burning added a physical hit impulse")
+            mob.invulnerableTime=0
+            mob.removeEffect(MobEffects.DAMAGE_RESISTANCE)
+            mob.hurt(h.level.damageSources().mobAttack(EntityType.HUSK.create(h.level)!!.also { it.setPos(start) }),1f)
+            h.assertTrue(mob.deltaMovement!=motion,"An ordinary physical hit lost its knockback")
+            h.level.setBlock(bp.offset(0,1,100),Blocks.STONE.defaultBlockState(),2)
+            val blocked=LaserBeam.trace(sentry,start,direction)
+            h.assertTrue(blocked.target==null && start.distanceTo(blocked.end)<101,"Laser passed through a solid wall")
+            h.level.setBlock(bp.offset(0,1,100),Blocks.AIR.defaultBlockState(),2);mob.discard()
+            val empty=LaserBeam.trace(sentry,start,direction)
+            h.assertTrue(abs(start.distanceTo(empty.end)-200.0)<1e-6,"Beam range is not two hundred meters")
+            h.assertTrue(h.level.getEntitiesOfClass(GroundFireEntity::class.java,sentry.boundingBox.inflate(200.0)).isEmpty(),"Laser created ground fire")
+            sentry.discard()
+        }.thenSucceed()
+
     }
 }

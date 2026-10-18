@@ -5,7 +5,8 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "tacz.TaczEntityUtilMixin",
-    "tacz.TaczBulletMixin"
+    "tacz.TaczBulletMixin",
+    "ThermalKnockbackMixin"
   ],
   "client": [
     "tacz.TaczInputMixin",
@@ -14,5 +15,6 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "refmap": "sbw_helldiver.refmap.json"
 }

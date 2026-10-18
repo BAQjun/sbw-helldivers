@@ -131,7 +131,9 @@ object FlameGameTests {
         val p=origin(h);val v=mob(h,p);val sentry=ModEntities.FLAME_SENTRY.get().create(h.level)!!
         val speed=v.getAttributeValue(Attributes.MOVEMENT_SPEED)
         v.getAttribute(Attributes.ARMOR)!!.baseValue=30.0;v.addEffect(MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,1000,4))
+        val motion=Vec3(-.07,.05,.12);v.deltaMovement=motion;v.hasImpulse=false
         repeat(4) { FlameDamage.hit(v,sentry) }
+        h.assertTrue(v.deltaMovement==motion && !v.hasImpulse,"Flame jets added a physical hit impulse")
         h.assertTrue(v.health==196f,"One-damage jets were lost to the native hit cooldown/armor: ${v.health}")
         h.assertTrue(v.getEffect(ModEffects.BURNING.get())?.duration==60 && v.getEffect(ModEffects.PANIC.get())?.duration==20,"Wrong burn/panic durations")
         h.assertTrue(abs(v.getAttributeValue(Attributes.MOVEMENT_SPEED)-speed*.75)<1e-6,"Panic is not 25 percent slow")

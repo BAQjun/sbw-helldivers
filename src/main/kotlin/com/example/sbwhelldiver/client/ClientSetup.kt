@@ -50,6 +50,7 @@ object ClientSetup {
         event.registerReloadListener(BeaconModel)
         event.registerReloadListener(MortarShellRenderer.Model)
         event.registerReloadListener(HmgFeedRenderer)
+        event.registerReloadListener(LaserPostVisual)
         event.registerReloadListener(BeaconCallHud)
     }
 

@@ -2,6 +2,7 @@
 uniform sampler2D Flame;
 uniform sampler2D Bloom;
 uniform int Mode;
+uniform float BloomStrength;
 uniform vec2 Step;
 in vec2 texCoord;
 out vec4 fragColor;
@@ -24,7 +25,7 @@ void main(){
         vec4 flame=texture(Flame,texCoord);
         // Preserve amber edges rather than whitening the whole plume. Additive
         // light has zero coverage outside the flame and cannot darken the scene.
-        vec3 bloom=texture(Bloom,texCoord).rgb*.52;
+        vec3 bloom=texture(Bloom,texCoord).rgb*BloomStrength;
         fragColor=vec4(min(flame.rgb,vec3(flame.a*1.12))+bloom,flame.a);
     }
 }

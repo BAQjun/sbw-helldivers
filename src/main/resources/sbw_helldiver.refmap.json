@@ -1,0 +1,16 @@
+{
+  "mappings": {
+    "com/example/sbwhelldiver/mixin/ThermalKnockbackMixin": {
+      "hurt": "Lnet/minecraft/world/entity/LivingEntity;m_6469_(Lnet/minecraft/world/damagesource/DamageSource;F)Z",
+      "Lnet/minecraft/world/entity/LivingEntity;knockback(DDD)V": "Lnet/minecraft/world/entity/LivingEntity;m_147240_(DDD)V"
+    }
+  },
+  "data": {
+    "searge": {
+      "com/example/sbwhelldiver/mixin/ThermalKnockbackMixin": {
+        "hurt": "Lnet/minecraft/world/entity/LivingEntity;m_6469_(Lnet/minecraft/world/damagesource/DamageSource;F)Z",
+        "Lnet/minecraft/world/entity/LivingEntity;knockback(DDD)V": "Lnet/minecraft/world/entity/LivingEntity;m_147240_(DDD)V"
+      }
+    }
+  }
+}
