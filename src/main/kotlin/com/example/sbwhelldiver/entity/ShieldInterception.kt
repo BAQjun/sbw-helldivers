@@ -16,6 +16,22 @@ import kotlin.math.*
 /** Sweeps actual projectile motion before its entity tick: fast bullets cannot tunnel through the shell. */
 @Mod.EventBusSubscriber(modid=MOD_ID)
 object ShieldInterception {
+    // Track loaded generators instead of scanning every mob/item in every world
+    // twenty times per second, including worlds with no shields at all.
+    private val loaded=java.util.IdentityHashMap<ServerLevel,MutableSet<ShieldGeneratorEntity>>()
+    @SubscribeEvent(priority=net.minecraftforge.eventbus.api.EventPriority.LOWEST)
+    fun joined(event:net.minecraftforge.event.entity.EntityJoinLevelEvent){
+        val shield=event.entity as? ShieldGeneratorEntity ?: return
+        val level=event.level as? ServerLevel ?: return
+        loaded.getOrPut(level){linkedSetOf()}.add(shield)
+    }
+    @SubscribeEvent fun left(event:net.minecraftforge.event.entity.EntityLeaveLevelEvent){
+        val shield=event.entity as? ShieldGeneratorEntity ?: return
+        val level=event.level as? ServerLevel ?: return
+        loaded[level]?.let {it.remove(shield);if(it.isEmpty())loaded.remove(level)}
+    }
+    @SubscribeEvent fun unload(event:net.minecraftforge.event.level.LevelEvent.Unload){(event.level as? ServerLevel)?.let {loaded.remove(it)}}
+    @SubscribeEvent fun stopped(event:net.minecraftforge.event.server.ServerStoppedEvent){loaded.clear()}
     fun entry(from:Vec3,to:Vec3,center:Vec3,radius:Double=ShieldGeneratorEntity.RADIUS):Double? {
         val p=from.subtract(center);val v=to.subtract(from);val c=p.lengthSqr()-radius*radius
         if(c< -1e-7)return null // Outbound fire is never intercepted.
@@ -38,21 +54,28 @@ object ShieldInterception {
     @SubscribeEvent fun tick(event:TickEvent.LevelTickEvent){
         val level=event.level as? ServerLevel ?: return
         if(event.phase!=TickEvent.Phase.START)return
-        val shields=level.allEntities.filterIsInstance<ShieldGeneratorEntity>().filter {it.shieldOnline}
+        val shields=loaded[level]?.filter {it.shieldOnline&&!it.isRemoved} ?: return
         if(shields.isEmpty())return
         // TACZ inserts the sphere into its own sorted, block-clipped ray hits.
         // Sweeping it here would absorb before nearer entities and miss newly spawned bullets.
+        // Absorption removes entities; iterate a snapshot so removing one round
+        // cannot invalidate the world's live iterator or skip the next round.
         for(p in level.allEntities.filterIsInstance<Projectile>())if(p !is TaczBulletAccess)intercept(p,shields)
     }
     fun intercept(p:Projectile,shields:List<ShieldGeneratorEntity>):Boolean {
         if(p.isRemoved || p.level().isClientSide)return false
         val from=p.position();val to=from.add(p.deltaMovement)
-        val candidates=shields.filter {it.shieldOnline}.mapNotNull {s->entry(from,to,s.shieldCenter())?.let {Triple(s,it,from.lerp(to,it))}}.sortedBy {it.second}
-        val candidate=candidates.firstOrNull() ?: return false
+        var nearest:ShieldGeneratorEntity?=null;var fraction=Double.POSITIVE_INFINITY
+        for(shield in shields)if(shield.shieldOnline){
+            val t=entry(from,to,shield.shieldCenter()) ?: continue
+            if(t<fraction){nearest=shield;fraction=t}
+        }
+        val shield=nearest ?: return false
+        val point=from.lerp(to,fraction)
         val block=p.level().clip(ClipContext(from,to,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,p))
-        if(block.type!=HitResult.Type.MISS && block.location.distanceToSqr(from)<candidate.third.distanceToSqr(from)-1e-6)return false
-        if(!candidate.first.absorb(projectileDamage(p,candidate.third),candidate.third))return false
-        p.setPos(candidate.third);p.discard() // Absorption never invokes an explosive projectile's terrain/area impact handler.
+        if(block.type!=HitResult.Type.MISS && block.location.distanceToSqr(from)<point.distanceToSqr(from)-1e-6)return false
+        if(!shield.absorb(projectileDamage(p,point),point))return false
+        p.setPos(point);p.discard() // Absorption never invokes an explosive projectile's terrain/area impact handler.
         return true
     }
 }

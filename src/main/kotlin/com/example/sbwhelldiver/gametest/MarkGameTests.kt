@@ -28,6 +28,20 @@ object MarkGameTests {
   val tag=CompoundTag();t.saveWithoutId(tag);tag.putInt("HellpodPhase",AbstractHellpodEntity.Phase.DEPLOYING.ordinal);tag.putInt("HellpodPhaseTicks",t.deployTicks-1);tag.putDouble("HellpodRestY",p.y);tag.putBoolean("HellpodCapReleased",true);t.load(tag);t.tick();return t
  }
  private fun clear(h:GameTestHelper){TargetMarks.clear();h.level.getEntities(null,net.minecraft.world.phys.AABB(at(h).subtract(350.0,50.0,350.0),at(h).add(350.0,120.0,350.0))).filter {it is AbstractHellpodEntity||it is net.minecraft.world.entity.projectile.Projectile||it is net.minecraft.world.entity.monster.Husk||it is net.minecraft.world.entity.animal.Cow}.forEach {it.discard()}}
+ @JvmStatic @GameTest(template="mark_test",batch="mark_obstructed_nearest",timeoutTicks=15)
+ fun nearestVisibleEnemyWinsRegardlessOfEntityOrder(h:GameTestHelper){
+  clear(h);val p=at(h);val t=turret(h,p)
+  val far=mob(h,p.add(0.0,0.0,25.0))
+  val blocked=mob(h,p.add(8.0,0.0,0.0))
+  val near=mob(h,p.add(0.0,0.0,12.0))
+  val wall=BlockPos.containing(p.add(4.0,0.0,0.0))
+  for(y in 0..3)for(z in -2..2)h.level.setBlock(wall.offset(0,y,z),Blocks.STONE.defaultBlockState(),2)
+  t.tick();h.assertTrue(t.selectedTarget===near,"Occluded nearest enemy or entity iteration order changed target priority")
+  near.discard();repeat(12){t.tick()};h.assertTrue(t.selectedTarget===far,"Blocked enemy prevented acquiring the farther visible enemy")
+  for(y in 0..3)for(z in -2..2)h.level.setBlock(wall.offset(0,y,z),Blocks.AIR.defaultBlockState(),2)
+  repeat(12){t.tick()};h.assertTrue(t.selectedTarget===blocked,"Opening line of sight did not restore the actual nearest enemy")
+  clear(h);h.succeed()
+ }
  @JvmStatic @GameTest(template="mark_test",batch="mark_trace",timeoutTicks=15)
  fun rayChoosesVisibleCreatureAndSurface(h:GameTestHelper){
   clear(h);val p=at(h);val user=owner(h);val enemy=mob(h,p.add(0.0,0.0,12.0));val start=p.add(0.0,1.0,0.0)

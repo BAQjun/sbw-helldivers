@@ -535,9 +535,18 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
         if(marked!=null)target=marked
         else if(target?.let {validTarget(it)}!=true || rescan)target=acquireTarget()
     }
-    private fun acquireTarget(): LivingEntity? = markedTarget() ?: level()
-        .getEntitiesOfClass(LivingEntity::class.java, boundingBox.inflate(seekRange())) {validTarget(it)}
-        .minByOrNull { distanceToSqr(it) }
+    private fun acquireTarget(): LivingEntity? {
+        markedTarget()?.let {return it}
+        var nearest:LivingEntity?=null
+        var best=Double.POSITIVE_INFINITY
+        // A farther candidate cannot replace an already visible nearer target.
+        // Preserve the original iteration order for ties and blocked candidates.
+        for(candidate in level().getEntitiesOfClass(LivingEntity::class.java,boundingBox.inflate(seekRange()))){
+            val distance=distanceToSqr(candidate)
+            if(distance<best&&validTarget(candidate)){nearest=candidate;best=distance}
+        }
+        return nearest
+    }
     private fun clearSight(start: Vec3, end: Vec3) = level().clip(
         ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this)
     ).type == HitResult.Type.MISS

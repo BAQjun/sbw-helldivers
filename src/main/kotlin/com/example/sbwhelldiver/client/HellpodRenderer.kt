@@ -22,7 +22,10 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
     private val sampled = mutableSetOf<String>()
     private val checkedShellShots = mutableSetOf<Int>()
     private data class TurnFrame(val time: Double, val direction: net.minecraft.world.phys.Vec3, val phase: AbstractHellpodEntity.Phase)
-    private val turnFrames = mutableMapOf<java.util.UUID, TurnFrame>()
+    private val turnFrames = java.util.WeakHashMap<AbstractHellpodEntity, TurnFrame>()
+    private val loadedMineBones=Array(64){"loaded_mine_${it.toString().padStart(2,'0')}"}
+    private val laserHeatBones=Array(20){"ls_heat_${it.toString().padStart(2,'0')}"}
+    private val rocketRoundBones=Array(17){"rocket_round_${it.toString().padStart(2,'0')}"}
     override fun render(entity: AutoAimableEntity, yaw: Float, partial: Float, pose: PoseStack,
         buffers: net.minecraft.client.renderer.MultiBufferSource, light: Int) {
         if(entity is com.example.sbwhelldiver.entity.PlayerHellpodEntity && entity.phase==AbstractHellpodEntity.Phase.FALLING){
@@ -40,7 +43,10 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
             checkedWreckTextureCache = true
             com.example.sbwhelldiver.LOGGER.info("WRECK_TEXTURE_CACHE_PASSED: native wreck rendering uses its prepared texture; lookupMs={}",(System.nanoTime()-began)/1_000_000.0)
         }
-        super.render(entity, yaw, partial, pose, buffers, light)
+        val mineBuffers=if(entity is com.example.sbwhelldiver.entity.MineDispenserEntity)
+            getCurrentModelEntry(pose,entity)?.texture?.let{MineMeshBuffers.wrap(buffers,it)} else null
+        try {super.render(entity,yaw,partial,pose,mineBuffers?:buffers,light)}
+        finally {mineBuffers?.finish()}
         val pod = entity as? AbstractHellpodEntity ?: return
         if(pod is com.example.sbwhelldiver.entity.HmgEmplacementEntity && pod.phase !in listOf(AbstractHellpodEntity.Phase.SPENT,AbstractHellpodEntity.Phase.DONE)) {
             getCurrentModelEntry(pose,entity)?.let {entry ->
@@ -144,13 +150,13 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
         }
         if(pod is com.example.sbwhelldiver.entity.MineDispenserEntity) {
             instance.getBone("spinner")?.rotation?.rotationY(Math.toRadians(pod.interpolatedSpin(partialTicks).toDouble()).toFloat())
-            for(i in 0 until pod.mineCount) instance.getBone("loaded_mine_%02d".format(i))?.visible=i%pod.minesPerPanel>=pod.releasedWaves
+            for(i in 0 until pod.mineCount) instance.getBone(loadedMineBones[i])?.visible=i%pod.minesPerPanel>=pod.releasedWaves
             MinefieldClientScene.checkLinkage(pod,instance)
         }
         if (pod is SentryHellpodEntity && pod.profile.isLaser) {
             // Progress is drawn once in an isolated emissive pass. Poly-mesh
             // bones need zero scale as well as visibility to hide their main pass.
-            for (i in 0 until 20) instance.getBone("ls_heat_%02d".format(i))?.let {
+            for (i in 0 until 20) instance.getBone(laserHeatBones[i])?.let {
                 it.visible=false;it.xScale=0f;it.yScale=0f;it.zScale=0f
             }
         }
@@ -199,7 +205,7 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
             axis.rotateY((180f - entityYaw) * (Math.PI / 180).toFloat())
             val direction = net.minecraft.world.phys.Vec3(axis.x.toDouble(), axis.y.toDouble(), axis.z.toDouble())
             val now = pod.tickCount + partialTicks.toDouble()
-            val previous = turnFrames[pod.uuid]
+            val previous = turnFrames[pod]
             if (previous != null && now >= previous.time) {
                 val angle = Math.toDegrees(kotlin.math.acos(previous.direction.dot(direction).coerceIn(-1.0, 1.0)))
                 val allowed = (pod.turretTurnXSpeed + pod.turretTurnYSpeed) * (now - previous.time + .15) + .3
@@ -209,7 +215,7 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
                     com.example.sbwhelldiver.LOGGER.info("DEPLOYMENT_TURN_RENDER_PASSED {}: first active frame angleStep={} degrees, allowed={}", pod.profile.id, angle, allowed)
                 }
             }
-            turnFrames[pod.uuid] = TurnFrame(now, direction, pod.phase)
+            turnFrames[pod] = TurnFrame(now, direction, pod.phase)
         }
         if (java.lang.Boolean.getBoolean("sbw_helldiver.clientSmokeTest") &&
             pod.phase == AbstractHellpodEntity.Phase.SPENT && pod.phaseAge >= 16) {
@@ -225,7 +231,7 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
             checkedDestroyedPose = true
         }
         if (pod is SentryHellpodEntity && pod.profile.isRocket) {
-            for (round in 1..16) instance.getBone("rocket_round_%02d".format(round))?.visible =
+            for (round in 1..16) instance.getBone(rocketRoundBones[round])?.visible =
                 pod.reloading || pod.phase != AbstractHellpodEntity.Phase.ACTIVE || round > 16 - pod.clipRemaining
         }
         if (java.lang.Boolean.getBoolean("sbw_helldiver.clientSmokeTest") && pod is SentryHellpodEntity &&

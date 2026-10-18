@@ -27,21 +27,30 @@ class AntiPersonnelMineRenderer(context: EntityRendererProvider.Context): Entity
         else -> TEXTURE
     }
     override fun render(entity: AntiPersonnelMineEntity,yaw: Float,partial: Float,pose: PoseStack,buffers: MultiBufferSource,light: Int) {
-        val model=Model.instances[entity.kind] ?: return
+        val distance=entity.position().distanceToSqr(net.minecraft.client.Minecraft.getInstance().gameRenderer.mainCamera.position)
+        val tier=if(distance>400.0)2 else if(distance>100.0)1 else 0
+        val model=if(tier==0)Model.instances[entity.kind] else Model.lods[tier to entity.kind]
+        model?:return
         val texture=getTextureLocation(entity)
         pose.pushPose();pose.mulPose(Axis.YP.rotationDegrees(180f-Mth.rotLerp(partial,entity.yRotO,entity.yRot)));pose.scale(.62f,.62f,.62f)
         for(i in 1..4)model.getBone("trigger_rod_$i")?.visible=entity.armed
-        model.renderToBuffer(pose,buffers,RenderType.entityCutoutNoCull(texture),BedrockModelRenderTypes.polyMeshCutout(texture),light,OverlayTexture.NO_OVERLAY)
+        val meshBuffers=MineMeshBuffers.wrap(buffers,texture)
+        try {model.renderToBuffer(pose,meshBuffers,RenderType.entityCutoutNoCull(texture),BedrockModelRenderTypes.polyMeshCutout(texture),light,OverlayTexture.NO_OVERLAY)}
+        finally {meshBuffers.finish()}
         MinefieldClientScene.renderedMine(entity)
         pose.popPose();super.render(entity,yaw,partial,pose,buffers,light)
     }
     object Model: ResourceManagerReloadListener {
         val instances=mutableMapOf<AntiPersonnelMineEntity.Kind,BakedModelInstance>()
+        val lods=mutableMapOf<Pair<Int,AntiPersonnelMineEntity.Kind>,BakedModelInstance>()
         override fun onResourceManagerReload(resources: ResourceManager) {
-            instances.clear()
+            instances.clear();lods.clear()
             for((kind,name) in listOf(AntiPersonnelMineEntity.Kind.PERSONNEL to "contact_mine",AntiPersonnelMineEntity.Kind.INCENDIARY to "incendiary_mine",AntiPersonnelMineEntity.Kind.GAS to "gas_mine",AntiPersonnelMineEntity.Kind.ANTI_TANK to "anti_tank_mine")) {
                 resources.openAsReader(ResourceLocation(MOD_ID,"models/bedrock/misc/$name.geo.json")).use {
                     instances[kind]=BakedModelInstance(BedrockModelBaker.bake(GsonUtil.CLIENT_GSON.fromJson(it,BedrockModelPOJO::class.java),BakerOptions.defaults()))
+                }
+                for(tier in 1..2)resources.openAsReader(ResourceLocation(MOD_ID,"models/bedrock/misc/${name}_lod$tier.geo.json")).use {
+                    lods[tier to kind]=BakedModelInstance(BedrockModelBaker.bake(GsonUtil.CLIENT_GSON.fromJson(it,BedrockModelPOJO::class.java),BakerOptions.defaults()))
                 }
             }
         }

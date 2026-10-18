@@ -19,6 +19,34 @@ import kotlin.math.abs
 @GameTestHolder("sbw_helldiver_shield")
 @PrefixGameTestTemplate(false)
 object ShieldGameTests {
+ @JvmStatic @GameTest(template="shield_test",batch="shield_burst_registry",timeoutTicks=20)
+ fun simultaneousNativeRoundsAreAllIntercepted(h:GameTestHelper){
+  val g=setup(h)
+  val rounds=(0 until 20).map{i->ModEntities.SENTRY_BULLET.get().create(h.level)!!.also {
+   it.setPos(g.shieldCenter().add(-20.0,0.0,(i-10)*.025));it.setDamage(1f);it.setCustomGravity(0f)
+   it.shoot(1.0,0.0,0.0,40f,0f);h.level.addFreshEntity(it)
+  }}
+  h.runAtTickTime(2){
+   h.assertTrue(rounds.all {it.isRemoved},"Removing a shielded round skipped another round in the same tick")
+   h.assertTrue(g.shieldHealth in 615f..630f,"Burst interception did not consume the expected shield pool")
+   g.discard();h.succeed()
+  }
+ }
+ @JvmStatic @GameTest(template="shield_test",batch="shield_registry",timeoutTicks=35)
+ fun interceptionTracksJoinedRemovedAndReloadedGenerators(h:GameTestHelper){
+  val first=setup(h)
+  fun arrow(g:ShieldGeneratorEntity)=Arrow(EntityType.ARROW,h.level).also{it.setPos(g.shieldCenter().add(ShieldGeneratorEntity.RADIUS+2,0.0,0.0));it.deltaMovement=Vec3(-4.0,0.0,0.0);h.level.addFreshEntity(it)}
+  val incoming=arrow(first)
+  h.runAtTickTime(2){
+   h.assertTrue(incoming.isRemoved&&first.shieldHealth<640f,"New generator was absent from live shield interception")
+   first.discard();val next=setup(h);val afterReload=arrow(next)
+   h.runAtTickTime(4){
+    h.assertTrue(afterReload.isRemoved&&next.shieldHealth<640f,"Replacement generator was lost after removal of the previous shield")
+    next.discard();val free=arrow(next)
+    h.runAtTickTime(6){h.assertTrue(!free.isRemoved,"Removed shield still intercepted a projectile");free.discard();h.succeed()}
+   }
+  }
+ }
  private fun setup(h:GameTestHelper,age:Int=0):ShieldGeneratorEntity {
   val pos=h.absolutePos(BlockPos(16,240,16));h.level.getChunk(pos)
   val at=Vec3(pos.x+.5,pos.y.toDouble(),pos.z+.5)

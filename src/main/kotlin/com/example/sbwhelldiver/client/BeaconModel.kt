@@ -59,24 +59,36 @@ object BeaconModel : ResourceManagerReloadListener {
         val triangles = if (openingSeconds == null) closed else if (openingSeconds >= 1) active
             else deploy.getOrNull((openingSeconds.coerceAtLeast(0f) * 30).toInt()) ?: closed
         val transform = pose.last()
+        val transformedPosition=Vector3f()
+        val transformedNormal=Vector3f()
         for (glowPass in listOf(false, true)) {
           val type = if (glowPass && activated) RenderType.eyes(WHITE)
               else RenderType.entityCutoutNoCull(if (glowPass) WHITE else TEXTURE)
           val consumer = buffers.getBuffer(type)
+          val bulk=PackedEntityVertices.create(consumer)
           for (triangle in triangles) {
             if (triangle.glow != glowPass) continue
             val r = if (!triangle.glow) 1f else if (activated) ((color shr 16) and 255) / 255f else 0.11f
             val g = if (!triangle.glow) 1f else if (activated) ((color shr 8) and 255) / 255f else 0.15f
             val b = if (!triangle.glow) 1f else if (activated) (color and 255) / 255f else 0.16f
-            for (index in intArrayOf(0, 1, 2, 2)) {
+            transformedNormal.set(triangle.normal).mul(transform.normal())
+            val packedColor=((r*255).toInt() and 255) or (((g*255).toInt() and 255) shl 8) or (((b*255).toInt() and 255) shl 16) or (255 shl 24)
+            for (corner in 0..3) {
+                val index=if(corner==3)2 else corner
                 val position = triangle.positions[index]
                 val uv = triangle.uv[index]
+                if(bulk!=null){
+                    transformedPosition.set(position).mulPosition(transform.pose())
+                    bulk.vertex(transformedPosition.x,transformedPosition.y,transformedPosition.z,packedColor,uv[0],uv[1],OverlayTexture.NO_OVERLAY,if(triangle.glow&&activated)0xF000F0 else light,transformedNormal.x,transformedNormal.y,transformedNormal.z)
+                    continue
+                }
                 consumer.vertex(transform.pose(), position.x, position.y, position.z).color(r, g, b, 1f)
                     .uv(uv[0], uv[1]).overlayCoords(OverlayTexture.NO_OVERLAY)
                     .uv2(if (triangle.glow && activated) 0xF000F0 else light)
                     .normal(transform.normal(), triangle.normal.x, triangle.normal.y, triangle.normal.z).endVertex()
             }
           }
+          bulk?.flush()
         }
     }
 }
