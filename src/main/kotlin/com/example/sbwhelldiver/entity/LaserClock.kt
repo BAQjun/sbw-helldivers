@@ -13,13 +13,15 @@ class LaserClock {
         private set
     var fuseLeft = 0
         private set
+    private var damageTick = 0
+    val damagePulse get() = state == State.FIRING && damageTick == 1
     val alarm get() = heat >= WARNING_HEAT - 1e-6
     val destroyNow get() = state == State.OVERLOADED && fuseLeft <= 0
 
     fun advance(hasTarget: Boolean, aligned: Boolean, coolingPerSecond: Double): Boolean {
         if (state == State.OVERLOADED) { fuseLeft--; return false }
         if (!hasTarget) {
-            state = State.OFF; warmupLeft = 0
+            state = State.OFF; warmupLeft = 0; damageTick = 0
             heat = (heat - coolingPerSecond / 20.0).coerceAtLeast(0.0)
             return false
         }
@@ -39,21 +41,26 @@ class LaserClock {
             heat = MAX_HEAT; state = State.OVERLOADED; fuseLeft = FUSE_TICKS
             return false
         }
+        damageTick = damageTick % DAMAGE_INTERVAL_TICKS + 1
         return true
     }
-    fun stop() { if (state != State.OVERLOADED) { state = State.OFF; warmupLeft = 0 } }
+    fun stop() { if (state != State.OVERLOADED) { state = State.OFF; warmupLeft = 0; damageTick = 0 } }
     fun save(tag: CompoundTag) {
         tag.putInt("LaserState",state.ordinal);tag.putDouble("LaserHeat",heat)
         tag.putInt("LaserWarmup",warmupLeft);tag.putInt("LaserFuse",fuseLeft)
+        tag.putInt("LaserDamageTick",damageTick)
     }
     fun restore(tag: CompoundTag) {
         state = State.entries[tag.getInt("LaserState").coerceIn(0,State.entries.lastIndex)]
         heat = tag.getDouble("LaserHeat").takeIf { it.isFinite() }?.coerceIn(0.0,MAX_HEAT) ?: 0.0
         warmupLeft = tag.getInt("LaserWarmup").coerceIn(0,WARMUP_TICKS)
         fuseLeft = tag.getInt("LaserFuse").coerceIn(0,FUSE_TICKS)
+        damageTick = tag.getInt("LaserDamageTick").coerceIn(0,DAMAGE_INTERVAL_TICKS)
         if (heat >= MAX_HEAT - 1e-6 && state != State.OVERLOADED) { state=State.OVERLOADED;fuseLeft=FUSE_TICKS }
     }
     companion object {
+        const val DAMAGE_INTERVAL_TICKS = 5
+        const val DIRECT_DAMAGE = 7.5f
         const val WARMUP_TICKS = 10
         const val FUSE_TICKS = 20
         const val MAX_HEAT = 250.0

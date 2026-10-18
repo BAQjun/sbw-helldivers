@@ -388,7 +388,7 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
         val hit = LaserBeam.trace(this,origin,direction)
         entityData.set(DATA_LASER_BACKOFF,muzzle.distanceTo(origin).toFloat())
         entityData.set(DATA_LASER_LENGTH,origin.distanceTo(hit.end).toFloat())
-        LaserBeam.fire(this,hit)
+        LaserBeam.fire(this,hit,laserClock.damagePulse)
         markFired()
     }
 

@@ -29,11 +29,11 @@ object LaserBeam {
         }
         return Trace(nearest,victim,mine)
     }
-    fun fire(sentry: SentryHellpodEntity, hit: Trace) {
+    fun fire(sentry: SentryHellpodEntity, hit: Trace, damagePulse: Boolean) {
         hit.mine?.detonate()
         hit.target?.let {
-            // The dedicated damage type bypasses the vanilla hit cooldown: 2/tick = 40/s.
-            it.hurt(FlameDamage.source(it,"laser_beam",sentry),2f)
+            // Keep tracing and ignition continuous; direct damage pulses every five ticks.
+            if (damagePulse) it.hurt(FlameDamage.source(it,"laser_beam",sentry),LaserClock.DIRECT_DAMAGE)
             FlameDamage.ignite(it,sentry)
         }
     }

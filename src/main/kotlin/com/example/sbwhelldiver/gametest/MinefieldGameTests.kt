@@ -119,7 +119,7 @@ object MinefieldGameTests {
         val target=mine(h,p.add(0.0,0.0,12.0),false)
         val hit=LaserBeam.trace(laser,p.add(-2.0,.09,12.0),Vec3(1.0,0.0,0.0))
         h.assertTrue(hit.mine==target,"Laser ray did not intersect the mine")
-        LaserBeam.fire(laser,hit);h.assertTrue(target.isRemoved,"Laser hit did not detonate mine")
+        LaserBeam.fire(laser,hit,false);h.assertTrue(target.isRemoved,"Laser hit did not detonate mine")
         arrow.discard();laser.discard();h.succeed()
     }
     @JvmStatic @GameTest(template="sentry_test",batch="mine_landing",timeoutTicks=200)

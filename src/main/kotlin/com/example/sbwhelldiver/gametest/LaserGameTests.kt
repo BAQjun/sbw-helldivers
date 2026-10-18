@@ -51,9 +51,29 @@ object LaserGameTests {
         h.succeed()
     }
 
-    @JvmStatic @GameTest(template="sentry_test",batch="laser",timeoutTicks=80)
+    @JvmStatic @GameTest(template="sentry_test",batch="laser",timeoutTicks=10)
+    fun damageCadenceSurvivesSaveAndRestartsAfterWarmup(h: GameTestHelper) {
+        val clock=LaserClock()
+        repeat(10) { h.assertTrue(!clock.advance(true,true,5.0) && !clock.damagePulse,"Damage during warmup") }
+        repeat(3) { t ->
+            h.assertTrue(clock.advance(true,true,5.0),"Beam failed to start")
+            h.assertTrue(clock.damagePulse==(t==0),"First pulse or spacing is wrong")
+        }
+        val tag=CompoundTag();clock.save(tag);val loaded=LaserClock();loaded.restore(tag)
+        repeat(12) {
+            clock.advance(true,false,5.0);loaded.advance(true,false,5.0)
+            h.assertTrue(clock.damagePulse==loaded.damagePulse,"Save/load changed the direct damage cadence")
+        }
+        loaded.stop();h.assertTrue(!loaded.damagePulse,"Stopped beam retained a damage pulse")
+        repeat(10) { h.assertTrue(!loaded.advance(true,true,5.0) && !loaded.damagePulse,"Restart bypassed warmup") }
+        h.assertTrue(loaded.advance(true,true,5.0) && loaded.damagePulse,"Fresh beam did not start with a damage pulse")
+        loaded.advance(false,false,5.0);h.assertTrue(!loaded.damagePulse,"Target loss retained a pulse")
+        h.succeed()
+    }
+
+    @JvmStatic @GameTest(template="sentry_test",batch="laser",timeoutTicks=200)
     fun exactBeamDamageBurnOnlyAndBlockOcclusion(h: GameTestHelper) {
-        val bp=h.absolutePos(BlockPos(15,300,4096));val start=Vec3(bp.x+.5,bp.y+1.0,bp.z+.5)
+        val bp=h.absolutePos(BlockPos(15,150,0));val start=Vec3(bp.x+.5,bp.y+1.0,bp.z+.5)
         for(cx in ((bp.x-2) shr 4)..((bp.x+2) shr 4))for(cz in (bp.z shr 4)..((bp.z+202) shr 4)) {
             h.level.setChunkForced(cx,cz,true);h.level.getChunk(cx,cz)
         }
@@ -63,22 +83,31 @@ object LaserGameTests {
             it.isNoAi=true;it.setPersistenceRequired();it.isNoGravity=true;it.setPos(start.add(0.0,-.5,150.0))
             it.getAttribute(Attributes.MAX_HEALTH)!!.baseValue=500.0;it.health=500f
             it.getAttribute(Attributes.ARMOR)!!.baseValue=30.0
-            it.addEffect(MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,1000,4));h.level.addFreshEntity(it)
+            it.addEffect(MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,1000,4))
         }
-        // Entity sections may still be loading on a fresh server. Run the ray
-        // check only once the actual target is registered in the world lookup.
+        // Wait before inserting the victim: a newly forced chunk may still be
+        // reading its entity section. Retire actors from an interrupted run.
         h.startSequence().thenWaitUntil {
-            h.assertTrue(h.level.getEntity(mob.id)===mob,"Beam victim section is still loading")
+            h.assertTrue(h.level.areEntitiesLoaded(net.minecraft.world.level.ChunkPos.asLong(bp.x shr 4,(bp.z+150) shr 4)),"Beam victim section is still loading")
         }.thenExecute {
+            h.level.getEntitiesOfClass(net.minecraft.world.entity.monster.Husk::class.java,
+                net.minecraft.world.phys.AABB(start,start.add(0.0,0.0,200.0)).inflate(2.0)).forEach { it.discard() }
+            h.assertTrue(h.level.addFreshEntity(mob) && h.level.getEntity(mob.id)===mob,"Beam victim failed to register")
             sentry.setPos(start)
             val motion=Vec3(.13,.07,-.09);mob.deltaMovement=motion;mob.hasImpulse=false
             val direction=Vec3(0.0,0.0,1.0)
-            repeat(20) { LaserBeam.fire(sentry,LaserBeam.trace(sentry,start,direction)) }
-            h.assertTrue(mob.health==460f,"Beam must deal forty direct damage per second through armor/cooldown")
+            val clock=LaserClock()
+            repeat(10) { clock.advance(true,true,5.0) }
+            repeat(20) { tick ->
+                h.assertTrue(clock.advance(true,true,5.0),"Continuous beam stopped unexpectedly")
+                LaserBeam.fire(sentry,LaserBeam.trace(sentry,start,direction),clock.damagePulse)
+                h.assertTrue(mob.health==500f-7.5f*(tick/5+1),"Direct damage must be 7.5 every five ticks, including between pulses: $tick")
+            }
+            h.assertTrue(mob.health==470f,"Beam must deal thirty direct damage per second through armor/cooldown")
             h.assertTrue(mob.getEffect(ModEffects.BURNING.get())?.duration==60 && !mob.hasEffect(ModEffects.PANIC.get()),"Laser burn duration or panic exclusion is wrong")
             h.assertTrue(mob.deltaMovement==motion && !mob.hasImpulse,"Beam added a physical hit impulse")
             mob.tickCount=20;ModEffects.BURNING.get().applyEffectTick(mob,0)
-            h.assertTrue(mob.health==444f,"Custom burn is not sixteen damage per second")
+            h.assertTrue(mob.health==454f,"Custom burn is not sixteen damage per second")
             h.assertTrue(mob.deltaMovement==motion && !mob.hasImpulse,"Burning added a physical hit impulse")
             mob.invulnerableTime=0
             mob.removeEffect(MobEffects.DAMAGE_RESISTANCE)
