@@ -137,8 +137,15 @@ class AntiPersonnelMineEntity(type: EntityType<AntiPersonnelMineEntity>,level: L
             Kind.GAS -> MortarFieldEntity.create(world,position(),MortarFieldEntity.Kind.GAS,kind.fieldRadius,true)
             else -> Unit
         }
-        if(kind!=Kind.GAS)world.sendParticles(ParticleTypes.EXPLOSION_EMITTER,at.x,at.y,at.z,1,0.0,0.0,0.0,0.0)
-        world.sendParticles(ParticleTypes.SMOKE,at.x,at.y,at.z,20,.8,.4,.8,.08)
+        // The normal particle packet applies a 32 m camera cutoff, even for an
+        // explosion emitter. An elevated or detached camera can see the mine
+        // and its damage while that packet silently drops the entire blast.
+        // Keep the original particle counts, bounded to the mine's visibility
+        // range, and let the renderer show the event from aerial viewpoints.
+        for(viewer in world.players())if(viewer.distanceToSqr(at)<=RENDER_DISTANCE*RENDER_DISTANCE){
+            if(kind!=Kind.GAS)world.sendParticles(viewer,ParticleTypes.EXPLOSION_EMITTER,true,at.x,at.y,at.z,1,0.0,0.0,0.0,0.0)
+            world.sendParticles(viewer,ParticleTypes.SMOKE,true,at.x,at.y,at.z,20,.8,.4,.8,.08)
+        }
         // Minefield trigger event and ExplosionSettings blast event are distinct.
         play("sfx_ap_mine_trigger_1")
         play(when(kind) { Kind.GAS -> "sfx_gas_mine_release"; Kind.INCENDIARY -> "sfx_incendiary_mine_explosion"; else -> "sfx_ap_mine_explosion_1" })

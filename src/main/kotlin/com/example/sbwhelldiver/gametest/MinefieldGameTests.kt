@@ -27,7 +27,11 @@ object MinefieldGameTests {
         }
         val at=Vec3(p.x+.5,p.y.toDouble(),p.z+.5)
         // Failed test fixtures above the template are outside its normal cleanup volume.
-        h.level.getEntities(null,AABB(at,at).inflate(30.0)) { it is MineDispenserEntity || it is AntiPersonnelMineEntity || it is HellpodCapEntity }.forEach { it.discard() }
+        h.level.getEntities(null,AABB(at,at).inflate(30.0)) {
+            it is AbstractHellpodEntity || it is AntiPersonnelMineEntity || it is HellpodCapEntity ||
+            it is net.minecraft.world.entity.Mob || it is ItemEntity || it is net.minecraft.world.entity.ExperienceOrb ||
+            it is net.minecraft.world.entity.projectile.Projectile || it is GroundFireEntity || it is MortarFieldEntity
+        }.forEach { it.discard() }
         return at
     }
     private fun mine(h: GameTestHelper,p: Vec3,armed: Boolean=true): AntiPersonnelMineEntity {
@@ -186,7 +190,7 @@ object MinefieldGameTests {
             h.level.getEntitiesOfClass(AntiPersonnelMineEntity::class.java,AABB(p,p).inflate(30.0)) { it.dispenserId==d.uuid }.forEach { if(it !in released)released.add(it) }
             released.filter { !it.isRemoved }.forEach { it.tick() }
         }
-        h.assertTrue(released.size==48 && released.all { !it.isRemoved && it.armed && it.settled },"The reference field did not deploy intact")
+        h.assertTrue(released.size==48 && released.all { !it.isRemoved && it.armed && it.settled },"The reference field did not deploy intact: released=${released.size}, alive=${released.count{!it.isRemoved}}, armed=${released.count{it.armed}}, settled=${released.count{it.settled}}")
         val positions=released.map { it.position() };released.forEach { it.discard() };d.discard()
         val detonated=mutableListOf<Int>()
         fun trial(index: Int) {
