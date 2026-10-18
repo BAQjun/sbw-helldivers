@@ -8,8 +8,8 @@ width=geometry['description']['texture_width'];height=geometry['description']['t
 meshes=[]
 for bone in geometry['bones']:
     name=bone['name']
-    if not (name.startswith('laser_displays_') or name.startswith('laser_heat_') and name[11:].isdigit()):continue
-    mesh=bone['poly_mesh'];segment=-1 if name.startswith('laser_displays_') else int(name[11:])
+    if not (name.startswith('ls_displays_') or name.startswith('ls_heat_') and name[8:].isdigit()):continue
+    mesh=bone['poly_mesh'];segment=-1 if name.startswith('ls_displays_') else int(name[8:])
     out={'segment':segment,'positions':mesh['positions'],
          'uvs':[[p[0]/width,1-p[1]/height] for p in mesh['uvs']],
          'faces':[[[v[0],v[2]] for v in f[:3]] for f in mesh['polys']]}

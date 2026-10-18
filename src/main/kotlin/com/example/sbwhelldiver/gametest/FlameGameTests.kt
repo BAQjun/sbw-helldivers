@@ -110,6 +110,8 @@ object FlameGameTests {
         val c=FlameClock();val shots=mutableListOf<Long>()
         for(t in 0L..119L)if(c.advance(t,true,true,900))shots.add(t)
         h.assertTrue(shots.first()==20L && shots.zipWithNext().all { it.second-it.first==5L },"Ignition/cadence incorrect: $shots")
+        h.assertTrue(shots.count { it in 20L..39L }*FlameClock.DIRECT_DAMAGE_PER_JET==10f,"Direct stream damage must be ten per second")
+        h.assertTrue(shots.count { it in 20L..39L }*FlameClock.AMMO_PER_JET==8,"Fuel consumption must remain eight per second")
         val saved=CompoundTag();c.save(saved,120);val restored=FlameClock();restored.restore(saved,1000)
         h.assertTrue(!restored.advance(1000,false,false,900) && restored.state==FlameClock.State.READY,"Idle loses ignition")
         h.assertTrue(restored.advance(1001,true,true,900),"Resuming during idle incurred a second ignition")
@@ -134,7 +136,7 @@ object FlameGameTests {
         val motion=Vec3(-.07,.05,.12);v.deltaMovement=motion;v.hasImpulse=false
         repeat(4) { FlameDamage.hit(v,sentry) }
         h.assertTrue(v.deltaMovement==motion && !v.hasImpulse,"Flame jets added a physical hit impulse")
-        h.assertTrue(v.health==196f,"One-damage jets were lost to the native hit cooldown/armor: ${v.health}")
+        h.assertTrue(v.health==190f,"2.5-damage jets were lost to the native hit cooldown/armor: ${v.health}")
         h.assertTrue(v.getEffect(ModEffects.BURNING.get())?.duration==60 && v.getEffect(ModEffects.PANIC.get())?.duration==20,"Wrong burn/panic durations")
         h.assertTrue(abs(v.getAttributeValue(Attributes.MOVEMENT_SPEED)-speed*.75)<1e-6,"Panic is not 25 percent slow")
         val other=mob(h,p.add(2.0,0.0,0.0));v.target=other
@@ -163,11 +165,11 @@ object FlameGameTests {
         val ray=h.level.clip(net.minecraft.world.level.ClipContext(p.add(0.0,1.0,0.0),p.add(0.0,1.0,35.0),net.minecraft.world.level.ClipContext.Block.COLLIDER,net.minecraft.world.level.ClipContext.Fluid.NONE,sentry))
         val query=h.level.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity::class.java,net.minecraft.world.phys.AABB(p.add(0.0,1.0,0.0),ray.location).inflate(.3))
         FlameJet.spray(h.level,sentry,p.add(0.0,1.0,0.0),Vec3(0.0,0.0,1.0))
-        h.assertTrue(near.health==199f && far.health==200f,"Jet range is not 35 blocks: ${near.health}/${far.health}, p=$p ray=${ray.type}/${ray.location}, query=${query.map { it.position() }}, nearClip=${near.boundingBox.inflate(.3).clip(p.add(0.0,1.0,0.0),ray.location)}")
-        h.assertTrue(spread.health==199f && outside.health==200f,"Spread damage does not match the visible expanding jet")
+        h.assertTrue(near.health==197.5f && far.health==200f,"Jet range is not 35 blocks: ${near.health}/${far.health}, p=$p ray=${ray.type}/${ray.location}, query=${query.map { it.position() }}, nearClip=${near.boundingBox.inflate(.3).clip(p.add(0.0,1.0,0.0),ray.location)}")
+        h.assertTrue(spread.health==197.5f && outside.health==200f,"Spread damage does not match the visible expanding jet")
         for(dx in -1..1)for(y in 0..2)h.level.setBlock(BlockPos.containing(p.add(dx.toDouble(),y.toDouble(),4.0)),Blocks.BEDROCK.defaultBlockState(),2)
         FlameJet.spray(h.level,sentry,p.add(0.0,1.0,0.0),Vec3(0.0,0.0,1.0))
-        h.assertTrue(near.health==199f,"Flames burned through a wall")
+        h.assertTrue(near.health==197.5f,"Flames burned through a wall")
         val ground=p.add(5.0,0.0,0.0);val stepping=mob(h,ground)
         val support=BlockPos.containing(ground).below();val previousSupport=h.level.getBlockState(support)
         h.level.setBlock(support,Blocks.STONE.defaultBlockState(),2)

@@ -44,6 +44,7 @@ class FlameClock {
     companion object {
         const val IGNITION_TICKS = 20
         const val IDLE_TICKS = 240
+        const val DIRECT_DAMAGE_PER_JET = 2.5f
         const val JET_INTERVAL = 5
         const val AMMO_PER_JET = 2
         const val RANGE = 35.0

@@ -150,7 +150,7 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
         if (pod is SentryHellpodEntity && pod.profile.isLaser) {
             // Progress is drawn once in an isolated emissive pass. Poly-mesh
             // bones need zero scale as well as visibility to hide their main pass.
-            for (i in 0 until 20) instance.getBone("laser_heat_%02d".format(i))?.let {
+            for (i in 0 until 20) instance.getBone("ls_heat_%02d".format(i))?.let {
                 it.visible=false;it.xScale=0f;it.yScale=0f;it.zScale=0f
             }
         }

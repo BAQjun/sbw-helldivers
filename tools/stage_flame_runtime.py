@@ -70,7 +70,7 @@ for name,reference in pod_audio.items():
 audio['models'][model]=cues;save(A/'helldivers/audio.json',audio)
 vehicle=load(D/'sbw_helldiver/sbw/vehicles/machine_gun_sentry.json');vehicle.update(ID='sbw_helldiver:flame_sentry',TurretPos=p['turret_pos'],BarrelPos=p['barrel_pos'],TurretTurnSpeed=[7,7])
 vehicle['SeekInfo'].update(MinSeekRange=0,MaxSeekRange=35)
-vehicle['Weapons']['Main'].update(RPM=240,Damage=1,Magazine=900,Spread=0,Gravity=0,SoundInfo={},ShootPos={'Transform':'Barrel','Positions':p['muzzle_offsets'],'Directions':['Barrel']})
+vehicle['Weapons']['Main'].update(RPM=240,Damage=2.5,Magazine=900,Spread=0,Gravity=0,SoundInfo={},ShootPos={'Transform':'Barrel','Positions':p['muzzle_offsets'],'Directions':['Barrel']})
 save(D/'sbw_helldiver/sbw/vehicles/flame_sentry.json',vehicle)
 save(A/'sbw/vehicles/flame_sentry.json',{'Animation':f'sbw_helldiver:animations/bedrock/vehicle/{model}.animation.json','Models':[{'Model':f'sbw_helldiver:models/bedrock/vehicle/{model}.geo.json','Texture':f'sbw_helldiver:textures/bedrock/vehicle/{model}.png'}]})
 for damage in ['flame_jet','sentry_burning']:save(D/f'sbw_helldiver/damage_type/{damage}.json',{'message_id':f'sbw_helldiver.{damage}','scaling':'never','exhaustion':0})

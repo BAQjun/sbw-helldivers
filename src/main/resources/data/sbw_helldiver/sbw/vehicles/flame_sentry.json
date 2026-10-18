@@ -38,7 +38,7 @@
       "RPM": 240,
       "Velocity": 20,
       "Gravity": 0,
-      "Damage": 1,
+      "Damage": 2.5,
       "Spread": 0,
       "Magazine": 900,
       "NormalReloadTime": 0,

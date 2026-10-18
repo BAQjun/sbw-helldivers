@@ -13,7 +13,13 @@ exec(compile(ast.Module(body=[n for n in tree.body if isinstance(n,ast.FunctionD
 transformed,native_nozzle,snapshot=[env[n] for n in ['transformed','native_nozzle','snapshot']]
 old_hashes={str(p.relative_to(A)):hashlib.sha256(p.read_bytes()).hexdigest() for folder in ['models/bedrock/vehicle','textures/bedrock/vehicle','animations/bedrock/vehicle','sbw/vehicles'] for p in (A/folder).glob('*') if 'laser' not in p.name}
 model='laser_hellpod_v1'
-geo=load(W/f'{model}.geo.json');bones={b['name']:b for b in geo['minecraft:geometry'][0]['bones']}
+geo=load(W/f'{model}.geo.json')
+# SBW reserves ^laser.* for native beam emitters; structural meshes must not match.
+rename={b['name']:'ls_'+b['name'][6:] for b in geo['minecraft:geometry'][0]['bones'] if b['name'].startswith('laser_')}
+for b in geo['minecraft:geometry'][0]['bones']:
+    b['name']=rename.get(b['name'],b['name'])
+    if 'parent' in b:b['parent']=rename.get(b['parent'],b['parent'])
+bones={b['name']:b for b in geo['minecraft:geometry'][0]['bones']}
 # Reuse identical attribute entries without changing a single triangle corner value.
 for b in bones.values():
     pm=b.get('poly_mesh')
@@ -29,7 +35,7 @@ for b in bones.values():
     pm['polys']=[[[maps[k][v[k]] for k in range(3)] for v in poly] for poly in pm['polys']]
 anim=load(W/f'{model}.animation.json')
 for a in anim['animations'].values():
-    a['bones']={k:v for k,v in a.get('bones',{}).items() if not k.startswith('laser_heat_')}
+    a['bones']={rename.get(k,k):v for k,v in a.get('bones',{}).items() if not k.startswith(('laser_heat_','ls_heat_'))}
 anim['animations'].pop('animation.laser.heat_preview',None)
 audio=load(A/'helldivers/audio.json');cues={}
 for name,a in anim['animations'].items():
@@ -44,7 +50,11 @@ destroyed=copy.deepcopy(anim['animations']['animation.helldiver.deployed']);dest
 for b,ch in destroyed['bones'].items():
     if b.startswith('pod_iris_'):ch['rotation']={'0.0':[0,-68,0],'0.4':[0,0,0]};ch['scale']={'0.0':[0,1,0],'0.4':[1,1,1]}
 anim['animations']['animation.helldiver.destroyed']=destroyed
-for a in anim['animations'].values():a.setdefault('bones',{})['pod_root']={'position':[0,0,0]}
+for a in anim['animations'].values():
+    a.setdefault('bones',{})['pod_root']={'position':[0,0,0]}
+    # Preserve the separately hidden display segments as runtime bones after
+    # removing the native laser prefix. Their authored pixels use the glow pass.
+    for i in range(20):a['bones'][f'ls_heat_{i:02d}']={'scale':0}
 for name in list(anim['animations']):
     if not name.startswith('animation.'):del anim['animations'][name]
 save(A/f'models/bedrock/vehicle/{model}.geo.json',geo)

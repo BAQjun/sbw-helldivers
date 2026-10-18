@@ -1,6 +1,7 @@
 package com.example.sbwhelldiver.effect
 
 import com.example.sbwhelldiver.MOD_ID
+import com.example.sbwhelldiver.entity.FlameClock
 import com.example.sbwhelldiver.init.ModEffects
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
@@ -25,7 +26,7 @@ object FlameDamage {
         target.remainingFireTicks = maxOf(target.remainingFireTicks,60)
     }
     fun hit(target: LivingEntity, attacker: Entity) {
-        target.hurt(source(target,"flame_jet",attacker),1f)
+        target.hurt(source(target,"flame_jet",attacker),FlameClock.DIRECT_DAMAGE_PER_JET)
         ignite(target,attacker)
         if (target !is Player) target.addEffect(MobEffectInstance(ModEffects.PANIC.get(),20,0,false,true,true))
     }
