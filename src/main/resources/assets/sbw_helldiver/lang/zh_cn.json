@@ -132,5 +132,7 @@
   "commands.sbw_helldiver.drop.unavailable": "%s 无法空投（死亡、旁观者或正在空投）",
   "commands.sbw_helldiver.drop.no_ground": "未找到适合 %s 空投的安全落点",
   "commands.sbw_helldiver.marking.status": "标记功能：%s",
-  "commands.sbw_helldiver.marking.set": "标记功能已设为：%s"
+  "commands.sbw_helldiver.marking.set": "标记功能已设为：%s",
+  "entity.sbw_helldiver.ground_fire": "HD2火焰",
+  "block.sbw_helldiver.sentry_fire": "HD2火焰"
 }

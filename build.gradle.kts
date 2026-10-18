@@ -45,7 +45,7 @@ minecraft {
     // 一条有效条目**，不能只留注释。
 
     runs {
-        configureEach { args("--mixin", "sbw_helldiver.mixins.json") }
+        configureEach { args("--mixin", "sbw_helldiver.mixins.json", "--mixin", "sbw_helldiver.iris.mixins.json") }
         create("gameTestServer") {
             workingDirectory(project.file("run-gametest-flame0313"))
             if(project.hasProperty("flameGameTests"))workingDirectory(project.file("run-gametest-flame0378"))
@@ -346,7 +346,7 @@ tasks.named<Jar>("jar") {
             "Specification-Vendor" to project.property("mod_authors"),
             "Implementation-Title" to project.name,
             "Implementation-Version" to project.version,
-            "MixinConfigs" to "sbw_helldiver.mixins.json",
+            "MixinConfigs" to "sbw_helldiver.mixins.json,sbw_helldiver.iris.mixins.json",
         )
     }
     finalizedBy("reobfJar")

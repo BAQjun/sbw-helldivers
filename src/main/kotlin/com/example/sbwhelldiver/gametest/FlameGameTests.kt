@@ -87,6 +87,7 @@ object FlameGameTests {
         val field=fields().single()
         h.assertTrue(field.radius in 3.0..4.0 && field.remainingTicks==300,"Fuel fire must have a 3-4 m radius and the jet's 15-second lifetime")
         field.tick()
+        h.assertTrue(h.level.getBlockState(inside.blockPosition()).lightEmission==Blocks.FIRE.defaultBlockState().lightEmission,"Ground fire must emit the same block light as vanilla fire")
         h.assertTrue(inside.getEffect(ModEffects.BURNING.get())?.duration==60 && !inside.hasEffect(ModEffects.PANIC.get()),"Fuel fire did not use the same burn as jet ground fire")
         h.assertTrue(!outside.hasEffect(ModEffects.BURNING.get()) && outside.health==200f,"Fuel fire/blast crossed its outer radius")
         val hp=inside.health;inside.invulnerableTime=0;FlameDamage.burn(inside)

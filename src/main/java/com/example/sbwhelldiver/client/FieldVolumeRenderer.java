@@ -35,12 +35,12 @@ public final class FieldVolumeRenderer {
     private static volatile boolean reload;
     private static long frames,events;
     private static int visible;
-    public static String diagnostics(){return "events="+events+" frames="+frames+" fields="+visible+" ready="+isReady()+" depthFormat="+depthFormat;}
+    public static String diagnostics(){return "events="+events+" frames="+frames+" fields="+visible+" ready="+isReady()+" depthFormat="+depthFormat+" "+FlameVolumeGeometry.diagnostics()+" "+FlameSurfaceLighting.diagnostics();}
     public static void requestReload(){reload=true;}
     public static boolean isReady(){return program!=0&&!failed;}
     public static long renderedFrames(){return frames;}
     private static void release(){
-        FieldArcGeometry.release();
+        FieldArcGeometry.release();FlameVolumeGeometry.release();FlameGlow.release();FlameSurfaceLighting.release();
         if(program!=0)glDeleteProgram(program);if(vao!=0)glDeleteVertexArrays(vao);
         if(noise!=0)glDeleteTextures(noise);if(depth!=0)glDeleteTextures(depth);if(depthFbo!=0)glDeleteFramebuffers(depthFbo);
         program=vao=noise=depth=depthFbo=width=height=depthFormat=0;failed=false;reload=false;
@@ -86,7 +86,8 @@ public final class FieldVolumeRenderer {
         var fields=new ArrayList<MortarFieldEntity>();
         for(var entity:mc.level.entitiesForRendering())if(entity instanceof MortarFieldEntity f&&f.isAlive()&&f.distanceToSqr(camera)<128*128)fields.add(f);
         visible=fields.size();
-        if(fields.isEmpty()||(failed&&!reload))return;
+        float[] flames=FlameJetVisual.INSTANCE.volumeInstances(event.getPartialTick(),camera,event.getFrustum());
+        if((fields.isEmpty()&&flames.length==0)||(failed&&!reload))return;
         fields.sort(Comparator.comparingDouble((MortarFieldEntity f)->f.distanceToSqr(camera)).reversed());
         try(var stack=MemoryStack.stackPush()) {
             // Raw GL calls are paired with exact restoration, leaving Mojang's
@@ -104,7 +105,7 @@ public final class FieldVolumeRenderer {
             IntBuffer viewport=stack.mallocInt(4);glGetIntegerv(GL_VIEWPORT,viewport);
             ByteBuffer mask=stack.malloc(4);glGetBooleanv(GL_COLOR_WRITEMASK,mask);
             try {
-                if(Boolean.getBoolean("sbw_helldiver.shaderFieldSmokeTest"))glGetError();
+                if(Boolean.getBoolean("sbw_helldiver.shaderFieldSmokeTest")||Boolean.getBoolean("sbw_helldiver.flameVolumeSmokeTest"))glGetError();
                 if(reload)release();
                 glBindSampler(0,0);glBindSampler(1,0);
                 glActiveTexture(GL_TEXTURE0);initialize();
@@ -154,7 +155,11 @@ public final class FieldVolumeRenderer {
                     glUniform3f(uniform("FogColor"),gas?.48f:.38f,gas?.55f:.60f,gas?.15f:.84f);
                     glDrawArrays(GL_TRIANGLES,0,3);
                 }
-                if(Boolean.getBoolean("sbw_helldiver.shaderFieldSmokeTest")) {
+                if(flames.length>0){
+                    FlameSurfaceLighting.draw(flames,camera,event.getProjectionMatrix(),new Matrix3f(RenderSystem.getInverseViewRotationMatrix()),w,h);
+                    FlameGlow.render(w,h,()->FlameVolumeGeometry.draw(flames,event.getProjectionMatrix(),new Matrix3f(RenderSystem.getInverseViewRotationMatrix()),camera,w,h,(mc.level.getGameTime()+event.getPartialTick())/20f));
+                }
+                if(Boolean.getBoolean("sbw_helldiver.shaderFieldSmokeTest")||Boolean.getBoolean("sbw_helldiver.flameVolumeSmokeTest")) {
                     int error=glGetError();if(error!=GL_NO_ERROR)throw new IllegalStateException("Volume GL error "+error);
                 }
                 frames++;

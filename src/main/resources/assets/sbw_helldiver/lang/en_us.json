@@ -132,5 +132,7 @@
   "commands.sbw_helldiver.drop.unavailable": "%s cannot drop (dead, spectator, or already dropping)",
   "commands.sbw_helldiver.drop.no_ground": "No safe landing surface found for %s",
   "commands.sbw_helldiver.marking.status": "Target marking: %s",
-  "commands.sbw_helldiver.marking.set": "Target marking set to: %s"
+  "commands.sbw_helldiver.marking.set": "Target marking set to: %s",
+  "entity.sbw_helldiver.ground_fire": "HD2 Fire",
+  "block.sbw_helldiver.sentry_fire": "HD2 Fire"
 }
