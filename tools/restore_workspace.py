@@ -1,4 +1,4 @@
-"""Restore exact files from the private workspace archive, without overwriting different files."""
+"""Restore exact files from the unpublished workspace archive, without overwriting different files."""
 from pathlib import Path
 import argparse,json,zipfile,hashlib
 p=argparse.ArgumentParser();p.add_argument('--archive-dir',type=Path,required=True);p.add_argument('--destination',type=Path,required=True);p.add_argument('--prefix',default='');args=p.parse_args()
