@@ -33,7 +33,6 @@ class AntiTankEmplacementEntity(type: EntityType<*>,level: Level): HmgEmplacemen
         val t = (net.minecraft.util.Mth.lerp(partial, previousOpticProgress.toFloat(), opticLowerTicks.toFloat()) / OPTIC_LOWER_TICKS).coerceIn(0f, 1f)
         return OPTIC_STOWED_PITCH * (1f - t*t*(3f - 2f*t))
     }
-    override val ammunitionCapacity get() = 30
     override val needsFirstMountLevelling get() = false
     override val ergonomics get() = 32.5
     override val mechanicalErgonomics get() = 32.5
@@ -46,7 +45,6 @@ class AntiTankEmplacementEntity(type: EntityType<*>,level: Level): HmgEmplacemen
     override val aimSpeedMultiplier get() = .65
     override val minimumClosingSpeed get() = 15.0
     override val aimZoom get() = 4.0
-    override val shotInterval get() = 20
     val mechanicalFeedAge get() = reloadAge
     val isMechanicallyFeeding get() = isFeeding
     override val weaponPivot get() = Vec3(.0298997853,1.415645339,-.160337929)

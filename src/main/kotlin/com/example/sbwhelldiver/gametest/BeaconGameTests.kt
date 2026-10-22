@@ -97,7 +97,7 @@ object BeaconGameTests {
             BeaconData.setItems(stack, listOf(ItemStack(card)))
             def.code.forEach { BeaconInput.accept(player, InteractionHand.MAIN_HAND, UUID.randomUUID(), it) }
             helper.assertTrue(BeaconData.selected(stack) == null, "Forged identity activated a beacon")
-            BeaconInput.accept(player, InteractionHand.MAIN_HAND, identity, Stratagems.UP)
+            BeaconInput.accept(player, InteractionHand.MAIN_HAND, identity, (def.code.first()+1)%4)
             helper.assertTrue(BeaconData.selected(stack) == null, "Invalid prefix activated a beacon")
             def.code.forEach { BeaconInput.accept(player, InteractionHand.MAIN_HAND, identity, it) }
             helper.assertTrue(BeaconData.selected(stack) == def, "Original ${def.id} code failed")

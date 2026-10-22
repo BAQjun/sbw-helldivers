@@ -20,7 +20,7 @@ class EmsMortarShellEntity(type: EntityType<out SmallCannonShellEntity>,level: L
     override fun impact(at: Vec3,destroyBlocks: Boolean) {
         val server=level() as? ServerLevel ?: return
         if (exploded) return
-        SentryExplosion.explode(this,at,1.0,false,genericEffects=false)
+        SentryExplosion.explode(this,at,com.example.sbwhelldiver.config.TurretConfigs.get("ems_mortar_sentry").innerRadius!!.get(),false,genericEffects=false)
         MortarFieldEntity.create(server,at,MortarFieldEntity.Kind.EMS)
     }
 }

@@ -71,7 +71,8 @@ open class MortarShellEntity(type: EntityType<out SmallCannonShellEntity>, level
     // SBW enables projectile interception on small shells; it must use the same dual-radius blast.
     override fun crushProjectile(velocity: Vec3) {}
 
-    protected open fun impact(at: Vec3, destroyBlocks: Boolean) { SentryExplosion.explode(this, at, 3.0, destroyBlocks) }
+    protected open fun impact(at: Vec3, destroyBlocks: Boolean) { SentryExplosion.explode(this, at,
+        com.example.sbwhelldiver.config.TurretConfigs.get("mortar_sentry").innerRadius!!.get(), destroyBlocks) }
 
     override fun causeExplode(vec3: Vec3) { impactPosition = vec3; impact(vec3, hasExplosionDestroy()) }
     override fun afterHitEntity(result: EntityHitResult) {

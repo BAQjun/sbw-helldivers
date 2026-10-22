@@ -84,7 +84,9 @@ object MortarGameTests {
                 helper.assertTrue(shell.position().distanceTo(lockedMuzzle!!)<1e-5,"Fixed barrel changed its launch point during the volley")
                 val saved = net.minecraft.nbt.CompoundTag(); pod.saveWithoutId(saved)
                 val locked = Vec3(saved.getDouble("MortarTargetX"), saved.getDouble("MortarTargetY"), saved.getDouble("MortarTargetZ"))
-                helper.assertTrue(locked.distanceTo(expected)<1e-5,"Four-shot salvo changed its locked center")
+                // The first EntityJoinLevelEvent occurs inside data.shoot(), before the
+                // caller commits the new volley center after a successful native shot.
+                if (rounds.isNotEmpty()) helper.assertTrue(locked.distanceTo(expected)<1e-5,"Four-shot salvo changed its locked center: $locked / $expected")
                 val sampled = Vec3(saved.getDouble("MortarShotX"), saved.getDouble("MortarShotY"), saved.getDouble("MortarShotZ"))
                 helper.assertTrue(sampled.subtract(expected).horizontalDistance()<=10.0,"Sampled mortar impact exceeded its 10m disk")
                 rounds.add(shell);launches[shell.id]=shell.position() to shell.deltaMovement;times.add(helper.level.gameTime)

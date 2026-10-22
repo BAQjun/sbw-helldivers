@@ -76,9 +76,15 @@ object FlameGameTests {
         (victims+listOf(protected,restored)).forEach{it.discard()};h.succeed()
     }
 
-    @JvmStatic @GameTest(template="sentry_test",batch="flame_destruction_fire",timeoutTicks=20)
+    @JvmStatic @GameTest(template="sentry_test",batch="flame_destruction_fire",timeoutTicks=200)
     fun destructionFireMatchesJetAndNormalRecoveryDoesNotIgnite(h:GameTestHelper) {
         val p=origin(h)
+        h.startSequence().thenWaitUntil {
+            for (dx in listOf(-5,5)) for (dz in listOf(-5,5)) {
+                val pos=BlockPos.containing(p.add(dx.toDouble(),0.0,dz.toDouble()))
+                h.assertTrue(h.level.areEntitiesLoaded(net.minecraft.world.level.ChunkPos.asLong(pos.x shr 4,pos.z shr 4)),"Fuel-fire victim section is still loading")
+            }
+        }.thenExecute {
         for(dx in -5..5)for(dz in -5..5)h.level.setBlock(BlockPos.containing(p.add(dx.toDouble(),-1.0,dz.toDouble())),Blocks.STONE.defaultBlockState(),2)
         val pod=deployed(h,p);val inside=mob(h,p.add(2.0,0.0,0.0));val outside=mob(h,p.add(4.6,0.0,0.0))
         pod.hurt(com.atsuishio.superbwarfare.init.ModDamageTypes.causeGunFireDamage(h.level.registryAccess(),null,EntityType.HUSK.create(h.level)!!),10000f)
@@ -103,6 +109,7 @@ object FlameGameTests {
         listOf(pod,inside,outside,recovering,restored).forEach{it.discard()}
         for(dx in -5..5)for(dz in -5..5){val at=BlockPos.containing(p.add(dx.toDouble(),0.0,dz.toDouble()));if(h.level.getBlockState(at).`is`(ModBlocks.SENTRY_FIRE.get()))h.level.removeBlock(at,false)}
         h.succeed()
+        }
     }
 
     @JvmStatic @GameTest(template="sentry_test",batch="flame",timeoutTicks=10)

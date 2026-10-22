@@ -20,7 +20,7 @@ import kotlin.math.*
 
 /** Stationary, player operated. Ammunition and the firing clock are server authoritative. */
 open class HmgEmplacementEntity(type: EntityType<*>, level: Level): AbstractHellpodEntity(type,level) {
-    open val ammunitionCapacity get() = CAPACITY
+    open val ammunitionCapacity get() = turretConfig?.ammunition?.get() ?: CAPACITY
     open val ergonomics get() = 65.0
     open val mechanicalErgonomics get() = 65.0
     open val fireNodePoseLimitDegrees get() = 5.0
@@ -34,7 +34,7 @@ open class HmgEmplacementEntity(type: EntityType<*>, level: Level): AbstractHell
     protected open val singleShotAimRecoil get() = false
     protected open val maximumAimKick get() = 4f
     open val aimZoom get() = 1.5
-    open val shotInterval get() = 2
+    open val shotInterval get() = ceil(1200.0 / (turretConfig?.rpm?.get() ?: 600)).toInt().coerceAtLeast(1)
     protected open val needsFirstMountLevelling get() = true
     val awaitingFirstMount get() = needsFirstMountLevelling && entityData.get(FIRST_MOUNT_START)==Long.MIN_VALUE
     val firstMountAge get() = if(entityData.get(FIRST_MOUNT_START)==Long.MIN_VALUE)0 else (level().gameTime-entityData.get(FIRST_MOUNT_START)).coerceIn(0L,FIRST_MOUNT_TICKS.toLong()).toInt()
@@ -61,6 +61,7 @@ open class HmgEmplacementEntity(type: EntityType<*>, level: Level): AbstractHell
     private var inputAt = -100L
     private var operatorId = -1
     private var nextShot = 0L
+    private var cadenceError = 0.0
     protected var requestedYaw = 0f
     protected var requestedPitch = 0f
     var lastBarrel = -1; private set
@@ -168,12 +169,17 @@ open class HmgEmplacementEntity(type: EntityType<*>, level: Level): AbstractHell
         entityData.set(AMMO,ammoRemaining-1);entityData.set(LAST_SHOT,server.gameTime);markFired();nextShot=server.gameTime+nextShotDelayTicks()
         if(ammoRemaining==0) { trigger=false;if(shouldRetract())enterPhase(Phase.RETRACTING) }
     }
-    protected open fun nextShotDelayTicks() = shotInterval
+    protected open fun nextShotDelayTicks(): Int {
+        val interval = 1200.0 / (turretConfig?.rpm?.get() ?: 600)
+        val delay = ceil(interval - cadenceError - 1e-9).toInt().coerceAtLeast(1)
+        cadenceError = (cadenceError + delay - interval).coerceIn(0.0, .999999999)
+        return delay
+    }
     protected open fun fireRound(server: ServerLevel,player: Player): Boolean {
         val barrel=shotSerial and 1
         val muzzle=muzzlePosition(barrel);val direction=firingDirection(barrel)
         val bullet=ModEntities.SENTRY_BULLET.get().create(server) as? SentryBulletEntity ?: return false
-        bullet.owner=player;bullet.setPos(muzzle);bullet.setDamage(DAMAGE);bullet.setCustomGravity(.01f)
+        bullet.owner=player;bullet.setPos(muzzle);bullet.setDamage(turretConfig?.damage?.get()?.toFloat() ?: DAMAGE);bullet.setCustomGravity(.01f)
         bullet.shoot(direction.x,direction.y,direction.z,12f,.12f)
         if(!server.addFreshEntity(bullet))return false
         lastBarrel=barrel;return true
@@ -232,7 +238,7 @@ open class HmgEmplacementEntity(type: EntityType<*>, level: Level): AbstractHell
         val delta=effectiveAimTarget(barrel,partial).subtract(muzzlePosition(barrel,partial))
         return if(delta.lengthSqr()<1e-8)limitedFiringDirection(barrel,partial) else delta.normalize()
     }
-    override fun shouldRetract() = ammoRemaining<=0 && (!waitForManualDismount || passengers.isEmpty())
+    override fun shouldRetract() = lifetimeExpired() || (ammoRemaining<=0 && (!waitForManualDismount || passengers.isEmpty()))
     override fun onRetracting() { trigger=false;operatorId=-1;ejectPassengers() }
     open fun interpolatedYaw(partial: Float) = previousWeaponYaw+Mth.wrapDegrees(weaponYaw-previousWeaponYaw)*partial
     open fun interpolatedPitch(partial: Float) = Mth.lerp(partial,previousWeaponPitch,weaponPitch)
@@ -281,7 +287,7 @@ open class HmgEmplacementEntity(type: EntityType<*>, level: Level): AbstractHell
             // Like other deployed sentries, the operator may damage their own emplacement.
             lastDamageSource=source;lastDamageStamp=level().gameTime
             source.entity?.let { lastAttackerUUID=it.stringUUID }
-            val computed=if(explosion)amount*SentryHellpodEntity.EXPLOSION_MULTIPLIER
+            val computed=if(explosion)amount*(1.0-(turretConfig?.explosionResistance?.get() ?: .5)).toFloat()
                 else getDamageModifier().compute(this,source,amount)
             val before=health
             onHurt(computed,source.entity,true)
@@ -299,6 +305,7 @@ open class HmgEmplacementEntity(type: EntityType<*>, level: Level): AbstractHell
     }
     override fun addAdditionalSaveData(tag: CompoundTag) {
         super.addAdditionalSaveData(tag);tag.putInt("HmgAmmo",ammoRemaining)
+        tag.putDouble("HmgCadenceError",cadenceError)
         tag.putFloat("HmgYaw",weaponYaw);tag.putFloat("HmgPitch",weaponPitch)
         tag.putBoolean("HmgHasBeenMounted",!awaitingFirstMount)
         tag.putInt("HmgFirstMountTicksRemaining",if(isFirstMountLevelling)FIRST_MOUNT_TICKS-firstMountAge else 0)
@@ -309,6 +316,8 @@ open class HmgEmplacementEntity(type: EntityType<*>, level: Level): AbstractHell
     }
     override fun readAdditionalSaveData(tag: CompoundTag) {
         super.readAdditionalSaveData(tag);entityData.set(AMMO,if(tag.contains("HmgAmmo"))tag.getInt("HmgAmmo").coerceIn(0,ammunitionCapacity) else ammunitionCapacity)
+        cadenceError=tag.getDouble("HmgCadenceError").takeIf {it.isFinite()}?.coerceIn(0.0,.999999999) ?: 0.0
+        if (health > getMaxHealth()) health=getMaxHealth()
         turretAimYaw=tag.getFloat("HmgYaw").takeIf{it.isFinite()} ?: yRot
         turretAimPitch=(tag.getFloat("HmgPitch").takeIf{it.isFinite()} ?: 0f).coerceIn(-65f,75f)
         previousWeaponYaw=weaponYaw;previousWeaponPitch=weaponPitch

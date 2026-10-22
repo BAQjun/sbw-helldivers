@@ -35,7 +35,12 @@ object FriendlyFireGameTests {
         owner.setPos(p.x.toDouble(),p.y.toDouble(),p.z+20.0)
         other.setPos(p.x+20.0,p.y.toDouble(),p.z.toDouble())
         helper.level.addFreshEntity(owner)
-        val oldPlayers = HelldiversConfig.attackPlayers.get()
+        // Avoid autosave/file-watcher races when temporarily toggling a SERVER value.
+        val configField = net.minecraftforge.common.ForgeConfigSpec::class.java.getDeclaredField("childConfig").also { it.isAccessible=true }
+        val originalConfig = configField.get(HelldiversConfig.SPEC) as com.electronwill.nightconfig.core.CommentedConfig
+        val memoryConfig = com.electronwill.nightconfig.core.CommentedConfig.inMemory()
+        memoryConfig.putAll(originalConfig)
+        HelldiversConfig.SPEC.setConfig(memoryConfig)
         HelldiversConfig.attackPlayers.set(true)
         try {
             for (type in listOf(ModEntities.MACHINE_GUN_SENTRY.get(), ModEntities.GATLING_SENTRY.get(),
@@ -51,7 +56,7 @@ object FriendlyFireGameTests {
                 helper.assertTrue(pod.hurt(source,9f) && pod.health == 104f, "Owner's gunfire was rejected or altered")
                 helper.assertTrue(!pod.isWreck, "Nonlethal owner damage destroyed the turret")
             }
-        } finally { HelldiversConfig.attackPlayers.set(oldPlayers); owner.discard() }
+        } finally { HelldiversConfig.SPEC.setConfig(originalConfig); owner.discard() }
         helper.succeed()
     }
 

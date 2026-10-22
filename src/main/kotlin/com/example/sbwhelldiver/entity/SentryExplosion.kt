@@ -35,12 +35,13 @@ object SentryExplosion {
         if (projectile.exploded) return
         projectile.exploded = true
         val outer = projectile.getExplosionRadius().toDouble()
+        val fullDamageRadius = inner.coerceIn(0.0, (outer - 1e-6).coerceAtLeast(0.0))
         val damage = projectile.getExplosionDamage()
         val source = ModDamageTypes.causeProjectileExplosionDamage(level.registryAccess(), projectile, projectile.owner)
-        if (outer > inner && damage > 0) {
+        if (outer > 0 && damage > 0) {
             level.getEntities(projectile, AABB(origin, origin).inflate(outer)) { !it.isRemoved && !it.ignoreExplosion() }
                 .forEach { target ->
-                    val amount = damageAt(distanceToBody(origin, target.boundingBox), damage, inner, outer)
+                    val amount = damageAt(distanceToBody(origin, target.boundingBox), damage, fullDamageRadius, outer)
                     if (amount <= 0f) return@forEach
                     // Each blast and the preceding direct hit must settle independently, as SBW projectiles do.
                     val cooldown = target.invulnerableTime

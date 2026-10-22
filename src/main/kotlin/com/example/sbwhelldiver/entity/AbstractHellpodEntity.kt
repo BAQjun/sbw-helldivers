@@ -24,6 +24,13 @@ abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAi
     enum class Phase { FALLING, IMPACT, DEPLOYING, ACTIVE, RETRACTING, DONE, DESTROYED, SPENT }
 
     val profile get() = AssetCatalog.profile(type)
+    val turretConfig get() = com.example.sbwhelldiver.config.TurretConfigs.forType(type)
+    override fun getMaxHealth(): Float = turretConfig?.maxHealth?.get()?.toFloat() ?: super.getMaxHealth()
+    protected fun lifetimeExpired(): Boolean {
+        val configured = turretConfig?.lifetimeTicks?.get() ?: -1
+        val lifetime = if (configured < 0) HelldiversConfig.effectiveSentryLifetimeTicks() else configured
+        return lifetime > 0 && activeTicks >= lifetime
+    }
     var phase: Phase
         get() = Phase.entries[entityData.get(DATA_PHASE).coerceIn(0, Phase.entries.lastIndex)]
         private set(value) { entityData.set(DATA_PHASE, value.ordinal) }
@@ -267,8 +274,7 @@ abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAi
     protected open fun tickClient() {}
     protected open fun onClientPhaseChanged(next: Phase) {}
     protected open fun shouldRetract(): Boolean {
-        val lifetime = HelldiversConfig.effectiveSentryLifetimeTicks()
-        return lifetime > 0 && activeTicks >= lifetime
+        return lifetimeExpired()
     }
 
     private fun releaseCap() {

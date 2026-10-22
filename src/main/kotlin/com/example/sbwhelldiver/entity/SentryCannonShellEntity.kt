@@ -12,7 +12,8 @@ import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.Vec3
 
 open class SentryCannonShellEntity(type: EntityType<out SmallCannonShellEntity>, level: Level) : SmallCannonShellEntity(type, level) {
-    protected open val innerBlastRadius get() = 2.0
+    protected open val configId get() = "autocannon_sentry"
+    protected open val innerBlastRadius get() = com.example.sbwhelldiver.config.TurretConfigs.get(configId).innerRadius!!.get()
     protected open val explosionParticleType: com.atsuishio.superbwarfare.tools.ParticleTool.ParticleType? get() = null
     init {
         setDamage(70f)
@@ -20,6 +21,10 @@ open class SentryCannonShellEntity(type: EntityType<out SmallCannonShellEntity>,
         setExplosionRadius(5f)
         setHeadShot(1f)
         setLegShot(1f)
+        val settings = com.example.sbwhelldiver.config.TurretConfigs.get(configId)
+        setDamage(settings.damage.get().toFloat())
+        setExplosionDamage(settings.explosionDamage!!.get().toFloat())
+        setExplosionRadius(settings.outerRadius!!.get().toFloat())
     }
 
     private var receivedFullMotion = false

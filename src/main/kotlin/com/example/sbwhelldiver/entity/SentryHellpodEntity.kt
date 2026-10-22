@@ -79,6 +79,24 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
     // Losing aim resets automatic-fire credit, never the cannon's global burst/cooldown.
     private fun resetFireClock() { shotClock.reset(); gatlingEngaged = false }
     private var initializedAmmo = false
+    private var appliedConfigRevision = -1
+    private val configuredAmmo get() = turretConfig?.ammunition?.get() ?: profile.totalAmmo
+    private fun burstInterval() = turretConfig?.burstInterval(profile.burstInterval) ?: profile.burstInterval
+    private fun burstPause() = turretConfig?.burstInterval(profile.burstPause) ?: profile.burstPause
+    private fun applyTurretConfig() {
+        val settings = turretConfig ?: return
+        modifyGunData(WEAPON_NAME) { gun ->
+            settings.applyWeapon(gun)
+            if (initializedAmmo && !profile.isLaser && !profile.isTesla) {
+                gun.ammo.set(gun.ammo.get().coerceIn(0, minOf(gun.get(GunProp.MAGAZINE), configuredAmmo)))
+                reserve = if (profile.isRocket) reserve.coerceIn(0, (configuredAmmo - gun.ammo.get()).coerceAtLeast(0)) else 0
+                entityData.set(DATA_CLIP, gun.ammo.get())
+            }
+        }
+        // Keep saved damage, including negative wreck health; never heal on config reload.
+        if (health > getMaxHealth()) health = getMaxHealth()
+        appliedConfigRevision = com.example.sbwhelldiver.config.TurretConfigs.revision
+    }
     private var reserve = 0
     private var reloadTicksLeft = 0
     private var spinTicks = 0
@@ -111,6 +129,7 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
     }
 
     override fun tick() {
+        if (!level().isClientSide && appliedConfigRevision != com.example.sbwhelldiver.config.TurretConfigs.revision) applyTurretConfig()
         rotorStepped = false
         val profileWreck = !level().isClientSide && phase == Phase.DESTROYED && health <= -getMaxHealth() &&
             java.lang.Boolean.getBoolean("sbw_helldiver.clientSmokeTest")
@@ -143,7 +162,7 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
             lastDamageSource = source
             lastDamageStamp = level().gameTime
             source.entity?.let { lastAttackerUUID = it.stringUUID }
-            val computed = if (explosion) amount * EXPLOSION_MULTIPLIER
+            val computed = if (explosion) amount * (1.0 - (turretConfig?.explosionResistance?.get() ?: .5)).toFloat()
                 else getDamageModifier().compute(this, source, amount)
             onHurt(computed, source.entity, true)
             true
@@ -232,6 +251,7 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
 
     override fun onActivated() {
         if (initializedAmmo) return
+        applyTurretConfig()
         initializedAmmo = true
         burstClock.reset()
         // The active pose starts exactly where the authored unfolding animation ends.
@@ -245,9 +265,9 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
         turretAimYaw = Math.toDegrees(atan2(deployedDirection.x, deployedDirection.z)).toFloat()
         if (profile.isLaser || profile.isTesla) { entityData.set(DATA_CLIP,0); return }
         modifyGunData(WEAPON_NAME) { gun ->
-            val capacity = gun.get(GunProp.MAGAZINE).coerceAtLeast(1).coerceAtMost(profile.totalAmmo.coerceAtLeast(1))
+            val capacity = gun.get(GunProp.MAGAZINE).coerceIn(0, configuredAmmo)
             gun.ammo.set(capacity)
-            reserve = if (profile.isRocket) (profile.totalAmmo - capacity).coerceAtLeast(0) else 0
+            reserve = if (profile.isRocket) (configuredAmmo - capacity).coerceAtLeast(0) else 0
             gun.virtualAmmo.set(0)
             gun.backupAmmoCount.set(0)
             gun.reload.setState(ReloadState.NOT_RELOADING)
@@ -307,7 +327,7 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
         }
         val server = level() as? ServerLevel ?: return
         val shots = if (profile.isGatling) tickRotor(true)
-            else if (profile.isCannon) burstClock.advance(profile.burstSize, profile.burstInterval, profile.burstPause, level().gameTime)
+            else if (profile.isCannon) burstClock.advance(profile.burstSize, burstInterval(), burstPause(), level().gameTime)
             else shotClock.advance(vehicleWeaponRpm(WEAPON_NAME))
         repeat(shots) {
             var fired = false
@@ -459,7 +479,7 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
         // Scatter changes only the round's launch velocity, never the barrel or a shell in flight.
         val shot = MortarBallistics.solve(muzzle,point) ?: run { mortarShotPoint = null; return }
         if (!MortarBallistics.clearPath(server,this,muzzle,shot.velocity,shot.flightTicks)) { mortarShotPoint = null; return }
-        if (burstClock.advance(profile.burstSize,profile.burstInterval,profile.burstPause,server.gameTime) == 0) return
+        if (burstClock.advance(profile.burstSize,burstInterval(),burstPause(),server.gameTime) == 0) return
         var fired = false
         modifyGunData(WEAPON_NAME) { data ->
             data.shootTimer.set(0)
@@ -480,7 +500,7 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
     }
 
     private fun chooseMortarShotPoint(server: ServerLevel, center: Vec3): Vec3 {
-        val scatter = MortarBallistics.scatterPoint(center, random.nextDouble(), random.nextDouble(), profile.mortarScatterRadius)
+        val scatter = MortarBallistics.scatterPoint(center, random.nextDouble(), random.nextDouble(), turretConfig?.scatterRadius?.get() ?: profile.mortarScatterRadius)
         val ground = server.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.OCEAN_FLOOR, floor(scatter.x).toInt(), floor(scatter.z).toInt())
         if (ground <= server.minBuildHeight) return scatter
         val above = Vec3(scatter.x, ground + 1.0, scatter.z)
@@ -511,8 +531,8 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
         ejectedCasingCount++
     }
 
-    private fun seekRange() = data().compute().seekInfo?.maxSeekRange ?: 48.0
-    private fun minRange() = data().compute().seekInfo?.minSeekRange ?: 0.0
+    private fun seekRange() = turretConfig?.range?.get() ?: data().compute().seekInfo?.maxSeekRange ?: 48.0
+    private fun minRange() = (turretConfig?.minimumRange?.get() ?: data().compute().seekInfo?.minSeekRange ?: 0.0).coerceAtMost(seekRange())
     internal fun validTarget(candidate: LivingEntity, marked:Boolean=false): Boolean {
         if (profile.isTesla && !TeslaArc.eligible(candidate)) return false
         if (!candidate.isAlive || candidate.isRemoved || candidate is Player || candidate === owner || candidate.isAlliedTo(this)) return false
@@ -665,6 +685,7 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
     }
     override fun readAdditionalSaveData(tag: CompoundTag) {
         super.readAdditionalSaveData(tag)
+        applyTurretConfig()
         mortarBurstPoint = if (tag.contains("MortarTargetX")) Vec3(tag.getDouble("MortarTargetX"),tag.getDouble("MortarTargetY"),tag.getDouble("MortarTargetZ")) else null
         mortarShotPoint = if (tag.contains("MortarShotX")) Vec3(tag.getDouble("MortarShotX"),tag.getDouble("MortarShotY"),tag.getDouble("MortarShotZ")) else null
         initializedAmmo = tag.getBoolean("SentryInitialized") ||
@@ -678,7 +699,7 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
         }
         val savedCooldown = tag.getDouble("CannonCooldownTicks")
         burstClock.restore(tag.getInt("CannonBurstRemaining").coerceIn(0, (profile.burstSize-1).coerceAtLeast(0)),
-            if (savedCooldown.isFinite()) savedCooldown.coerceIn(0.0, maxOf(profile.burstInterval.toDouble(),profile.burstPause)) else 0.0,
+            if (savedCooldown.isFinite()) savedCooldown.coerceIn(0.0, maxOf(burstInterval(),burstPause())) else 0.0,
             level().gameTime)
         reserve = tag.getInt("SentryReserve")
         reloadTicksLeft = tag.getInt("SentryReloadTicks")
@@ -700,9 +721,9 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
         entityData.set(DATA_RELOAD_START, level().gameTime - (profile.reloadTicks - reloadTicksLeft))
         entityData.set(DATA_RELOAD_AGE, reloadAge)
         modifyGunData(WEAPON_NAME) { gun ->
-            val capacity = min(gun.get(GunProp.MAGAZINE), profile.totalAmmo)
+            val capacity = min(gun.get(GunProp.MAGAZINE), configuredAmmo)
             gun.ammo.set(gun.ammo.get().coerceIn(0, capacity.coerceAtLeast(0)))
-            reserve = if (profile.isRocket) reserve.coerceIn(0, (profile.totalAmmo - gun.ammo.get()).coerceAtLeast(0)) else 0
+            reserve = if (profile.isRocket) reserve.coerceIn(0, (configuredAmmo - gun.ammo.get()).coerceAtLeast(0)) else 0
             entityData.set(DATA_CLIP, gun.ammo.get())
         }
     }

@@ -37,15 +37,11 @@ class GrenadierBattlementEntity(type: EntityType<*>,level: Level): HmgEmplacemen
         super.readAdditionalSaveData(tag)
         setDeploymentHeading(if(tag.contains("GrenadierDeploymentHeading"))tag.getFloat("GrenadierDeploymentHeading").takeIf {it.isFinite()} ?: yRot else yRot)
     }
-    override val ammunitionCapacity get() = 60
     override val ergonomics get() = 25.0
     override val mechanicalErgonomics get() = 25.0
     override val needsFirstMountLevelling get() = false
     override val immediateGameplayAim get()=true
     override val nextBarrel get() = 0
-    override val shotInterval get() = 8
-    // 7.5 ticks per shot, without banking unused firing time or resetting on trigger release.
-    override fun nextShotDelayTicks() = if (shotSerial and 1 == 1) 8 else 7
     override val verticalAimKick get() = .70f
     override val horizontalAimKick get() = .18
     override val weaponPivot get() = Vec3(0.0,1.3831595625,.1192714375)
@@ -117,7 +113,7 @@ class GrenadierBattlementEntity(type: EntityType<*>,level: Level): HmgEmplacemen
         if(!throughSight())return super.getCameraRotation(partial,player,zoom,isFirstPerson)
         return net.minecraft.world.phys.Vec2(interpolatedYaw(partial),interpolatedPitch(partial))
     }
-    override fun shouldRetract() = false
+    override fun shouldRetract() = lifetimeExpired()
     private val panels = mutableListOf<GrenadierWallPanelEntity>()
     override fun remove(reason:net.minecraft.world.entity.Entity.RemovalReason){
         panels.forEach{it.discard()};panels.clear();super.remove(reason)

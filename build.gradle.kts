@@ -64,6 +64,14 @@ minecraft {
             if(project.hasProperty("combatFixGameTests"))workingDirectory(project.file("run-gametest-combat0374"))
             property("forge.enabledGameTestNamespaces", if(project.hasProperty("flameGameTests")) "sbw_helldiver_flame" else if(project.hasProperty("playerDropGameTests")) "sbw_helldiver_drop,sbw_helldiver_marks" else if(project.hasProperty("combatFixGameTests")) "sbw_helldiver_eagle,sbw_helldiver_marks,sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("taczOnlyTests")) "sbw_helldiver_tacz" else if(project.hasProperty("taczCompatTests")) "sbw_helldiver_tacz,sbw_helldiver_shield,sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("eagleGameTests")) "sbw_helldiver_eagle,sbw_helldiver_shield,sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("markGameTests")) "sbw_helldiver_marks,sbw_helldiver_shield,sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("shieldGameTests")) "sbw_helldiver_shield,sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("hmgGameTests")) "sbw_helldiver_hmg,sbw_helldiver_grenadier" else if(project.hasProperty("antiTankGameTests")) "sbw_helldiver_antitank,sbw_helldiver_elemental,sbw_helldiver_minefield" else if(project.hasProperty("elementalGameTests")) "sbw_helldiver_elemental" else if(project.hasProperty("minefieldGameTests")) "sbw_helldiver_minefield" else if(project.hasProperty("teslaGameTests")) "sbw_helldiver_tesla" else if (project.hasProperty("laserGameTests")) "sbw_helldiver_laser" else "${project.property("mod_id")},sbw_helldiver_laser,sbw_helldiver_flame")
             property("forge.logging.console.level", "info")
+            if (project.hasProperty("turretConfigTests")) {
+                workingDirectory(project.file("run-gametest-config0385"))
+                property("forge.enabledGameTestNamespaces", "sbw_helldiver_config")
+            }
+            if (project.hasProperty("turretRegressionTests")) {
+                workingDirectory(project.file("run-gametest-turrets0385"))
+                property("forge.enabledGameTestNamespaces", "sbw_helldiver,sbw_helldiver_laser,sbw_helldiver_flame,sbw_helldiver_tesla,sbw_helldiver_hmg,sbw_helldiver_grenadier")
+            }
             property("mixin.env.remapRefMap", "true")
             property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
             mods {

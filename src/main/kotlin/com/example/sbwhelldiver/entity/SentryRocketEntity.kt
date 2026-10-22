@@ -16,7 +16,8 @@ class SentryRocketEntity(type: EntityType<out SmallRocketEntity>, level: Level) 
         setLegShot(1f)
     }
 
-    override fun causeExplode(vec3: Vec3) = SentryExplosion.explode(this, vec3, 1.0, hasExplosionDestroy())
+    override fun causeExplode(vec3: Vec3) = SentryExplosion.explode(this, vec3,
+        com.example.sbwhelldiver.config.TurretConfigs.get("rocket_sentry").innerRadius!!.get(), hasExplosionDestroy())
     override fun getModelInstance() = ProjectileModelReloadListener.getModel(MODEL)?.createInstance()
 
     companion object {

@@ -233,8 +233,11 @@ object SentryGameTests {
     }
     @JvmStatic @GameTest(template = "sentry_test", timeoutTicks = 300)
     fun detachedCapFallsPersistsAndExpires(helper: GameTestHelper) {
-        for (x in 0..30) for (z in 0..30) helper.setBlock(BlockPos(x, FLOOR, z), Blocks.BEDROCK)
-        val p = helper.absolutePos(BlockPos(15, FLOOR + 1, 15))
+        // Other fixtures place elevated platforms; a drop uses the highest surface.
+        // Keep this cap's landing platform above them, including when reusing a test world.
+        val capFloor = 340
+        for (x in 0..30) for (z in 0..30) helper.setBlock(BlockPos(x, capFloor, z), Blocks.BEDROCK)
+        val p = helper.absolutePos(BlockPos(15, capFloor + 1, 15))
         val pod = ModEntities.SUPPLY_HELLPOD.get().create(helper.level)!!
         pod.moveTo(p.x + 0.5, p.y + 5.0, p.z + 0.5, 0f, 0f)
         helper.level.addFreshEntity(pod)
@@ -272,7 +275,7 @@ object SentryGameTests {
                 }
                 if (lid == cap && lid.isRemoved) {
                     helper.assertTrue(savedOnGround && lid.groundedAge == 40, "Cap expired before its ground lifetime")
-                    helper.assertBlockPresent(Blocks.BEDROCK, BlockPos(15, FLOOR, 15))
+                    helper.assertBlockPresent(Blocks.BEDROCK, BlockPos(15, capFloor, 15))
                     helper.succeed()
                 }
             }
