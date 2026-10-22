@@ -276,7 +276,12 @@ object StratagemClient {
             StratagemCooldownClient.drawIcon(gui, def, panelX + 3, y + 2, partial)
             val status = StratagemCooldownClient.visual(def.id, partial)
             if (status.remaining >= 0 && def.id != "eagle_rearm") {
-                gui.drawString(mc.font, "${status.remaining}", panelX + 21, y + 21, 0xFFF3E9CB.toInt(), true)
+                val uses = status.remaining.toString()
+                val textWidth = mc.font.width(uses)
+                val boxWidth = maxOf(9, textWidth + 3)
+                val boxX = panelX + 31 - boxWidth
+                gui.fill(boxX, y + 20, panelX + 31, y + 31, 0xFFFFFFFF.toInt())
+                gui.drawString(mc.font, uses, boxX + (boxWidth - textWidth) / 2, y + 22, 0xFF202020.toInt(), false)
             }
             val enabled = StratagemCooldownClient.available(def.id) && (visiblePrefix.isEmpty() || def in candidates || selected == def)
             val label = Component.translatable(def.translation).string

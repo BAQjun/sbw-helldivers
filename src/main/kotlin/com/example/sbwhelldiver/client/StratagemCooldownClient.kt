@@ -93,15 +93,34 @@ object StratagemCooldownClient : ResourceManagerReloadListener {
         for (def in Stratagems.definitions + Stratagems.eagleRearm) {
             val resource = manager.getResource(def.icon).orElse(null) ?: continue
             val pixels = resource.open().use(NativeImage::read)
+            // Native icons encode category and ammunition as two independent masks.
+            // Recover their combined coverage so both silhouettes become white.
+            fun rgb(c: Int) = doubleArrayOf((c and 255).toDouble(), (c ushr 8 and 255).toDouble(), (c ushr 16 and 255).toDouble())
+            val background = rgb(pixels.getPixelRGBA(0, 0))
+            val category = rgb(pixels.getPixelRGBA(1, 1))
+            var brightest = pixels.getPixelRGBA(0, 0)
+            var brightness = -1.0
             for (y in 0 until pixels.height) for (x in 0 until pixels.width) {
-                val c = pixels.getPixelRGBA(x,y)
-                val r = c and 255; val g = c ushr 8 and 255; val b = c ushr 16 and 255
-                val l = (r * .2126 + g * .7152 + b * .0722).toInt()
-                // Keep the native cream artwork; remove category colour from the background/border.
-                val border = ((x in 1..2 || x in pixels.width-3..pixels.width-2) && y in 1 until pixels.height-1) ||
-                    ((y in 1..2 || y in pixels.height-3..pixels.height-2) && x in 1 until pixels.width-1)
-                val value = if (border || maxOf(r,g,b) - minOf(r,g,b) < 55 && l > 150) 233 else l
-                pixels.setPixelRGBA(x,y,(c and -0x1000000) or value or (value shl 8) or (value shl 16))
+                val c = pixels.getPixelRGBA(x, y)
+                val v = rgb(c)
+                val l = v[0] * .2126 + v[1] * .7152 + v[2] * .0722
+                if (c ushr 24 != 0 && l > brightness) { brightest = c; brightness = l }
+            }
+            val artwork = rgb(brightest)
+            val a = DoubleArray(3) { category[it] - background[it] }
+            val b = DoubleArray(3) { artwork[it] - background[it] }
+            fun dot(v: DoubleArray, w: DoubleArray) = v.indices.sumOf { v[it] * w[it] }
+            val aa = dot(a, a); val ab = dot(a, b); val bb = dot(b, b)
+            val determinant = aa * bb - ab * ab
+            for (y in 0 until pixels.height) for (x in 0 until pixels.width) {
+                val c = pixels.getPixelRGBA(x, y)
+                val v = rgb(c)
+                val delta = DoubleArray(3) { v[it] - background[it] }
+                val coverage = if (determinant > 1.0)
+                    ((dot(delta, a) * (bb - ab) + dot(delta, b) * (aa - ab)) / determinant).coerceIn(0.0, 1.0)
+                else (dot(delta, b) / bb.coerceAtLeast(1.0)).coerceIn(0.0, 1.0)
+                val value = (96 + 159 * coverage).toInt().coerceIn(96, 255)
+                pixels.setPixelRGBA(x, y, (c and -0x1000000) or value or (value shl 8) or (value shl 16))
             }
             val id = ResourceLocation(MOD_ID,"dynamic/cooldowns/${def.id}")
             textures.register(id, DynamicTexture(pixels)); grey[def.icon] = id
