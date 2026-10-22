@@ -21,7 +21,7 @@
   "hud.sbw_helldiver.stratagems": "已装载战备",
   "hud.sbw_helldiver.empty_slot": "槽位 %s：未装载",
   "hud.sbw_helldiver.ready": "已激活 · 左键投掷",
-  "hud.sbw_helldiver.arrival": "空投抵达：%s 秒",
+  "hud.sbw_helldiver.arrival": "抵达倒计时 %s",
   "key.sbw_helldiver.stratagem": "战备方向输入（按住）",
   "key.categories.sbw_helldiver": "绝地潜兵战备",
   "subtitle.sbw_helldiver.beacon_ready": "信标准备就绪",
@@ -136,5 +136,12 @@
   "entity.sbw_helldiver.ground_fire": "HD2火焰",
   "block.sbw_helldiver.sentry_fire": "HD2火焰",
   "death.attack.sbw_helldiver.hellpod_impact": "%1$s 被空投仓砸扁了",
-  "death.attack.sbw_helldiver.hellpod_impact.player": "%1$s 被空投仓砸扁了"
+  "death.attack.sbw_helldiver.hellpod_impact.player": "%1$s 被空投仓砸扁了",
+  "hud.sbw_helldiver.cooldown": "冷却倒计时 %s",
+  "hud.sbw_helldiver.rearming": "重新武装中 %s",
+  "hud.sbw_helldiver.waiting_beacon": "等待信标落地",
+  "hud.sbw_helldiver.no_uses": "次数耗尽：等待重新武装",
+  "hud.sbw_helldiver.eagle_busy": "飞鹰执行任务中",
+  "item.sbw_helldiver.eagle_rearm_stratagem": "重新武装“飞鹰”",
+  "commands.sbw_helldiver.cooldown.set": "%s 的战备冷却：%s"
 }

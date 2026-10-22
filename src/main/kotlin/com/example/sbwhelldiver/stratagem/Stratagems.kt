@@ -48,6 +48,9 @@ object Stratagems {
         StratagemDefinition("anti_tank_minefield", listOf(DOWN, LEFT, UP, UP)),
         StratagemDefinition("tesla_tower", listOf(DOWN, UP, RIGHT, UP, LEFT, RIGHT)),
     )
+    val eagleRearm = StratagemDefinition("eagle_rearm", listOf(UP, UP, LEFT, UP, RIGHT))
+    fun commands(loadout: List<StratagemDefinition?>, hasEagles: Boolean = loadout.any { it?.category == StratagemCategory.RED }): List<StratagemDefinition?> =
+        if (hasEagles) listOf(eagleRearm) + loadout else loadout
     fun get(id: String) = definitions.firstOrNull { it.id == id }
     fun fromItem(stack: ItemStack) = (stack.item as? StratagemItem)?.dropEntityId?.path?.let(::get)
     fun matching(loadout: List<StratagemDefinition?>, prefix: List<Int>) = loadout.filterNotNull().filter {

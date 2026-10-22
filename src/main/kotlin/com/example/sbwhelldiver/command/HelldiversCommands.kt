@@ -19,6 +19,11 @@ import net.minecraftforge.fml.common.Mod
 object HelldiversCommands {
  @SubscribeEvent fun register(e:RegisterCommandsEvent){
   e.dispatcher.register(Commands.literal("helldivers").requires{it.hasPermission(2)}
+   .then(Commands.literal("cooldown").executes { c -> cooldown(c, listOf(c.source.playerOrException), null) }
+    .then(Commands.argument("players",EntityArgument.players()).executes { c -> cooldown(c,EntityArgument.getPlayers(c,"players"),null) })
+    .then(Commands.literal("set").then(Commands.argument("enabled",BoolArgumentType.bool())
+     .executes { c -> cooldown(c,listOf(c.source.playerOrException),BoolArgumentType.getBool(c,"enabled")) }
+     .then(Commands.argument("players",EntityArgument.players()).executes { c -> cooldown(c,EntityArgument.getPlayers(c,"players"),BoolArgumentType.getBool(c,"enabled")) }))))
    .then(Commands.literal("drop").then(Commands.argument("players",EntityArgument.players())
     .executes{drop(it,null)}.then(Commands.argument("pos",Vec3Argument.vec3()).executes{drop(it,Vec3Argument.getVec3(it,"pos"))})))
    .then(Commands.literal("marking").executes{c->c.source.sendSuccess({Component.translatable("commands.sbw_helldiver.marking.status",MarkSettings.get(c.source.server).enabled)},false);1}
@@ -26,6 +31,14 @@ object HelldiversCommands {
      val enabled=BoolArgumentType.getBool(c,"enabled");MarkSettings.set(c.source.server,enabled)
      c.source.sendSuccess({Component.translatable("commands.sbw_helldiver.marking.set",enabled)},true);1
     })))
+ }
+ private fun cooldown(c:com.mojang.brigadier.context.CommandContext<net.minecraft.commands.CommandSourceStack>,players:Collection<net.minecraft.server.level.ServerPlayer>,enabled:Boolean?):Int {
+  for(p in players) {
+   val value=enabled ?: !com.example.sbwhelldiver.stratagem.StratagemCooldowns.state(p).enabled
+   com.example.sbwhelldiver.stratagem.StratagemCooldowns.setEnabled(p,value)
+   c.source.sendSuccess({Component.translatable("commands.sbw_helldiver.cooldown.set",p.displayName,Component.translatable(if(value)"options.on" else "options.off"))},true)
+  }
+  return players.size
  }
  private fun drop(c:com.mojang.brigadier.context.CommandContext<net.minecraft.commands.CommandSourceStack>,at:Vec3?):Int {
   var count=0

@@ -56,7 +56,8 @@ object BeaconInput {
         if (++session.countAtTick > 8) return false
         session.lastTick = tick
         session.prefix.add(direction)
-        val candidates = Stratagems.matching(BeaconData.loadout(stack), session.prefix)
+        val candidates = Stratagems.matching(Stratagems.commands(BeaconData.loadout(stack), StratagemCooldowns.equipped(player).isNotEmpty()), session.prefix)
+            .filter { StratagemCooldowns.available(player, it.id) }
         if (candidates.isEmpty()) {
             session.prefix.clear()
             player.playNotifySound(ModSounds.EVENTS.getValue("beacon_input_error").get(), SoundSource.PLAYERS, 1f, 1f)
@@ -66,7 +67,9 @@ object BeaconInput {
         val step = session.prefix.size.coerceIn(1, 8)
         player.playNotifySound(ModSounds.EVENTS.getValue("beacon_arrow_input_$step").get(), SoundSource.PLAYERS, 1f, 1f)
         val complete = candidates.firstOrNull { it.code.size == session.prefix.size } ?: return false
-        BeaconData.activate(stack, complete)
+        if (complete == Stratagems.eagleRearm) {
+            if (!StratagemCooldowns.rearm(player)) { reset(player.uuid); return false }
+        } else BeaconData.activate(stack, complete)
         player.inventory.setChanged()
         player.containerMenu.broadcastChanges()
         player.playNotifySound(ModSounds.EVENTS.getValue("beacon_ready").get(), SoundSource.PLAYERS, 1f, 1f)

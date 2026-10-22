@@ -40,6 +40,7 @@ object ClientSetup {
 
     @SubscribeEvent
     fun reloadListeners(event: net.minecraftforge.client.event.RegisterClientReloadListenersEvent) {
+        event.registerReloadListener(StratagemCooldownClient)
         event.registerReloadListener(net.minecraft.server.packs.resources.ResourceManagerReloadListener { FieldVolumeRenderer.requestReload() })
         event.registerReloadListener(SoundTimeline)
         event.registerReloadListener(MortarFieldAudio)

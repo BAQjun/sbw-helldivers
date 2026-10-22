@@ -76,7 +76,7 @@ object StratagemClient {
     private fun rawAltDown(): Boolean {
         val mc = Minecraft.getInstance()
         return ALT.isDown || GLFW.glfwGetKey(mc.window.window, GLFW.GLFW_KEY_RIGHT_ALT) == GLFW.GLFW_PRESS ||
-            (java.lang.Boolean.getBoolean("sbw_helldiver.beaconSmokeTest") && testHold)
+            ((java.lang.Boolean.getBoolean("sbw_helldiver.beaconSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.cooldownSmokeTest")) && testHold)
     }
     private fun beaconBlocked(): Boolean {
         if (Minecraft.getInstance().player?.isPassenger == true) {
@@ -179,7 +179,7 @@ object StratagemClient {
         if (identity != token || previousHand != hand) { prefix.clear(); identity = token; previousHand = hand }
         prefix.add(direction)
         lastInput = mc.level?.gameTime ?: 0
-        if (Stratagems.matching(BeaconData.loadout(stack), prefix).isEmpty()) {
+        if (Stratagems.matching(StratagemCooldownClient.commands(BeaconData.loadout(stack)), prefix).filter { StratagemCooldownClient.available(it.id) }.isEmpty()) {
             prefix.clear(); errorUntil = lastInput + 12
         }
         BeaconNetwork.CHANNEL.sendToServer(BeaconKeyPacket(hand, token, direction))
@@ -216,7 +216,7 @@ object StratagemClient {
     internal data class HudLayout(val x: Float, val y: Float, val width: Float, val height: Float)
     internal var lastHudLayout: HudLayout? = null
         private set
-    fun hud(gui: GuiGraphics) {
+    fun hud(gui: GuiGraphics, partial: Float = 0f) {
         lastHudLayout = null
         lastFailureRows = emptySet()
         val mc = Minecraft.getInstance()
@@ -238,7 +238,7 @@ object StratagemClient {
         }
         if (wanted) {
             val stack = if (inputMode) mc.player!!.getItemInHand(hand!!) else null
-            val loadout = stack?.let(BeaconData::loadout) ?: failureLoadout.map(Stratagems::get)
+            val loadout = StratagemCooldownClient.commands(stack?.let(BeaconData::loadout) ?: failureLoadout.map(Stratagems::get))
             hudContents = HudContents(loadout, stack?.let(BeaconData::selected),
                 if (inputMode) prefix.toList() else emptyList(),
                 loadout.mapIndexedNotNull { index, def -> index.takeIf { def?.id in activeFailures } }.toSet(), now < errorUntil)
@@ -250,7 +250,7 @@ object StratagemClient {
         val loadout = contents.loadout
         val selected = contents.selected
         val visiblePrefix = contents.prefix
-        val candidates = Stratagems.matching(loadout, visiblePrefix)
+        val candidates = Stratagems.matching(loadout, visiblePrefix).filter { StratagemCooldownClient.available(it.id) }
         lastFailureRows = contents.failureRows
         // Match the reference's screen proportions independently of Minecraft's GUI scale.
         val scale = mc.window.guiScaledHeight / 480f
@@ -261,7 +261,7 @@ object StratagemClient {
         val panelX = 0
         val panelY = 0
         val rowHeight = 32
-        val panelHeight = 25 + rowHeight * 4 + 6 + if (selected != null) 20 else 0
+        val panelHeight = 25 + rowHeight * loadout.size + 6 + if (selected != null) 20 else 0
         val textX = 32
         lastHudLayout = HudLayout(screenX, screenY, panelWidth * scale, panelHeight * scale)
         gui.pose().pushPose()
@@ -269,12 +269,16 @@ object StratagemClient {
         gui.pose().scale(scale, scale, 1f)
         gui.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, 0x70101C18)
         drawHudText(gui, Component.translatable("hud.sbw_helldiver.stratagems"), panelX + 8, panelY + 6, 0xEAF0EB)
-        for (i in 0..3) {
+        for (i in loadout.indices) {
             val def = loadout[i]
             val y = panelY + 25 + rowHeight * i
             if (def == null) { drawHudText(gui, Component.translatable("hud.sbw_helldiver.empty_slot", i + 1), textX, y + 6, 0x9DAFA3); continue }
-            gui.blit(def.icon, panelX + 3, y + 2, 26, 26, 0f, 0f, 64, 64, 64, 64)
-            val enabled = visiblePrefix.isEmpty() || def in candidates || selected == def
+            StratagemCooldownClient.drawIcon(gui, def, panelX + 3, y + 2, partial)
+            val status = StratagemCooldownClient.visual(def.id, partial)
+            if (status.remaining >= 0 && def.id != "eagle_rearm") {
+                gui.drawString(mc.font, "${status.remaining}", panelX + 21, y + 21, 0xFFF3E9CB.toInt(), true)
+            }
+            val enabled = StratagemCooldownClient.available(def.id) && (visiblePrefix.isEmpty() || def in candidates || selected == def)
             val label = Component.translatable(def.translation).string
             val maxLabelWidth = ((panelWidth - 40) / 1.5f).toInt()
             val fittedLabel = if (mc.font.width(label) <= maxLabelWidth) label
@@ -282,6 +286,14 @@ object StratagemClient {
             drawHudText(gui, Component.literal(fittedLabel), textX, y, if (enabled) 0xF4F4EF else 0x95A79B)
             if (i in lastFailureRows) {
                 drawHudText(gui, Component.translatable("message.sbw_helldiver.deployment_failed"), textX, y + 17, 0xF07668)
+                continue
+            }
+            val statusText = StratagemCooldownClient.text(status, partial)
+            if (statusText != null) {
+                gui.pose().pushPose()
+                gui.pose().translate(textX.toDouble(), (y + 17).toDouble(), 0.0)
+                gui.drawString(mc.font, statusText, 0, 0, 0xE8E4CC, true)
+                gui.pose().popPose()
                 continue
             }
             gui.pose().pushPose()
@@ -297,7 +309,7 @@ object StratagemClient {
         }
         if (selected != null) {
             val ready = Component.translatable("hud.sbw_helldiver.ready").string
-            drawHudText(gui, Component.literal(mc.font.plainSubstrByWidth(ready, ((panelWidth - 16) / 1.5f).toInt())), panelX + 8, panelY + 25 + rowHeight * 4, 0x83E4FF)
+            drawHudText(gui, Component.literal(mc.font.plainSubstrByWidth(ready, ((panelWidth - 16) / 1.5f).toInt())), panelX + 8, panelY + 25 + rowHeight * loadout.size, 0x83E4FF)
         }
         gui.pose().popPose()
     }
@@ -314,7 +326,7 @@ object StratagemClient {
     object Registration {
         @SubscribeEvent fun keys(event: RegisterKeyMappingsEvent) { event.register(ALT) }
         @SubscribeEvent fun overlay(event: RegisterGuiOverlaysEvent) {
-            event.registerAboveAll("stratagems") { _, gui, _, _, _ -> hud(gui) }
+            event.registerAboveAll("stratagems") { _, gui, partial, _, _ -> hud(gui, partial) }
             event.registerAboveAll("beacon_call") { _, gui, partial, _, _ -> BeaconCallHud.draw(gui, partial) }
         }
     }

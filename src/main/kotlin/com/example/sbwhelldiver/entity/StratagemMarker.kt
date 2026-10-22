@@ -33,6 +33,16 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         private set
     private var dropTypeId: ResourceLocation? = null
     private var ownerUuid: UUID? = null
+    var managedRequest: UUID? = null
+    private fun updateCooldown(cancel: Boolean = false) {
+        val server = level().server ?: return
+        val owner = ownerUuid ?: return
+        val token = managedRequest ?: return
+        val id = dropTypeId?.path ?: return
+        val ledger = com.example.sbwhelldiver.stratagem.StratagemCooldowns
+        if (cancel) ledger.cancel(server, owner, id, token)
+        else ledger.arrival(server, owner, id, token, ledger.now(server) + arrivalDeadline - level().gameTime)
+    }
     private var startedAt = -1L
     private var surfaceY = 0.0
     private var podSpawned = false
@@ -73,8 +83,9 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         entityData.set(LEFT, (duration - age).coerceAtLeast(0))
         playActivationSound()
         if (!podSpawned && age >= duration + landingGraceTicks - descentTicks) {
-            if (!(if(isEagle) spawnEagle() else spawnHellpod())) { discard(); return }
+            if (!(if(isEagle) spawnEagle() else spawnHellpod())) { updateCooldown(true); discard(); return }
             podSpawned = true
+            updateCooldown()
         }
         if (age >= duration + landingGraceTicks) {
             if(isEagle){
@@ -139,6 +150,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         entityData.define(STRATAGEM, "")
     }
     override fun readAdditionalSaveData(tag: CompoundTag) {
+        managedRequest = if (tag.hasUUID("CooldownRequest")) tag.getUUID("CooldownRequest") else null
         dropTypeId = ResourceLocation.tryParse(tag.getString("DropType"))
         if (tag.hasUUID("Owner")) ownerUuid = tag.getUUID("Owner")
         if (tag.hasUUID("Pod")) podUUID = tag.getUUID("Pod")
@@ -161,6 +173,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         noPhysics = true
     }
     override fun addAdditionalSaveData(tag: CompoundTag) {
+        managedRequest?.let { tag.putUUID("CooldownRequest", it) }
         dropTypeId?.let { tag.putString("DropType", it.toString()) }
         ownerUuid?.let { tag.putUUID("Owner", it) }
         podUUID?.let { tag.putUUID("Pod", it) }

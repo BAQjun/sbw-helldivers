@@ -60,8 +60,9 @@ data class BeaconFailurePacket(val stratagemId: String, val loadoutIds: List<Str
 }
 
 object BeaconNetwork {
-    val CHANNEL = NetworkRegistry.newSimpleChannel(ResourceLocation(MOD_ID, "beacon"), { "7" }, { it == "7" }, { it == "7" })
+    val CHANNEL = NetworkRegistry.newSimpleChannel(ResourceLocation(MOD_ID, "beacon"), { "8" }, { it == "8" }, { it == "8" })
     fun register() {
+        CHANNEL.registerMessage(12,CooldownSnapshotPacket::class.java,{p,b->p.encode(b)},CooldownSnapshotPacket::decode,CooldownSnapshotPacket::handle,Optional.of(NetworkDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(11,DropSteerPacket::class.java,{p,b->p.encode(b)},DropSteerPacket::decode,DropSteerPacket::handle,Optional.of(NetworkDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(8,DropPreparePacket::class.java,{p,b->p.encode(b)},DropPreparePacket::decode,DropPreparePacket::handle,Optional.of(NetworkDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(9,DropReadyPacket::class.java,{p,b->p.encode(b)},DropReadyPacket::decode,DropReadyPacket::handle,Optional.of(NetworkDirection.PLAY_TO_SERVER))

@@ -60,6 +60,8 @@ class StratagemBeacon(type: EntityType<StratagemBeacon>, level: Level) :
     private var failedAt = -1L
     val deploymentFailed get() = entityData.get(FAILED)
     private var deployed = false
+    var managedRequest: java.util.UUID? = null
+    private var savedCallOwner: java.util.UUID? = null
     val previousRoll = Quaternionf()
     val roll = Quaternionf()
     val ballRadius get() = bbWidth.toDouble() / 2
@@ -145,8 +147,18 @@ class StratagemBeacon(type: EntityType<StratagemBeacon>, level: Level) :
                 val marker = StratagemMarker(ModEntities.STRATAGEM_MARKER.get(), level())
                 val deployYaw=if(selected.dropId.path=="grenadier_battlement" || selected.category==com.example.sbwhelldiver.stratagem.StratagemCategory.RED)wallDeploymentYaw(result.location) else yRot
                 marker.moveTo(result.location.x, result.location.y + 0.015, result.location.z, deployYaw, 0f)
-                marker.configure(selected.dropId, HelldiversConfig.dropDelayTicks.get(), (owner as? Player)?.uuid,
+                marker.configure(selected.dropId, HelldiversConfig.dropDelayTicks.get(), owner?.uuid ?: savedCallOwner,
                     Direction.UP, result.location.y, selected.category.beamColor)
+                val request = managedRequest
+                if (request != null) {
+                    val ownerId = owner?.uuid ?: savedCallOwner
+                    val server = level().server
+                    if (ownerId == null || server == null || !com.example.sbwhelldiver.stratagem.StratagemCooldowns.arrival(server, ownerId, selected.id, request,
+                            com.example.sbwhelldiver.stratagem.StratagemCooldowns.now(server) + marker.arrivalDeadline - level().gameTime)) {
+                        failDeployment(); return
+                    }
+                    marker.managedRequest = request
+                }
                 if (level().addFreshEntity(marker)) {
                     deployed = true
                     deltaMovement = Vec3.ZERO
@@ -154,6 +166,7 @@ class StratagemBeacon(type: EntityType<StratagemBeacon>, level: Level) :
                     discard()
                     return
                 }
+                failDeployment(); return
             }
         }
         if (!level().isClientSide && firstBounceAt < 0) firstBounceAt = level().gameTime
@@ -198,6 +211,10 @@ class StratagemBeacon(type: EntityType<StratagemBeacon>, level: Level) :
         hasImpulse = true
         val player = owner as? Player
         val selected = BeaconData.selected(item)
+        val server = level().server
+        if (server != null && selected != null) managedRequest?.let { token -> (owner?.uuid ?: savedCallOwner)?.let { id ->
+            com.example.sbwhelldiver.stratagem.StratagemCooldowns.cancel(server, id, selected.id, token)
+        } }
         if (player is ServerPlayer && player !is FakePlayer && selected != null) {
             BeaconNetwork.CHANNEL.send(PacketDistributor.PLAYER.with { player },
                 BeaconFailurePacket(selected.id, BeaconData.loadout(item).map { it?.id ?: "" }))
@@ -206,6 +223,8 @@ class StratagemBeacon(type: EntityType<StratagemBeacon>, level: Level) :
 
     override fun addAdditionalSaveData(tag: CompoundTag) {
         super.addAdditionalSaveData(tag)
+        managedRequest?.let { tag.putUUID("CooldownRequest", it) }
+        (owner?.uuid ?: savedCallOwner)?.let { tag.putUUID("CooldownOwner", it) }
         launchOrigin?.let {tag.putDouble("BeaconLaunchX",it.x);tag.putDouble("BeaconLaunchY",it.y);tag.putDouble("BeaconLaunchZ",it.z)}
         tag.putFloat("BeaconLaunchYaw",launchYaw)
         tag.putLong("BeaconFirstBounceAt", firstBounceAt)
@@ -215,6 +234,8 @@ class StratagemBeacon(type: EntityType<StratagemBeacon>, level: Level) :
 
     override fun readAdditionalSaveData(tag: CompoundTag) {
         super.readAdditionalSaveData(tag)
+        managedRequest = if (tag.hasUUID("CooldownRequest")) tag.getUUID("CooldownRequest") else null
+        savedCallOwner = if (tag.hasUUID("CooldownOwner")) tag.getUUID("CooldownOwner") else null
         launchOrigin=if(tag.contains("BeaconLaunchX"))Vec3(tag.getDouble("BeaconLaunchX"),tag.getDouble("BeaconLaunchY"),tag.getDouble("BeaconLaunchZ")) else position()
         launchYaw=if(tag.contains("BeaconLaunchYaw"))tag.getFloat("BeaconLaunchYaw") else yRot
         firstBounceAt = if (tag.contains("BeaconFirstBounceAt")) tag.getLong("BeaconFirstBounceAt") else -1L

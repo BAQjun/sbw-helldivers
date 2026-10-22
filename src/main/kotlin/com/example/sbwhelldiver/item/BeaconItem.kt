@@ -56,12 +56,19 @@ class BeaconItem(properties: Properties) : Item(properties) {
         val stack = player.getItemInHand(hand)
         if (stack.item !== this || BeaconData.identity(stack) != identity || player.isSpectator || player.isPassenger ||
             player.containerMenu !== player.inventoryMenu || player.cooldowns.isOnCooldown(this)) return false
-        if (BeaconData.selected(stack) == null) return false
+        val selected = BeaconData.selected(stack) ?: return false
+        if (!com.example.sbwhelldiver.stratagem.StratagemCooldowns.available(player, selected.id)) return false
         val level = player.level()
         val projectile = StratagemBeacon(ModEntities.STRATAGEM_BEACON.get(), player, level)
         projectile.setItem(stack.copyWithCount(1))
         projectile.shootFromRotation(player, player.xRot, player.yRot, 0f, 1.5f, 0.5f)
-        if (!level.addFreshEntity(projectile)) return false
+        val cooldowns = com.example.sbwhelldiver.stratagem.StratagemCooldowns
+        if (!cooldowns.reserve(player, selected.id, projectile.uuid)) return false
+        if (cooldowns.state(player).enabled) projectile.managedRequest = projectile.uuid
+        if (!level.addFreshEntity(projectile)) {
+            cooldowns.cancel(player.server, player.uuid, selected.id, projectile.uuid)
+            return false
+        }
         BeaconData.clear(stack)
         BeaconInput.reset(player.uuid)
         player.cooldowns.addCooldown(this, 4)

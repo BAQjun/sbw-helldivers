@@ -21,7 +21,7 @@
   "hud.sbw_helldiver.stratagems": "EQUIPPED STRATAGEMS",
   "hud.sbw_helldiver.empty_slot": "Slot %s: empty",
   "hud.sbw_helldiver.ready": "Ready · Left-click to throw",
-  "hud.sbw_helldiver.arrival": "ARRIVING IN %s s",
+  "hud.sbw_helldiver.arrival": "Arriving %s",
   "key.sbw_helldiver.stratagem": "Stratagem input (hold)",
   "key.categories.sbw_helldiver": "Helldivers Stratagems",
   "subtitle.sbw_helldiver.beacon_ready": "Beacon ready",
@@ -136,5 +136,12 @@
   "entity.sbw_helldiver.ground_fire": "HD2 Fire",
   "block.sbw_helldiver.sentry_fire": "HD2 Fire",
   "death.attack.sbw_helldiver.hellpod_impact": "%1$s was crushed by a hellpod",
-  "death.attack.sbw_helldiver.hellpod_impact.player": "%1$s was crushed by a hellpod"
+  "death.attack.sbw_helldiver.hellpod_impact.player": "%1$s was crushed by a hellpod",
+  "hud.sbw_helldiver.cooldown": "Cooldown %s",
+  "hud.sbw_helldiver.rearming": "Rearming %s",
+  "hud.sbw_helldiver.waiting_beacon": "Awaiting beacon",
+  "hud.sbw_helldiver.no_uses": "Depleted: rearm required",
+  "hud.sbw_helldiver.eagle_busy": "Eagle in flight",
+  "item.sbw_helldiver.eagle_rearm_stratagem": "Eagle Rearm",
+  "commands.sbw_helldiver.cooldown.set": "Stratagem cooldowns for %s: %s"
 }
