@@ -143,5 +143,7 @@
   "hud.sbw_helldiver.no_uses": "次数耗尽：等待重新武装",
   "hud.sbw_helldiver.eagle_busy": "飞鹰执行任务中",
   "item.sbw_helldiver.eagle_rearm_stratagem": "重新武装“飞鹰”",
-  "commands.sbw_helldiver.cooldown.set": "%s 的战备冷却：%s"
+  "commands.sbw_helldiver.cooldown.set": "%s 的战备冷却：%s",
+  "subtitle.sbw_helldiver.stratagem_countdown": "战备倒计时",
+  "subtitle.sbw_helldiver.stratagem_ready": "战备就绪"
 }

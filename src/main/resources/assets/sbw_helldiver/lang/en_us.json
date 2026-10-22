@@ -143,5 +143,7 @@
   "hud.sbw_helldiver.no_uses": "Depleted: rearm required",
   "hud.sbw_helldiver.eagle_busy": "Eagle in flight",
   "item.sbw_helldiver.eagle_rearm_stratagem": "Eagle Rearm",
-  "commands.sbw_helldiver.cooldown.set": "Stratagem cooldowns for %s: %s"
+  "commands.sbw_helldiver.cooldown.set": "Stratagem cooldowns for %s: %s",
+  "subtitle.sbw_helldiver.stratagem_countdown": "Stratagem countdown",
+  "subtitle.sbw_helldiver.stratagem_ready": "Stratagem ready"
 }

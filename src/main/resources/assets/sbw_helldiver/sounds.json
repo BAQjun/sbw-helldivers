@@ -4917,5 +4917,31 @@
         "attenuation_distance": 256
       }
     ]
+  },
+  "stratagem_countdown": {
+    "subtitle": "subtitle.sbw_helldiver.stratagem_countdown",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagem_ui/202758016",
+        "volume": 0.05623413251903491
+      }
+    ]
+  },
+  "stratagem_ready": {
+    "subtitle": "subtitle.sbw_helldiver.stratagem_ready",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagem_ui/996243944",
+        "volume": 0.0707945784384138
+      },
+      {
+        "name": "sbw_helldiver:original/stratagem_ui/328140114",
+        "volume": 0.0707945784384138
+      },
+      {
+        "name": "sbw_helldiver:original/stratagem_ui/172444281",
+        "volume": 0.0707945784384138
+      }
+    ]
   }
 }

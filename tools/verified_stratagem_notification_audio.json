@@ -1,0 +1,63 @@
+{
+  "source_bank": "content/audio/ui_mission.wwise_bank",
+  "native_event": "play_stratagems_popup_ready_notification",
+  "native_event_id": 1506992932,
+  "native_action_delay_ms": 600,
+  "source_media_ids": [
+    996243944,
+    328140114,
+    172444281
+  ],
+  "native_gain_db": -23,
+  "gain_path": {
+    "container_331022645": -17,
+    "actor_mixer_941588353": 2,
+    "actor_mixer_584257906": -8
+  },
+  "runtime": {
+    "stratagem_ready": "Native UI ready-notification variants, including the 600ms action delay.",
+    "stratagem_countdown": "Uses the original cooldown switch container default branch (202758016), once at displayed 3, 2 and 1 seconds for both arrival and cooldown, as requested by the user. The UI ready-notification samples are not used for countdown pulses."
+  },
+  "processing": "Full decoded native sources encoded to Vorbis with original channels; no trimming, pitch change, synthesis or additional effects. Runtime UI instance volume is 1.0, with gain applied once through the sounds.json entries.",
+  "sha256": {
+    "996243944": "3c2e4a67f468fdadb23a7c2b5d3a5dee664eadf2e9d401f71ce571220e861808",
+    "328140114": "d1b35b87195b1d8246d94ae381f23a97740dfaabcbd9ad823c6013ac262eff03",
+    "172444281": "8ea4f4e3d17015b95183640f88b7d0a5a568c7ec8e652fe95c58dff9768162e9",
+    "202758016": "6d6d4d16016db79fe330bc0bd8adf0ffbc9c1f53eba8467b52231437a144900d"
+  },
+  "countdown": {
+    "source_bank": "content/audio/ui_mission.wwise_bank",
+    "native_event_id": 1329584843,
+    "native_action_play_id": 838185309,
+    "stops_container": 181167636,
+    "switch_container": 614319613,
+    "switch_group": "hud_stratagem_cooldown",
+    "switch_group_id": 3899939811,
+    "default_switch_id": 2253823030,
+    "default_sound_id": 756963820,
+    "default_source_media_id": 202758016,
+    "gain_path": {
+      "container_614319613": -17,
+      "actor_mixer_29022001": 0,
+      "actor_mixer_535880511": 0,
+      "actor_mixer_584257906": -8
+    },
+    "native_gain_db": -25,
+    "native_action_delay_ms": 0,
+    "nondefault_source_media_ids": [
+      544951353,
+      261668816,
+      991269580,
+      738834294
+    ],
+    "limitation": "The bank verifies the group, actions, branches and default source. Gameplay names/thresholds of the non-default switch values have not been recovered. The implementation deliberately uses the bank default rather than inventing a state mapping. One-second dispatch follows displayed timer boundaries and is not a looping ready cue. Arrival uses this same pulse as requested by the user.",
+    "corroborating_author_source": "https://www.nexusmods.com/helldivers2/mods/8742",
+    "arrival_rule": "User override: only the final three seconds (3, 2, 1) produce pulses. Earlier arrival seconds remain silent.",
+    "related_native_inbound_group": {
+      "id": 2346296439,
+      "name": "hud_stratagem_inbound",
+      "container": 181167636,
+      "note": "Native inbound uses a separate switch group and has a silent default branch. Nondefault state names/timing are unresolved; do not claim its full gameplay dispatch has been reconstructed."
+    }
+  }
+}

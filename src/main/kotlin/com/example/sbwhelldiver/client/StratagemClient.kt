@@ -52,6 +52,20 @@ object StratagemClient {
     private var hudTransitionFrom = 0.0
     private var hudTargetVisible = false
 
+    private var automaticLoadout = emptyList<StratagemDefinition?>()
+    private var automaticSelected: StratagemDefinition? = null
+    internal var lastAutomaticRows = emptyMap<String, HudLayout>()
+        private set
+
+    private fun observeAutomaticLoadout() {
+        val player = Minecraft.getInstance().player ?: return
+        val stack = listOf(player.mainHandItem, player.offhandItem).firstOrNull { it.item is BeaconItem }
+            ?: (0 until player.inventory.containerSize).asSequence().map(player.inventory::getItem).firstOrNull { it.item is BeaconItem }
+        automaticSelected = stack?.let(BeaconData::selected)
+        // Keep pending calls visible when the player switches away or drops the beacon.
+        if (stack != null) automaticLoadout = StratagemCooldownClient.commands(BeaconData.loadout(stack))
+    }
+
     private fun hudVisibility(nanos: Long): Double {
         val progress = ((nanos - hudTransitionAt) / 180_000_000.0).coerceIn(0.0, 1.0)
         val eased = 1.0 - (1.0 - progress) * (1.0 - progress) * (1.0 - progress)
@@ -196,8 +210,10 @@ object StratagemClient {
         if (mc.level !== previousLevel) {
             failures.clear(); failureLoadout = List(4) { "" }; prefix.clear()
             previousSlot = -1; identity = null; previousHand = null; altWasDown = false; waitForAltRelease = false
-            clearHud(); previousLevel = mc.level
+            clearHud(); StratagemNotifications.clear(); automaticLoadout = emptyList(); automaticSelected = null; lastAutomaticRows = emptyMap(); previousLevel = mc.level
         }
+        observeAutomaticLoadout()
+        StratagemNotifications.tick(automaticLoadout)
         failures.entries.removeIf { it.value <= (mc.level?.gameTime ?: Long.MAX_VALUE) }
         updateAlt()
         val hand = held()
@@ -219,11 +235,13 @@ object StratagemClient {
     fun hud(gui: GuiGraphics, partial: Float = 0f) {
         lastHudLayout = null
         lastFailureRows = emptySet()
+        lastAutomaticRows = emptyMap()
         val mc = Minecraft.getInstance()
         val hand = held()
         val inputMode = holdingAlt() && hand != null && mc.player?.isSpectator == false
         val now = mc.level?.gameTime ?: Long.MAX_VALUE
         val activeFailures = failures.filterValues { it > now }.keys
+        if (mc.screen == null && mc.player != null && !inputMode) drawAutomaticNotices(gui, partial)
         if (mc.screen != null || mc.player == null || beaconBlocked()) {
             clearHud()
             return
@@ -273,48 +291,78 @@ object StratagemClient {
             val def = loadout[i]
             val y = panelY + 25 + rowHeight * i
             if (def == null) { drawHudText(gui, Component.translatable("hud.sbw_helldiver.empty_slot", i + 1), textX, y + 6, 0x9DAFA3); continue }
-            StratagemCooldownClient.drawIcon(gui, def, panelX + 3, y + 2, partial)
-            val status = StratagemCooldownClient.visual(def.id, partial)
-            if (status.remaining >= 0 && def.id != "eagle_rearm") {
-                val uses = status.remaining.toString()
-                val textWidth = mc.font.width(uses)
-                val boxWidth = maxOf(9, textWidth + 3)
-                val boxX = panelX + 31 - boxWidth
-                gui.fill(boxX, y + 20, panelX + 31, y + 31, 0xFFFFFFFF.toInt())
-                gui.drawString(mc.font, uses, boxX + (boxWidth - textWidth) / 2, y + 22, 0xFF202020.toInt(), false)
-            }
-            val enabled = StratagemCooldownClient.available(def.id) && (visiblePrefix.isEmpty() || def in candidates || selected == def)
-            val label = Component.translatable(def.translation).string
-            val maxLabelWidth = ((panelWidth - 40) / 1.5f).toInt()
-            val fittedLabel = if (mc.font.width(label) <= maxLabelWidth) label
-                else mc.font.plainSubstrByWidth(label, maxLabelWidth - mc.font.width("…")) + "…"
-            drawHudText(gui, Component.literal(fittedLabel), textX, y, if (enabled) 0xF4F4EF else 0x95A79B)
-            if (i in lastFailureRows) {
-                drawHudText(gui, Component.translatable("message.sbw_helldiver.deployment_failed"), textX, y + 17, 0xF07668)
-                continue
-            }
-            val statusText = StratagemCooldownClient.text(status, partial)
-            if (statusText != null) {
-                gui.pose().pushPose()
-                gui.pose().translate(textX.toDouble(), (y + 17).toDouble(), 0.0)
-                gui.drawString(mc.font, statusText, 0, 0, 0xE8E4CC, true)
-                gui.pose().popPose()
-                continue
-            }
-            gui.pose().pushPose()
-            gui.pose().translate(textX.toDouble(), (y + 17).toDouble(), 0.0)
-            gui.pose().scale(1.5f, 1.5f, 1f)
-            def.code.forEachIndexed { index, direction ->
-                val color = if (contents.inputError) 0xFFF07668.toInt()
-                    else if (selected == def || (def in candidates && index < visiblePrefix.size)) 0xFF82FFD0.toInt()
-                    else if (enabled) 0xFFE6ECE6.toInt() else 0xFF56675F.toInt()
-                ArrowGlyph.draw(gui, index * 12, 0, direction, color, 1)
-            }
-            gui.pose().popPose()
+            drawRow(gui, def, y, selected, visiblePrefix, candidates, contents.inputError, i in lastFailureRows, partial)
         }
         if (selected != null) {
             val ready = Component.translatable("hud.sbw_helldiver.ready").string
             drawHudText(gui, Component.literal(mc.font.plainSubstrByWidth(ready, ((panelWidth - 16) / 1.5f).toInt())), panelX + 8, panelY + 25 + rowHeight * loadout.size, 0x83E4FF)
+        }
+        gui.pose().popPose()
+    }
+
+    private fun drawAutomaticNotices(gui: GuiGraphics, partial: Float) {
+        val mc = Minecraft.getInstance()
+        val scale = mc.window.guiScaledHeight / 480f
+        val x = mc.window.guiScaledWidth * .023f
+        val y = mc.window.guiScaledHeight * .028f
+        val rows = linkedMapOf<String, HudLayout>()
+        gui.pose().pushPose()
+        gui.pose().translate(x.toDouble(), y.toDouble(), 0.0)
+        gui.pose().scale(scale, scale, 1f)
+        for ((index, def) in automaticLoadout.withIndex()) {
+            if (def == null || def != automaticSelected && !StratagemNotifications.visible(def, partial)) continue
+            val rowY = 25 + 32 * index
+            gui.fill(0, rowY - 2, 158, rowY + 30, 0x70101C18)
+            drawRow(gui, def, rowY, automaticSelected, emptyList(), emptyList(), false, false, partial, true)
+            rows[def.id] = HudLayout(x, y + (rowY - 2) * scale, 158 * scale, 32 * scale)
+        }
+        gui.pose().popPose()
+        lastAutomaticRows = rows
+    }
+
+    private fun drawRow(gui: GuiGraphics, def: StratagemDefinition, y: Int, selected: StratagemDefinition?,
+                        visiblePrefix: List<Int>, candidates: List<StratagemDefinition>, inputError: Boolean,
+                        failure: Boolean, partial: Float, automatic: Boolean = false) {
+        val mc = Minecraft.getInstance()
+        val panelX = 0; val panelWidth = 158; val textX = 32
+        StratagemCooldownClient.drawIcon(gui, def, panelX + 3, y + 2, partial)
+        val status = StratagemCooldownClient.visual(def.id, partial)
+        if (status.remaining >= 0 && def.id != "eagle_rearm") {
+            val uses = status.remaining.toString()
+            val textWidth = mc.font.width(uses) - 1
+            val boxWidth = maxOf(9, textWidth + 3)
+            val boxX = panelX + 31 - boxWidth
+            gui.fill(boxX, y + 20, panelX + 31, y + 31, 0xFFFFFFFF.toInt())
+            gui.drawString(mc.font, uses, boxX + (boxWidth - textWidth) / 2, y + 22, 0xFF202020.toInt(), false)
+        }
+        val enabled = StratagemCooldownClient.available(def.id) && (visiblePrefix.isEmpty() || def in candidates || selected == def)
+        val label = Component.translatable(def.translation).string
+        val maxLabelWidth = ((panelWidth - 40) / 1.5f).toInt()
+        val fittedLabel = if (mc.font.width(label) <= maxLabelWidth) label
+            else mc.font.plainSubstrByWidth(label, maxLabelWidth - mc.font.width("…")) + "…"
+        drawHudText(gui, Component.literal(fittedLabel), textX, y, if (enabled) 0xF4F4EF else 0x95A79B)
+        if (failure) {
+            drawHudText(gui, Component.translatable("message.sbw_helldiver.deployment_failed"), textX, y + 17, 0xF07668)
+            return
+        }
+        val statusText = if (automatic && selected == def) Component.translatable("hud.sbw_helldiver.ready") else StratagemCooldownClient.text(status, partial)
+        if (statusText != null) {
+            gui.pose().pushPose()
+            gui.pose().translate(textX.toDouble(), (y + 17).toDouble(), 0.0)
+            gui.drawString(mc.font, statusText, 0, 0, 0xE8E4CC, true)
+            gui.pose().popPose()
+            return
+        }
+        gui.pose().pushPose()
+        gui.pose().translate(textX.toDouble(), (y + 17).toDouble(), 0.0)
+        gui.pose().scale(1.5f, 1.5f, 1f)
+        val revealed = if (automatic) StratagemNotifications.revealedArrows(def, partial) ?: def.code.size else def.code.size
+        def.code.forEachIndexed { index, direction ->
+            if (index >= revealed) return@forEachIndexed
+            val color = if (inputError) 0xFFF07668.toInt()
+                else if (selected == def || (def in candidates && index < visiblePrefix.size)) 0xFF82FFD0.toInt()
+                else if (enabled) 0xFFE6ECE6.toInt() else 0xFF56675F.toInt()
+            ArrowGlyph.draw(gui, index * 12, 0, direction, color, 1)
         }
         gui.pose().popPose()
     }

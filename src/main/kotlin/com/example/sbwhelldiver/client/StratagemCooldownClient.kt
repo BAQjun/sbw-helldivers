@@ -61,6 +61,11 @@ object StratagemCooldownClient : ResourceManagerReloadListener {
         }
         return Visual(remaining = remaining, blocked = eagle && (remaining == 0 || otherEagleInFlight))
     }
+    fun automaticNotice(id: String, partial: Float = 0f): Boolean {
+        val v = visual(id, partial)
+        return v.phase == CallPhase.THROWN || v.phase == CallPhase.ARRIVING ||
+            v.phase == CallPhase.COOLDOWN && v.end - now(partial) in 0.0..60.0 && (v.remaining != 0 || v.rearming)
+    }
     fun available(id: String) = !visual(id).blocked && (id != "eagle_rearm" || !data.contains("Enabled") || data.getBoolean("Enabled"))
     fun text(v: Visual, partial: Float): Component? {
         val key = when {
