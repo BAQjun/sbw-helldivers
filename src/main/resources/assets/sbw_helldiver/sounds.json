@@ -4918,29 +4918,82 @@
       }
     ]
   },
-  "stratagem_countdown": {
-    "subtitle": "subtitle.sbw_helldiver.stratagem_countdown",
-    "sounds": [
-      {
-        "name": "sbw_helldiver:original/stratagem_ui/202758016",
-        "volume": 0.05623413251903491
-      }
-    ]
-  },
   "stratagem_ready": {
     "subtitle": "subtitle.sbw_helldiver.stratagem_ready",
     "sounds": [
       {
-        "name": "sbw_helldiver:original/stratagem_ui/996243944",
-        "volume": 0.0707945784384138
+        "name": "sbw_helldiver:original/stratagem_ui/343379494",
+        "volume": 0.05623413251903491
       },
       {
-        "name": "sbw_helldiver:original/stratagem_ui/328140114",
-        "volume": 0.0707945784384138
+        "name": "sbw_helldiver:original/stratagem_ui/1025962110",
+        "volume": 0.05623413251903491
       },
       {
-        "name": "sbw_helldiver:original/stratagem_ui/172444281",
-        "volume": 0.0707945784384138
+        "name": "sbw_helldiver:original/stratagem_ui/438112912",
+        "volume": 0.05623413251903491
+      }
+    ]
+  },
+  "stratagem_inbound_3": {
+    "subtitle": "subtitle.sbw_helldiver.stratagem_countdown",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagem_ui/205963285",
+        "volume": 0.06309573444801933
+      }
+    ]
+  },
+  "stratagem_inbound_2": {
+    "subtitle": "subtitle.sbw_helldiver.stratagem_countdown",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagem_ui/476404362",
+        "volume": 0.06309573444801933
+      }
+    ]
+  },
+  "stratagem_inbound_1": {
+    "subtitle": "subtitle.sbw_helldiver.stratagem_countdown",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagem_ui/356476257",
+        "volume": 0.12589254117941673
+      },
+      {
+        "name": "sbw_helldiver:original/stratagem_ui/660182206",
+        "volume": 0.12589254117941673
+      },
+      {
+        "name": "sbw_helldiver:original/stratagem_ui/151524753",
+        "volume": 0.12589254117941673
+      }
+    ]
+  },
+  "stratagem_cooldown_3": {
+    "subtitle": "subtitle.sbw_helldiver.stratagem_countdown",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagem_ui/991269580",
+        "volume": 0.05623413251903491
+      }
+    ]
+  },
+  "stratagem_cooldown_2": {
+    "subtitle": "subtitle.sbw_helldiver.stratagem_countdown",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagem_ui/261668816",
+        "volume": 0.05623413251903491
+      }
+    ]
+  },
+  "stratagem_cooldown_1": {
+    "subtitle": "subtitle.sbw_helldiver.stratagem_countdown",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/stratagem_ui/738834294",
+        "volume": 0.05623413251903491
       }
     ]
   }

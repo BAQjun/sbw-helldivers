@@ -81,6 +81,7 @@ object CooldownClientSmokeTest {
         }
         if(tick==165){
             check(StratagemCooldownClient.visual("machine_gun_sentry").phase==CallPhase.COOLDOWN){"Real landed call never entered cooldown"}
+            check("stratagem_inbound_1" in StratagemNotifications.audioFaded){"Inbound tail did not fade out after arrival"}
             check(StratagemClient.lastAutomaticRows.containsKey("machine_gun_sentry")){ "Arrival did not retain the cooldown row for three seconds" }
             capture(mc,"cooldown")
             LOGGER.info("COOLDOWN_REAL_THROW_PASSED: validated input, real beacon landing, owner snapshot, arrival then cooldown")
@@ -132,6 +133,7 @@ object CooldownClientSmokeTest {
             val def=Stratagems.get("machine_gun_sentry")!!
             check(StratagemNotifications.revealedArrows(def) in 1 until def.code.size){"Ready arrows did not reveal progressively"}
             check(StratagemClient.lastAutomaticRows.containsKey(def.id)){"Completed countdown closed before arrow animation"}
+            check("stratagem_ready" in StratagemNotifications.audioAllocated){"Completion cue did not start with the arrow animation"}
             capture(mc,"ready_arrows_partial")
         }
         if(tick==342){
@@ -144,7 +146,9 @@ object CooldownClientSmokeTest {
             check(!StratagemClient.lastAutomaticRows.containsKey("machine_gun_sentry") && StratagemClient.lastAutomaticRows.containsKey("gatling_sentry")){"Completed cooldown notice did not close independently"}
             check(StratagemNotifications.countedPhases.containsAll(setOf(CallPhase.ARRIVING,CallPhase.COOLDOWN))){"Missing arrival/cooldown countdown sounds"}
             check(StratagemNotifications.countedSeconds[CallPhase.ARRIVING] == setOf(1, 2, 3)){"Arrival tick must play only for displayed 3, 2, 1: ${StratagemNotifications.countedSeconds}"}
-            check(StratagemNotifications.audioAllocated.containsAll(setOf("stratagem_countdown","stratagem_ready"))){"Countdown/ready UI sounds did not reach the audio engine"}
+            val expectedAudio = setOf("stratagem_ready") + listOf("inbound", "cooldown").flatMap { phase -> (1..3).map { "stratagem_${phase}_$it" } }
+            check(StratagemNotifications.audioAllocated.containsAll(expectedAudio)){"Distinct per-second UI cues did not reach the audio engine: ${StratagemNotifications.audioAllocated}"}
+            check(StratagemNotifications.countedSeconds[CallPhase.COOLDOWN] == setOf(1, 2, 3)){"Cooldown tick must play only for displayed 3, 2, 1"}
             capture(mc,"automatic_complete")
             LOGGER.info("COOLDOWN_NOTIFICATIONS_PASSED: activation, upper-left arrival, empty-hand persistence, landing hold, final three seconds, progressive ready arrows, ready hold, fixed slots and independent completion")
             LOGGER.info("COOLDOWN_AUDIO_PASSED: arrival and cooldown boundaries, ready cue and active UI sound sources")

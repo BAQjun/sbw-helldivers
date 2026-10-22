@@ -4,8 +4,11 @@ import com.example.sbwhelldiver.asset.AssetCatalog
 import com.example.sbwhelldiver.stratagem.CallPhase
 import com.example.sbwhelldiver.stratagem.StratagemDefinition
 import net.minecraft.client.Minecraft
-import net.minecraft.client.resources.sounds.SimpleSoundInstance
+import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance
+import net.minecraft.client.resources.sounds.SoundInstance
 import net.minecraft.sounds.SoundEvent
+import net.minecraft.sounds.SoundSource
+import net.minecraft.util.RandomSource
 import kotlin.math.ceil
 
 /** Client-only presentation: never changes server cooldowns or consumes a call. */
@@ -19,10 +22,13 @@ object StratagemNotifications {
     internal val audioAllocated = mutableSetOf<String>()
     internal val countedPhases = mutableSetOf<CallPhase>()
     internal val countedSeconds = mutableMapOf<CallPhase, MutableSet<Int>>()
-    private data class AudioProbe(val effect: String, val sound: SimpleSoundInstance, var ticks: Int = 0)
+    internal val audioFaded = mutableSetOf<String>()
+    private data class AudioProbe(val effect: String, val sound: UiSound, var ticks: Int = 0)
     private val probes = mutableListOf<AudioProbe>()
+    private data class InboundCue(val sound: UiSound, val calls: Map<String, Long>)
+    private val inbound = mutableListOf<InboundCue>()
 
-    fun clear() { previous.clear(); completed.clear(); seconds.clear(); probes.clear(); audioStarted.clear(); audioAllocated.clear(); countedPhases.clear(); countedSeconds.clear() }
+    fun clear() { inbound.forEach { it.sound.finish() }; inbound.clear(); previous.clear(); completed.clear(); seconds.clear(); probes.clear(); audioStarted.clear(); audioAllocated.clear(); countedPhases.clear(); countedSeconds.clear(); audioFaded.clear() }
 
     fun tick(loadout: List<StratagemDefinition?>) {
         val mc = Minecraft.getInstance()
@@ -30,7 +36,7 @@ object StratagemNotifications {
         val time = StratagemCooldownClient.now()
         val ids = loadout.mapNotNull { it?.id }.toSet()
         previous.keys.retainAll(ids); completed.keys.retainAll(ids); seconds.keys.retainAll(ids)
-        var countdown = false
+        val countdowns = mutableMapOf<String, MutableMap<String, Long>>()
         var ready = false
         for (def in loadout.filterNotNull()) {
             val v = StratagemCooldownClient.visual(def.id)
@@ -49,7 +55,8 @@ object StratagemNotifications {
             if (counting && left > 0) {
                 val stamp = "${v.phase}:${v.end}" to left
                 if (seconds.put(def.id, stamp) != stamp) {
-                    countdown = true
+                    val group = if (v.phase == CallPhase.ARRIVING) "inbound" else "cooldown"
+                    countdowns.getOrPut("stratagem_${group}_$left") { mutableMapOf() }[def.id] = v.end
                     if (java.lang.Boolean.getBoolean("sbw_helldiver.cooldownSmokeTest")) {
                         countedPhases.add(v.phase)
                         countedSeconds.getOrPut(v.phase) { mutableSetOf() }.add(left)
@@ -58,10 +65,22 @@ object StratagemNotifications {
             } else seconds.remove(def.id)
             previous[def.id] = v
         }
-        // The native cooldown switch default is a one-shot tick, separate from ready notification.
-        // Several Eagles share a timer: do not stack copies on the same displayed boundary.
-        if (countdown) play("stratagem_countdown")
-        if (ready) play("stratagem_ready", 12)
+        // Native cooldown event stops the inbound container with a 100 ms linear fade.
+        // A shared cue remains audible while any of the calls that started it is inbound.
+        inbound.removeAll { cue ->
+            if (cue.sound.isStopped || cue.sound.age > 60) true
+            else if (cue.calls.none { (id, end) -> id in ids &&
+                    StratagemCooldownClient.visual(id).let { it.phase == CallPhase.ARRIVING && it.end == end } }) {
+                cue.sound.release(); true
+            } else false
+        }
+        // Native inbound/cooldown groups each have distinct _3_sec, _2_sec and _1_sec branches.
+        // Several Eagles share a timer: deduplicate identical cues, retaining distinct phases.
+        countdowns.forEach { (effect, calls) ->
+            val sound = play(effect)
+            if (effect.startsWith("stratagem_inbound_")) inbound.add(InboundCue(sound, calls))
+        }
+        if (ready) play("stratagem_ready")
         probes.forEach { it.ticks++; if (it.ticks in 2..20 && mc.soundManager.isActive(it.sound)) audioAllocated.add(it.effect) }
         probes.removeAll { it.ticks > 24 }
     }
@@ -78,13 +97,34 @@ object StratagemNotifications {
         ((StratagemCooldownClient.now(partial) - it) / ARROW_TICKS).toInt().coerceIn(0, def.code.size)
     }
 
-    private fun play(effect: String, delay: Int = 0) {
-        val sound = SimpleSoundInstance.forUI(SoundEvent.createVariableRangeEvent(AssetCatalog.sound(effect)), 1f, 1f)
+    private fun play(effect: String): UiSound {
+        val sound = UiSound(effect)
         val manager = Minecraft.getInstance().soundManager
-        if (delay == 0) manager.play(sound) else manager.playDelayed(sound, delay)
+        manager.play(sound)
         if (java.lang.Boolean.getBoolean("sbw_helldiver.cooldownSmokeTest")) {
             audioStarted[effect] = (audioStarted[effect] ?: 0) + 1
             probes.add(AudioProbe(effect, sound))
+        }
+        return sound
+    }
+
+    private class UiSound(private val effect: String) : AbstractTickableSoundInstance(
+        SoundEvent.createVariableRangeEvent(AssetCatalog.sound(effect)), SoundSource.MASTER, RandomSource.create()) {
+        var age = 0; private set
+        private var releaseLeft = -1
+        init { relative = true; attenuation = SoundInstance.Attenuation.NONE; volume = 1f; pitch = 1f }
+        fun release() { if (releaseLeft < 0) releaseLeft = 2 }
+        fun finish() { volume = 0f; stop() }
+        override fun tick() {
+            age++
+            if (releaseLeft > 0) {
+                volume = --releaseLeft / 2f
+                if (releaseLeft == 0) {
+                    finish()
+                    if (java.lang.Boolean.getBoolean("sbw_helldiver.cooldownSmokeTest")) audioFaded.add(effect)
+                }
+            }
+            if (age > 80) finish()
         }
     }
 }

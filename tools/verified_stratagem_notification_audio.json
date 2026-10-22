@@ -1,63 +1,121 @@
 {
   "source_bank": "content/audio/ui_mission.wwise_bank",
-  "native_event": "play_stratagems_popup_ready_notification",
-  "native_event_id": 1506992932,
-  "native_action_delay_ms": 600,
-  "source_media_ids": [
-    996243944,
-    328140114,
-    172444281
-  ],
-  "native_gain_db": -23,
-  "gain_path": {
-    "container_331022645": -17,
-    "actor_mixer_941588353": 2,
-    "actor_mixer_584257906": -8
+  "switch_states": {
+    "_0_sec": 3599305278,
+    "_1_sec": 2320300611,
+    "_2_sec": 743815828,
+    "_3_sec": 1534287025,
+    "_4_sec": 454492578,
+    "_5_sec": 3780473815,
+    "_6_sec": 947183096,
+    "_7_sec": 3155698805,
+    "_8_sec": 2253823030
   },
-  "runtime": {
-    "stratagem_ready": "Native UI ready-notification variants, including the 600ms action delay.",
-    "stratagem_countdown": "Uses the original cooldown switch container default branch (202758016), once at displayed 3, 2 and 1 seconds for both arrival and cooldown, as requested by the user. The UI ready-notification samples are not used for countdown pulses."
+  "inbound": {
+    "group": "hud_stratagem_inbound",
+    "group_id": 2346296439,
+    "container": 181167636,
+    "play_actions": [
+      446569254
+    ],
+    "events": [
+      2841514059
+    ],
+    "gain_path_db": {
+      "container_181167636": -16,
+      "actor_mixer_584257906": -8,
+      "final_second_random_498908784": 6
+    }
   },
-  "processing": "Full decoded native sources encoded to Vorbis with original channels; no trimming, pitch change, synthesis or additional effects. Runtime UI instance volume is 1.0, with gain applied once through the sounds.json entries.",
-  "sha256": {
-    "996243944": "3c2e4a67f468fdadb23a7c2b5d3a5dee664eadf2e9d401f71ce571220e861808",
-    "328140114": "d1b35b87195b1d8246d94ae381f23a97740dfaabcbd9ad823c6013ac262eff03",
-    "172444281": "8ea4f4e3d17015b95183640f88b7d0a5a568c7ec8e652fe95c58dff9768162e9",
-    "202758016": "6d6d4d16016db79fe330bc0bd8adf0ffbc9c1f53eba8467b52231437a144900d"
-  },
-  "countdown": {
-    "source_bank": "content/audio/ui_mission.wwise_bank",
-    "native_event_id": 1329584843,
-    "native_action_play_id": 838185309,
+  "cooldown": {
+    "group": "hud_stratagem_cooldown",
+    "group_id": 3899939811,
+    "container": 614319613,
+    "event_id": 1329584843,
+    "play_action_id": 838185309,
     "stops_container": 181167636,
-    "switch_container": 614319613,
-    "switch_group": "hud_stratagem_cooldown",
-    "switch_group_id": 3899939811,
-    "default_switch_id": 2253823030,
-    "default_sound_id": 756963820,
-    "default_source_media_id": 202758016,
-    "gain_path": {
+    "stop_action_id": 144766717,
+    "stop_transition_ms": 100,
+    "stop_fade_curve": "Linear",
+    "gain_path_db": {
       "container_614319613": -17,
-      "actor_mixer_29022001": 0,
-      "actor_mixer_535880511": 0,
+      "actor_mixer_584257906": -8
+    }
+  },
+  "completion": {
+    "event_id": 472264393,
+    "play_action_id": 656143766,
+    "container": 634325555,
+    "action_delay_ms": 0,
+    "gain_path_db": {
+      "container_634325555": -17,
       "actor_mixer_584257906": -8
     },
-    "native_gain_db": -25,
-    "native_action_delay_ms": 0,
-    "nondefault_source_media_ids": [
-      544951353,
-      261668816,
-      991269580,
-      738834294
-    ],
-    "limitation": "The bank verifies the group, actions, branches and default source. Gameplay names/thresholds of the non-default switch values have not been recovered. The implementation deliberately uses the bank default rather than inventing a state mapping. One-second dispatch follows displayed timer boundaries and is not a looping ready cue. Arrival uses this same pulse as requested by the user.",
-    "corroborating_author_source": "https://www.nexusmods.com/helldivers2/mods/8742",
-    "arrival_rule": "User override: only the final three seconds (3, 2, 1) produce pulses. Earlier arrival seconds remain silent.",
-    "related_native_inbound_group": {
-      "id": 2346296439,
-      "name": "hud_stratagem_inbound",
-      "container": 181167636,
-      "note": "Native inbound uses a separate switch group and has a silent default branch. Nondefault state names/timing are unresolved; do not claim its full gameplay dispatch has been reconstructed."
+    "native_selection": "Shuffle, avoid last 1, equal weights",
+    "runtime_selection": "Minecraft equal-weight random variants",
+    "note": "Native event text name is unconfirmed; IDs and media are verified from the bank. This is separate from popup-ready event 1506992932 and its 600 ms delay."
+  },
+  "runtime": {
+    "stratagem_inbound_3": {
+      "sources": [
+        205963285
+      ],
+      "gain_db": -24
+    },
+    "stratagem_inbound_2": {
+      "sources": [
+        476404362
+      ],
+      "gain_db": -24
+    },
+    "stratagem_inbound_1": {
+      "sources": [
+        356476257,
+        660182206,
+        151524753
+      ],
+      "gain_db": -18
+    },
+    "stratagem_cooldown_3": {
+      "sources": [
+        991269580
+      ],
+      "gain_db": -25
+    },
+    "stratagem_cooldown_2": {
+      "sources": [
+        261668816
+      ],
+      "gain_db": -25
+    },
+    "stratagem_cooldown_1": {
+      "sources": [
+        738834294
+      ],
+      "gain_db": -25
+    },
+    "stratagem_ready": {
+      "sources": [
+        343379494,
+        1025962110,
+        438112912
+      ],
+      "gain_db": -25
     }
+  },
+  "timing": "User override: arrival and cooldown play only at displayed 3, 2 and 1 seconds. Completion plays immediately on observed cooldown expiry, at the start of the input-arrow sequence. Identical phase/second cues are deduplicated across concurrent entries.",
+  "processing": "Full native decoded sources encoded to Vorbis, original channels, no trimming, pitch changes, synthesis or effects. UI instance volume 1.0; native gain applied once in sounds.json.",
+  "sha256": {
+    "205963285": "5cf8f91327d6875d58dfb6b0a97a430aee3d6079b5b44a8c2e0840b7642cad00",
+    "476404362": "6081fb6c2b3bb6eb67e0801eda6fabee8cb41ea1206faffa5dbf1e4094ae0c12",
+    "356476257": "1f5c179a3d66be070c9d7eafcc9e891e15f2a2e76e38860973244691830586ab",
+    "660182206": "30983701775be0f8aaa10495e2b0d86b16c1fa5d241dd39eda2fec864572e9b0",
+    "151524753": "bf3bef07fe42acd49dbc549e9d47ded12621038d2c621d24c6cdb5b638022ccc",
+    "991269580": "9bd76826728664311e362cfde529323ba06ed965e494443b7841860d44e085d6",
+    "261668816": "38fab80ce087a13a3134bec2a950570731a5b1c3bf8105abe37fd0207ee305ae",
+    "738834294": "a3bc8c4b90596bc3a458742a48dee2e7619f3c3574696d1f6987119909223ea4",
+    "343379494": "ef67d952e66357a85c38b863347cc5fde5f053e2bf1ff4d39be2cab201c728cf",
+    "1025962110": "2a16d8a4a67239c710faeeae7acf10f0729cfe2e4e6eba0f2933fb79b849b30c",
+    "438112912": "78f1e4e9aa3e330eae5dfa90a45cd0a5d1da8d7e22010cac8ea6352f4a77d7c0"
   }
 }
