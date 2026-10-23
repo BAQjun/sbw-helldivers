@@ -1,22 +1,24 @@
 package com.example.sbwhelldiver.client
 
+import com.github.mcmodderanchor.simplebedrockmodel.v1.client.renderer.BedrockModelRenderTypes
 import com.mojang.blaze3d.vertex.VertexConsumer
-import com.mojang.blaze3d.vertex.VertexFormat
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.resources.ResourceLocation
 
 /** Iris/Oculus extends entity vertices in groups of four. Keep each native mesh
- * triangle as a degenerate quad so vertices from different mines cannot become
+ * triangle as a degenerate quad so vertices from different model parts cannot become
  * one shader primitive. Positions, UVs, normals and animation remain unchanged.
  */
-object MineMeshBuffers {
+object ShaderMeshBuffers {
  fun wrap(source:MultiBufferSource,texture:ResourceLocation)=Wrapped(source,texture,ShaderPackCompat.active())
  class Wrapped(private val source:MultiBufferSource,private val texture:ResourceLocation,private val enabled:Boolean):MultiBufferSource {
+  private val meshType=BedrockModelRenderTypes.polyMeshCutout(texture)
   private var pending:TriangleQuads?=null
   override fun getBuffer(type:RenderType):VertexConsumer {
    finish() // The source can finish its previous RenderType when selecting another.
-   if(!enabled||type.mode()!=VertexFormat.Mode.TRIANGLES)return source.getBuffer(type)
+   // Leave muzzle flashes, emissive passes and other materials on their native paths.
+   if(!enabled||type!==meshType)return source.getBuffer(type)
    return TriangleQuads(source.getBuffer(RenderType.entityCutoutNoCull(texture))).also{pending=it}
   }
   fun finish(){pending?.flush();pending=null}
@@ -41,7 +43,7 @@ private class TriangleQuads(private val out:VertexConsumer):VertexConsumer {
   if(bulk==null)out.vertex(v[0],v[1],v[2],v[3],v[4],v[5],v[6],v[7],v[8],p[0],p[1],v[11],v[12],v[13])
   else bulk.vertex(v[0],v[1],v[2],p[2],v[7],v[8],p[0],p[1],v[11],v[12],v[13])
  }
- fun flush(){check(count%3==0){"Incomplete mine mesh triangle"};bulk?.flush()}
+ fun flush(){check(count%3==0){"Incomplete Bedrock mesh triangle"};bulk?.flush()}
  override fun endVertex(){
   val i=count%3;val v=vertices[i];v[0]=x.toFloat();v[1]=y.toFloat();v[2]=z.toFloat();v[3]=r/255f;v[4]=g/255f;v[5]=b/255f;v[6]=a/255f;v[7]=u;v[8]=this.v;v[11]=nx;v[12]=ny;v[13]=nz
   packed[i][0]=ou or (ov shl 16);packed[i][1]=lu or (lv shl 16);packed[i][2]=(r and 255) or ((g and 255) shl 8) or ((b and 255) shl 16) or ((a and 255) shl 24)
