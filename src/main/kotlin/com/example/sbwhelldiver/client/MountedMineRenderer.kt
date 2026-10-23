@@ -31,6 +31,9 @@ object MountedMineRenderer {
                     val entry=item.asJsonObject;val rows=entry.getAsJsonArray("matrix")
                     val matrix=Matrix4f()
                     for(row in 0..2)for(col in 0..3)matrix.set(col,row,rows[row].asJsonArray[col].asFloat)
+                    // Indexed writes use JOML's unsafe path and leave the old
+                    // identity flag intact. Recompute it before multiplying.
+                    matrix.determineProperties()
                     Mount(entry["parent"].asString,matrix)
                 }
             }

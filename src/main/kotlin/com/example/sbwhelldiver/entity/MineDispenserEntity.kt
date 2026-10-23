@@ -47,9 +47,15 @@ class MineDispenserEntity(type: EntityType<*>,level: Level): AbstractHellpodEnti
         // Two consecutive waves form twelve separated lanes on each radial band.
         // Uniform random launch speeds concentrate mines near the pod and can
         // overlap adjacent waves; solve the ballistic arc for a spaced landing.
-        val stagger=if((wave/2)%2==0) -4.0 else 4.0
-        val horizontal=Vec3(axis.x,0.0,axis.z).normalize()
-            .yRot(Math.toRadians(stagger+(random.nextDouble()-.5)*3).toFloat())
+        // Authored mine normals alternate across each leaf; using their azimuth
+        // as a landing lane makes consecutive waves converge. Aim outward from
+        // each of the six panel sectors, splitting paired waves by 30 degrees.
+        val panel=index/minesPerPanel
+        val heading=Math.toRadians((panel+2)*360.0/MinefieldClock.PANELS)
+        val stagger=(if(isAntiTank) 0.0 else if(wave%2==0) -15.0 else 15.0)+
+            (if((wave/2)%2==0) -4.0 else 4.0)
+        val horizontal=Vec3(cos(heading),0.0,sin(heading))
+            .yRot(rotation+Math.toRadians(stagger+(random.nextDouble()-.5)*3).toFloat())
         val radius=(if(isAntiTank) 7.0+5.0*wave else MinefieldClock.landingRadius(wave))+(random.nextDouble()-.5)*.4
         val target=horizontal.scale(radius)
         val travel=Vec3(target.x-local.x,0.0,target.z-local.z)
