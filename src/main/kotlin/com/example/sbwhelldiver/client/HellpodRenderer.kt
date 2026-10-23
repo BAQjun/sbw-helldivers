@@ -33,7 +33,7 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
             val rendered=net.minecraft.world.phys.Vec3(net.minecraft.util.Mth.lerp(partial.toDouble(),entity.xOld,entity.x),net.minecraft.util.Mth.lerp(partial.toDouble(),entity.yOld,entity.y),net.minecraft.util.Mth.lerp(partial.toDouble(),entity.zOld,entity.z))
             pose.translate(actual.x-rendered.x,actual.y-rendered.y,actual.z-rendered.z)
         }
-        (entity as? AbstractHellpodEntity)?.let { PodInterior.render(it, partial, pose) }
+        (entity as? AbstractHellpodEntity)?.let { PodInterior.render(it, partial, pose, buffers, light) }
         if (java.lang.Boolean.getBoolean("sbw_helldiver.clientSmokeTest") && entity.isWreck && !checkedWreckTextureCache) {
             val original = requireNotNull(getCurrentModelEntry(pose,entity)).texture
             check(WreckTextureCache.preparedTextures.containsKey(original)) { "Wreck texture was not prepared during resource loading" }
@@ -61,7 +61,7 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
                 } finally {pose.popPose()}
             }
         }
-        if(pod is SentryHellpodEntity && pod.profile.isTesla) TeslaTowerClient.render(pod,partial,pose,buffers)
+        if(pod is SentryHellpodEntity && pod.profile.isTesla && !ShaderPackCompat.active() && !ShaderPackCompat.shadowPass()) TeslaTowerClient.render(pod,partial,pose,buffers)
         if(pod is SentryHellpodEntity && pod.profile.isLaser && !ShaderPackCompat.shadowPass()) {
             getCurrentModelEntry(pose,entity)?.let { entry ->
                 pose.pushPose()

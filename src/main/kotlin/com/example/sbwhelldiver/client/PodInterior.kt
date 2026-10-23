@@ -11,7 +11,10 @@ import kotlin.math.*
 
 /** A depth portal inside the opened iris, retaining foreground occlusion and actual terrain. */
 object PodInterior {
-    fun render(pod: AbstractHellpodEntity, partial: Float, pose: PoseStack) {
+    fun render(pod: AbstractHellpodEntity, partial: Float, pose: PoseStack,
+        buffers: net.minecraft.client.renderer.MultiBufferSource, light: Int) {
+        // A depth portal is not a shadow caster and must never clear pack depth.
+        if (ShaderPackCompat.shadowPass()) return
         val openness = when (pod.phase) {
             AbstractHellpodEntity.Phase.DEPLOYING -> ((pod.phaseAge + partial - 3) / 7f).coerceIn(0f, 1f)
             AbstractHellpodEntity.Phase.ACTIVE -> 1f
@@ -21,6 +24,14 @@ object PodInterior {
             else -> 0f
         }
         if (openness <= 0) return
+        if (ShaderPackCompat.active()) {
+            // Shader packs replace the immediate position/color program. The
+            // stencil/depth-range portal can then cover unrelated world pixels.
+            // Keep the aperture dark using the pack's normal entity material,
+            // without changing its framebuffer, stencil, or depth range.
+            aperture(pose, openness, buffers, light)
+            return
+        }
         val target = Minecraft.getInstance().mainRenderTarget
         if (!target.isStencilEnabled) target.enableStencil()
         val bit = 0x80
@@ -84,6 +95,29 @@ object PodInterior {
             if (blend) RenderSystem.enableBlend() else RenderSystem.disableBlend()
             if (depth) RenderSystem.enableDepthTest() else RenderSystem.disableDepthTest()
             RenderSystem.setShader { shader }
+        }
+    }
+
+    private val apertureTexture = net.minecraft.resources.ResourceLocation("sbw_helldiver", "textures/mesh/white.png")
+    private fun aperture(pose: PoseStack, openness: Float,
+        buffers: net.minecraft.client.renderer.MultiBufferSource, light: Int) {
+        val out = buffers.getBuffer(net.minecraft.client.renderer.RenderType.entityCutoutNoCull(apertureTexture))
+        val matrix = pose.last().pose()
+        val normal = pose.last().normal()
+        val radius = .79f * openness
+        fun vertex(x: Float, z: Float) {
+            out.vertex(matrix, x, .12f, z).color(18, 23, 20, 255)
+                .uv(.5f + x / 2, .5f + z / 2)
+                .overlayCoords(net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY)
+                .uv2(light).normal(normal, 0f, 1f, 0f).endVertex()
+        }
+        for (i in 0 until 32) {
+            val a = i * Math.PI * 2 / 32
+            val b = (i + 1) * Math.PI * 2 / 32
+            vertex(0f, 0f)
+            vertex((sin(a) * radius).toFloat(), (cos(a) * radius).toFloat())
+            vertex((sin(b) * radius).toFloat(), (cos(b) * radius).toFloat())
+            vertex(0f, 0f)
         }
     }
 

@@ -35,18 +35,21 @@ public final class FieldVolumeRenderer {
     private static volatile boolean reload;
     private static long frames,events;
     private static int visible;
-    public static String diagnostics(){return "events="+events+" frames="+frames+" fields="+visible+" ready="+isReady()+" depthFormat="+depthFormat+" "+FlameVolumeGeometry.diagnostics()+" "+FlameSurfaceLighting.diagnostics()+" "+LaserEffectGeometry.diagnostics();}
+    public static String diagnostics(){return "events="+events+" frames="+frames+" fields="+visible+" ready="+isReady()+" depthFormat="+depthFormat+" "+FlameVolumeGeometry.diagnostics()+" "+FlameSurfaceLighting.diagnostics()+" "+LaserEffectGeometry.diagnostics()+" "+EnergyEffectGeometry.diagnostics();}
     public static void requestReload(){reload=true;}
     public static boolean isReady(){return program!=0&&!failed;}
     public static long renderedFrames(){return frames;}
     private static void release(){
-        FieldArcGeometry.release();FlameVolumeGeometry.release();FlameGlow.release();FlameSurfaceLighting.release();LaserEffectGeometry.release();
+        EnergyEffectGeometry.release();FieldArcGeometry.release();FlameVolumeGeometry.release();FlameGlow.release();FlameSurfaceLighting.release();LaserEffectGeometry.release();
         if(program!=0)glDeleteProgram(program);if(vao!=0)glDeleteVertexArrays(vao);
         if(noise!=0)glDeleteTextures(noise);if(depth!=0)glDeleteTextures(depth);if(depthFbo!=0)glDeleteFramebuffers(depthFbo);
         program=vao=noise=depth=depthFbo=width=height=depthFormat=0;failed=false;reload=false;
     }
     static String source(String name) throws IOException {
-        try(var input=Minecraft.getInstance().getResourceManager().open(new ResourceLocation("sbw_helldiver","shaders/volume/"+name))) {
+        return sourcePath("shaders/volume/"+name);
+    }
+    static String sourcePath(String path) throws IOException {
+        try(var input=Minecraft.getInstance().getResourceManager().open(new ResourceLocation("sbw_helldiver",path))) {
             return new String(input.readAllBytes(),StandardCharsets.UTF_8);
         }
     }
@@ -86,9 +89,15 @@ public final class FieldVolumeRenderer {
         var fields=new ArrayList<MortarFieldEntity>();
         for(var entity:mc.level.entitiesForRendering())if(entity instanceof MortarFieldEntity f&&f.isAlive()&&f.distanceToSqr(camera)<128*128)fields.add(f);
         visible=fields.size();
+        var energy=new ArrayList<net.minecraft.world.entity.Entity>();
+        for(var entity:mc.level.entitiesForRendering()){
+            if(!entity.isAlive()||entity.distanceToSqr(camera)>192*192)continue;
+            if(entity instanceof com.example.sbwhelldiver.entity.ShieldGeneratorEntity ||
+                ShaderPackCompat.INSTANCE.active()&&entity instanceof com.example.sbwhelldiver.entity.SentryHellpodEntity s&&s.getProfile().isTesla())energy.add(entity);
+        }
         float[] flames=FlameJetVisual.INSTANCE.volumeInstances(event.getPartialTick(),camera,event.getFrustum());
         float[] lasers=LaserPostVisual.INSTANCE.collect(event.getPartialTick(),camera,event.getFrustum());
-        if((fields.isEmpty()&&flames.length==0&&lasers.length==0)||(failed&&!reload))return;
+        if((fields.isEmpty()&&flames.length==0&&lasers.length==0&&energy.isEmpty())||(failed&&!reload))return;
         fields.sort(Comparator.comparingDouble((MortarFieldEntity f)->f.distanceToSqr(camera)).reversed());
         try(var stack=MemoryStack.stackPush()) {
             // Raw GL calls are paired with exact restoration, leaving Mojang's
@@ -106,7 +115,7 @@ public final class FieldVolumeRenderer {
             IntBuffer viewport=stack.mallocInt(4);glGetIntegerv(GL_VIEWPORT,viewport);
             ByteBuffer mask=stack.malloc(4);glGetBooleanv(GL_COLOR_WRITEMASK,mask);
             try {
-                if(Boolean.getBoolean("sbw_helldiver.shaderFieldSmokeTest")||Boolean.getBoolean("sbw_helldiver.flameVolumeSmokeTest")||Boolean.getBoolean("sbw_helldiver.laserShaderSmokeTest"))glGetError();
+                if(Boolean.getBoolean("sbw_helldiver.energyShaderSmokeTest")||Boolean.getBoolean("sbw_helldiver.shaderFieldSmokeTest")||Boolean.getBoolean("sbw_helldiver.flameVolumeSmokeTest")||Boolean.getBoolean("sbw_helldiver.laserShaderSmokeTest"))glGetError();
                 if(reload)release();
                 glBindSampler(0,0);glBindSampler(1,0);
                 glActiveTexture(GL_TEXTURE0);initialize();
@@ -161,7 +170,9 @@ public final class FieldVolumeRenderer {
                     FlameGlow.render(w,h,()->FlameVolumeGeometry.draw(flames,event.getProjectionMatrix(),new Matrix3f(RenderSystem.getInverseViewRotationMatrix()),camera,w,h,(mc.level.getGameTime()+event.getPartialTick())/20f));
                 }
                 if(lasers.length>0)FlameGlow.render(w,h,.18f,()->LaserEffectGeometry.draw(lasers,event.getProjectionMatrix(),new Matrix3f(RenderSystem.getInverseViewRotationMatrix()),w,h));
-                if(Boolean.getBoolean("sbw_helldiver.shaderFieldSmokeTest")||Boolean.getBoolean("sbw_helldiver.flameVolumeSmokeTest")||Boolean.getBoolean("sbw_helldiver.laserShaderSmokeTest")) {
+                glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,depth);
+                EnergyEffectGeometry.draw(energy,event.getPartialTick(),camera,event.getProjectionMatrix(),new Matrix3f(RenderSystem.getInverseViewRotationMatrix()),w,h);
+                if(Boolean.getBoolean("sbw_helldiver.energyShaderSmokeTest")||Boolean.getBoolean("sbw_helldiver.shaderFieldSmokeTest")||Boolean.getBoolean("sbw_helldiver.flameVolumeSmokeTest")||Boolean.getBoolean("sbw_helldiver.laserShaderSmokeTest")) {
                     int error=glGetError();if(error!=GL_NO_ERROR)throw new IllegalStateException("Volume GL error "+error);
                 }
                 frames++;

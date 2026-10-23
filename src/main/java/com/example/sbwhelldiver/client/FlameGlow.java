@@ -49,6 +49,14 @@ final class FlameGlow {
         render(w,h,.52f,flame);
     }
     static void render(int w,int h,float bloomStrength,Draw flame)throws IOException {
+        render(w,h,bloomStrength,false,flame);
+    }
+    /** Electric emission has zero coverage alpha; retain its direct light as
+     * well as its bloom instead of applying the flame's alpha-based color cap. */
+    static void renderAdditive(int w,int h,float bloomStrength,Draw light)throws IOException {
+        render(w,h,bloomStrength,true,light);
+    }
+    private static void render(int w,int h,float bloomStrength,boolean additive,Draw flame)throws IOException {
         int destination=glGetInteger(GL_DRAW_FRAMEBUFFER_BINDING),active=glGetInteger(GL_ACTIVE_TEXTURE);
         glActiveTexture(GL_TEXTURE0);int previous0=glGetInteger(GL_TEXTURE_BINDING_2D);
         glActiveTexture(GL_TEXTURE1);int previous1=glGetInteger(GL_TEXTURE_BINDING_2D);
@@ -67,7 +75,7 @@ final class FlameGlow {
             pass(targets[1],textures[2],bw,bh,1,0f,1.6f/bh);
             glActiveTexture(GL_TEXTURE1);glBindTexture(GL_TEXTURE_2D,textures[1]);glActiveTexture(GL_TEXTURE0);
             glEnable(GL_BLEND);glBlendFuncSeparate(GL_ONE,GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA);
-            pass(destination,textures[0],w,h,2,0f,0f);
+            pass(destination,textures[0],w,h,additive?3:2,0f,0f);
         }finally{
             glBindFramebuffer(GL_DRAW_FRAMEBUFFER,destination);glViewport(0,0,w,h);
             glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,previous0);

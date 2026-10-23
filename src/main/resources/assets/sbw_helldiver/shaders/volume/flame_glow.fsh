@@ -26,6 +26,6 @@ void main(){
         // Preserve amber edges rather than whitening the whole plume. Additive
         // light has zero coverage outside the flame and cannot darken the scene.
         vec3 bloom=texture(Bloom,texCoord).rgb*BloomStrength;
-        fragColor=vec4(min(flame.rgb,vec3(flame.a*1.12))+bloom,flame.a);
+        fragColor=Mode==3?vec4(flame.rgb+bloom,0.):vec4(min(flame.rgb,vec3(flame.a*1.12))+bloom,flame.a);
     }
 }

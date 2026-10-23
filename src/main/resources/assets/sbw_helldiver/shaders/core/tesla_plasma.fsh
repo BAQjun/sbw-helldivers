@@ -1,4 +1,8 @@
 #version 150
+#ifdef SBW_ENERGY_POST
+uniform sampler2D SceneDepth;
+uniform vec2 Viewport;
+#endif
 uniform vec4 ColorModulator;
 uniform float GameTime;
 uniform float FogStart;
@@ -21,6 +25,9 @@ float valueNoise(vec3 p) {
                    mix(hash(i+vec3(0,1,1)),hash(i+vec3(1,1,1)),f.x),f.y),f.z);
 }
 void main() {
+#ifdef SBW_ENERGY_POST
+ if(gl_FragCoord.z>texture(SceneDepth,gl_FragCoord.xy/Viewport).r+0.000002)discard;
+#endif
     vec2 p=effectUV*2.0-1.0;
     float r=length(p);
     if(r>=1.0)discard;
@@ -43,4 +50,9 @@ void main() {
     color=mix(color,vec3(1.0),core*0.8);
     fragColor=vec4(color*vertexColor.rgb*ColorModulator.rgb,
         clamp(density*3.2+core*0.65+halo*0.15,0.0,1.0)*vertexColor.a*ColorModulator.a*fogFade());
+
+#ifdef SBW_ENERGY_POST
+ // Add light without dark rectangles or alpha accumulation.
+ fragColor=vec4(fragColor.rgb*fragColor.a,0.0);
+#endif
 }
