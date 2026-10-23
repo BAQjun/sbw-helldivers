@@ -40,7 +40,7 @@ public final class FieldVolumeRenderer {
     public static boolean isReady(){return program!=0&&!failed;}
     public static long renderedFrames(){return frames;}
     private static void release(){
-        EnergyEffectGeometry.release();FieldArcGeometry.release();FlameVolumeGeometry.release();FlameGlow.release();FlameSurfaceLighting.release();LaserEffectGeometry.release();
+        MineGlowGeometry.release();EnergyEffectGeometry.release();FieldArcGeometry.release();FlameVolumeGeometry.release();FlameGlow.release();FlameSurfaceLighting.release();LaserEffectGeometry.release();
         if(program!=0)glDeleteProgram(program);if(vao!=0)glDeleteVertexArrays(vao);
         if(noise!=0)glDeleteTextures(noise);if(depth!=0)glDeleteTextures(depth);if(depthFbo!=0)glDeleteFramebuffers(depthFbo);
         program=vao=noise=depth=depthFbo=width=height=depthFormat=0;failed=false;reload=false;
@@ -83,6 +83,7 @@ public final class FieldVolumeRenderer {
     }
     private static int uniform(String name){return glGetUniformLocation(program,name);}
     public static void render(RenderLevelStageEvent event) {
+        if(event.getStage()==RenderLevelStageEvent.Stage.AFTER_SKY&&!ShaderPackCompat.INSTANCE.shadowPass())MineGlowGeometry.beginFrame();
         if(event.getStage()!=RenderLevelStageEvent.Stage.AFTER_LEVEL||ShaderPackCompat.INSTANCE.shadowPass())return;
         events++;Minecraft mc=Minecraft.getInstance();if(mc.level==null)return;
         Vec3 camera=event.getCamera().getPosition();
@@ -97,7 +98,7 @@ public final class FieldVolumeRenderer {
         }
         float[] flames=FlameJetVisual.INSTANCE.volumeInstances(event.getPartialTick(),camera,event.getFrustum());
         float[] lasers=LaserPostVisual.INSTANCE.collect(event.getPartialTick(),camera,event.getFrustum());
-        if((fields.isEmpty()&&flames.length==0&&lasers.length==0&&energy.isEmpty())||(failed&&!reload))return;
+        if((fields.isEmpty()&&flames.length==0&&lasers.length==0&&energy.isEmpty()&&MineGlowGeometry.vertexCount()==0)||(failed&&!reload))return;
         fields.sort(Comparator.comparingDouble((MortarFieldEntity f)->f.distanceToSqr(camera)).reversed());
         try(var stack=MemoryStack.stackPush()) {
             // Raw GL calls are paired with exact restoration, leaving Mojang's
@@ -172,6 +173,8 @@ public final class FieldVolumeRenderer {
                 if(lasers.length>0)FlameGlow.render(w,h,.18f,()->LaserEffectGeometry.draw(lasers,event.getProjectionMatrix(),new Matrix3f(RenderSystem.getInverseViewRotationMatrix()),w,h));
                 glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,depth);
                 EnergyEffectGeometry.draw(energy,event.getPartialTick(),camera,event.getProjectionMatrix(),new Matrix3f(RenderSystem.getInverseViewRotationMatrix()),w,h);
+                glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,depth);
+                if(MineGlowGeometry.vertexCount()>0)FlameGlow.render(w,h,.28f,()->MineGlowGeometry.draw(event.getProjectionMatrix(),w,h));
                 if(Boolean.getBoolean("sbw_helldiver.energyShaderSmokeTest")||Boolean.getBoolean("sbw_helldiver.shaderFieldSmokeTest")||Boolean.getBoolean("sbw_helldiver.flameVolumeSmokeTest")||Boolean.getBoolean("sbw_helldiver.laserShaderSmokeTest")) {
                     int error=glGetError();if(error!=GL_NO_ERROR)throw new IllegalStateException("Volume GL error "+error);
                 }

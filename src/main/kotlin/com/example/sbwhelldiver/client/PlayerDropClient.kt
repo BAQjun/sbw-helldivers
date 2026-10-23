@@ -95,6 +95,7 @@ object PlayerDropClient {
   val delta=v.look.subtract(eye)
   e.yaw=pod.yRot;e.pitch=-Math.toDegrees(atan2(delta.y,delta.horizontalDistance())).toFloat()
   e.roll=0f
+  HellpodLandingShake.apply(e)
  }
  @SubscribeEvent fun hand(e:RenderHandEvent){if(mounted()!=null||loading())e.isCanceled=true}
  @SubscribeEvent fun overlay(e:RenderGuiOverlayEvent.Pre){if(mounted()!=null&&(e.overlay.id.namespace in setOf("superbwarfare","tacz")||e.overlay.id.path in setOf("crosshair","hotbar","experience_bar","jump_bar")))e.isCanceled=true}

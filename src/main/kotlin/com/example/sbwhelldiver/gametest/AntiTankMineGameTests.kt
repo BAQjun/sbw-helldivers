@@ -81,7 +81,7 @@ object AntiTankMineGameTests {
     fun innerThreeMetresFullDamageAndSevenMetreCutoff(h:GameTestHelper) {
         val p=point(h);val m=mine(h,p);val inner=cow(h,p.add(2.9,0.0,0.0));val edge=cow(h,p.add(5.0,0.0,0.0));val outside=cow(h,p.add(7.6,0.0,0.0));m.detonate()
         h.assertTrue(abs(inner.health-180f)<.01,"Inner 3-m damage is not 320: ${inner.health}")
-        h.assertTrue(edge.health in 180.1f..499.9f&&outside.health==500f,"Outer falloff or 7-m cutoff is incorrect")
+        h.assertTrue(edge.health in 180.1f..499.9f&&outside.health==500f,"Outer falloff or 7-m cutoff is incorrect: edge=${edge.health} outside=${outside.health} at=$p")
         h.assertTrue(abs(SentryExplosion.damageAt(3.0,320f,3.0,7.0)-320f)<.01 && SentryExplosion.damageAt(7.0,320f,3.0,7.0)==0f,"Exact blast boundaries changed")
         cleanup(h,p);h.succeed()
     }

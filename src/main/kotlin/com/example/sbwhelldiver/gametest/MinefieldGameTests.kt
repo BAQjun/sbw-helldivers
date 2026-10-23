@@ -126,6 +126,24 @@ object MinefieldGameTests {
         LaserBeam.fire(laser,hit,false);h.assertTrue(target.isRemoved,"Laser hit did not detonate mine")
         arrow.discard();laser.discard();h.succeed()
     }
+    @JvmStatic @GameTest(template="sentry_test",batch="mine_support",timeoutTicks=10)
+    fun settledSupportHandlesFullBlocksSlabsAndRemoval(h: GameTestHelper) {
+        val p=origin(h)
+        val floor=BlockPos.containing(p.add(0.0,-1.0,0.0))
+        h.level.setBlock(floor,Blocks.STONE.defaultBlockState(),2)
+        val full=mine(h,p);full.tick()
+        h.assertTrue(full.settled,"Mine lost full-block support")
+        h.level.setBlock(floor,Blocks.AIR.defaultBlockState(),2);full.tick()
+        h.assertTrue(!full.settled,"Mine stayed suspended after its support was removed")
+        full.discard()
+        val slabFloor=floor.offset(3,0,0)
+        h.level.setBlock(slabFloor,Blocks.STONE_SLAB.defaultBlockState(),2)
+        val slab=mine(h,p.add(3.0,-.5,0.0));slab.tick()
+        h.assertTrue(slab.settled,"Mine lost half-slab support")
+        h.level.setBlock(slabFloor,Blocks.AIR.defaultBlockState(),2);slab.tick()
+        h.assertTrue(!slab.settled,"Slab-supported mine did not fall after removal")
+        slab.discard();h.succeed()
+    }
     @JvmStatic @GameTest(template="sentry_test",batch="mine_landing",timeoutTicks=200)
     fun fullFlightAndLandingDoNotSelfDetonate(h: GameTestHelper) {
         val p=origin(h)
@@ -219,7 +237,7 @@ object MinefieldGameTests {
             h.assertTrue(h.level.addFreshEntity(loaded),"Saved dispenser UUID was not available after removal")
             repeat(30) { loaded.tick() }
             val all=h.level.getEntitiesOfClass(AntiPersonnelMineEntity::class.java,AABB(p,p).inflate(20.0)) { it.dispenserId==originalId }
-            h.assertTrue(wave>0 && loaded.releasedWaves==8 && all.size==48,"Reload wave=$wave loaded=${loaded.releasedWaves} phase=${loaded.phase} count=${all.size} expected=48")
+            h.assertTrue(wave>0 && loaded.releasedWaves==8 && all.size==48,"Reload wave=$wave loaded=${loaded.releasedWaves} phase=${loaded.phase} count=${all.size} expected=48; point=$p worldCount=${h.level.allEntities.count{it is AntiPersonnelMineEntity&&it.dispenserId==originalId}}")
             all.forEach { it.discard() };loaded.discard();h.succeed()
         }
     }

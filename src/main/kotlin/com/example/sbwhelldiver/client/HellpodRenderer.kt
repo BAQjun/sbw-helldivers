@@ -48,6 +48,14 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
         try {super.render(entity,yaw,partial,pose,mineBuffers?:buffers,light)}
         finally {mineBuffers?.finish()}
         val pod = entity as? AbstractHellpodEntity ?: return
+        if(pod is com.example.sbwhelldiver.entity.MineDispenserEntity){
+            getCurrentModelEntry(pose,entity)?.let{entry->
+                pose.pushPose()
+                try{rotateVehicleAxis(entity,pose,yaw,partial);pose.scale(renderScale(),renderScale(),renderScale())
+                    MountedMineRenderer.render(pod,entry.instance,pose,buffers,light)
+                }finally{pose.popPose()}
+            }
+        }
         if(pod is com.example.sbwhelldiver.entity.HmgEmplacementEntity && pod.phase !in listOf(AbstractHellpodEntity.Phase.SPENT,AbstractHellpodEntity.Phase.DONE)) {
             getCurrentModelEntry(pose,entity)?.let {entry ->
                 pose.pushPose()
@@ -150,7 +158,11 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
         }
         if(pod is com.example.sbwhelldiver.entity.MineDispenserEntity) {
             instance.getBone("spinner")?.rotation?.rotationY(Math.toRadians(pod.interpolatedSpin(partialTicks).toDouble()).toFloat())
-            for(i in 0 until pod.mineCount) instance.getBone(loadedMineBones[i])?.visible=i%pod.minesPerPanel>=pod.releasedWaves
+            // Mounted geometry is drawn from an immutable shared cache only
+            // after opening; never traverse or submit its meshes in this pass.
+            for(i in 0 until pod.mineCount) instance.getBone(loadedMineBones[i])?.let{
+                it.visible=false;it.xScale=0f;it.yScale=0f;it.zScale=0f
+            }
             MinefieldClientScene.checkLinkage(pod,instance)
         }
         if (pod is SentryHellpodEntity && pod.profile.isLaser) {

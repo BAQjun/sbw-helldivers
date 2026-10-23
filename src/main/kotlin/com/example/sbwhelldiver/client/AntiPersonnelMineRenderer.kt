@@ -20,38 +20,39 @@ import net.minecraft.server.packs.resources.ResourceManagerReloadListener
 import net.minecraft.util.Mth
 class AntiPersonnelMineRenderer(context: EntityRendererProvider.Context): EntityRenderer<AntiPersonnelMineEntity>(context) {
     init { shadowRadius=.16f }
-    override fun getTextureLocation(entity: AntiPersonnelMineEntity)=when(entity.kind) {
-        AntiPersonnelMineEntity.Kind.INCENDIARY -> ResourceLocation(MOD_ID,"textures/bedrock/misc/incendiary_mine.png")
-        AntiPersonnelMineEntity.Kind.GAS -> ResourceLocation(MOD_ID,"textures/bedrock/misc/gas_mine.png")
-        AntiPersonnelMineEntity.Kind.ANTI_TANK -> ResourceLocation(MOD_ID,"textures/bedrock/misc/anti_tank_mine.png")
-        else -> TEXTURE
-    }
+    override fun getTextureLocation(entity: AntiPersonnelMineEntity)=Model.textures.getValue(entity.kind)
     override fun render(entity: AntiPersonnelMineEntity,yaw: Float,partial: Float,pose: PoseStack,buffers: MultiBufferSource,light: Int) {
         val distance=entity.position().distanceToSqr(net.minecraft.client.Minecraft.getInstance().gameRenderer.mainCamera.position)
-        val tier=if(distance>400.0)2 else if(distance>100.0)1 else 0
-        val model=if(tier==0)Model.instances[entity.kind] else Model.lods[tier to entity.kind]
-        model?:return
+        val tier=if(distance>196.0)2 else if(distance>36.0)1 else 0
+        val mesh=Model.meshes[Triple(entity.kind,tier,entity.armed)]?:return
         val texture=getTextureLocation(entity)
         pose.pushPose();pose.mulPose(Axis.YP.rotationDegrees(180f-Mth.rotLerp(partial,entity.yRotO,entity.yRot)));pose.scale(.62f,.62f,.62f)
-        for(i in 1..4)model.getBone("trigger_rod_$i")?.visible=entity.armed
-        val meshBuffers=MineMeshBuffers.wrap(buffers,texture)
-        try {model.renderToBuffer(pose,meshBuffers,RenderType.entityCutoutNoCull(texture),BedrockModelRenderTypes.polyMeshCutout(texture),light,OverlayTexture.NO_OVERLAY)}
-        finally {meshBuffers.finish()}
+        mesh.render(pose,buffers.getBuffer(RenderType.entityCutoutNoCull(texture)),light,true)
         MinefieldClientScene.renderedMine(entity)
         pose.popPose();super.render(entity,yaw,partial,pose,buffers,light)
     }
     object Model: ResourceManagerReloadListener {
+        val textures=AntiPersonnelMineEntity.Kind.entries.associateWith{kind->ResourceLocation(MOD_ID,"textures/bedrock/misc/"+when(kind){AntiPersonnelMineEntity.Kind.PERSONNEL->"contact_mine";AntiPersonnelMineEntity.Kind.INCENDIARY->"incendiary_mine";AntiPersonnelMineEntity.Kind.GAS->"gas_mine";else->"anti_tank_mine"}+".png")}
+        val meshes=mutableMapOf<Triple<AntiPersonnelMineEntity.Kind,Int,Boolean>,CachedMineMesh>()
         val instances=mutableMapOf<AntiPersonnelMineEntity.Kind,BakedModelInstance>()
         val lods=mutableMapOf<Pair<Int,AntiPersonnelMineEntity.Kind>,BakedModelInstance>()
         override fun onResourceManagerReload(resources: ResourceManager) {
-            instances.clear();lods.clear()
+            instances.clear();lods.clear();meshes.clear();MountedMineRenderer.reload(resources)
             for((kind,name) in listOf(AntiPersonnelMineEntity.Kind.PERSONNEL to "contact_mine",AntiPersonnelMineEntity.Kind.INCENDIARY to "incendiary_mine",AntiPersonnelMineEntity.Kind.GAS to "gas_mine",AntiPersonnelMineEntity.Kind.ANTI_TANK to "anti_tank_mine")) {
-                resources.openAsReader(ResourceLocation(MOD_ID,"models/bedrock/misc/$name.geo.json")).use {
-                    instances[kind]=BakedModelInstance(BedrockModelBaker.bake(GsonUtil.CLIENT_GSON.fromJson(it,BedrockModelPOJO::class.java),BakerOptions.defaults()))
-                }
-                for(tier in 1..2)resources.openAsReader(ResourceLocation(MOD_ID,"models/bedrock/misc/${name}_lod$tier.geo.json")).use {
-                    lods[tier to kind]=BakedModelInstance(BedrockModelBaker.bake(GsonUtil.CLIENT_GSON.fromJson(it,BedrockModelPOJO::class.java),BakerOptions.defaults()))
-                }
+                resources.open(textures.getValue(kind)).use{input->com.mojang.blaze3d.platform.NativeImage.read(input).use{image->
+                    for(tier in 0..2){
+                        val suffix=if(tier==0)"" else "_lod$tier"
+                        val options=BakerOptions.ofAnimatedBones((1..4).map{"trigger_rod_$it"}.toSet())
+                        val model=resources.openAsReader(ResourceLocation(MOD_ID,"models/bedrock/misc/$name$suffix.geo.json")).use{
+                            BakedModelInstance(BedrockModelBaker.bake(GsonUtil.CLIENT_GSON.fromJson(it,BedrockModelPOJO::class.java),options))
+                        }
+                        if(tier==0)instances[kind]=model else lods[tier to kind]=model
+                        for(armed in listOf(false,true)){
+                            for(i in 1..4)model.getBone("trigger_rod_$i")?.visible=armed
+                            meshes[Triple(kind,tier,armed)]=CachedMineMesh.bake(model,image,kind.ordinal)
+                        }
+                    }
+                }}
             }
         }
     }

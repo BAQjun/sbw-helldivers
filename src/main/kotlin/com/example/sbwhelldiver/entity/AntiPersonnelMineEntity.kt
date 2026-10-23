@@ -28,7 +28,7 @@ class AntiPersonnelMineEntity(type: EntityType<AntiPersonnelMineEntity>,level: L
     enum class Kind(val blastDamage: Float,val blastRadius: Double,val fieldRadius: Double,val innerRadius: Double=1.2) {
         PERSONNEL(100f,5.0,0.0), INCENDIARY(50f,4.0,4.0), GAS(0f,0.0,6.0), ANTI_TANK(320f,7.0,0.0,3.0)
     }
-    val kind get()=when(net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(type).path) {
+    val kind=when(net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(type).path) {
         "incendiary_mine" -> Kind.INCENDIARY
         "gas_mine" -> Kind.GAS
         "anti_tank_mine" -> Kind.ANTI_TANK
@@ -44,6 +44,15 @@ class AntiPersonnelMineEntity(type: EntityType<AntiPersonnelMineEntity>,level: L
     private var lerpSteps=0
     private var lerpPosition=Vec3.ZERO
     private var lerpYaw=0f
+    private val supportPos=net.minecraft.core.BlockPos.MutableBlockPos()
+    private fun hasSupport():Boolean {
+        // Settled fields usually rest on full blocks. Prove support with one
+        // cached block-shape lookup instead of allocating a collision iterator
+        // and testing voxel shapes for every stationary mine on every tick.
+        supportPos.set(x,boundingBox.minY-.04,z)
+        if(level().getBlockState(supportPos).isCollisionShapeFullBlock(level(),supportPos))return true
+        return level().getBlockCollisions(this,boundingBox.move(0.0,-.04,0.0)).iterator().hasNext()
+    }
     override fun defineSynchedData() { entityData.define(SETTLED,false);entityData.define(ARMED,false) }
     fun launch(at: Vec3,velocity: Vec3,owner: UUID?,dispenser: UUID?) {
         ownerId=owner;dispenserId=dispenser;setPos(at);deltaMovement=velocity;yRot=random.nextFloat()*360f
@@ -64,7 +73,7 @@ class AntiPersonnelMineEntity(type: EntityType<AntiPersonnelMineEntity>,level: L
         if(!settled) {
             deltaMovement=deltaMovement.add(0.0,-GRAVITY,0.0);move(MoverType.SELF,deltaMovement)
             if(onGround()) { entityData.set(SETTLED,true);deltaMovement=Vec3.ZERO;play("sfx_ap_mine_land_1") }
-        } else if(!level().getBlockCollisions(this,boundingBox.move(0.0,-.04,0.0)).iterator().hasNext())entityData.set(SETTLED,false)
+        } else if(!hasSupport())entityData.set(SETTLED,false)
         if(age>=MinefieldClock.ARM_TICKS && settled)entityData.set(ARMED,true)
         val contacts=level().getEntities(this,boundingBox.inflate(.04,.10,.04)) {
             !it.isRemoved && it.isAlive && !it.isSpectator && !it.noPhysics &&

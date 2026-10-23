@@ -70,6 +70,7 @@ abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAi
     val impactDeadline get() = entityData.get(DATA_ARRIVAL)
     val landingY get() = entityData.get(DATA_REST_Y).toDouble()
     private var previousFlightY = Double.NaN
+    private var clientWasFalling=false
     var flightSampleTime = Double.NaN
         private set
 
@@ -130,7 +131,13 @@ abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAi
         super.onSyncedDataUpdated(key)
         if (key == DATA_PHASE) {
             refreshDimensions()
-            if (level().isClientSide) onClientPhaseChanged(phase)
+            if (level().isClientSide) {
+                if(phase==Phase.IMPACT&&clientWasFalling){
+                    com.example.sbwhelldiver.client.HellpodLandingShake.impact(this)
+                    clientWasFalling=false
+                }
+                onClientPhaseChanged(phase)
+            }
         }
     }
 
@@ -172,6 +179,7 @@ abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAi
         noPhysics = phase == Phase.FALLING
         super.tick()
         if (level().isClientSide) {
+            if(phase==Phase.FALLING)clientWasFalling=true
             // Native vehicle collision can pull the buried hull down to the block surface.
             // Keep the client model at the server's landing height, where its projectiles originate.
             val anchorY = entityData.get(DATA_REST_Y).toDouble()

@@ -40,7 +40,7 @@ object ElementalMineGameTests {
         val inside=cow(h,p.add(5.8,0.0,0.0));val outside=cow(h,p.add(6.3,0.0,0.0));val close=cow(h,p.add(.5,0.0,0.0))
         m.detonate();h.assertTrue(listOf(inside,outside,close).all{it.health==500f},"Gas mine caused immediate explosion damage")
         val field=h.level.getEntitiesOfClass(MortarFieldEntity::class.java,AABB(p,p).inflate(7.0)).single();h.assertTrue(field.kind==MortarFieldEntity.Kind.GAS&&field.radius==6.0&&field.remainingTicks==300,"Wrong gas radius/lifetime")
-        field.tick();h.assertTrue(inside.hasEffect(ModEffects.GAS.get())&&inside.hasEffect(ModEffects.CONFUSION.get())&&close.hasEffect(ModEffects.GAS.get())&&!outside.hasEffect(ModEffects.GAS.get()),"Gas mine did not share mortar poison/confusion or crossed 6-m boundary")
+        field.tick();h.assertTrue(inside.hasEffect(ModEffects.GAS.get())&&inside.hasEffect(ModEffects.CONFUSION.get())&&close.hasEffect(ModEffects.GAS.get())&&!outside.hasEffect(ModEffects.GAS.get()),"Gas mine did not share mortar poison/confusion or crossed 6-m boundary: inside=${inside.activeEffects} close=${close.activeEffects} outside=${outside.activeEffects} at=$p")
         val mortar=MortarFieldEntity.create(h.level,p.add(0.0,0.0,12.0),MortarFieldEntity.Kind.GAS);h.assertTrue(mortar.radius==7.0,"Mine radius changed the existing mortar radius")
         cleanup(h,p);h.succeed()
     }
@@ -73,7 +73,7 @@ object ElementalMineGameTests {
         for((type,kind) in listOf(ModEntities.INCENDIARY_MINEFIELD to AntiPersonnelMineEntity.Kind.INCENDIARY,ModEntities.GAS_MINEFIELD to AntiPersonnelMineEntity.Kind.GAS)) {
             val d=dispenser(h,p,type);h.assertTrue(d.getMaxHealth()==40f,"Elemental dispenser health is not 40")
             repeat(30){d.tick()};val mines=h.level.getEntitiesOfClass(AntiPersonnelMineEntity::class.java,AABB(p,p).inflate(22.0)){it.dispenserId==d.uuid}
-            h.assertTrue(mines.size==48&&mines.all{it.kind==kind},"Wrong payload kind/count");mines.forEach{it.discard()};d.discard()
+            h.assertTrue(mines.size==48&&mines.all{it.kind==kind},"Wrong payload kind/count: kinds=${mines.groupingBy{it.kind}.eachCount()} expected=$kind at=$p worldCount=${h.level.allEntities.count{it is AntiPersonnelMineEntity&&it.dispenserId==d.uuid}}");mines.forEach{it.discard()};d.discard()
             val mid=dispenser(h,p,type);mid.tick();mid.hurt(h.level.damageSources().generic(),10000f);repeat(40){mid.tick()}
             val partial=h.level.getEntitiesOfClass(AntiPersonnelMineEntity::class.java,AABB(p,p).inflate(22.0)){it.dispenserId==mid.uuid};h.assertTrue(partial.size==6&&mid.phase==AbstractHellpodEntity.Phase.SPENT,"Destroyed launcher kept releasing mines");partial.forEach{it.discard()};mid.discard()
         };cleanup(h,p);h.succeed()
