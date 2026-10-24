@@ -1,8 +1,8 @@
-# Runtime model reduction (performance preview)
+# Runtime model optimization
 
 The editable Blockbench models remain full detail. Only the optional low quality game exports are reduced.
 Keep an unreduced export directory as the input; never feed reduced output back
-into the tool. The performance preview is not a production release.
+into the tool. Full-detail and optional reduced exports are shipped together.
 
 From this directory, install the pinned development dependencies with `npm ci`.
 Then run from the repository root:

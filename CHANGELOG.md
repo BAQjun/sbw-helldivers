@@ -1,5 +1,23 @@
 # 版本记录
 
+## 0.4 — 模型优化与质量设置 / Model optimization and quality settings
+
+### 中文
+
+- 优化默认精细模型，清理完全遮挡的立方体面及重复属性数据，保留原有外表网格、轮廓、法线与贴图坐标。
+- 在“模组 → SBW Helldivers → 配置”中新增“低质量模型”客户端开关，默认关闭；保存后重新加载资源，已部署的战备也会随之切换。
+- 可选减面模型覆盖炮台、空投仓、地雷、迫击炮弹与飞鹰，保留原有贴图、动画及战备属性。
+- 修复空投仓下沿锁扣悬空与喷口上沿的缝隙。
+- 将光影兼容的网格三角形处理统一应用于全部空投仓战备，避免模型拉出条状面。
+
+### English
+
+- Optimize the default full-detail models by removing fully hidden cube faces and duplicate attribute records, preserving the original mesh surfaces, silhouettes, normals and UVs.
+- Add a client-side **Low Quality Models** toggle under **Mods → SBW Helldivers → Config**, off by default. Saving reloads resources and updates already deployed stratagems.
+- Optional reduced models cover turrets, Hellpods, mines, mortar rounds and the Eagle while preserving textures, animations and gameplay properties.
+- Fix floating lower Hellpod lock tabs and the gap above the thruster housings.
+- Apply shader-compatible mesh triangle handling to all Hellpod stratagems to prevent stretched strips of geometry.
+
 ## 0.3.92-perftest2 — 可选低质量模型 / Optional low quality models
 
 - 默认精细模型仅清理完全遮挡的面及重复的顶点属性数据，保留全部网格表面、轮廓、法线与贴图坐标。
