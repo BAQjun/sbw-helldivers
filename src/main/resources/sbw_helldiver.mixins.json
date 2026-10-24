@@ -9,6 +9,7 @@
     "ThermalKnockbackMixin"
   ],
   "client": [
+    "EagleProjectileRenderMixin",
     "tacz.TaczInputMixin",
     "tacz.TaczCameraMixin",
     "tacz.TaczCrosshairMixin"

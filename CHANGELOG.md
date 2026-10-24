@@ -1,5 +1,17 @@
 # 版本记录
 
+## 0.4.1 — 飞鹰机炮弹显示 / Eagle cannon round visuals
+
+### 中文
+
+- 飞鹰机枪扫射改用 SBW A-10A 的 GAU-8/A 原生机炮弹渲染，保持原有弹射物伤害、射速、高爆弹比例及爆炸范围。
+- 飞鹰机炮弹不再套用玩家手持武器的枪口显示偏移，弹道始终从飞机实际发射位置显示。
+
+### English
+
+- Use the native SBW A-10A GAU-8/A cannon round renderer for the Eagle Strafing Run, preserving its damage, rate of fire, explosive round ratio and blast radii.
+- Exclude Eagle cannon rounds from handheld weapon muzzle offsets so their tracers remain on the aircraft's actual firing path.
+
 ## 0.4 — 模型优化与质量设置 / Model optimization and quality settings
 
 ### 中文

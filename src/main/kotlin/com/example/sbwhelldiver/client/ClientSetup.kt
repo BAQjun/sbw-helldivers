@@ -1,5 +1,6 @@
 package com.example.sbwhelldiver.client
 
+import com.atsuishio.superbwarfare.client.renderer.projectile.SmallCannonShellEntityRenderer
 import com.atsuishio.superbwarfare.client.renderer.entity.BasicAutoAimableRenderer
 import com.atsuishio.superbwarfare.entity.vehicle.base.AutoAimableEntity
 import com.example.sbwhelldiver.MOD_ID
@@ -82,7 +83,8 @@ object ClientSetup {
         event.registerEntityRenderer<AutoAimableEntity>(ModEntities.PLAYER_HELLPOD.get(),::HellpodRenderer)
         event.registerEntityRenderer(ModEntities.EAGLE.get(),::EagleRenderer)
         event.registerEntityRenderer(ModEntities.EAGLE_BOMB.get(),::EagleBombRenderer)
-        event.registerEntityRenderer<com.atsuishio.superbwarfare.entity.projectile.SmallCannonShellEntity>(ModEntities.EAGLE_CANNON_ROUND.get(),::SentryCannonShellRenderer)
+        // Use the same native shell renderer as SBW's A-10A GAU-8/A.
+        event.registerEntityRenderer<com.atsuishio.superbwarfare.entity.projectile.SmallCannonShellEntity>(ModEntities.EAGLE_CANNON_ROUND.get(),::SmallCannonShellEntityRenderer)
         event.registerEntityRenderer<AutoAimableEntity>(ModEntities.SHIELD_GENERATOR.get(),::HellpodRenderer)
         event.registerEntityRenderer<AutoAimableEntity>(ModEntities.GRENADIER_BATTLEMENT.get(),::HellpodRenderer)
         event.registerEntityRenderer<com.atsuishio.superbwarfare.entity.projectile.SmallCannonShellEntity>(ModEntities.GRENADIER_GRENADE.get(),::GrenadierGrenadeRenderer)
