@@ -45,7 +45,8 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
         }
         val needsShaderMeshAdapter=entity is com.example.sbwhelldiver.entity.MineDispenserEntity ||
             entity is com.example.sbwhelldiver.entity.AntiTankEmplacementEntity ||
-            entity is com.example.sbwhelldiver.entity.GrenadierBattlementEntity
+            entity is com.example.sbwhelldiver.entity.GrenadierBattlementEntity ||
+            (entity is SentryHellpodEntity && entity.profile.isLaser)
         val meshBuffers=if(needsShaderMeshAdapter && ShaderPackCompat.active())
             getCurrentModelEntry(pose,entity)?.let{entry->
                 var texture=entry.texture
