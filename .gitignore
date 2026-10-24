@@ -38,3 +38,6 @@
 *.key
 .DS_Store
 Thumbs.db
+
+# Offline model development dependencies
+**/node_modules/

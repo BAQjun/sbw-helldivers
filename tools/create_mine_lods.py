@@ -12,7 +12,7 @@ for name in ['contact_mine','incendiary_mine','gas_mine','anti_tank_mine']:
    points=[tuple(round(v/step)*step for v in p) for p in mesh['positions']]
    faces=[];seen=set()
    for face in mesh['polys']:
-    for indices in [(0,1,2),(0,2,3)]:
+    for indices in [(0,j,j+1) for j in range(1,len(face)-1)]:
      tri=[face[i] for i in indices];p=[points[v[0]] for v in tri]
      if len(set(p))<3:continue
      a,b,c=p;ab=[b[i]-a[i] for i in range(3)];ac=[c[i]-a[i] for i in range(3)]

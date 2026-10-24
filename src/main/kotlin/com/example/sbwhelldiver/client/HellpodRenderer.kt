@@ -43,10 +43,8 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
             checkedWreckTextureCache = true
             com.example.sbwhelldiver.LOGGER.info("WRECK_TEXTURE_CACHE_PASSED: native wreck rendering uses its prepared texture; lookupMs={}",(System.nanoTime()-began)/1_000_000.0)
         }
-        val needsShaderMeshAdapter=entity is com.example.sbwhelldiver.entity.MineDispenserEntity ||
-            entity is com.example.sbwhelldiver.entity.AntiTankEmplacementEntity ||
-            entity is com.example.sbwhelldiver.entity.GrenadierBattlementEntity ||
-            (entity is SentryHellpodEntity && entity.profile.isLaser)
+        // Reduced meshes must retain triangle boundaries in the shader loader's quad stream.
+        val needsShaderMeshAdapter=entity is AbstractHellpodEntity
         val meshBuffers=if(needsShaderMeshAdapter && ShaderPackCompat.active())
             getCurrentModelEntry(pose,entity)?.let{entry->
                 var texture=entry.texture

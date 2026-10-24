@@ -1,5 +1,17 @@
 # 版本记录
 
+## 0.3.92-perftest1 — 性能测试版 / Performance preview
+
+- 适度精简炮台、地雷、迫击炮弹和飞鹰的游戏模型网格，剔除同一动画部件内部被完全遮挡的面。
+- 保留骨骼、动画挂点、原有贴图及地雷发光标记，修正空投仓下沿锁扣悬空与喷口上沿透空缝隙。
+- 将光影下的网格三角形兼容处理扩展至所有空投仓战备。
+- 仅供性能与画面测试。
+
+- Moderately reduce runtime meshes for turrets, mines, mortar rounds and the Eagle; remove fully enclosed faces within individual animated parts.
+- Preserve animation bones, attachment points, original textures and emissive mine markings. Fix floating lower Hellpod lock tabs and the gap above the thruster housings.
+- Apply shader-compatible triangle grouping to all Hellpod stratagem meshes.
+- Intended for performance and visual testing only.
+
 ## 0.3.85
 
 - 为 13 种自动与手动炮台增加独立服务端配置，支持生命值、爆炸抗性、伤害、射速、弹药／燃料、索敌距离、工作时限及适用的爆炸范围、迫击炮散布等属性。
