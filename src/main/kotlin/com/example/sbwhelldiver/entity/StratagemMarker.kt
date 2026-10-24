@@ -48,7 +48,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     private var podSpawned = false
     private var activationPlayed = false
     private val isEagle get()=dropTypeId?.path?.startsWith("eagle_")==true
-    private val eagleCallTicks get()=EagleFlight.attackStart(dropTypeId?.path=="eagle_airstrike")
+    private val eagleCallTicks get()=EagleAttack.fromId(dropTypeId?.path).callTicks
     private var descentTicks = AbstractHellpodEntity.FALL_TICKS
 
     fun configure(dropType: ResourceLocation, delayTicks: Int, owner: UUID?, normal: Direction = Direction.UP, groundY: Double = y, beamColor: Int = 0x27BAFF) {
@@ -74,7 +74,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     override fun tick() {
         super.tick()
         if (level().isClientSide) return
-        if (startedAt < 0) {
+        if (startedAt < 0 && dropTypeId == null) {
             startedAt = level().gameTime
             entityData.set(START, startedAt)
         }
@@ -91,7 +91,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
             if(isEagle){
                 val aircraft=podUUID?.let{(level() as ServerLevel).getEntity(it)} as? EagleEntity
                 // Arrival and strike completion are separate phases. Flying ordnance keeps the call visible.
-                val missingFlightTimeout=duration+EagleFlight.end(dropTypeId?.path=="eagle_airstrike")-eagleCallTicks+20
+                val missingFlightTimeout=duration+EagleFlight.end(EagleAttack.fromId(dropTypeId?.path))-eagleCallTicks+20
                 if(aircraft?.strikeComplete==true || aircraft==null&&age>=missingFlightTimeout)discard()
             }else discard()
         }
@@ -106,11 +106,11 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
 
     private fun spawnEagle():Boolean {
         val server=level() as? ServerLevel?:return false
-        val bombing=dropTypeId?.path=="eagle_airstrike"
+        val mode=EagleAttack.fromId(dropTypeId?.path)
         val f=Vec3.directionFromRotation(0f,yRot)
-        val direction=if(bombing)Vec3(-f.z,0.0,f.x) else f
+        val direction=if(mode.perpendicular)Vec3(-f.z,0.0,f.x) else f
         val eagle=com.example.sbwhelldiver.init.ModEntities.EAGLE.get().create(server)?:return false
-        eagle.configure(Vec3(x,surfaceY,z),direction,bombing,ownerUuid,if(server.gameTime-startedAt<=1)startedAt else server.gameTime)
+        eagle.configure(Vec3(x,surfaceY,z),direction,mode,ownerUuid,if(server.gameTime-startedAt<=1)startedAt else server.gameTime)
         if(!server.addFreshEntity(eagle))return false
         podUUID=eagle.uuid
         // Keep the arrival deadline; the red beam remains through payload impacts, without redispatch after save/load.

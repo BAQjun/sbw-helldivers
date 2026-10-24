@@ -84,6 +84,12 @@ object EagleGameTests {
  fun distantAircraftStaysTickingUntilItsOneCompleteAttack(h:GameTestHelper){
   val record=SpawnRecorder();net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(record)
   val e=eagle(h,true)
+  // This fixture fires outside the small structure. Supply real impact surfaces rather than
+  // relying on terrain/chunk generation completing before the last projectile reaches it.
+  for(i in 0 until EagleFlight.BOMB_COUNT){
+   val at=net.minecraft.core.BlockPos.containing(e.target.add(e.runDirection.scale(EagleFlight.bombOffset(i)))).below()
+   for(dx in -1..1)for(dz in -1..1)h.level.setBlockAndUpdate(at.offset(dx,0,dz),net.minecraft.world.level.block.Blocks.STONE.defaultBlockState())
+  }
   h.runAfterDelay((EagleFlight.end(true)+12).toLong()){
    h.assertTrue(e.fired==6&&e.isRemoved&&e.removalReason==net.minecraft.world.entity.Entity.RemovalReason.DISCARDED,"Remote aircraft stopped: fired=${e.fired}, age=${e.age}, reason=${e.removalReason}")
    net.minecraftforge.common.MinecraftForge.EVENT_BUS.unregister(record);record.shots.forEach{it.discard()};e.discard();h.succeed()

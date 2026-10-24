@@ -15,6 +15,7 @@ object StratagemCooldownConfig {
         "anti_personnel_minefield" to 120.0, "anti_tank_minefield" to 120.0,
         "incendiary_minefield" to 120.0, "gas_minefield" to 120.0,
         "eagle_airstrike" to 15.0, "eagle_strafing_run" to 15.0,
+        "eagle_cluster_bomb" to 15.0, "eagle_110mm_rocket_pods" to 15.0, "eagle_500kg_bomb" to 15.0,
     )
     internal val cooldowns = linkedMapOf<String, ForgeConfigSpec.DoubleValue>()
     internal val uses = linkedMapOf<String, ForgeConfigSpec.IntValue>()
@@ -28,7 +29,7 @@ object StratagemCooldownConfig {
                 "Cooldown starts on arrival; Eagle turnaround is shared. Zero disables the wait.")
                 .defineInRange("cooldownSeconds", upgradedSeconds(id, base), 0.0, 86400.0)
             if (id.startsWith("eagle_")) uses[id] = builder.comment("独立使用次数；一次重新武装补满所有飞鹰。Uses per rearm, independent for each Eagle stratagem.")
-                .defineInRange("uses", if (id == "eagle_airstrike") 3 else 5, 1, 1000)
+                .defineInRange("uses", com.example.sbwhelldiver.entity.EagleAttack.fromId(id).defaultUses, 1, 1000)
             builder.pop()
         }
         builder.push("eagle_rearm")

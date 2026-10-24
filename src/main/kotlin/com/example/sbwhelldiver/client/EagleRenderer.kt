@@ -18,7 +18,7 @@ import org.joml.Vector3f
 class EagleRenderer(context:EntityRendererProvider.Context):EntityRenderer<EagleEntity>(context) {
  private val aircraftBuffers=MultiBufferSource.immediate(com.mojang.blaze3d.vertex.BufferBuilder(262144))
  override fun shouldRender(e:EagleEntity,f:net.minecraft.client.renderer.culling.Frustum,x:Double,y:Double,z:Double):Boolean {
-  val p=e.positionAt(e.age);return e.age<EagleFlight.end(e.airstrike)&&f.isVisible(net.minecraft.world.phys.AABB(p.x-10,p.y-9,p.z-10,p.x+10,p.y+9,p.z+10))
+  val p=e.positionAt(e.age);return e.age<EagleFlight.end(e.attack)&&f.isVisible(net.minecraft.world.phys.AABB(p.x-10,p.y-9,p.z-10,p.x+10,p.y+9,p.z+10))
  }
  override fun getTextureLocation(entity:EagleEntity)=Model.textures[0]
  override fun render(e:EagleEntity,yaw:Float,partial:Float,p:PoseStack,sharedBuffers:MultiBufferSource,light:Int) {
@@ -29,7 +29,7 @@ class EagleRenderer(context:EntityRendererProvider.Context):EntityRenderer<Eagle
   try {
   val t=e.age+partial;val exact=e.positionAt(t);val rendered=net.minecraft.world.phys.Vec3(net.minecraft.util.Mth.lerp(partial.toDouble(),e.xo,e.x),net.minecraft.util.Mth.lerp(partial.toDouble(),e.yo,e.y),net.minecraft.util.Mth.lerp(partial.toDouble(),e.zo,e.z))
   p.translate(exact.x-rendered.x,exact.y-rendered.y,exact.z-rendered.z)
-  p.mulPose(Axis.YP.rotationDegrees(180-e.yRot));p.mulPose(Axis.XP.rotationDegrees(-EagleFlight.pitch(t,e.airstrike,e.flightHeight)))
+  p.mulPose(Axis.YP.rotationDegrees(180-e.yRot));p.mulPose(Axis.XP.rotationDegrees(-EagleFlight.pitch(t,e.attack,e.flightHeight)))
   val tr=p.last()
   Model.parts.forEachIndexed { i,triangles ->
    val vc=b.getBuffer(RenderType.entityCutoutNoCull(Model.textures[i]))

@@ -2350,6 +2350,22 @@
       "fade_out": 0,
       "duration": 1.993333,
       "stop_effects": []
+    },
+    "sfx_eagle_500kg_impact": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 1.2,
+      "stop_effects": []
+    },
+    "sfx_eagle_500kg_fuse": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 0.911,
+      "stop_effects": []
     }
   },
   "models": {

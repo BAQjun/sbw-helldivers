@@ -154,5 +154,14 @@
   "config.sbw_helldiver.save": "Save",
   "config.sbw_helldiver.applying": "Applying model settings…",
   "config.sbw_helldiver.failed": "Could not apply changes. The previous setting was restored.",
-  "pack.sbw_helldiver.low_quality_models": "Low Quality Models"
+  "pack.sbw_helldiver.low_quality_models": "Low Quality Models",
+  "entity.sbw_helldiver.eagle_cluster_bomb": "Eagle Cluster Bomb",
+  "item.sbw_helldiver.eagle_cluster_bomb_stratagem": "Eagle Cluster Bomb",
+  "entity.sbw_helldiver.eagle_110mm_rocket": "Eagle 110mm Rocket Pods",
+  "item.sbw_helldiver.eagle_110mm_rocket_pods_stratagem": "Eagle 110mm Rocket Pods",
+  "entity.sbw_helldiver.eagle_500kg_bomb": "Eagle 500kg Bomb",
+  "item.sbw_helldiver.eagle_500kg_bomb_stratagem": "Eagle 500kg Bomb",
+  "entity.sbw_helldiver.eagle_cluster_bomblet": "Eagle Cluster Bomblet",
+  "subtitles.sbw_helldiver.sfx_eagle_500kg_impact": "Heavy bomb embeds",
+  "subtitles.sbw_helldiver.sfx_eagle_500kg_fuse": "Heavy bomb fuse clicks"
 }

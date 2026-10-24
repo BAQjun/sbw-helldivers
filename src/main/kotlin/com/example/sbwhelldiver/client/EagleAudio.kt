@@ -26,9 +26,9 @@ object EagleAudio {
   for(p in level.entitiesForRendering().filterIsInstance<EagleEntity>()){
    val keys=played.getOrPut(p){mutableSetOf()}
    fun play(key:String){if(keys.add(key)){val sound=FlySound(p,key);mc.soundManager.play(sound);probes.add(sound to 0);if(key=="sfx_eagle_flyby")flybys++ else if(key=="sfx_eagle_strafe")strafes++}}
-   if(p.age<EagleFlight.end(p.airstrike))play("sfx_eagle_engine")
-   if(p.age in (EagleFlight.attackStart(p.airstrike)-25.0)..(EagleFlight.attackEnd(p.airstrike)+30.0) && (mc.player?.position()?.distanceToSqr(p.positionAt(p.age))?:Double.MAX_VALUE)<140.0*140.0)play("sfx_eagle_flyby")
-   if(!p.airstrike&&p.age>=EagleFlight.attackStart(p.airstrike)&&p.age<EagleFlight.attackEnd(p.airstrike))play("sfx_eagle_strafe")
+   if(p.age<EagleFlight.end(p.attack))play("sfx_eagle_engine")
+   if(p.age in (EagleFlight.attackStart(p.attack)-25.0)..(EagleFlight.attackEnd(p.attack)+30.0) && (mc.player?.position()?.distanceToSqr(p.positionAt(p.age))?:Double.MAX_VALUE)<140.0*140.0)play("sfx_eagle_flyby")
+   if(p.attack==com.example.sbwhelldiver.entity.EagleAttack.STRAFE&&p.age>=EagleFlight.attackStart(p.attack)&&p.age<EagleFlight.attackEnd(p.attack))play("sfx_eagle_strafe")
   }
   val it=probes.listIterator();while(it.hasNext()){val(s,t)=it.next();if(mc.soundManager.isActive(s))allocated.add(s.key);if(t>12)it.remove() else it.set(s to t+1)}
  }

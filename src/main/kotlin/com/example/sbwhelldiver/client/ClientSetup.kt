@@ -82,7 +82,11 @@ object ClientSetup {
     fun registerRenderers(event: EntityRenderersEvent.RegisterRenderers) {
         event.registerEntityRenderer<AutoAimableEntity>(ModEntities.PLAYER_HELLPOD.get(),::HellpodRenderer)
         event.registerEntityRenderer(ModEntities.EAGLE.get(),::EagleRenderer)
-        event.registerEntityRenderer(ModEntities.EAGLE_BOMB.get(),::EagleBombRenderer)
+        event.registerEntityRenderer(ModEntities.EAGLE_BOMB.get()){EagleBombRenderer<com.example.sbwhelldiver.entity.EagleBombEntity>(it)}
+        event.registerEntityRenderer(ModEntities.EAGLE_CLUSTER_BOMB.get()){EagleBombRenderer<com.example.sbwhelldiver.entity.EagleClusterBombEntity>(it,.22,1.2)}
+        event.registerEntityRenderer(ModEntities.EAGLE_CLUSTER_BOMBLET.get()){EagleBombRenderer<com.example.sbwhelldiver.entity.EagleClusterBombletEntity>(it,.08,.3)}
+        event.registerEntityRenderer(ModEntities.EAGLE_110MM_ROCKET.get()){EagleBombRenderer<com.example.sbwhelldiver.entity.Eagle110mmRocketEntity>(it,.09,1.5)}
+        event.registerEntityRenderer(ModEntities.EAGLE_500KG_BOMB.get()){EagleBombRenderer<com.example.sbwhelldiver.entity.Eagle500kgBombEntity>(it,.55,2.4)}
         // Use the same native shell renderer as SBW's A-10A GAU-8/A.
         event.registerEntityRenderer<com.atsuishio.superbwarfare.entity.projectile.SmallCannonShellEntity>(ModEntities.EAGLE_CANNON_ROUND.get(),::SmallCannonShellEntityRenderer)
         event.registerEntityRenderer<AutoAimableEntity>(ModEntities.SHIELD_GENERATOR.get(),::HellpodRenderer)

@@ -17,13 +17,13 @@
 | 普通、电磁、毒气迫击炮；重机枪支架、反坦克炮台 | 153.9 |
 | 火焰哨戒炮 | 85.5 |
 | 特斯拉塔、榴弹墙、四种地雷 | 102.6 |
-| 飞鹰空袭、飞鹰机枪扫射（共享周转） | 7.125（实际 7.15） |
+| 全部飞鹰战备（共享周转） | 7.125（实际 7.15） |
 
 基础时间和使用次数来自 [Helldivers2 RawData 的 StratagemSettings](https://github.com/Darctor/Helldivers2_RawData/blob/main/Data/settings/generated_stratagem_settings.json)。升级效果参照 [Synthetic Supplementation](https://helldivers.wiki.gg/wiki/Synthetic_Supplementation)、[Morale Augmentation](https://helldivers.wiki.gg/wiki/Morale_Augmentation)、[Liquid-Ventilated Cockpit](https://helldivers.wiki.gg/wiki/Liquid-Ventilated_Cockpit) 和 [Eagle Rearm](https://helldivers.wiki.gg/wiki/Eagle_Rearm)。
 
 ## 飞鹰
 
-- 空袭每次补给后可使用 **3 次**，机枪扫射 **5 次**，分别扣除。
+- 空袭每次补给后可使用 **3 次**，机枪扫射 **5 次**，集束炸弹 **5 次**，110mm 火箭巢 **4 次**，500kg 炸弹 **2 次**，分别扣除。
 - 一种战备耗尽时，其他仍有次数的飞鹰战备可以继续使用；所有携带的飞鹰战备耗尽后，自动重新武装，默认 **114 秒**。
 - 携带飞鹰战备的信标球顶部自动显示“重新武装‘飞鹰’”，输入 **↑ ↑ ← ↑ →** 立即补给，无需投掷。只要携带的任一种飞鹰还有余弹，手动补给默认 **102.6 秒**。
 - 重新武装期间全部飞鹰不可调用，完成后所有飞鹰战备的次数补满。已进入攻击的飞机仍会完成攻击。
@@ -44,6 +44,18 @@ uses = 3
 [stratagems.eagle_strafing_run]
 cooldownSeconds = 7.125
 uses = 5
+
+[stratagems.eagle_cluster_bomb]
+cooldownSeconds = 7.125
+uses = 5
+
+[stratagems.eagle_110mm_rocket_pods]
+cooldownSeconds = 7.125
+uses = 4
+
+[stratagems.eagle_500kg_bomb]
+cooldownSeconds = 7.125
+uses = 2
 
 [stratagems.eagle_rearm]
 automaticSeconds = 114.0

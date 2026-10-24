@@ -4996,5 +4996,40 @@
         "volume": 0.05623413251903491
       }
     ]
+  },
+  "sfx_eagle_500kg_impact": {
+    "subtitle": "subtitles.sbw_helldiver.sfx_eagle_500kg_impact",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/eagle_500kg/256342392",
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/eagle_500kg/82907214",
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/eagle_500kg/386687583",
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/eagle_500kg/328700094",
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_eagle_500kg_fuse": {
+    "subtitle": "subtitles.sbw_helldiver.sfx_eagle_500kg_fuse",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/eagle_500kg/852824391",
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ]
   }
 }

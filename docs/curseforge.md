@@ -8,7 +8,7 @@ Bring Helldivers-inspired stratagems to Minecraft with this add-on for **Superb 
 - **Manned defenses:** HMG Emplacement, Anti-Tank Emplacement, and Grenadier Battlement with a deployable protective wall.
 - **Minefields:** Anti-Personnel, Anti-Tank, Incendiary, and Gas Mines.
 - **Shield Generator Relay:** A transparent energy shield that blocks incoming projectiles while allowing shots from inside to leave.
-- **Eagle support:** Eagle Airstrike and Eagle Strafing Run.
+- **Eagle support:** Eagle Airstrike, Eagle Strafing Run, Eagle Cluster Bomb, Eagle 110mm Rocket Pods, and Eagle 500kg Bomb.
 
 Stratagems include deployment animations, mechanical effects, and sound. Use **X** to mark a creature or location. Sentries prioritize eligible marked enemies; mortars can bombard a marked location.
 

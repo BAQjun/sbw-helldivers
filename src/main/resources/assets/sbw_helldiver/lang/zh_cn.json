@@ -154,5 +154,14 @@
   "config.sbw_helldiver.save": "保存",
   "config.sbw_helldiver.applying": "正在应用模型设置……",
   "config.sbw_helldiver.failed": "应用失败，已还原设置。",
-  "pack.sbw_helldiver.low_quality_models": "低质量模型"
+  "pack.sbw_helldiver.low_quality_models": "低质量模型",
+  "entity.sbw_helldiver.eagle_cluster_bomb": "飞鹰集束炸弹",
+  "item.sbw_helldiver.eagle_cluster_bomb_stratagem": "飞鹰集束炸弹",
+  "entity.sbw_helldiver.eagle_110mm_rocket": "飞鹰110mm火箭",
+  "item.sbw_helldiver.eagle_110mm_rocket_pods_stratagem": "飞鹰110mm火箭",
+  "entity.sbw_helldiver.eagle_500kg_bomb": "飞鹰500kg炸弹",
+  "item.sbw_helldiver.eagle_500kg_bomb_stratagem": "飞鹰500kg炸弹",
+  "entity.sbw_helldiver.eagle_cluster_bomblet": "飞鹰集束子炸弹",
+  "subtitles.sbw_helldiver.sfx_eagle_500kg_impact": "重型炸弹嵌入",
+  "subtitles.sbw_helldiver.sfx_eagle_500kg_fuse": "重型炸弹引信扣响"
 }

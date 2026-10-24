@@ -18,6 +18,9 @@ object ModItems {
 
     val ITEMS: DeferredRegister<Item> = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID)
 
+    val EAGLE_CLUSTER_BOMB=ITEMS.register("eagle_cluster_bomb_stratagem") { StratagemItem(Item.Properties().stacksTo(16),dropId("eagle_cluster_bomb")) }
+    val EAGLE_110MM_ROCKET_PODS=ITEMS.register("eagle_110mm_rocket_pods_stratagem") { StratagemItem(Item.Properties().stacksTo(16),dropId("eagle_110mm_rocket_pods")) }
+    val EAGLE_500KG_BOMB=ITEMS.register("eagle_500kg_bomb_stratagem") { StratagemItem(Item.Properties().stacksTo(16),dropId("eagle_500kg_bomb")) }
     val EAGLE_AIRSTRIKE=ITEMS.register("eagle_airstrike_stratagem") { StratagemItem(Item.Properties().stacksTo(16),dropId("eagle_airstrike")) }
     val EAGLE_STRAFING_RUN=ITEMS.register("eagle_strafing_run_stratagem") { StratagemItem(Item.Properties().stacksTo(16),dropId("eagle_strafing_run")) }
 
