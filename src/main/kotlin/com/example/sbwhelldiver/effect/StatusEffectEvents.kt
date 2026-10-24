@@ -4,6 +4,7 @@ import com.example.sbwhelldiver.MOD_ID
 import com.example.sbwhelldiver.init.ModEffects
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.Mob
+import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.ai.goal.Goal
 import net.minecraft.world.entity.monster.RangedAttackMob
 import net.minecraft.world.entity.player.Player
@@ -97,7 +98,7 @@ object StatusEffectEvents {
             wildAttacker.set(mob)
             try {
                 if (ranged) (mob as RangedAttackMob).performRangedAttack(victim,1f)
-                else mob.doHurtTarget(victim)
+                else if (mob.getAttribute(Attributes.ATTACK_DAMAGE) != null) mob.doHurtTarget(victim)
             } finally { wildAttacker.remove() }
         }
     }

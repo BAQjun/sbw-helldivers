@@ -5003,22 +5003,22 @@
       {
         "name": "sbw_helldiver:original/eagle_500kg/256342392",
         "stream": false,
-        "attenuation_distance": 96
+        "attenuation_distance": 128
       },
       {
         "name": "sbw_helldiver:original/eagle_500kg/82907214",
         "stream": false,
-        "attenuation_distance": 96
+        "attenuation_distance": 128
       },
       {
         "name": "sbw_helldiver:original/eagle_500kg/386687583",
         "stream": false,
-        "attenuation_distance": 96
+        "attenuation_distance": 128
       },
       {
         "name": "sbw_helldiver:original/eagle_500kg/328700094",
         "stream": false,
-        "attenuation_distance": 96
+        "attenuation_distance": 128
       }
     ]
   },
@@ -5028,7 +5028,7 @@
       {
         "name": "sbw_helldiver:original/eagle_500kg/852824391",
         "stream": false,
-        "attenuation_distance": 96
+        "attenuation_distance": 128
       }
     ]
   }

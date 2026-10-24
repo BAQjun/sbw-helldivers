@@ -91,8 +91,11 @@ object EagleGameTests {
    for(dx in -1..1)for(dz in -1..1)h.level.setBlockAndUpdate(at.offset(dx,0,dz),net.minecraft.world.level.block.Blocks.STONE.defaultBlockState())
   }
   h.runAfterDelay((EagleFlight.end(true)+12).toLong()){
-   h.assertTrue(e.fired==6&&e.isRemoved&&e.removalReason==net.minecraft.world.entity.Entity.RemovalReason.DISCARDED,"Remote aircraft stopped: fired=${e.fired}, age=${e.age}, reason=${e.removalReason}")
-   net.minecraftforge.common.MinecraftForge.EVENT_BUS.unregister(record);record.shots.forEach{it.discard()};e.discard();h.succeed()
+   // Fresh chunks may delay projectile ticks; wait for actual impacts within the existing timeout.
+   h.succeedWhen {
+    h.assertTrue(e.fired==6&&e.isRemoved&&e.removalReason==net.minecraft.world.entity.Entity.RemovalReason.DISCARDED,"Remote aircraft stopped: fired=${e.fired}, age=${e.age}, reason=${e.removalReason}")
+    net.minecraftforge.common.MinecraftForge.EVENT_BUS.unregister(record);record.shots.forEach{it.discard()};e.discard()
+   }
   }
  }
 

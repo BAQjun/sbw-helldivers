@@ -1,5 +1,17 @@
 # 版本记录
 
+## 0.4.3
+
+### 中文
+
+- 扩大飞鹰 500kg 炸弹插入与引信提示音的传播范围，最远可在 128 格内听见。
+- 修复村民等缺少攻击伤害属性的生物受到混乱或恐慌效果时可能导致崩溃的问题；保留混乱移动，并维持正常近战及远程生物的攻击行为。
+
+### English
+
+- Extended the audible range of Eagle 500kg Bomb embedding and fuse cues to 128 blocks.
+- Fixed a crash when confusion or panic affected villagers and other mobs without an attack damage attribute. Confused movement is preserved, along with attacks from supported melee and ranged mobs.
+
 ## 0.4.2
 
 ### 中文

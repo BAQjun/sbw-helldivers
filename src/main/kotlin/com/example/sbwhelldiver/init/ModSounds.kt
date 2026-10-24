@@ -15,6 +15,8 @@ object ModSounds {
             else if (effect == "sfx_gas_mortar_loop") SoundEvent.createFixedRangeEvent(AssetCatalog.sound(effect), 32f)
             else if (effect.startsWith("sfx_gas_mortar_") || effect.startsWith("sfx_ems_mortar_"))
                 SoundEvent.createFixedRangeEvent(AssetCatalog.sound(effect), 96f)
+            else if (effect == "sfx_eagle_500kg_impact" || effect == "sfx_eagle_500kg_fuse")
+                SoundEvent.createFixedRangeEvent(AssetCatalog.sound(effect), 128f)
             else SoundEvent.createVariableRangeEvent(AssetCatalog.sound(effect))
         }
     }
