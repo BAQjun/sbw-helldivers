@@ -9,10 +9,11 @@ const opts=Object.fromEntries(process.argv.slice(2).reduce((a,v,i,all)=>{if(v.st
 if(!opts.input||!opts.output)throw new Error('Use --input <original asset directory> --output <runtime asset directory> [--report <json>]');
 const source=path.resolve(opts.input),destination=path.resolve(opts.output);
 if(source===destination)throw new Error('Keep the original exports in a separate directory; do not simplify an already reduced model.');
+const preserveSurface=Object.hasOwn(opts,'preserve-surface');
 const ratio=Number(opts.ratio??.55),maxError=Number(opts.error??.006);
 if(!(ratio>=.35&&ratio<=1&&maxError>0&&maxError<=.01))throw new Error('Unsafe reduction settings');
 await Simplifier.ready;
-const report={settings:{ratio,maxError,meshoptimizer:'1.3.0'},models:[]};
+const report={settings:{ratio,maxError,preserveSurface,meshoptimizer:'1.3.0'},models:[]};
 const cache=new Map(),images=new Map();
 const digest=x=>crypto.createHash('sha256').update(x).digest('hex');
 function imageFor(rel){
@@ -71,6 +72,20 @@ function opaqueCube(c,image){
   for(let y=Math.floor(y1);y<Math.ceil(y2);y++)for(let x=Math.floor(x1);x<Math.ceil(x2);x++)if(image.data[(y*image.width+x)*4+3]!==255)return false;
  }return true;
 }
+// Full-detail mode never moves, collapses or rounds a surface vertex. Only
+// identical attribute records are shared. Keep every mesh surface triangle.
+function preserveMesh(m){
+ const out={...m,positions:[],normals:[],uvs:[],polys:[]};
+ const names=['positions','normals','uvs'],maps=names.map(()=>new Map());let before=0;
+ for(const face of m.polys)for(let j=1;j<face.length-1;j++){
+  before++;const tri=[face[0],face[j],face[j+1]];
+  out.polys.push(tri.map(c=>c.map((old,a)=>{
+   if(old<0)return old;const value=m[names[a]][old],key=JSON.stringify(value);
+   let id=maps[a].get(key);if(id===undefined){id=out[names[a]].length;maps[a].set(key,id);out[names[a]].push(value)}return id;
+  })));
+ }
+ return {mesh:out,before,after:out.polys.length,error:0};
+}
 function subtract(r,cover){const [a,b,c,d]=r,[x,y,z,w]=cover;const l=Math.max(a,x),t=Math.max(b,y),rr=Math.min(c,z),bb=Math.min(d,w);if(l>=rr-1e-7||t>=bb-1e-7)return [r];const rows=[];if(a<l-1e-7)rows.push([a,b,l,d]);if(rr<c-1e-7)rows.push([rr,b,c,d]);if(b<t-1e-7)rows.push([l,b,rr,t]);if(bb<d-1e-7)rows.push([l,bb,rr,d]);return rows;}
 function cullInternalFaces(bone,image){
  const cubes=bone.cubes??[],boxes=cubes.map(cubeBox),opaque=cubes.map((c,i)=>boxes[i]&&opaqueCube(c,image));let removed=0;
@@ -96,7 +111,7 @@ for(const file of filesIn(path.join(source,'models')).filter(f=>f.endsWith('.geo
  for(const g of out['minecraft:geometry'])for(const b of g.bones){
   row.cubeFacesBefore+=(b.cubes??[]).reduce((n,c)=>n+(Array.isArray(c.uv)?6:Object.keys(c.uv??{}).length),0);row.cubeFacesRemoved+=cullInternalFaces(b,image);
   if(!b.poly_mesh)continue;
-  const m=reduceMesh(b.poly_mesh,g.description.texture_width,g.description.texture_height,{image,mine:rel.includes('/misc/')&&rel.includes('mine'),skull:rel.includes('anti_tank_mine.geo'),protectedBone:/ls_heat_|lens|optic_lens/.test(b.name)});
+  const m=preserveSurface?preserveMesh(b.poly_mesh):reduceMesh(b.poly_mesh,g.description.texture_width,g.description.texture_height,{image,mine:rel.includes('/misc/')&&rel.includes('mine'),skull:rel.includes('anti_tank_mine.geo'),protectedBone:/ls_heat_|lens|optic_lens/.test(b.name)});
   b.poly_mesh=m.mesh;row.meshBefore+=m.before;row.meshAfter+=m.after;row.maxError=Math.max(row.maxError,m.error);row.bones.push({name:b.name,before:m.before,after:m.after,error:m.error});
  }
  const target=path.join(destination,rel);fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,JSON.stringify(out));report.models.push(row);
@@ -105,7 +120,8 @@ for(const file of filesIn(path.join(source,'models')).filter(f=>f.endsWith('.geo
 // Eagle has a separate material-indexed triangle format. Never join different materials.
 const eagle=path.join(source,'models/mesh/eagle.mesh.json');if(fs.existsSync(eagle)){
  const original=JSON.parse(fs.readFileSync(eagle,'utf8'));const out={...original,triangles:[]};const row={model:'models/mesh/eagle.mesh.json',meshBefore:original.triangles.length,meshAfter:0};
- for(const material of [...new Set(original.triangles.map(t=>t[0]))]){
+ if(preserveSurface)out.triangles=original.triangles;
+ else for(const material of [...new Set(original.triangles.map(t=>t[0]))]){
   const triangles=original.triangles.filter(t=>t[0]===material),m={positions:[],normals:[],uvs:[],polys:[],normalized_uvs:true};
   for(const [,points] of triangles){const a=points[0],b=points[1],c=points[2],u=b.slice(0,3).map((v,i)=>v-a[i]),v=c.slice(0,3).map((v,i)=>v-a[i]);const n=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]],len=Math.hypot(...n);if(len<1e-12)continue;const ni=m.normals.length;m.normals.push(n.map(v=>v/len));const face=[];for(const p of points){const i=m.positions.length;m.positions.push(p.slice(0,3));m.uvs.push(p.slice(3,5));face.push([i,ni,i])}m.polys.push(face);}
   const {mesh}=reduceMesh(m,1,1);

@@ -145,5 +145,14 @@
   "item.sbw_helldiver.eagle_rearm_stratagem": "Eagle Rearm",
   "commands.sbw_helldiver.cooldown.set": "Stratagem cooldowns for %s: %s",
   "subtitle.sbw_helldiver.stratagem_countdown": "Stratagem countdown",
-  "subtitle.sbw_helldiver.stratagem_ready": "Stratagem ready"
+  "subtitle.sbw_helldiver.stratagem_ready": "Stratagem ready",
+  "config.sbw_helldiver.title": "SBW Helldivers · Client Settings",
+  "config.sbw_helldiver.low_quality_models": "Low Quality Models",
+  "config.sbw_helldiver.low_quality_models.value": "Low Quality Models: %s",
+  "config.sbw_helldiver.low_quality_models.tooltip": "Reduce model polygons to improve performance while preserving textures and animations.",
+  "config.sbw_helldiver.low_quality_models.hint": "Off by default. Changes apply when saved.",
+  "config.sbw_helldiver.save": "Save",
+  "config.sbw_helldiver.applying": "Applying model settings…",
+  "config.sbw_helldiver.failed": "Could not apply changes. The previous setting was restored.",
+  "pack.sbw_helldiver.low_quality_models": "Low Quality Models"
 }

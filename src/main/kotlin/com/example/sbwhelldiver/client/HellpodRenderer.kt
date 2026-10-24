@@ -28,6 +28,7 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
     private val rocketRoundBones=Array(17){"rocket_round_${it.toString().padStart(2,'0')}"}
     override fun render(entity: AutoAimableEntity, yaw: Float, partial: Float, pose: PoseStack,
         buffers: net.minecraft.client.renderer.MultiBufferSource, light: Int) {
+        (entity as? AbstractHellpodEntity)?.let(ModelQualityResources::refresh)
         if(entity is com.example.sbwhelldiver.entity.PlayerHellpodEntity && entity.phase==AbstractHellpodEntity.Phase.FALLING){
             val actual=entity.visualOrigin(partial)
             val rendered=net.minecraft.world.phys.Vec3(net.minecraft.util.Mth.lerp(partial.toDouble(),entity.xOld,entity.x),net.minecraft.util.Mth.lerp(partial.toDouble(),entity.yOld,entity.y),net.minecraft.util.Mth.lerp(partial.toDouble(),entity.zOld,entity.z))

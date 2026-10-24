@@ -145,5 +145,14 @@
   "item.sbw_helldiver.eagle_rearm_stratagem": "重新武装“飞鹰”",
   "commands.sbw_helldiver.cooldown.set": "%s 的战备冷却：%s",
   "subtitle.sbw_helldiver.stratagem_countdown": "战备倒计时",
-  "subtitle.sbw_helldiver.stratagem_ready": "战备就绪"
+  "subtitle.sbw_helldiver.stratagem_ready": "战备就绪",
+  "config.sbw_helldiver.title": "SBW Helldivers · 客户端设置",
+  "config.sbw_helldiver.low_quality_models": "低质量模型",
+  "config.sbw_helldiver.low_quality_models.value": "低质量模型：%s",
+  "config.sbw_helldiver.low_quality_models.tooltip": "减少模型面数以提高性能，保留原有贴图与动画。",
+  "config.sbw_helldiver.low_quality_models.hint": "默认关闭。保存后生效。",
+  "config.sbw_helldiver.save": "保存",
+  "config.sbw_helldiver.applying": "正在应用模型设置……",
+  "config.sbw_helldiver.failed": "应用失败，已还原设置。",
+  "pack.sbw_helldiver.low_quality_models": "低质量模型"
 }

@@ -31,6 +31,9 @@ object ClientSetup {
 
     @SubscribeEvent
     fun setup(event: net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent) {
+        net.minecraftforge.fml.ModLoadingContext.get().registerExtensionPoint(
+            net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory::class.java
+        ) { net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory { _, parent -> HelldiversConfigScreen(parent) } }
         event.enqueueWork {
             net.minecraft.client.renderer.ItemBlockRenderTypes.setRenderLayer(com.example.sbwhelldiver.init.ModBlocks.SENTRY_FIRE.get(),net.minecraft.client.renderer.RenderType.cutout())
             net.minecraft.client.Minecraft.getInstance().mainRenderTarget.enableStencil()
@@ -39,7 +42,13 @@ object ClientSetup {
     }
 
     @SubscribeEvent
+    fun modelQualityPack(event: net.minecraftforge.event.AddPackFindersEvent) {
+        ModelQualityResources.addPack(event)
+    }
+
+    @SubscribeEvent
     fun reloadListeners(event: net.minecraftforge.client.event.RegisterClientReloadListenersEvent) {
+        event.registerReloadListener(ModelQualityResources)
         event.registerReloadListener(StratagemCooldownClient)
         event.registerReloadListener(net.minecraft.server.packs.resources.ResourceManagerReloadListener { FieldVolumeRenderer.requestReload() })
         event.registerReloadListener(SoundTimeline)

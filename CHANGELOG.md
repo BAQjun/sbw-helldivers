@@ -1,5 +1,17 @@
 # 版本记录
 
+## 0.3.92-perftest2 — 可选低质量模型 / Optional low quality models
+
+- 默认精细模型仅清理完全遮挡的面及重复的顶点属性数据，保留全部网格表面、轮廓、法线与贴图坐标。
+- 在游戏内模组配置界面新增“低质量模型”客户端开关，默认使用原精度模型。
+- 保存后重新加载模型，已部署的炮台、地雷及飞鹰随设置切换，保留贴图、动画与战备属性。
+- 此版本仍仅供性能与画面测试。
+
+- Optimize the default full-detail models by removing fully hidden cube faces and deduplicating identical vertex attributes, preserving every mesh surface triangle, silhouette, normal and UV.
+- Add a client-side “Low Quality Models” toggle to the in-game mod configuration screen; full-detail models remain the default.
+- Saving reloads models for existing turrets, mines and the Eagle while preserving textures, animations and gameplay properties.
+- This build remains a performance and visual preview.
+
 ## 0.3.92-perftest1 — 性能测试版 / Performance preview
 
 - 适度精简炮台、地雷、迫击炮弹和飞鹰的游戏模型网格，剔除同一动画部件内部被完全遮挡的面。

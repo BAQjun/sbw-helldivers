@@ -63,6 +63,7 @@ class Mod {
         // 用 SERVER 类型而不是 COMMON —— 这些参数会同步到客户端，
         // 且必须在客户端与服务端之间保持一致，否则空投落点会两边算得不一样。
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, HelldiversConfig.SPEC)
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, com.example.sbwhelldiver.config.ClientModelConfig.SPEC)
         bus.addListener<net.minecraftforge.fml.event.config.ModConfigEvent.Loading> { event ->
             if (event.config.modId == MOD_ID && event.config.type == ModConfig.Type.SERVER) com.example.sbwhelldiver.config.TurretConfigs.changed()
         }
