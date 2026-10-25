@@ -1,6 +1,8 @@
 # Runtime model optimization
 
-The editable Blockbench models remain full detail. Only the optional low quality game exports are reduced.
+The editable Blockbench models remain full detail. Both runtime quality levels
+receive surface-preserving structural cleanup; only the optional low quality
+exports use curve simplification.
 Keep an unreduced export directory as the input; never feed reduced output back
 into the tool. Full-detail and optional reduced exports are shipped together.
 
@@ -48,3 +50,40 @@ The Eagle geometry remains unchanged. It removes cube faces only under the
 opaque same-bone coverage rule above. Verify this mode with `verify.py
 --preserve-surface`; this checks the ordered triangle attributes against the
 unreduced export, rather than just checking that attribute values still exist.
+
+## Structural cleanup for both quality levels
+
+`structural.mjs` reads a separate baseline directory containing Bedrock model
+JSON files directly, and writes an optimized copy. Run it independently for
+full-detail and already-reduced models; do not feed its output back as input.
+The texture root is the normal asset directory and must also contain the
+matching animation definitions.
+
+```sh
+node tools/model_optimizer/structural.mjs --input <baseline-models> --output <optimized-models> --textures <assets> --report <report.json>
+node tools/model_optimizer/structural_test.mjs --work <fixture-directory>
+```
+
+This cleanup does not decimate curves. It removes zero-area or exactly duplicate
+triangles, compacts identical attributes, removes faces completely enclosed by
+closed opaque solids, and merges uniformly colored coplanar cube faces into
+rectangles. Hierarchy, names, pivots, locators, and animation definitions remain
+unchanged. Coverage by rotated cubes or several neighboring solids is supported;
+any remaining gap retains the face. Texture images are read without modification.
+
+Cross-bone coverage is limited to rigid groups. Bones named by animations,
+runtime visibility/rotation groups, and locator-bearing bones define protected
+group boundaries. Maintain these boundaries when adding runtime bone controls.
+Do not merge differently colored or nonuniform textured faces. Merging faces
+can split an authored cube into single-face rectangles, so face count rather
+than cube-object count measures the geometry reduction.
+
+The fixtures cover hidden and shared surfaces, opacity, animation boundaries,
+rotations, partial coverage, unions of opaque occluders, cache metadata, and
+mesh degenerates. Accepted Blockbench sources remain unchanged.
+
+Apply the older reducer's `verify.py` checks before structural cleanup. The
+structural stage intentionally changes cube partitioning and removes invisible
+triangles, so the earlier ordered-triangle and cube-object checks do not apply
+to its output. Verify bone metadata, retained mesh attributes, and triangle
+subsets against the separate baseline as well as running the structural fixtures.

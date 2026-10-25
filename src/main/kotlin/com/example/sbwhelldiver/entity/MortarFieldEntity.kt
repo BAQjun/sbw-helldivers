@@ -34,7 +34,7 @@ class MortarFieldEntity(type: EntityType<out MortarFieldEntity>,level: Level) : 
     // A smooth radius curve preserves the 10-block Eagle/smoke height at 12m+.
     val fieldHeight get() = when(kind) {
         Kind.EMS -> 3.0
-        Kind.GAS -> (radius * radius / 14.0).coerceIn(1.5,10.0)
+        Kind.GAS -> (radius * radius / 14.0).coerceIn(4.0,10.0)
         Kind.SMOKE -> 10.0
     }
     val remainingTicks get() = entityData.get(REMAINING)

@@ -57,7 +57,7 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
                     entity.isWreck -> com.atsuishio.superbwarfare.client.renderer.TextureBrightnessHandler.getBrightenedTexture(texture,.3f)
                     else -> texture
                 }
-                ShaderMeshBuffers.wrap(buffers,texture)
+                ShaderMeshBuffers.wrap(buffers,texture,(entity as? AbstractHellpodEntity)?.let(TerrainMeshOcclusion::volume))
             } else null
         try {super.render(entity,yaw,partial,pose,meshBuffers?:buffers,light)}
         finally {meshBuffers?.finish()}
@@ -110,7 +110,7 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
             rotateVehicleAxis(entity, pose, yaw, partial)
             pose.scale(renderScale(), renderScale(), renderScale())
             val texture = entry.texture
-            val intactBuffers=if(needsShaderMeshAdapter)ShaderMeshBuffers.wrap(buffers,texture) else null
+            val intactBuffers=if(needsShaderMeshAdapter)ShaderMeshBuffers.wrap(buffers,texture,(entity as? AbstractHellpodEntity)?.let(TerrainMeshOcclusion::volume)) else null
             try {instance.renderToBuffer(pose, intactBuffers?:buffers,
                 net.minecraft.client.renderer.RenderType.entityTranslucent(texture),
                 com.github.mcmodderanchor.simplebedrockmodel.v1.client.renderer.BedrockModelRenderTypes.polyMeshCutout(texture),

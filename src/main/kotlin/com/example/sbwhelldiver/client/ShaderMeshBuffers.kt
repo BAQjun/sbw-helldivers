@@ -13,8 +13,8 @@ import net.minecraft.resources.ResourceLocation
  * one shader primitive. Positions, UVs, normals and animation remain unchanged.
  */
 object ShaderMeshBuffers {
- fun wrap(source:MultiBufferSource,texture:ResourceLocation)=Wrapped(source,texture,ShaderPackCompat.active())
- class Wrapped(private val source:MultiBufferSource,private val texture:ResourceLocation,private val enabled:Boolean):MultiBufferSource {
+ fun wrap(source:MultiBufferSource,texture:ResourceLocation,occlusion:DoubleArray?=null)=Wrapped(source,texture,ShaderPackCompat.active(),occlusion)
+ class Wrapped(private val source:MultiBufferSource,private val texture:ResourceLocation,private val enabled:Boolean,private val occlusion:DoubleArray?):MultiBufferSource {
   private val cutout=BinaryEntityTextures.contains(texture)
   private val quadType=RenderType.entityTranslucent(texture)
   private val meshType=BedrockModelRenderTypes.polyMeshCutout(texture)
@@ -22,10 +22,10 @@ object ShaderMeshBuffers {
   override fun getBuffer(type:RenderType):VertexConsumer {
    finish() // The source can finish its previous RenderType when selecting another.
    // Leave muzzle flashes, emissive passes and other materials on their native paths.
-   if(type===quadType)return CachedQuadVertices(source.getBuffer(if(cutout)RenderType.entityCutoutNoCull(texture) else type)).also{pending=it}
+   if(type===quadType)return CachedQuadVertices(source.getBuffer(if(cutout)RenderType.entityCutoutNoCull(texture) else type),occlusion).also{pending=it}
    if(type!==meshType)return source.getBuffer(type)
-   if(!enabled)return DirectMeshVertices(source.getBuffer(type)).also{pending=it}
-   return TriangleQuads(source.getBuffer(RenderType.entityCutoutNoCull(texture))).also{pending=it}
+   if(!enabled)return DirectMeshVertices(source.getBuffer(type),occlusion).also{pending=it}
+   return TriangleQuads(source.getBuffer(RenderType.entityCutoutNoCull(texture)),occlusion).also{pending=it}
   }
   fun finish(){pending?.flush();pending=null}
  }
@@ -33,23 +33,23 @@ object ShaderMeshBuffers {
 
 private interface MeshBatch { fun flush() }
 
-private class CachedQuadVertices(private val out:VertexConsumer):VertexConsumer by out,MeshBatch,CachedMeshRenderer.QuadConsumer {
+private class CachedQuadVertices(private val out:VertexConsumer,private val occlusion:DoubleArray?):VertexConsumer by out,MeshBatch,CachedMeshRenderer.QuadConsumer {
  private val bulk=PackedEntityVertices.create(out)
  override fun renderQuads(chunk:BakedGeometryChunk,pose:PoseStack,light:Int,overlay:Int,r:Float,g:Float,b:Float,a:Float,skipCull:Boolean)=
-  CachedMeshRenderer.renderQuads(chunk,pose,out,bulk,light,overlay,r,g,b,a,skipCull)
+  CachedMeshRenderer.renderQuadsOccluded(chunk,pose,out,bulk,occlusion,light,overlay,r,g,b,a,skipCull)
  override fun flush(){bulk?.flush()}
 }
 
-private class DirectMeshVertices(private val out:VertexConsumer):VertexConsumer by out,MeshBatch,CachedMeshRenderer.Consumer {
+private class DirectMeshVertices(private val out:VertexConsumer,private val occlusion:DoubleArray?):VertexConsumer by out,MeshBatch,CachedMeshRenderer.Consumer {
  private val bulk=PackedEntityVertices.create(out)
  override fun renderMesh(chunk:BakedGeometryChunk,pose:PoseStack,light:Int,overlay:Int,r:Float,g:Float,b:Float,a:Float)=
-  CachedMeshRenderer.render(chunk,pose,out,bulk,false,light,overlay,r,g,b,a)
+  CachedMeshRenderer.renderOccluded(chunk,pose,out,bulk,false,occlusion,light,overlay,r,g,b,a)
  override fun flush(){bulk?.flush()}
 }
 
-private class TriangleQuads(private val out:VertexConsumer):VertexConsumer,MeshBatch,CachedMeshRenderer.Consumer {
+private class TriangleQuads(private val out:VertexConsumer,private val occlusion:DoubleArray?):VertexConsumer,MeshBatch,CachedMeshRenderer.Consumer {
  override fun renderMesh(chunk:BakedGeometryChunk,pose:PoseStack,light:Int,overlay:Int,r:Float,g:Float,b:Float,a:Float)=
-  CachedMeshRenderer.render(chunk,pose,out,bulk,true,light,overlay,r,g,b,a)
+  CachedMeshRenderer.renderOccluded(chunk,pose,out,bulk,true,occlusion,light,overlay,r,g,b,a)
  private val bulk=PackedEntityVertices.create(out)
  private var x=0.0;private var y=0.0;private var z=0.0
  private var r=255;private var g=255;private var b=255;private var a=255

@@ -95,7 +95,7 @@ object EagleFieldGameTests {
         for((i,radius) in listOf(6.0,7.0,12.0).withIndex()) {
             val p=at.add(i*30.0,0.0,0.0)
             val field=MortarFieldEntity.create(h.level,p,MortarFieldEntity.Kind.GAS,radius,mineCloud=i==0)
-            val expected=if(i==0)36.0/14 else if(i==1)3.5 else 10.0
+            val expected=if(i<2)4.0 else 10.0
             val inside=cow(h,p.add(0.0,expected-.4,0.0));val above=cow(h,p.add(0.0,expected+.5,0.0));field.tick()
             h.assertTrue(abs(field.fieldHeight-expected)<1e-6 && inside.hasEffect(ModEffects.GAS.get()) && !above.hasEffect(ModEffects.GAS.get()),"Gas height/effect coverage differs: radius=$radius height=${field.fieldHeight}")
             field.discard();inside.discard();above.discard()

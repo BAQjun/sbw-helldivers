@@ -31,7 +31,7 @@ import static org.lwjgl.opengl.GL33C.*;
  * modified GL state is restored. No fog planes or enclosing meshes are drawn.
  */
 public final class FieldVolumeRenderer {
-    private static int program,vao,noise,depth,depthFbo,width,height,depthFormat;
+    private static int program,vao,noise,depth,depthFbo,width,height,depthFormat,terrain;
     private static final HashMap<String,Integer> uniforms=new HashMap<>();
     private static boolean failed;
     private static volatile boolean reload;
@@ -42,10 +42,10 @@ public final class FieldVolumeRenderer {
     public static boolean isReady(){return program!=0&&!failed;}
     public static long renderedFrames(){return frames;}
     private static void release(){
-        FieldFogLayer.release();uniforms.clear();MineGlowGeometry.release();EnergyEffectGeometry.release();FieldArcGeometry.release();FlameVolumeGeometry.release();FlameGlow.release();FlameSurfaceLighting.release();LaserEffectGeometry.release();
+        FieldFogLayer.release();FieldTerrainMask.clear();uniforms.clear();MineGlowGeometry.release();EnergyEffectGeometry.release();FieldArcGeometry.release();FlameVolumeGeometry.release();FlameGlow.release();FlameSurfaceLighting.release();LaserEffectGeometry.release();
         if(program!=0)glDeleteProgram(program);if(vao!=0)glDeleteVertexArrays(vao);
-        if(noise!=0)glDeleteTextures(noise);if(depth!=0)glDeleteTextures(depth);if(depthFbo!=0)glDeleteFramebuffers(depthFbo);
-        program=vao=noise=depth=depthFbo=width=height=depthFormat=0;failed=false;reload=false;
+        if(terrain!=0)glDeleteTextures(terrain);if(noise!=0)glDeleteTextures(noise);if(depth!=0)glDeleteTextures(depth);if(depthFbo!=0)glDeleteFramebuffers(depthFbo);
+        program=vao=noise=depth=depthFbo=width=height=depthFormat=terrain=0;failed=false;reload=false;
     }
     static String source(String name) throws IOException {
         return sourcePath("shaders/volume/"+name);
@@ -74,6 +74,13 @@ public final class FieldVolumeRenderer {
             program=candidate;candidate=0;
         } finally {glDeleteShader(vertex);if(fragment!=0)glDeleteShader(fragment);if(candidate!=0)glDeleteProgram(candidate);}
         vao=glGenVertexArrays();noise=glGenTextures();depth=glGenTextures();depthFbo=glGenFramebuffers();
+        terrain=glGenTextures();
+        glBindTexture(GL_TEXTURE_2D,terrain);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+        // Radius is capped at 16 blocks: one fixed 33x33 floor texture avoids
+        // reallocating GPU storage for each cloud or frame.
+        glTexImage2D(GL_TEXTURE_2D,0,GL_R32F,33,33,0,GL_RED,GL_FLOAT,(ByteBuffer)null);
         glBindTexture(GL_TEXTURE_3D,noise);
         glTexParameteri(GL_TEXTURE_3D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);glTexParameteri(GL_TEXTURE_3D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
         for(int axis:new int[]{GL_TEXTURE_WRAP_S,GL_TEXTURE_WRAP_T,GL_TEXTURE_WRAP_R})glTexParameteri(GL_TEXTURE_3D,axis,GL_REPEAT);
@@ -84,13 +91,13 @@ public final class FieldVolumeRenderer {
         glTexImage3D(GL_TEXTURE_3D,0,GL_R8,64,64,64,0,GL_RED,GL_UNSIGNED_BYTE,data);
     }
     // Restrict each ray-march pass to its projected bounds. Inside/near-plane cases use the full screen.
-    private static void fieldScissor(MortarFieldEntity field,Vec3 camera,Matrix4f projection,int w,int h) {
+    private static void fieldScissor(MortarFieldEntity field,Vec3 camera,Matrix4f projection,int w,int h,float down) {
         Matrix4f view=new Matrix4f(new Matrix3f(RenderSystem.getInverseViewRotationMatrix()).transpose());
         Matrix4f clip=new Matrix4f(projection).mul(view);
         float minX=1,minY=1,maxX=-1,maxY=-1;
         for(int dx:new int[]{-1,1})for(int dz:new int[]{-1,1})for(int dy:new int[]{0,1}) {
             var v=new org.joml.Vector4f((float)(field.getX()+dx*field.getRadius()-camera.x),
-                (float)(field.getY()+dy*field.getFieldHeight()-camera.y),(float)(field.getZ()+dz*field.getRadius()-camera.z),1);
+                (float)(field.getY()+(dy==0?-down:field.getFieldHeight())-camera.y),(float)(field.getZ()+dz*field.getRadius()-camera.z),1);
             clip.transform(v);
             if(v.w<=.01f){glScissor(0,0,w,h);return;}
             float x=v.x/v.w,y=v.y/v.w;minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);
@@ -106,7 +113,7 @@ public final class FieldVolumeRenderer {
         events++;Minecraft mc=Minecraft.getInstance();if(mc.level==null)return;
         Vec3 camera=event.getCamera().getPosition();
         var fields=new ArrayList<MortarFieldEntity>();
-        for(var entity:mc.level.entitiesForRendering())if(entity instanceof MortarFieldEntity f&&f.isAlive()&&f.distanceToSqr(camera)<128*128&&event.getFrustum().isVisible(new net.minecraft.world.phys.AABB(f.getX()-f.getRadius(),f.getY(),f.getZ()-f.getRadius(),f.getX()+f.getRadius(),f.getY()+f.getFieldHeight(),f.getZ()+f.getRadius())))fields.add(f);
+        for(var entity:mc.level.entitiesForRendering())if(entity instanceof MortarFieldEntity f&&f.isAlive()&&f.distanceToSqr(camera)<128*128&&event.getFrustum().isVisible(new net.minecraft.world.phys.AABB(f.getX()-f.getRadius(),f.getY()-FieldTerrainMask.maximumDepth(f),f.getZ()-f.getRadius(),f.getX()+f.getRadius(),f.getY()+f.getFieldHeight(),f.getZ()+f.getRadius())))fields.add(f);
         visible=fields.size();
         var energy=new ArrayList<net.minecraft.world.entity.Entity>();
         for(var entity:mc.level.entitiesForRendering()){
@@ -124,9 +131,10 @@ public final class FieldVolumeRenderer {
             int oldProgram=glGetInteger(GL_CURRENT_PROGRAM),oldVao=glGetInteger(GL_VERTEX_ARRAY_BINDING),oldBuffer=glGetInteger(GL_ARRAY_BUFFER_BINDING);
             int oldDraw=glGetInteger(GL_DRAW_FRAMEBUFFER_BINDING),oldRead=glGetInteger(GL_READ_FRAMEBUFFER_BINDING);
             int oldActive=glGetInteger(GL_ACTIVE_TEXTURE);
-            int oldSampler0=glGetIntegeri(GL_SAMPLER_BINDING,0),oldSampler1=glGetIntegeri(GL_SAMPLER_BINDING,1);
+            int oldSampler0=glGetIntegeri(GL_SAMPLER_BINDING,0),oldSampler1=glGetIntegeri(GL_SAMPLER_BINDING,1),oldSampler2=glGetIntegeri(GL_SAMPLER_BINDING,2);
             glActiveTexture(GL_TEXTURE0);int old2D=glGetInteger(GL_TEXTURE_BINDING_2D),old3D=glGetInteger(GL_TEXTURE_BINDING_3D);
             glActiveTexture(GL_TEXTURE1);int old1=glGetInteger(GL_TEXTURE_BINDING_3D),old12D=glGetInteger(GL_TEXTURE_BINDING_2D);
+            glActiveTexture(GL_TEXTURE2);int old22D=glGetInteger(GL_TEXTURE_BINDING_2D),old23D=glGetInteger(GL_TEXTURE_BINDING_3D);
             boolean test=glIsEnabled(GL_DEPTH_TEST),blend=glIsEnabled(GL_BLEND),cull=glIsEnabled(GL_CULL_FACE),scissor=glIsEnabled(GL_SCISSOR_TEST);
             boolean writeDepth=glGetBoolean(GL_DEPTH_WRITEMASK);
             int src=glGetInteger(GL_BLEND_SRC_RGB),dst=glGetInteger(GL_BLEND_DST_RGB),srcA=glGetInteger(GL_BLEND_SRC_ALPHA),dstA=glGetInteger(GL_BLEND_DST_ALPHA);
@@ -137,7 +145,7 @@ public final class FieldVolumeRenderer {
             try {
                 if(Boolean.getBoolean("sbw_helldiver.energyShaderSmokeTest")||Boolean.getBoolean("sbw_helldiver.shaderFieldSmokeTest")||Boolean.getBoolean("sbw_helldiver.flameVolumeSmokeTest")||Boolean.getBoolean("sbw_helldiver.laserShaderSmokeTest"))glGetError();
                 if(reload)release();
-                glBindSampler(0,0);glBindSampler(1,0);
+                glBindSampler(0,0);glBindSampler(1,0);glBindSampler(2,0);
                 glActiveTexture(GL_TEXTURE0);initialize();
                 var target=mc.getMainRenderTarget();int w=target.width,h=target.height;
                 glBindTexture(GL_TEXTURE_2D,target.getDepthTextureId());
@@ -170,7 +178,7 @@ public final class FieldVolumeRenderer {
                 if(!fields.isEmpty())FieldFogLayer.begin(fogW,fogH);
                 glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,depth);
                 glUseProgram(program);glBindVertexArray(vao);
-                glUniform1i(uniform("SceneDepth"),0);glUniform1i(uniform("DensityNoise"),1);
+                glUniform1i(uniform("SceneDepth"),0);glUniform1i(uniform("DensityNoise"),1);glUniform1i(uniform("TerrainFloor"),2);
                 glActiveTexture(GL_TEXTURE1);glBindTexture(GL_TEXTURE_3D,noise);
                 FloatBuffer matrix=stack.mallocFloat(16);
                 new Matrix4f(event.getProjectionMatrix()).invert().get(matrix);glUniformMatrix4fv(uniform("InverseProjection"),false,matrix);
@@ -179,7 +187,13 @@ public final class FieldVolumeRenderer {
                 glUniform2f(uniform("Viewport"),fogW,fogH);
                 glEnable(GL_SCISSOR_TEST);
                 for(var field:fields) {
-                    fieldScissor(field,camera,event.getProjectionMatrix(),fogW,fogH);
+                    var floor=FieldTerrainMask.get(field);
+                    fieldScissor(field,camera,event.getProjectionMatrix(),fogW,fogH,floor.depth());
+                    glActiveTexture(GL_TEXTURE2);glBindTexture(GL_TEXTURE_2D,terrain);
+                    glTexSubImage2D(GL_TEXTURE_2D,0,0,0,floor.width(),floor.height(),GL_RED,GL_FLOAT,floor.floors());
+                    glUniform2f(uniform("TerrainOrigin"),(float)(floor.x()-field.getX()),(float)(floor.z()-field.getZ()));
+                    glUniform2f(uniform("TerrainSize"),33,33);
+                    glUniform1f(uniform("DownwardDepth"),floor.depth());
                     Vec3 eye=camera.subtract(field.position());boolean gas=field.getKind()==MortarFieldEntity.Kind.GAS,smoke=field.getKind()==MortarFieldEntity.Kind.SMOKE;
                     float partial=event.getPartialTick();
                     float fade=(float)Math.max(0,Math.min(1,Math.min((field.tickCount+partial)/(gas?7:6),field.getRemainingTicks()/(gas?20.0:12.0))));
@@ -216,8 +230,9 @@ public final class FieldVolumeRenderer {
                 glBindFramebuffer(GL_DRAW_FRAMEBUFFER,oldDraw);glBindFramebuffer(GL_READ_FRAMEBUFFER,oldRead);
                 glViewport(viewport.get(0),viewport.get(1),viewport.get(2),viewport.get(3));
                 glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,old2D);glBindTexture(GL_TEXTURE_3D,old3D);
-                glActiveTexture(GL_TEXTURE1);glBindTexture(GL_TEXTURE_3D,old1);glBindTexture(GL_TEXTURE_2D,old12D);glActiveTexture(oldActive);
-                glBindSampler(0,oldSampler0);glBindSampler(1,oldSampler1);
+                glActiveTexture(GL_TEXTURE1);glBindTexture(GL_TEXTURE_3D,old1);glBindTexture(GL_TEXTURE_2D,old12D);
+                glActiveTexture(GL_TEXTURE2);glBindTexture(GL_TEXTURE_2D,old22D);glBindTexture(GL_TEXTURE_3D,old23D);glActiveTexture(oldActive);
+                glBindSampler(0,oldSampler0);glBindSampler(1,oldSampler1);glBindSampler(2,oldSampler2);
                 glScissor(scissorBox.get(0),scissorBox.get(1),scissorBox.get(2),scissorBox.get(3));
                 set(GL_DEPTH_TEST,test);set(GL_BLEND,blend);set(GL_CULL_FACE,cull);set(GL_SCISSOR_TEST,scissor);glDepthMask(writeDepth);
                 glBlendFuncSeparate(src,dst,srcA,dstA);glBlendEquationSeparate(eq,eqA);

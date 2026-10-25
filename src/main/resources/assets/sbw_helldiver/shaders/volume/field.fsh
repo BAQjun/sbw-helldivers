@@ -1,6 +1,9 @@
 #version 150
 uniform sampler2D SceneDepth;
 uniform sampler3D DensityNoise;
+uniform sampler2D TerrainFloor;
+uniform vec2 TerrainOrigin,TerrainSize;
+uniform float DownwardDepth;
 uniform mat4 InverseProjection;
 uniform mat3 InverseViewRotation;
 uniform vec2 Viewport;
@@ -19,11 +22,16 @@ float noise(vec3 p) {
 }
 float density(vec3 p) {
     float radial=length(p.xz);
-    if(radial>=Radius||p.y<=0.0||p.y>=Height)return 0.0;
+    if(radial>=Radius||p.y<=-DownwardDepth||p.y>=Height)return 0.0;
+    // Reject solid terrain before sampling the more expensive 3D density.
+    // One texel represents one block column: a solid ledge cannot be averaged
+    // down into a neighboring pit by texture filtering.
+    float floorY=p.y<1.01?texture(TerrainFloor,(floor(p.xz-TerrainOrigin)+0.5)/TerrainSize).r:0.0;
+    if(p.y<=floorY)return 0.0;
     vec3 flow=p*vec3(0.65,0.85,0.65)+vec3(Seed-Time*0.16,-Time*0.20,Time*0.09);
     float detail=noise(flow),fine=noise(flow*2.03+17.1);
     if(Smoke) {
-        // A billowing half-ellipsoid, warped at two scales. Density dies before
+        // A billowing asymmetric ellipsoid, warped at two scales. Density dies before
         // the integration/scissor bounds, so neither a flat lid nor box edges show.
         // Keep three noise lookups per sample, including the coarse shape field.
         // Shared world-space shape keeps overlapping canisters from filling
@@ -32,13 +40,15 @@ float density(vec3 p) {
         float n=detail*0.60+fine*0.28+coarse*0.12;
         float rim=Radius*(0.82+0.12*coarse);
         float cap=Height*(0.60+0.32*coarse);
-        float shape=length(vec2(radial/rim,p.y/cap));
+        float underside=max(0.001,DownwardDepth*(0.55+0.40*coarse));
+        float shape=length(vec2(radial/rim,p.y/(p.y>=0.0?cap:underside)));
         float edge=smoothstep(0.0,0.18,1.0-shape+(n-0.5)*0.12);
-        return edge*smoothstep(0.0,0.30,p.y)*smoothstep(0.18,0.72,n);
+        return edge*smoothstep(0.0,0.30,p.y-floorY)*smoothstep(0.18,0.72,n);
     }
     float n=detail*0.60+fine*0.28+noise(flow*4.07+41.7)*0.12;
     float edge=smoothstep(0.0,min(1.4,Radius*0.3),Radius-radial);
-    float bottom=smoothstep(0.0,0.30,p.y);
+    float underside=DownwardDepth*sqrt(max(0.0,1.0-radial*radial/(Radius*Radius)))*(0.60+0.35*n);
+    float bottom=smoothstep(0.0,0.30,p.y-max(floorY,-underside));
     float top=smoothstep(0.0,0.35,Height-p.y-(1.0-n)*0.15);
     return edge*bottom*top*smoothstep(0.22,0.73,n);
 }
@@ -49,7 +59,7 @@ void main() {
     vec3 dir=normalize(InverseViewRotation*viewDir);
     // Ray/slab interval bounds work from outside and inside the volume.
     vec3 safeDir=mix(dir,vec3(1e-6),lessThan(abs(dir),vec3(1e-6)));
-    vec3 nearBox=(vec3(-Radius,0.0,-Radius)-Eye)/safeDir;
+    vec3 nearBox=(vec3(-Radius,-DownwardDepth,-Radius)-Eye)/safeDir;
     vec3 farBox=(vec3(Radius,Height,Radius)-Eye)/safeDir;
     vec3 lo=min(nearBox,farBox),hi=max(nearBox,farBox);
     float start=max(0.06,max(lo.x,max(lo.y,lo.z)));
