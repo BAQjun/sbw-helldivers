@@ -9,7 +9,7 @@ uniform float Radius,Time,Seed,Extinction;
 uniform vec3 FogColor;
 in vec2 texCoord;
 out vec4 fragColor;
-const float Height=3.0;
+uniform float Height;
 float noise(vec3 p) {
     // Smooth 3D value noise, with no surface-oriented UV coordinates.
     vec3 cell=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);

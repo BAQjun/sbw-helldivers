@@ -27,6 +27,9 @@ object Stratagems {
     const val DOWN = 2
     const val LEFT = 3
     val definitions = listOf(
+        StratagemDefinition("eagle_smoke_strike",listOf(0,1,0,2),StratagemCategory.RED),
+        StratagemDefinition("eagle_gas_strike",listOf(0,1,3,1),StratagemCategory.RED),
+        StratagemDefinition("eagle_napalm_airstrike",listOf(0,1,2,0),StratagemCategory.RED),
         StratagemDefinition("eagle_cluster_bomb",listOf(0,1,2,2,1),StratagemCategory.RED),
         StratagemDefinition("eagle_110mm_rocket_pods",listOf(0,1,0,3),StratagemCategory.RED),
         StratagemDefinition("eagle_500kg_bomb",listOf(0,1,2,2,2),StratagemCategory.RED),

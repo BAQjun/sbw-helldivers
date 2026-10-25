@@ -21,6 +21,9 @@ object ModItems {
     val EAGLE_CLUSTER_BOMB=ITEMS.register("eagle_cluster_bomb_stratagem") { StratagemItem(Item.Properties().stacksTo(16),dropId("eagle_cluster_bomb")) }
     val EAGLE_110MM_ROCKET_PODS=ITEMS.register("eagle_110mm_rocket_pods_stratagem") { StratagemItem(Item.Properties().stacksTo(16),dropId("eagle_110mm_rocket_pods")) }
     val EAGLE_500KG_BOMB=ITEMS.register("eagle_500kg_bomb_stratagem") { StratagemItem(Item.Properties().stacksTo(16),dropId("eagle_500kg_bomb")) }
+    val EAGLE_NAPALM=ITEMS.register("eagle_napalm_airstrike_stratagem") { StratagemItem(Item.Properties().stacksTo(16),dropId("eagle_napalm_airstrike")) }
+    val EAGLE_GAS=ITEMS.register("eagle_gas_strike_stratagem") { StratagemItem(Item.Properties().stacksTo(16),dropId("eagle_gas_strike")) }
+    val EAGLE_SMOKE=ITEMS.register("eagle_smoke_strike_stratagem") { StratagemItem(Item.Properties().stacksTo(16),dropId("eagle_smoke_strike")) }
     val EAGLE_AIRSTRIKE=ITEMS.register("eagle_airstrike_stratagem") { StratagemItem(Item.Properties().stacksTo(16),dropId("eagle_airstrike")) }
     val EAGLE_STRAFING_RUN=ITEMS.register("eagle_strafing_run_stratagem") { StratagemItem(Item.Properties().stacksTo(16),dropId("eagle_strafing_run")) }
 

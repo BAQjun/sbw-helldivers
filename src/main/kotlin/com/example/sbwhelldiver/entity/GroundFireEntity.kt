@@ -23,14 +23,18 @@ class GroundFireEntity(type: EntityType<out GroundFireEntity>,level: Level) : En
     val remainingTicks get() = entityData.get(REMAINING)
     val radius get() = entityData.get(AREA_RADIUS).toDouble()
     private var sourceUuid: UUID? = null
+    var heavyBurning = false; private set
+    private val terrainCells = hashSetOf<net.minecraft.core.BlockPos>()
     init { noPhysics = true }
     override fun defineSynchedData() { entityData.define(REMAINING,LIFETIME);entityData.define(AREA_RADIUS,RADIUS.toFloat()) }
     override fun getAddEntityPacket(): Packet<ClientGamePacketListener> = NetworkHooks.getEntitySpawningPacket(this)
     override fun addAdditionalSaveData(tag: CompoundTag) {
-        tag.putInt("Remaining",remainingTicks);tag.putDouble("Radius",radius); sourceUuid?.let { tag.putUUID("Source",it) }
+        tag.putBoolean("HeavyBurning",heavyBurning);tag.putLongArray("TerrainCells",terrainCells.map { it.asLong() });tag.putInt("Remaining",remainingTicks);tag.putDouble("Radius",radius); sourceUuid?.let { tag.putUUID("Source",it) }
     }
     override fun readAdditionalSaveData(tag: CompoundTag) {
-        entityData.set(REMAINING,tag.getInt("Remaining").coerceIn(0,LIFETIME))
+        heavyBurning=tag.getBoolean("HeavyBurning")
+        terrainCells.clear();tag.getLongArray("TerrainCells").forEach { terrainCells.add(net.minecraft.core.BlockPos.of(it)) }
+        entityData.set(REMAINING,tag.getInt("Remaining").coerceIn(0,if(heavyBurning) NAPALM_LIFETIME else LIFETIME))
         entityData.set(AREA_RADIUS,if(tag.contains("Radius"))tag.getDouble("Radius").coerceIn(.1,16.0).toFloat() else RADIUS.toFloat())
         sourceUuid = if(tag.hasUUID("Source")) tag.getUUID("Source") else null
     }
@@ -39,27 +43,48 @@ class GroundFireEntity(type: EntityType<out GroundFireEntity>,level: Level) : En
         if (!level().isClientSide) {
             if (remainingTicks <= 0) { discard(); return }
             if(tickCount==1)placeFlames()
-            level().getEntitiesOfClass(LivingEntity::class.java,AABB(x-radius,y-.1,z-radius,x+radius,y+.45,z+radius)).forEach{igniteInside(it)}
+            level().getEntitiesOfClass(LivingEntity::class.java,AABB(x-radius,y-(if(heavyBurning) 9.0 else .1),z-radius,x+radius,y+(if(heavyBurning) 5.0 else .45),z+radius)).forEach{igniteInside(it)}
             entityData.set(REMAINING,remainingTicks-1)
         }
     }
     fun coversCell(pos:net.minecraft.core.BlockPos):Boolean {
+        if(heavyBurning)return pos in terrainCells
         if(kotlin.math.abs(pos.y-y)>.1)return false
         if(radius<2.0)return pos.x==blockX && pos.z==blockZ
         val dx=pos.x+.5-x;val dz=pos.z+.5-z
         return dx*dx+dz*dz<=radius*radius
     }
     fun igniteInside(target:LivingEntity) {
-        val feet=net.minecraft.core.BlockPos.containing(target.x,kotlin.math.floor(y),target.z)
+        val feet=net.minecraft.core.BlockPos.containing(target.x,if(heavyBurning) target.y else kotlin.math.floor(y),target.z)
         if(!level().getBlockState(feet).`is`(com.example.sbwhelldiver.init.ModBlocks.SENTRY_FIRE.get()))return
-        if(target.isAlive && !target.isSpectator && target.y<=y+.45 && target.boundingBox.maxY>=y &&
+        if(target.isAlive && !target.isSpectator && coversCell(feet) && target.y<=feet.y+.45 && target.boundingBox.maxY>=feet.y &&
             (target.x-x)*(target.x-x)+(target.z-z)*(target.z-z)<=radius*radius) {
             val source=sourceUuid?.let{(level() as? ServerLevel)?.getEntity(it)}
-            FlameDamage.ignite(target,source)
+            if(heavyBurning) FlameDamage.igniteHeavy(target,source) else FlameDamage.ignite(target,source)
         }
     }
     private fun placeFlames() {
         val fire=com.example.sbwhelldiver.init.ModBlocks.SENTRY_FIRE.get().defaultBlockState()
+        if(heavyBurning) {
+            if(terrainCells.isEmpty()) {
+                val reach=kotlin.math.ceil(radius).toInt()
+                for(dx in -reach..reach)for(dz in -reach..reach) {
+                    val px=blockX+dx;val pz=blockZ+dz
+                    if((px+.5-x)*(px+.5-x)+(pz+.5-z)*(pz+.5-z)>radius*radius)continue
+                    // Use loaded terrain only; no new chunks or floating horizontal fire discs.
+                    for(py in blockY+4 downTo blockY-8) {
+                        val cell=net.minecraft.core.BlockPos(px,py,pz)
+                        if(!level().hasChunkAt(cell))break
+                        val state=level().getBlockState(cell)
+                        if((state.isAir || state.`is`(com.example.sbwhelldiver.init.ModBlocks.SENTRY_FIRE.get())) && fire.canSurvive(level(),cell)) {
+                            terrainCells.add(cell);break
+                        }
+                    }
+                }
+            }
+            for(cell in terrainCells)if(level().getBlockState(cell).isAir && fire.canSurvive(level(),cell))level().setBlock(cell,fire,3)
+            return
+        }
         val reach=if(radius<2.0)0 else kotlin.math.ceil(radius).toInt()
         for(dx in -reach..reach)for(dz in -reach..reach) {
             val pos=net.minecraft.core.BlockPos(blockX+dx,kotlin.math.floor(y).toInt(),blockZ+dz)
@@ -69,17 +94,19 @@ class GroundFireEntity(type: EntityType<out GroundFireEntity>,level: Level) : En
     override fun shouldRenderAtSqrDistance(distance: Double)=distance<128.0*128.0
 
     companion object {
+        const val NAPALM_LIFETIME = 420
+        const val NAPALM_RADIUS = 10.0
         const val LIFETIME = 300
         const val RADIUS = .75
         private val AREA_RADIUS=SynchedEntityData.defineId(GroundFireEntity::class.java,EntityDataSerializers.FLOAT)
         private val REMAINING=SynchedEntityData.defineId(GroundFireEntity::class.java,EntityDataSerializers.INT)
-        fun create(level: ServerLevel,at: Vec3,source: Entity? = null,radius: Double=RADIUS): GroundFireEntity {
+        fun create(level: ServerLevel,at: Vec3,source: Entity? = null,radius: Double=RADIUS,heavyBurning: Boolean=false): GroundFireEntity {
             val nearby=level.getEntitiesOfClass(GroundFireEntity::class.java,AABB(at,at).inflate(.6)) {
-                kotlin.math.abs(it.radius-radius)<.001 && kotlin.math.abs(it.y-at.y)<.25 && it.position().distanceToSqr(at)<.36
+                it.heavyBurning==heavyBurning && kotlin.math.abs(it.radius-radius)<.001 && kotlin.math.abs(it.y-at.y)<.25 && it.position().distanceToSqr(at)<.36
             }.firstOrNull()
-            if(nearby!=null) { nearby.entityData.set(REMAINING,LIFETIME);nearby.sourceUuid=source?.uuid;nearby.placeFlames();return nearby }
+            if(nearby!=null) { nearby.entityData.set(REMAINING,if(heavyBurning) NAPALM_LIFETIME else LIFETIME);nearby.sourceUuid=source?.uuid;nearby.placeFlames();return nearby }
             return GroundFireEntity(ModEntities.GROUND_FIRE.get(),level).also {
-                it.entityData.set(AREA_RADIUS,radius.coerceIn(.1,16.0).toFloat());it.setPos(at.add(0.0,.015,0.0));it.sourceUuid=source?.uuid;level.addFreshEntity(it);it.placeFlames()
+                it.heavyBurning=heavyBurning;it.entityData.set(REMAINING,if(heavyBurning) NAPALM_LIFETIME else LIFETIME);it.entityData.set(AREA_RADIUS,radius.coerceIn(.1,16.0).toFloat());it.setPos(at.add(0.0,.015,0.0));it.sourceUuid=source?.uuid;level.addFreshEntity(it);it.placeFlames()
             }
         }
     }

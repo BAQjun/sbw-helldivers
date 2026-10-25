@@ -82,6 +82,9 @@ object ClientSetup {
     fun registerRenderers(event: EntityRenderersEvent.RegisterRenderers) {
         event.registerEntityRenderer<AutoAimableEntity>(ModEntities.PLAYER_HELLPOD.get(),::HellpodRenderer)
         event.registerEntityRenderer(ModEntities.EAGLE.get(),::EagleRenderer)
+        event.registerEntityRenderer(ModEntities.EAGLE_NAPALM_BOMB.get()){EagleBombRenderer<com.example.sbwhelldiver.entity.EagleNapalmBombEntity>(it)}
+        event.registerEntityRenderer(ModEntities.EAGLE_GAS_BOMB.get()){EagleBombRenderer<com.example.sbwhelldiver.entity.EagleGasBombEntity>(it)}
+        event.registerEntityRenderer(ModEntities.EAGLE_SMOKE_BOMB.get()){EagleBombRenderer<com.example.sbwhelldiver.entity.EagleSmokeBombEntity>(it)}
         event.registerEntityRenderer(ModEntities.EAGLE_BOMB.get()){EagleBombRenderer<com.example.sbwhelldiver.entity.EagleBombEntity>(it)}
         event.registerEntityRenderer(ModEntities.EAGLE_CLUSTER_BOMB.get()){EagleBombRenderer<com.example.sbwhelldiver.entity.EagleClusterBombEntity>(it,.22,1.2)}
         event.registerEntityRenderer(ModEntities.EAGLE_CLUSTER_BOMBLET.get()){EagleBombRenderer<com.example.sbwhelldiver.entity.EagleClusterBombletEntity>(it,.08,.3)}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "sbw_helldiver:item/eagle_gas_strike_stratagem"
+  }
+}

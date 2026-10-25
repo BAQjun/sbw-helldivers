@@ -163,5 +163,14 @@
   "item.sbw_helldiver.eagle_500kg_bomb_stratagem": "Eagle 500kg Bomb",
   "entity.sbw_helldiver.eagle_cluster_bomblet": "Eagle Cluster Bomblet",
   "subtitles.sbw_helldiver.sfx_eagle_500kg_impact": "Heavy bomb embeds",
-  "subtitles.sbw_helldiver.sfx_eagle_500kg_fuse": "Heavy bomb fuse clicks"
+  "subtitles.sbw_helldiver.sfx_eagle_500kg_fuse": "Heavy bomb fuse clicks",
+  "item.sbw_helldiver.eagle_napalm_airstrike_stratagem": "Eagle Napalm Airstrike",
+  "entity.sbw_helldiver.eagle_napalm_airstrike_bomb": "Eagle Napalm Airstrike — Bomb",
+  "effect.sbw_helldiver.heavy_burning": "Heavy Burning",
+  "item.sbw_helldiver.eagle_gas_strike_stratagem": "Eagle Gas Airstrike",
+  "entity.sbw_helldiver.eagle_gas_strike_bomb": "Eagle Gas Airstrike — Bomb",
+  "item.sbw_helldiver.eagle_smoke_strike_stratagem": "Eagle Smoke Strike",
+  "entity.sbw_helldiver.eagle_smoke_strike_bomb": "Eagle Smoke Strike — Bomb",
+  "death.attack.sbw_helldiver.heavy_burning": "%1$s was consumed by napalm",
+  "death.attack.sbw_helldiver.heavy_burning.player": "%1$s was consumed by %2$s’s napalm"
 }

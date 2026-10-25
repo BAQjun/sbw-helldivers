@@ -40,7 +40,7 @@ object StatusEffectEvents {
         }
     }
     @SubscribeEvent fun attack(event: LivingAttackEvent) {
-        if (event.entity.hasEffect(ModEffects.BURNING.get()) &&
+        if ((event.entity.hasEffect(ModEffects.BURNING.get()) || event.entity.hasEffect(ModEffects.HEAVY_BURNING.get())) &&
             (event.source.`is`(net.minecraft.world.damagesource.DamageTypes.ON_FIRE) || event.source.`is`(net.minecraft.world.damagesource.DamageTypes.IN_FIRE))) {
             event.isCanceled = true
             return

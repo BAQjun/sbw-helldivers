@@ -12,6 +12,9 @@
 | 集束子弹 | 每发母弹 8，共 64 | 3 | 60 | 3m／6m |
 | 110mm 火箭 | 三组，每组 2 | 100 | 50 | 1.6m／5m |
 | 500kg 炸弹 | 1 | 320 | 240 | 10m／25m |
+| 凝固汽油弹 | 5 | 240 | 40 | 2m／10m |
+| 毒气弹 | 4 | 240 | 无 | 毒雾半径 12m |
+| 烟雾弹 | 9 | 240 | 无 | 烟雾半径 15m |
 
 内半径内结算全额爆炸伤害，向外半径衰减。直击和爆炸分别结算。
 
@@ -41,6 +44,44 @@ heavyBombFuseSeconds = 0.8
 
 ## 参数来源
 
-以上伤害、弹药数量由本模组平衡设定；其余时序与速度参照 [Helldivers2 RawData](https://github.com/Darctor/Helldivers2_RawData/tree/main/Data) 的 `EagleComponentData`、`projectiles`、`explosions` 与 `StratagemSettings` 数据（1.007.100）。该版本中，集束母弹寿命为约 0.35 秒、分裂数量为 8；500kg 命中引信为约 0.8 秒；火箭发射间隔为 0.5 秒、初速为 700m/s。使用次数按对应数据的基础次数加满升级效果设置。
+以上伤害与早期飞鹰的弹药数量由本模组平衡设定；新增三种持续区域飞鹰的数量与阵列见下文，其余时序与速度参照 [Helldivers2 RawData](https://github.com/Darctor/Helldivers2_RawData/tree/main/Data) 的 `EagleComponentData`、`projectiles`、`explosions` 与 `StratagemSettings` 数据（1.007.100）。该版本中，集束母弹寿命为约 0.35 秒、分裂数量为 8；500kg 命中引信为约 0.8 秒；火箭发射间隔为 0.5 秒、初速为 700m/s。使用次数按对应数据的基础次数加满升级效果设置。
 
 500kg 音效取自原始 `stratagems_eagle_500kg_bomb` 音频库，保留其事件中冲击层与延迟 300ms 的独立层。将后者用于插入后的引信提示；具体播放位置是本模组的事件映射。
+
+## 持续区域与烟雾
+
+凝固汽油弹、毒气弹和烟雾弹均从投掷点与信标连线的垂直方向进入，4.1 秒抵达。三种战备的投放间隔均为 0.2 秒。实际落点按原版二维阵列旋转到进场方向；三种战备的落点沿进场轴分别跨越 42m、24m 和 35m。三种战备的满升级使用次数均为 3 次，与其他飞鹰共享补给。
+
+- 凝固汽油弹地火持续 21 秒，半径 10m，沿落点附近的地形铺设。普通燃烧每秒 16 点，持续 3 秒；重型燃烧每秒 32 点，持续 1 秒。地火持续刷新两种效果，同一效果不会因多个重叠区域而重复叠层，两种不同燃烧效果独立结算。
+- 飞鹰毒气区域半径 12m，持续 15 秒，高 3m，持续刷新 6 秒毒气与混乱效果。其他毒气战备保留原有数值。
+- 烟雾区域半径 15m，持续 30 秒，高 5m。白雾由与毒气、电磁区域相同的体积雾渲染系统绘制，使用独立颜色与密度。
+
+烟雾是原版 AI 的感知限制，不替换生物的目标选择器、攻击目标、攻击方式或仇恨遗忘时间。不跨烟获取新的玩家目标；处于烟雾内部时，视距最多为 4m，同时仍须满足生物原有的距离、视线、阵营与目标资格要求。原有仇恨不会因生成烟雾而直接删除；原版路径计算使用最后目击位置，不能持续读取烟雾后玩家的新位置。玩家穿烟攻击时更新为攻击发出位置；弹丸在生成时保存发射者位置，避免命中时泄露其移动后的坐标。重新看见玩家或烟雾消散后恢复正常感知。
+
+### 持续区域的数据来源
+
+`EagleComponentData` 的投放模式索引分别为凝固汽油弹 4、毒气弹 7、烟雾弹 3。旧导出表中的枚举名称已过时，不能把模式 7 的 `Single` 标签解释为单枚投弹。本机当前游戏的原生落点表确认三种模式的基础数量分别为 4、3、8；本模组对这三种新战备加入 XXL 武器舱的额外一枚，最终数量为 5、4、9。额外炸弹落在阵列预留的中心位置。原生表每个条目为 100 字节，包含数量和 12 组二维坐标；毒气的三个基础落点为 (-12,-4)、(0,0)、(12,-4)，第四枚落在 (0,0)，坐标单位为米，随飞行方向旋转。
+
+该表结构及额外炸弹的运行时读取也可参见 [HD2Runtime 飞鹰阵列研究](https://github.com/SkyeShade/HD2Runtime/blob/main/scripts/research_eagle_components.py)。本模组先前已明确设定数量的其他飞鹰维持原有平衡。
+
+凝固汽油弹关联 projectile 141 / explosion 359，其外半径为 10m、地火模板为 `FireTemplate_Large`；解码枚举标注该模板持续 21 秒。该导出条目没有单独的地火半径字段，因此本模组以该条目的 10m 外半径作为地火覆盖半径，地形跟随是 Minecraft 适配行为。毒气弹关联 projectile 188 / explosion 331，外半径 12m、持续区域时间 15 秒；状态设置中的 Gas 持续时间为 6 秒。烟雾关联 projectile 130 / explosion 75，持续区域时间为 30 秒；烟雾半径使用本模组指定的 15m。烟雾高度 5m、近距离视距上限 4m 为本模组的适配参数。
+
+原始数据：[Helldivers2 RawData settings](https://github.com/Darctor/Helldivers2_RawData/tree/main/Data/settings)、[FireTemplate 枚举](https://github.com/Darctor/Helldivers2_RawData/blob/main/Data/enums/FireTemplate.txt)。
+
+## 原版显示名称
+
+显示名称直接核对当前原版的简体中文与美式英文语言资源，注册 ID 保持不变。
+
+| 简体中文 | English |
+| --- | --- |
+| “飞鹰”机枪扫射 | Eagle Strafing Run |
+| “飞鹰”空袭 | Eagle Airstrike |
+| “飞鹰”集束炸弹 | Eagle Cluster Bomb |
+| “飞鹰”110mm火箭巢 | Eagle 110mm Rocket Pods |
+| “飞鹰”500kg炸弹 | Eagle 500kg Bomb |
+| “飞鹰”凝固汽油弹空袭 | Eagle Napalm Airstrike |
+| “飞鹰”毒气空袭 | Eagle Gas Airstrike |
+| “飞鹰”烟雾攻击 | Eagle Smoke Strike |
+| 重新武装“飞鹰” | Eagle Rearm |
+
+新增三项的原版字符串键依次为 1278805896、513886541、2087441269。`Eagle Gas Strike` 是旧数据的内部名称，界面使用正式名称 `Eagle Gas Airstrike`。

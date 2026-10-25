@@ -102,10 +102,13 @@ class EagleEntity(type:EntityType<*>,level:Level):Entity(type,level),IEntityAddi
   val shot=when(attack){
    EagleAttack.CLUSTER->ModEntities.EAGLE_CLUSTER_BOMB.get().create(server)
    EagleAttack.HEAVY_BOMB->ModEntities.EAGLE_500KG_BOMB.get().create(server)
+   EagleAttack.NAPALM->ModEntities.EAGLE_NAPALM_BOMB.get().create(server)
+   EagleAttack.GAS->ModEntities.EAGLE_GAS_BOMB.get().create(server)
+   EagleAttack.SMOKE->ModEntities.EAGLE_SMOKE_BOMB.get().create(server)
    else->ModEntities.EAGLE_BOMB.get().create(server)
   }?:return false
   val release=positionAt(attack.releaseAge(index)).add(0.0,-1.2,0.0)
-  val aim=target.add(runDirection.scale(attack.offset(index)))
+  val aim=target.add(attack.landingOffset(index,runDirection))
   if(shot is EagleClusterBombEntity)shot.configureSplit(uuid,aim,runDirection)
   shot.setPos(release);ownerUuid?.let {shot.owner=server.getEntity(it)}
   val v=EagleFlight.bombVelocity(release,aim);shot.shoot(v.x,v.y,v.z,v.length().toFloat(),0f)

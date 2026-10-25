@@ -81,6 +81,22 @@ public final class FieldVolumeRenderer {
         while(data.hasRemaining())data.put((byte)random.nextInt(256));data.flip();
         glTexImage3D(GL_TEXTURE_3D,0,GL_R8,64,64,64,0,GL_RED,GL_UNSIGNED_BYTE,data);
     }
+    // Restrict each ray-march pass to its projected bounds. Inside/near-plane cases use the full screen.
+    private static void fieldScissor(MortarFieldEntity field,Vec3 camera,Matrix4f projection,int w,int h) {
+        Matrix4f view=new Matrix4f(new Matrix3f(RenderSystem.getInverseViewRotationMatrix()).transpose());
+        Matrix4f clip=new Matrix4f(projection).mul(view);
+        float minX=1,minY=1,maxX=-1,maxY=-1;
+        for(int dx:new int[]{-1,1})for(int dz:new int[]{-1,1})for(int dy:new int[]{0,1}) {
+            var v=new org.joml.Vector4f((float)(field.getX()+dx*field.getRadius()-camera.x),
+                (float)(field.getY()+dy*field.getFieldHeight()-camera.y),(float)(field.getZ()+dz*field.getRadius()-camera.z),1);
+            clip.transform(v);
+            if(v.w<=.01f){glScissor(0,0,w,h);return;}
+            float x=v.x/v.w,y=v.y/v.w;minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);
+        }
+        int x=Math.max(0,(int)Math.floor((minX+1)*.5*w)-2),y=Math.max(0,(int)Math.floor((minY+1)*.5*h)-2);
+        int right=Math.min(w,(int)Math.ceil((maxX+1)*.5*w)+2),top=Math.min(h,(int)Math.ceil((maxY+1)*.5*h)+2);
+        glScissor(x,y,Math.max(0,right-x),Math.max(0,top-y));
+    }
     private static int uniform(String name){return glGetUniformLocation(program,name);}
     public static void render(RenderLevelStageEvent event) {
         if(event.getStage()==RenderLevelStageEvent.Stage.AFTER_SKY&&!ShaderPackCompat.INSTANCE.shadowPass())MineGlowGeometry.beginFrame();
@@ -114,6 +130,7 @@ public final class FieldVolumeRenderer {
             int src=glGetInteger(GL_BLEND_SRC_RGB),dst=glGetInteger(GL_BLEND_DST_RGB),srcA=glGetInteger(GL_BLEND_SRC_ALPHA),dstA=glGetInteger(GL_BLEND_DST_ALPHA);
             int eq=glGetInteger(GL_BLEND_EQUATION_RGB),eqA=glGetInteger(GL_BLEND_EQUATION_ALPHA);
             IntBuffer viewport=stack.mallocInt(4);glGetIntegerv(GL_VIEWPORT,viewport);
+            IntBuffer scissorBox=stack.mallocInt(4);glGetIntegerv(GL_SCISSOR_BOX,scissorBox);
             ByteBuffer mask=stack.malloc(4);glGetBooleanv(GL_COLOR_WRITEMASK,mask);
             try {
                 if(Boolean.getBoolean("sbw_helldiver.energyShaderSmokeTest")||Boolean.getBoolean("sbw_helldiver.shaderFieldSmokeTest")||Boolean.getBoolean("sbw_helldiver.flameVolumeSmokeTest")||Boolean.getBoolean("sbw_helldiver.laserShaderSmokeTest"))glGetError();
@@ -155,17 +172,21 @@ public final class FieldVolumeRenderer {
                 FloatBuffer rotation=stack.mallocFloat(9);
                 new Matrix3f(RenderSystem.getInverseViewRotationMatrix()).get(rotation);glUniformMatrix3fv(uniform("InverseViewRotation"),false,rotation);
                 glUniform2f(uniform("Viewport"),w,h);
+                glEnable(GL_SCISSOR_TEST);
                 for(var field:fields) {
-                    Vec3 eye=camera.subtract(field.position());boolean gas=field.getKind()==MortarFieldEntity.Kind.GAS;
+                    fieldScissor(field,camera,event.getProjectionMatrix(),w,h);
+                    Vec3 eye=camera.subtract(field.position());boolean gas=field.getKind()==MortarFieldEntity.Kind.GAS,smoke=field.getKind()==MortarFieldEntity.Kind.SMOKE;
                     float partial=event.getPartialTick();
                     float fade=(float)Math.max(0,Math.min(1,Math.min((field.tickCount+partial)/(gas?7:6),field.getRemainingTicks()/(gas?20.0:12.0))));
                     glUniform3f(uniform("Eye"),(float)eye.x,(float)eye.y,(float)eye.z);
                     glUniform1f(uniform("Radius"),(float)field.getRadius());glUniform1f(uniform("Time"),(field.tickCount+partial)/20f);
                     glUniform1f(uniform("Seed"),(float)((field.getX()*.731+field.getZ()*.173)%91));
-                    glUniform1f(uniform("Extinction"),(gas?.42f:.16f)*fade);
-                    glUniform3f(uniform("FogColor"),gas?.48f:.38f,gas?.55f:.60f,gas?.15f:.84f);
+                    glUniform1f(uniform("Height"),(float)field.getFieldHeight());
+                    glUniform1f(uniform("Extinction"),(smoke?.95f:gas?.42f:.16f)*fade);
+                    glUniform3f(uniform("FogColor"),smoke?.82f:gas?.48f:.38f,smoke?.84f:gas?.55f:.60f,smoke?.86f:gas?.15f:.84f);
                     glDrawArrays(GL_TRIANGLES,0,3);
                 }
+                glDisable(GL_SCISSOR_TEST);
                 if(flames.length>0){
                     FlameSurfaceLighting.draw(flames,camera,event.getProjectionMatrix(),new Matrix3f(RenderSystem.getInverseViewRotationMatrix()),w,h);
                     FlameGlow.render(w,h,()->FlameVolumeGeometry.draw(flames,event.getProjectionMatrix(),new Matrix3f(RenderSystem.getInverseViewRotationMatrix()),camera,w,h,(mc.level.getGameTime()+event.getPartialTick())/20f));
@@ -188,6 +209,7 @@ public final class FieldVolumeRenderer {
                 glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,old2D);glBindTexture(GL_TEXTURE_3D,old3D);
                 glActiveTexture(GL_TEXTURE1);glBindTexture(GL_TEXTURE_3D,old1);glActiveTexture(oldActive);
                 glBindSampler(0,oldSampler0);glBindSampler(1,oldSampler1);
+                glScissor(scissorBox.get(0),scissorBox.get(1),scissorBox.get(2),scissorBox.get(3));
                 set(GL_DEPTH_TEST,test);set(GL_BLEND,blend);set(GL_CULL_FACE,cull);set(GL_SCISSOR_TEST,scissor);glDepthMask(writeDepth);
                 glBlendFuncSeparate(src,dst,srcA,dstA);glBlendEquationSeparate(eq,eqA);
                 glColorMask(mask.get(0)!=0,mask.get(1)!=0,mask.get(2)!=0,mask.get(3)!=0);

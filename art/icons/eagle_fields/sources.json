@@ -1,0 +1,17 @@
+[
+  {
+    "id": "eagle_napalm_airstrike",
+    "nativeHash": "0x3ec6a98542325181",
+    "nativeSha256": "023e00373709e70a616d5b207e8f1962fdfc9fe20a8ac473ecaa543407a1c577"
+  },
+  {
+    "id": "eagle_gas_strike",
+    "nativeHash": "0x0d3c8f39571eaea9",
+    "nativeSha256": "9d92e1dd73adff470241295b038764bebc81cc81933ca1a0631d05ad962d9c8f"
+  },
+  {
+    "id": "eagle_smoke_strike",
+    "nativeHash": "0xe768c8e161674303",
+    "nativeSha256": "b35518058b37efe55d2294f7a5e9d318aa10461f6aa5b7077f207b321cd881fb"
+  }
+]

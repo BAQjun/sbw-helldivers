@@ -15,7 +15,7 @@ object StratagemCooldownConfig {
         "anti_personnel_minefield" to 120.0, "anti_tank_minefield" to 120.0,
         "incendiary_minefield" to 120.0, "gas_minefield" to 120.0,
         "eagle_airstrike" to 15.0, "eagle_strafing_run" to 15.0,
-        "eagle_cluster_bomb" to 15.0, "eagle_110mm_rocket_pods" to 15.0, "eagle_500kg_bomb" to 15.0,
+        "eagle_cluster_bomb" to 15.0, "eagle_110mm_rocket_pods" to 15.0, "eagle_500kg_bomb" to 15.0, "eagle_smoke_strike" to 15.0, "eagle_gas_strike" to 15.0, "eagle_napalm_airstrike" to 15.0,
     )
     internal val cooldowns = linkedMapOf<String, ForgeConfigSpec.DoubleValue>()
     internal val uses = linkedMapOf<String, ForgeConfigSpec.IntValue>()

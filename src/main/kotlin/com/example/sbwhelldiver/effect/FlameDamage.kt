@@ -30,10 +30,15 @@ object FlameDamage {
         ignite(target,attacker)
         if (target !is Player) target.addEffect(MobEffectInstance(ModEffects.PANIC.get(),20,0,false,true,true))
     }
-    fun burn(target: LivingEntity) {
+    fun igniteHeavy(target: LivingEntity, attacker: Entity? = null) {
+        ignite(target,attacker)
+        if (target.fireImmune() || target.hasEffect(net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE)) return
+        target.addEffect(MobEffectInstance(ModEffects.HEAVY_BURNING.get(),20,0,false,true,true))
+    }
+    fun burn(target: LivingEntity, heavy: Boolean = false) {
         if (target.fireImmune() || target.hasEffect(net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE)) return
         val server = target.level() as? net.minecraft.server.level.ServerLevel ?: return
         val attacker = if(target.persistentData.hasUUID(OWNER)) server.getEntity(target.persistentData.getUUID(OWNER)) else null
-        target.hurt(source(target,"sentry_burning",attacker),16f)
+        target.hurt(source(target,if(heavy) "heavy_burning" else "sentry_burning",attacker),if(heavy) 32f else 16f)
     }
 }

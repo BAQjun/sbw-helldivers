@@ -3,6 +3,7 @@
   "values": [
     "sbw_helldiver:laser_beam",
     "sbw_helldiver:sentry_burning",
-    "sbw_helldiver:flame_jet"
+    "sbw_helldiver:flame_jet",
+    "sbw_helldiver:heavy_burning"
   ]
 }

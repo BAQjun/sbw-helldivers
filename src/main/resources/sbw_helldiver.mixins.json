@@ -6,7 +6,11 @@
   "mixins": [
     "tacz.TaczEntityUtilMixin",
     "tacz.TaczBulletMixin",
-    "ThermalKnockbackMixin"
+    "ThermalKnockbackMixin",
+    "SmokeSightMixin",
+    "SmokeNavigationAccess",
+    "SmokeNavigationMixin",
+    "SmokeTargetConditionsMixin"
   ],
   "client": [
     "EagleProjectileRenderMixin",

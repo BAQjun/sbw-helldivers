@@ -11,6 +11,7 @@ object ModEffects {
     val GAS = EFFECTS.register("gas", ::GasEffect)
     val CONFUSION = EFFECTS.register("confusion", ::ConfusionEffect)
     val STUN = EFFECTS.register("stun", ::StunEffect)
+    val HEAVY_BURNING = EFFECTS.register("heavy_burning", ::HeavyBurningEffect)
     val BURNING = EFFECTS.register("sentry_burning", ::SentryBurningEffect)
     val PANIC = EFFECTS.register("panic", ::PanicEffect)
 }

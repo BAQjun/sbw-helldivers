@@ -36,8 +36,22 @@ class SentryBurningEffect : MobEffect(MobEffectCategory.HARMFUL,0xF46C25) {
     }
     override fun removeAttributeModifiers(entity: LivingEntity,attributes: AttributeMap,amplifier: Int) {
         super.removeAttributeModifiers(entity,attributes,amplifier)
-        entity.clearFire()
-        entity.persistentData.remove("HelldiverFlameOwner")
+        if (!entity.hasEffect(com.example.sbwhelldiver.init.ModEffects.HEAVY_BURNING.get())) {
+            entity.clearFire()
+            entity.persistentData.remove("HelldiverFlameOwner")
+        }
+    }
+}
+class HeavyBurningEffect : MobEffect(MobEffectCategory.HARMFUL,0xFFD245) {
+    override fun isDurationEffectTick(duration: Int,amplifier: Int) = true
+    override fun applyEffectTick(entity: LivingEntity,amplifier: Int) {
+        if (!entity.level().isClientSide && entity.tickCount % 20 == 0) FlameDamage.burn(entity,true)
+    }
+    override fun removeAttributeModifiers(entity: LivingEntity,attributes: AttributeMap,amplifier: Int) {
+        super.removeAttributeModifiers(entity,attributes,amplifier)
+        if (!entity.hasEffect(com.example.sbwhelldiver.init.ModEffects.BURNING.get())) {
+            entity.clearFire();entity.persistentData.remove("HelldiverFlameOwner")
+        }
     }
 }
 class StunEffect : MobEffect(MobEffectCategory.HARMFUL,0x8FCDE4) {
