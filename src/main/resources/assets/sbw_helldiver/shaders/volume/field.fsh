@@ -12,7 +12,7 @@ uniform float Radius,Time,Seed,Extinction;
 uniform vec3 FogColor;
 in vec2 texCoord;
 out vec4 fragColor;
-uniform float Height;
+uniform float Height,CanopyLift;
 uniform bool Smoke;
 uniform vec3 SmokeNoiseOrigin;
 float noise(vec3 p) {
@@ -39,9 +39,16 @@ float density(vec3 p) {
         float coarse=noise(p*vec3(0.22,0.30,0.22)+SmokeNoiseOrigin+vec3(9.1,0.0,42.7));
         float n=detail*0.60+fine*0.28+coarse*0.12;
         float rim=Radius*(0.82+0.12*coarse);
-        float cap=Height*(0.60+0.32*coarse);
+        // Small gas fields need a visible four-block body, not merely a
+        // four-block bounding box whose cap and feathering erase its top.
+        // Add headroom above the body; large clouds retain their original shape.
+        float cap=(Height-CanopyLift)*(0.60+0.32*coarse)+CanopyLift;
         float underside=max(0.001,DownwardDepth*(0.55+0.40*coarse));
-        float shape=length(vec2(radial/rim,p.y/(p.y>=0.0?cap:underside)));
+        float vertical=p.y/(p.y>=0.0?cap:underside);
+        // A fourth-power upper profile gives small gas clouds broad rounded
+        // shoulders instead of stretching their centre into a narrow peak.
+        if(p.y>0.0)vertical=mix(vertical,vertical*vertical,clamp(CanopyLift*0.5,0.0,1.0));
+        float shape=length(vec2(radial/rim,vertical));
         float edge=smoothstep(0.0,0.18,1.0-shape+(n-0.5)*0.12);
         return edge*smoothstep(0.0,0.30,p.y-floorY)*smoothstep(0.18,0.72,n);
     }

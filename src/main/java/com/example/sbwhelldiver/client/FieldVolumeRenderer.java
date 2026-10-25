@@ -90,6 +90,14 @@ public final class FieldVolumeRenderer {
         while(data.hasRemaining())data.put((byte)random.nextInt(256));data.flip();
         glTexImage3D(GL_TEXTURE_3D,0,GL_R8,64,64,64,0,GL_RED,GL_UNSIGNED_BYTE,data);
     }
+    private static float canopyLift(MortarFieldEntity field) {
+        return field.getKind()==MortarFieldEntity.Kind.GAS ?
+            (float)Math.max(0,Math.min(2.0,10.0-field.getFieldHeight())) : 0;
+    }
+    /** Includes the soft upper plume, above the server-owned effect height. */
+    public static float visualHeight(MortarFieldEntity field) {
+        return (float)field.getFieldHeight()+canopyLift(field);
+    }
     // Restrict each ray-march pass to its projected bounds. Inside/near-plane cases use the full screen.
     private static void fieldScissor(MortarFieldEntity field,Vec3 camera,Matrix4f projection,int w,int h,float down) {
         Matrix4f view=new Matrix4f(new Matrix3f(RenderSystem.getInverseViewRotationMatrix()).transpose());
@@ -97,7 +105,7 @@ public final class FieldVolumeRenderer {
         float minX=1,minY=1,maxX=-1,maxY=-1;
         for(int dx:new int[]{-1,1})for(int dz:new int[]{-1,1})for(int dy:new int[]{0,1}) {
             var v=new org.joml.Vector4f((float)(field.getX()+dx*field.getRadius()-camera.x),
-                (float)(field.getY()+(dy==0?-down:field.getFieldHeight())-camera.y),(float)(field.getZ()+dz*field.getRadius()-camera.z),1);
+                (float)(field.getY()+(dy==0?-down:visualHeight(field))-camera.y),(float)(field.getZ()+dz*field.getRadius()-camera.z),1);
             clip.transform(v);
             if(v.w<=.01f){glScissor(0,0,w,h);return;}
             float x=v.x/v.w,y=v.y/v.w;minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);
@@ -113,7 +121,7 @@ public final class FieldVolumeRenderer {
         events++;Minecraft mc=Minecraft.getInstance();if(mc.level==null)return;
         Vec3 camera=event.getCamera().getPosition();
         var fields=new ArrayList<MortarFieldEntity>();
-        for(var entity:mc.level.entitiesForRendering())if(entity instanceof MortarFieldEntity f&&f.isAlive()&&f.distanceToSqr(camera)<128*128&&event.getFrustum().isVisible(new net.minecraft.world.phys.AABB(f.getX()-f.getRadius(),f.getY()-FieldTerrainMask.maximumDepth(f),f.getZ()-f.getRadius(),f.getX()+f.getRadius(),f.getY()+f.getFieldHeight(),f.getZ()+f.getRadius())))fields.add(f);
+        for(var entity:mc.level.entitiesForRendering())if(entity instanceof MortarFieldEntity f&&f.isAlive()&&f.distanceToSqr(camera)<128*128&&event.getFrustum().isVisible(new net.minecraft.world.phys.AABB(f.getX()-f.getRadius(),f.getY()-FieldTerrainMask.maximumDepth(f),f.getZ()-f.getRadius(),f.getX()+f.getRadius(),f.getY()+visualHeight(f),f.getZ()+f.getRadius())))fields.add(f);
         visible=fields.size();
         var energy=new ArrayList<net.minecraft.world.entity.Entity>();
         for(var entity:mc.level.entitiesForRendering()){
@@ -200,7 +208,8 @@ public final class FieldVolumeRenderer {
                     glUniform3f(uniform("Eye"),(float)eye.x,(float)eye.y,(float)eye.z);
                     glUniform1f(uniform("Radius"),(float)field.getRadius());glUniform1f(uniform("Time"),(field.tickCount+partial)/20f);
                     glUniform1f(uniform("Seed"),(float)((field.getX()*.731+field.getZ()*.173)%91));
-                    glUniform1f(uniform("Height"),(float)field.getFieldHeight());
+                    glUniform1f(uniform("Height"),visualHeight(field));
+                    glUniform1f(uniform("CanopyLift"),canopyLift(field));
                     glUniform1i(uniform("Smoke"),smoke||gas?1:0);
                     if(smoke||gas)glUniform3f(uniform("SmokeNoiseOrigin"),(float)((field.getX()*.22)%64),
                         (float)((field.getY()*.30-(mc.level.getGameTime()+(double)partial)*.055/20)%64),(float)((field.getZ()*.22)%64));
