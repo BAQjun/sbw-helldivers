@@ -85,3 +85,5 @@ heavyBombFuseSeconds = 0.8
 | 重新武装“飞鹰” | Eagle Rearm |
 
 新增三项的原版字符串键依次为 1278805896、513886541、2087441269。`Eagle Gas Strike` 是旧数据的内部名称，界面使用正式名称 `Eagle Gas Airstrike`。
+
+全部已实现战备的名称见 [战备中英文名称](stratagem-names.md)。
