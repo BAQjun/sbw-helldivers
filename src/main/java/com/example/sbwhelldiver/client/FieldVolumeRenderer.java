@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Random;
+import java.util.HashMap;
 import static org.lwjgl.opengl.GL33C.*;
 
 /** True per-pixel ray integration of world-space fog. AFTER_LEVEL is after
@@ -31,6 +32,7 @@ import static org.lwjgl.opengl.GL33C.*;
  */
 public final class FieldVolumeRenderer {
     private static int program,vao,noise,depth,depthFbo,width,height,depthFormat;
+    private static final HashMap<String,Integer> uniforms=new HashMap<>();
     private static boolean failed;
     private static volatile boolean reload;
     private static long frames,events;
@@ -40,7 +42,7 @@ public final class FieldVolumeRenderer {
     public static boolean isReady(){return program!=0&&!failed;}
     public static long renderedFrames(){return frames;}
     private static void release(){
-        MineGlowGeometry.release();EnergyEffectGeometry.release();FieldArcGeometry.release();FlameVolumeGeometry.release();FlameGlow.release();FlameSurfaceLighting.release();LaserEffectGeometry.release();
+        FieldFogLayer.release();uniforms.clear();MineGlowGeometry.release();EnergyEffectGeometry.release();FieldArcGeometry.release();FlameVolumeGeometry.release();FlameGlow.release();FlameSurfaceLighting.release();LaserEffectGeometry.release();
         if(program!=0)glDeleteProgram(program);if(vao!=0)glDeleteVertexArrays(vao);
         if(noise!=0)glDeleteTextures(noise);if(depth!=0)glDeleteTextures(depth);if(depthFbo!=0)glDeleteFramebuffers(depthFbo);
         program=vao=noise=depth=depthFbo=width=height=depthFormat=0;failed=false;reload=false;
@@ -97,14 +99,14 @@ public final class FieldVolumeRenderer {
         int right=Math.min(w,(int)Math.ceil((maxX+1)*.5*w)+2),top=Math.min(h,(int)Math.ceil((maxY+1)*.5*h)+2);
         glScissor(x,y,Math.max(0,right-x),Math.max(0,top-y));
     }
-    private static int uniform(String name){return glGetUniformLocation(program,name);}
+    private static int uniform(String name){return uniforms.computeIfAbsent(name,n->glGetUniformLocation(program,n));}
     public static void render(RenderLevelStageEvent event) {
         if(event.getStage()==RenderLevelStageEvent.Stage.AFTER_SKY&&!ShaderPackCompat.INSTANCE.shadowPass())MineGlowGeometry.beginFrame();
         if(event.getStage()!=RenderLevelStageEvent.Stage.AFTER_LEVEL||ShaderPackCompat.INSTANCE.shadowPass())return;
         events++;Minecraft mc=Minecraft.getInstance();if(mc.level==null)return;
         Vec3 camera=event.getCamera().getPosition();
         var fields=new ArrayList<MortarFieldEntity>();
-        for(var entity:mc.level.entitiesForRendering())if(entity instanceof MortarFieldEntity f&&f.isAlive()&&f.distanceToSqr(camera)<128*128)fields.add(f);
+        for(var entity:mc.level.entitiesForRendering())if(entity instanceof MortarFieldEntity f&&f.isAlive()&&f.distanceToSqr(camera)<128*128&&event.getFrustum().isVisible(new net.minecraft.world.phys.AABB(f.getX()-f.getRadius(),f.getY(),f.getZ()-f.getRadius(),f.getX()+f.getRadius(),f.getY()+f.getFieldHeight(),f.getZ()+f.getRadius())))fields.add(f);
         visible=fields.size();
         var energy=new ArrayList<net.minecraft.world.entity.Entity>();
         for(var entity:mc.level.entitiesForRendering()){
@@ -124,7 +126,7 @@ public final class FieldVolumeRenderer {
             int oldActive=glGetInteger(GL_ACTIVE_TEXTURE);
             int oldSampler0=glGetIntegeri(GL_SAMPLER_BINDING,0),oldSampler1=glGetIntegeri(GL_SAMPLER_BINDING,1);
             glActiveTexture(GL_TEXTURE0);int old2D=glGetInteger(GL_TEXTURE_BINDING_2D),old3D=glGetInteger(GL_TEXTURE_BINDING_3D);
-            glActiveTexture(GL_TEXTURE1);int old1=glGetInteger(GL_TEXTURE_BINDING_3D);
+            glActiveTexture(GL_TEXTURE1);int old1=glGetInteger(GL_TEXTURE_BINDING_3D),old12D=glGetInteger(GL_TEXTURE_BINDING_2D);
             boolean test=glIsEnabled(GL_DEPTH_TEST),blend=glIsEnabled(GL_BLEND),cull=glIsEnabled(GL_CULL_FACE),scissor=glIsEnabled(GL_SCISSOR_TEST);
             boolean writeDepth=glGetBoolean(GL_DEPTH_WRITEMASK);
             int src=glGetInteger(GL_BLEND_SRC_RGB),dst=glGetInteger(GL_BLEND_DST_RGB),srcA=glGetInteger(GL_BLEND_SRC_ALPHA),dstA=glGetInteger(GL_BLEND_DST_ALPHA);
@@ -164,6 +166,9 @@ public final class FieldVolumeRenderer {
                 glColorMask(true,true,true,true);glEnable(GL_BLEND);glBlendEquationSeparate(GL_FUNC_ADD,GL_FUNC_ADD);
                 glBlendFuncSeparate(GL_ONE,GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA);
                 FieldArcGeometry.draw(fields,event.getPartialTick(),camera,event.getProjectionMatrix(),new Matrix3f(RenderSystem.getInverseViewRotationMatrix()),w,h);
+                int fogW=Math.max(1,(w+1)/2),fogH=Math.max(1,(h+1)/2);
+                if(!fields.isEmpty())FieldFogLayer.begin(fogW,fogH);
+                glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,depth);
                 glUseProgram(program);glBindVertexArray(vao);
                 glUniform1i(uniform("SceneDepth"),0);glUniform1i(uniform("DensityNoise"),1);
                 glActiveTexture(GL_TEXTURE1);glBindTexture(GL_TEXTURE_3D,noise);
@@ -171,10 +176,10 @@ public final class FieldVolumeRenderer {
                 new Matrix4f(event.getProjectionMatrix()).invert().get(matrix);glUniformMatrix4fv(uniform("InverseProjection"),false,matrix);
                 FloatBuffer rotation=stack.mallocFloat(9);
                 new Matrix3f(RenderSystem.getInverseViewRotationMatrix()).get(rotation);glUniformMatrix3fv(uniform("InverseViewRotation"),false,rotation);
-                glUniform2f(uniform("Viewport"),w,h);
+                glUniform2f(uniform("Viewport"),fogW,fogH);
                 glEnable(GL_SCISSOR_TEST);
                 for(var field:fields) {
-                    fieldScissor(field,camera,event.getProjectionMatrix(),w,h);
+                    fieldScissor(field,camera,event.getProjectionMatrix(),fogW,fogH);
                     Vec3 eye=camera.subtract(field.position());boolean gas=field.getKind()==MortarFieldEntity.Kind.GAS,smoke=field.getKind()==MortarFieldEntity.Kind.SMOKE;
                     float partial=event.getPartialTick();
                     float fade=(float)Math.max(0,Math.min(1,Math.min((field.tickCount+partial)/(gas?7:6),field.getRemainingTicks()/(gas?20.0:12.0))));
@@ -182,14 +187,15 @@ public final class FieldVolumeRenderer {
                     glUniform1f(uniform("Radius"),(float)field.getRadius());glUniform1f(uniform("Time"),(field.tickCount+partial)/20f);
                     glUniform1f(uniform("Seed"),(float)((field.getX()*.731+field.getZ()*.173)%91));
                     glUniform1f(uniform("Height"),(float)field.getFieldHeight());
-                    glUniform1i(uniform("Smoke"),smoke?1:0);
-                    if(smoke)glUniform3f(uniform("SmokeNoiseOrigin"),(float)((field.getX()*.22)%64),
+                    glUniform1i(uniform("Smoke"),smoke||gas?1:0);
+                    if(smoke||gas)glUniform3f(uniform("SmokeNoiseOrigin"),(float)((field.getX()*.22)%64),
                         (float)((field.getY()*.30-(mc.level.getGameTime()+(double)partial)*.055/20)%64),(float)((field.getZ()*.22)%64));
-                    glUniform1f(uniform("Extinction"),(smoke?.95f:gas?.42f:.16f)*fade);
+                    glUniform1f(uniform("Extinction"),(smoke?.95f:gas?.20f:.16f)*fade);
                     glUniform3f(uniform("FogColor"),smoke?.82f:gas?.48f:.38f,smoke?.84f:gas?.55f:.60f,smoke?.86f:gas?.15f:.84f);
                     glDrawArrays(GL_TRIANGLES,0,3);
                 }
                 glDisable(GL_SCISSOR_TEST);
+                if(!fields.isEmpty())FieldFogLayer.composite(target.frameBufferId,depth,w,h,event.getProjectionMatrix());
                 if(flames.length>0){
                     FlameSurfaceLighting.draw(flames,camera,event.getProjectionMatrix(),new Matrix3f(RenderSystem.getInverseViewRotationMatrix()),w,h);
                     FlameGlow.render(w,h,()->FlameVolumeGeometry.draw(flames,event.getProjectionMatrix(),new Matrix3f(RenderSystem.getInverseViewRotationMatrix()),camera,w,h,(mc.level.getGameTime()+event.getPartialTick())/20f));
@@ -210,7 +216,7 @@ public final class FieldVolumeRenderer {
                 glBindFramebuffer(GL_DRAW_FRAMEBUFFER,oldDraw);glBindFramebuffer(GL_READ_FRAMEBUFFER,oldRead);
                 glViewport(viewport.get(0),viewport.get(1),viewport.get(2),viewport.get(3));
                 glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,old2D);glBindTexture(GL_TEXTURE_3D,old3D);
-                glActiveTexture(GL_TEXTURE1);glBindTexture(GL_TEXTURE_3D,old1);glActiveTexture(oldActive);
+                glActiveTexture(GL_TEXTURE1);glBindTexture(GL_TEXTURE_3D,old1);glBindTexture(GL_TEXTURE_2D,old12D);glActiveTexture(oldActive);
                 glBindSampler(0,oldSampler0);glBindSampler(1,oldSampler1);
                 glScissor(scissorBox.get(0),scissorBox.get(1),scissorBox.get(2),scissorBox.get(3));
                 set(GL_DEPTH_TEST,test);set(GL_BLEND,blend);set(GL_CULL_FACE,cull);set(GL_SCISSOR_TEST,scissor);glDepthMask(writeDepth);

@@ -19,9 +19,8 @@ enum class EagleAttack(
         (if (this == ROCKETS) 350.0 else 600.0) * kotlin.math.sin(Math.toRadians(EagleFlight.ENTRY_PITCH))
     fun releaseAge(index: Int): Double = callTicks + if (this == ROCKETS) (index / 2) * interval else index * interval
     fun offset(index: Int): Double = if (count == 1) 0.0 else -spread / 2 + spread * index / (count - 1)
-    /** Field strikes retain native base points. Gas/smoke extend the upgraded extra bomb
-     * along the run instead of reusing a zero-filled native slot at the beacon.
-     * Older strikes retain their established mod balance / explicitly requested payload counts. */
+    /** Full upgraded patterns are centered on the beacon, including the extra canister.
+     * Native spacing is retained; mirrored lateral offsets prevent duplicate impacts. */
     fun landingOffset(index: Int, forward: net.minecraft.world.phys.Vec3): net.minecraft.world.phys.Vec3 {
         val point = fieldPatterns[this]?.get(index) ?: (offset(index) to 0.0)
         return forward.scale(point.first).add(net.minecraft.world.phys.Vec3(-forward.z,0.0,forward.x).scale(point.second))
@@ -29,8 +28,8 @@ enum class EagleAttack(
     companion object {
         private val fieldPatterns = mapOf(
             NAPALM to listOf(-21.0 to 1.0,-7.0 to -1.0,7.0 to 1.0,21.0 to -1.0,0.0 to 0.0),
-            GAS to listOf(-12.0 to -4.0,0.0 to 0.0,12.0 to -4.0,24.0 to 0.0),
-            SMOKE to listOf(-10.0 to 5.0,-5.0 to -5.0,0.0 to 5.0,5.0 to -5.0,10.0 to 5.0,15.0 to -5.0,20.0 to 5.0,25.0 to -5.0,30.0 to 5.0)
+            GAS to listOf(-18.0 to -2.0,-6.0 to 2.0,6.0 to -2.0,18.0 to 2.0),
+            SMOKE to listOf(-20.0 to 5.0,-15.0 to -5.0,-10.0 to 5.0,-5.0 to -5.0,0.0 to 0.0,5.0 to 5.0,10.0 to -5.0,15.0 to 5.0,20.0 to -5.0)
         )
         fun fromId(id: String?) = entries.firstOrNull { it.id == id } ?: AIRSTRIKE
         fun legacy(bombing: Boolean) = if (bombing) AIRSTRIKE else STRAFE

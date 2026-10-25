@@ -58,11 +58,11 @@ void main() {
     vec4 scene=InverseProjection*vec4(uv*2.0-1.0,sceneDepth*2.0-1.0,1.0);
     if(sceneDepth<0.999999)end=min(end,length(scene.xyz/scene.w));
     if(end<=start){fragColor=vec4(0.0);return;}
-    float steps=clamp(ceil((end-start)/0.16),1.0,160.0);
+    float steps=clamp(ceil((end-start)/0.24),1.0,112.0);
     float dt=(end-start)/steps;
     float jitter=fract(sin(dot(gl_FragCoord.xy,vec2(12.9898,78.233)))*43758.5453);
     vec3 sum=vec3(0.0);float transmission=1.0;
-    for(int i=0;i<160;i++) {
+    for(int i=0;i<112;i++) {
         if(float(i)>=steps||transmission<0.012)break;
         vec3 p=Eye+dir*(start+(float(i)+jitter)*dt);
         float rho=density(p);

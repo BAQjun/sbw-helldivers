@@ -31,11 +31,20 @@ class EagleRenderer(context:EntityRendererProvider.Context):EntityRenderer<Eagle
   p.translate(exact.x-rendered.x,exact.y-rendered.y,exact.z-rendered.z)
   p.mulPose(Axis.YP.rotationDegrees(180-e.yRot));p.mulPose(Axis.XP.rotationDegrees(-EagleFlight.pitch(t,e.attack,e.flightHeight)))
   val tr=p.last()
+  val transformedPosition=Vector3f();val transformedNormal=Vector3f()
   Model.parts.forEachIndexed { i,triangles ->
    val vc=b.getBuffer(RenderType.entityCutoutNoCull(Model.textures[i]))
-   for(a in triangles)for(k in intArrayOf(0,1,2,2)) {
-    val v=a.p[k];val uv=a.uv[k];vc.vertex(tr.pose(),v.x,v.y,v.z).color(1f,1f,1f,1f).uv(uv[0],uv[1]).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light).normal(tr.normal(),a.n.x,a.n.y,a.n.z).endVertex()
+   val bulk=PackedEntityVertices.create(vc)
+   for(a in triangles){
+    transformedNormal.set(a.n).mul(tr.normal())
+    for(corner in 0..3){
+     val k=if(corner==3)2 else corner;val v=a.p[k];val uv=a.uv[k]
+     transformedPosition.set(v).mulPosition(tr.pose())
+     if(bulk!=null)bulk.vertex(transformedPosition.x,transformedPosition.y,transformedPosition.z,-1,uv[0],uv[1],OverlayTexture.NO_OVERLAY,light,transformedNormal.x,transformedNormal.y,transformedNormal.z)
+     else vc.vertex(transformedPosition.x,transformedPosition.y,transformedPosition.z,1f,1f,1f,1f,uv[0],uv[1],OverlayTexture.NO_OVERLAY,light,transformedNormal.x,transformedNormal.y,transformedNormal.z)
+    }
    }
+   bulk?.flush()
   }
   // Two short blue exhaust cones at the original engine nodes, in the same transformed aircraft pose.
   val glow=b.getBuffer(RenderType.entityTranslucentEmissive(BeaconModel.WHITE))

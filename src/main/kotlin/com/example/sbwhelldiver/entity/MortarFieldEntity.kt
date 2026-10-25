@@ -30,7 +30,7 @@ class MortarFieldEntity(type: EntityType<out MortarFieldEntity>,level: Level) : 
     val kind get() = Kind.entries[entityData.get(KIND).coerceIn(0,Kind.entries.lastIndex)]
     val radius get() = entityData.get(AREA_RADIUS).toDouble().takeIf { it>0 } ?: kind.radius
     val effectTicks get() = entityData.get(EFFECT_TICKS).takeIf { it>=0 } ?: kind.effectTicks
-    val fieldHeight get() = if(kind==Kind.SMOKE) 10.0 else 3.0
+    val fieldHeight get() = if(kind==Kind.EMS) 3.0 else 10.0
     val remainingTicks get() = entityData.get(REMAINING)
     init { noPhysics = true }
     override fun defineSynchedData() { entityData.define(EFFECT_TICKS,-1);entityData.define(MINE_CLOUD,false);entityData.define(AREA_RADIUS,0f);entityData.define(KIND,0);entityData.define(REMAINING,300) }
@@ -52,7 +52,7 @@ class MortarFieldEntity(type: EntityType<out MortarFieldEntity>,level: Level) : 
                 com.example.sbwhelldiver.effect.SmokeOcclusion.register(this)
                 entityData.set(REMAINING,remainingTicks-1);return
             }
-            val box=AABB(x-radius,y-.25,z-radius,x+radius,y+3.0,z+radius)
+            val box=AABB(x-radius,y-.25,z-radius,x+radius,y+fieldHeight,z+radius)
             level().getEntitiesOfClass(LivingEntity::class.java,box) {
                 it.isAlive && !it.isSpectator && (it.x-x)*(it.x-x)+(it.z-z)*(it.z-z) <= radius*radius
             }.forEach { target ->

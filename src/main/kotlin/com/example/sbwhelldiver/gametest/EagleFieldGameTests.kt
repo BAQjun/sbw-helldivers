@@ -89,6 +89,59 @@ object EagleFieldGameTests {
         h.assertTrue(loaded.remainingTicks==299 && loaded.radius==12.0 && loaded.effectTicks==120,"Gas persistence")
         loaded.discard();cleanup(h,at);h.succeed()
     }
+    @JvmStatic @GameTest(template="sentry_test",batch="eagle_fields_gas_height",timeoutTicks=20)
+    fun allGasSourcesReachTenBlocksWithoutChangingEms(h: GameTestHelper) {
+        val at=origin(h).add(0.0,120.0,0.0)
+        for((i,mine) in listOf(false,true).withIndex()) {
+            val p=at.add(i*30.0,0.0,0.0);val field=MortarFieldEntity.create(h.level,p,MortarFieldEntity.Kind.GAS,mineCloud=mine)
+            val high=cow(h,p.add(0.0,8.0,0.0));val above=cow(h,p.add(0.0,10.5,0.0));field.tick()
+            h.assertTrue(field.fieldHeight==10.0 && high.hasEffect(ModEffects.GAS.get()) && !above.hasEffect(ModEffects.GAS.get()),"Gas source height/effect coverage differs: mine=$mine")
+            field.discard();high.discard();above.discard()
+        }
+        val ems=MortarFieldEntity.create(h.level,at,MortarFieldEntity.Kind.EMS)
+        h.assertTrue(ems.fieldHeight==3.0,"EMS height changed with gas");ems.discard();h.succeed()
+    }
+    @JvmStatic @GameTest(template="sentry_test",batch="eagle_fields_center",timeoutTicks=20)
+    fun everyBombingPatternCentersTheCompleteSalvoAtEveryHeading(h: GameTestHelper) {
+        for(attack in EagleAttack.entries.filter{it.levelBombing})for(yaw in listOf(0.0,23.0,90.0,137.0)) {
+            val a=Math.toRadians(yaw);val f=Vec3(kotlin.math.cos(a),0.0,kotlin.math.sin(a))
+            val points=(0 until attack.count).map{attack.landingOffset(it,f)}
+            h.assertTrue(points.fold(Vec3.ZERO){sum,p->sum.add(p)}.scale(1.0/attack.count).lengthSqr()<1e-10,"$attack salvo off-center at $yaw")
+            h.assertTrue(points.distinct().size==attack.count,"$attack duplicate impact at $yaw")
+        }
+        h.succeed()
+    }
+    @JvmStatic @GameTest(template="sentry_test",batch="eagle_fields_no_generation",timeoutTicks=20)
+    fun planningDistantFlightDoesNotSynchronouslyLoadTerrain(h: GameTestHelper) {
+        val source=h.level.chunkSource;val before=source.loadedChunksCount
+        val strike=ModEntities.EAGLE.get().create(h.level)!!
+        try {
+            strike.configure(Vec3(8_000_000.0,80.0,8_000_000.0),Vec3(1.0,0.0,0.0),EagleAttack.SMOKE,null)
+            h.assertTrue(source.loadedChunksCount==before,"Planning loaded distant terrain synchronously: $before -> ${source.loadedChunksCount}")
+        } finally {strike.discard()}
+        h.succeed()
+    }
+    @JvmStatic @GameTest(template="sentry_test",batch="eagle_fields_real_impacts",timeoutTicks=260)
+    fun boundedChunkLoadingStillDeliversAllGasAndSmokeImpacts(h: GameTestHelper) {
+        val anchor=origin(h);val strikes=mutableListOf<EagleEntity>();val fields=mutableListOf<MortarFieldEntity>()
+        val observer=object {
+            @net.minecraftforge.eventbus.api.SubscribeEvent fun joined(e:net.minecraftforge.event.entity.EntityJoinLevelEvent) {
+                val f=e.entity as? MortarFieldEntity ?: return
+                if(f.position().distanceTo(Vec3(anchor.x,200.02,anchor.z))<150)fields.add(f)
+            }
+        }
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(observer)
+        for((i,attack) in listOf(EagleAttack.GAS,EagleAttack.SMOKE).withIndex()) {
+            val at=Vec3(anchor.x+i*80,200.0,anchor.z);val f=Vec3(1.0,0.0,0.0)
+            for(j in 0 until attack.count){val p=BlockPos.containing(at.add(attack.landingOffset(j,f))).below();for(dx in -2..2)for(dz in -2..2)h.level.setBlock(p.offset(dx,0,dz),Blocks.STONE.defaultBlockState(),2)}
+            val strike=ModEntities.EAGLE.get().create(h.level)!!;strike.configure(at,f,attack,null);h.level.addFreshEntity(strike);strikes.add(strike)
+        }
+        h.succeedWhen {
+            h.assertTrue(fields.count{it.kind==MortarFieldEntity.Kind.GAS}==4 && fields.count{it.kind==MortarFieldEntity.Kind.SMOKE}==9,"Canisters stalled before actual impact: gas=${fields.count{it.kind==MortarFieldEntity.Kind.GAS}}, smoke=${fields.count{it.kind==MortarFieldEntity.Kind.SMOKE}}")
+            h.assertTrue(strikes.all{it.strikeComplete && it.isRemoved},"Carrier retired before ordnance resolved")
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.unregister(observer);fields.forEach{it.discard()};strikes.forEach{it.discard()}
+        }
+    }
     @JvmStatic @GameTest(template="sentry_test",batch="eagle_fields_smoke",timeoutTicks=20)
     fun smokeBlocksNewTargetsButPreservesVanillaGoalsAndExistingAggro(h: GameTestHelper) {
         // Keep this sight fixture above adjacent test structures and their floors.
@@ -144,13 +197,14 @@ object EagleFieldGameTests {
             h.assertTrue(shots.size==count,"Carrier count differs from actual canisters: ${shots.size}/$count")
             if(attack==EagleAttack.GAS || attack==EagleAttack.SMOKE) {
                 val expected=if(attack==EagleAttack.GAS)
-                    listOf(Vec3(-12.0,0.0,-4.0),Vec3.ZERO,Vec3(12.0,0.0,-4.0),Vec3(24.0,0.0,0.0))
-                else (0..8).map{i->Vec3(-10.0+i*5.0,0.0,if(i%2==0)5.0 else -5.0)}
+                    listOf(Vec3(-18.0,0.0,-2.0),Vec3(-6.0,0.0,2.0),Vec3(6.0,0.0,-2.0),Vec3(18.0,0.0,2.0))
+                else listOf(Vec3(-20.0,0.0,5.0),Vec3(-15.0,0.0,-5.0),Vec3(-10.0,0.0,5.0),Vec3(-5.0,0.0,-5.0),Vec3.ZERO,Vec3(5.0,0.0,5.0),Vec3(10.0,0.0,-5.0),Vec3(15.0,0.0,5.0),Vec3(20.0,0.0,-5.0))
                 h.assertTrue(expected.distinct().size==count,"Upgraded field canisters must not repeat a landing point")
+                h.assertTrue(expected.fold(Vec3.ZERO){a,p->a.add(p)}.lengthSqr()<1e-10,"Full upgraded pattern is not centered on the beacon")
                 for((i,shot) in shots.withIndex()) {
                     val t=EagleFlight.BOMB_FLIGHT.toDouble()
                     val landing=shot.position().add(shot.deltaMovement.scale(t)).add(0.0,-EagleFlight.BOMB_GRAVITY*t*(t-1)/2,0.0)
-                    h.assertTrue(landing.distanceTo(strike.target.add(expected[i]))<.01,"$attack canister $i misses the continued landing pattern: $landing")
+                    h.assertTrue(landing.distanceTo(strike.target.add(expected[i]))<.01,"$attack canister $i misses the centered landing pattern: $landing")
                     h.assertTrue(shot.deltaMovement.x>=1.999,"$attack canister $i was launched backwards or stalled")
                     h.assertTrue(shot.deltaMovement.y<0,"$attack canister $i was launched upwards")
                     h.assertTrue(attack.releaseAge(i)<EagleFlight.attackEnd(attack),"Aircraft pulled up before canister $i")

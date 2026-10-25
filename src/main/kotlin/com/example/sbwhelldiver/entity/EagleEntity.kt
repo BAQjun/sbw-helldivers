@@ -60,7 +60,11 @@ class EagleEntity(type:EntityType<*>,level:Level):Entity(type,level),IEntityAddi
    flightHeight=EagleFlight.terrainClearance(point,runDirection,mode) {p->
     val x=kotlin.math.floor(p.x).toInt();val z=kotlin.math.floor(p.z).toInt()
     val key=(x.toLong() shl 32) xor (z.toLong() and 0xffffffffL)
-    heights.getOrPut(key){server.getHeight(Heightmap.Types.MOTION_BLOCKING,x,z).toDouble()}
+    // Inspect resident terrain only: planning a visual flight must not synchronously
+    // generate hundreds of unseen chunks along the approach and pull-out.
+    heights.getOrPut(key){server.chunkSource.getChunkNow(x shr 4,z shr 4)
+     ?.getHeight(Heightmap.Types.MOTION_BLOCKING,x and 15,z and 15)?.plus(1)?.toDouble()
+     ?: maxOf(point.y,server.seaLevel.toDouble())}
    }
   }
   updateFlight(0.0);xo=x;yo=y;zo=z;xOld=x;yOld=y;zOld=z;yRotO=yRot;xRotO=xRot
@@ -151,23 +155,21 @@ class EagleEntity(type:EntityType<*>,level:Level):Entity(type,level),IEntityAddi
  private fun sound(name:String,volume:Float) {ModSounds.EVENTS[name]?.get()?.let {level().playSound(null,x,y,z,it,SoundSource.PLAYERS,volume,1f)}}
  private fun holdFlightChunks() {
   val server=level() as? ServerLevel?:return
-  // The carrier needs only its strike chunk. During the attack keep the actual launch corridor active
-  // for projectiles crossing the player's simulation boundary; do not force-load the distant high approach.
+  // Only prewarm upcoming real releases, not the empty visual flight corridor.
+  // Twelve ticks give chunk loading time without holding the entire future salvo.
   val desired=mutableSetOf<ChunkPos>()
-  if(age>=EagleFlight.attackStart(attack)-20 && age<EagleFlight.attackEnd(attack)+21){
-   for(ahead in -20..24)desired.add(ChunkPos(net.minecraft.core.BlockPos.containing(positionAt((age+ahead).coerceAtLeast(EagleFlight.attackStart(attack).toDouble())))))
-  }
-  if(age>=EagleFlight.attackStart(attack)-20 && !payloadReleased)
-   for(index in fired until attack.count)desired.add(ChunkPos(net.minecraft.core.BlockPos.containing(positionAt(attack.releaseAge(index)))))
+  for(index in fired until attack.count)if(attack.releaseAge(index)<=age+12)
+   desired.add(ChunkPos(net.minecraft.core.BlockPos.containing(positionAt(attack.releaseAge(index)))))
   // Follow each projectile rather than releasing a fixed flight corridor too soon on high terrain.
   for(shot in activeOrdnance.values)if(!shot.isRemoved){
    desired.add(ChunkPos(shot.blockPosition()))
    desired.add(ChunkPos(net.minecraft.core.BlockPos.containing(shot.position().add(shot.deltaMovement))))
+   desired.add(ChunkPos(net.minecraft.core.BlockPos.containing(shot.position().add(shot.deltaMovement.scale(2.0)))))
   }
   desired.addAll(awaitingChunks.values)
   desired.add(ChunkPos(net.minecraft.core.BlockPos.containing(target)))
   for(c in heldChunks-desired)server.chunkSource.removeRegionTicket(TICKET,c,2,id,true)
-  for(c in desired)server.chunkSource.addRegionTicket(TICKET,c,2,id,true)
+  for(c in desired-heldChunks)server.chunkSource.addRegionTicket(TICKET,c,2,id,true)
   heldChunks.clear();heldChunks.addAll(desired)
  }
  override fun remove(reason:RemovalReason) {if(java.lang.Boolean.getBoolean("sbw_helldiver.eagleSmokeTest"))com.example.sbwhelldiver.LOGGER.info("EAGLE_REMOVE reason={} age={} fired={} at={}",reason,age,fired,position());val s=level() as? ServerLevel;if(s!=null)for(c in heldChunks)s.chunkSource.removeRegionTicket(TICKET,c,2,id,true);heldChunks.clear();super.remove(reason)}
