@@ -11,10 +11,10 @@
     1,
     0
   ],
-  "faces": 6918,
-  "triangles": 6918,
-  "mesh_groups": 7,
-  "vertices": 6558,
+  "faces": 8578,
+  "triangles": 9546,
+  "mesh_groups": 14,
+  "vertices": 7723,
   "reference_lod": "g_se_destroyer_LOD4",
   "bounds_meters": {
     "min": [

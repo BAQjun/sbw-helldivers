@@ -54,7 +54,7 @@ def atlas(path):
             em[a:a+4]=bytes((*ec,255))
     png(path/'舰体图集.png',pix);png(path/'舰体图集_自发光.png',em)
 
-uid=lambda s:str(uuid.uuid5(uuid.NAMESPACE_URL,'sbw-super-destroyer-distant-v2/'+s))
+uid=lambda s:str(uuid.uuid5(uuid.NAMESPACE_URL,'sbw-super-destroyer-distant-v3/'+s))
 def sub(a,b):return [a[i]-b[i] for i in range(3)]
 def cross(a,b):return [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]]
 def dot(a,b):return sum(x*y for x,y in zip(a,b))
@@ -87,6 +87,64 @@ class Ship:
         p['v'].extend(vs)
     def mount(self,name,p):self.mounts[name]=p
 
+def add_hull_liners(ship, source, convert):
+    """Closed, inset hull sections cover native LOD seams without covering rail gaps."""
+    def cross2(a,b):return a[0]*b[1]-a[1]*b[0]
+    def hull(points):
+        pts=sorted(set((round(p[0],5),round(p[1],5))for p in points))
+        if len(pts)<3:return []
+        def turn(a,b,c):return cross2((b[0]-a[0],b[1]-a[1]),(c[0]-a[0],c[1]-a[1]))
+        lo=[];hi=[]
+        for v in pts:
+            while len(lo)>1 and turn(lo[-2],lo[-1],v)<=0:lo.pop()
+            lo.append(v)
+        for v in reversed(pts):
+            while len(hi)>1 and turn(hi[-2],hi[-1],v)<=0:hi.pop()
+            hi.append(v)
+        return lo[:-1]+hi[:-1]
+    def section(y, materials, xmin, xmax):
+        points=[]
+        for f in source.polygons:
+            if f.material_index not in materials:continue
+            vv=[source.vertices[i].co for i in f.vertices]
+            for a,b in zip(vv,vv[1:]+vv[:1]):
+                if (a.y<=y<b.y)or(b.y<=y<a.y):
+                    t=(y-a.y)/(b.y-a.y);x=a.x+t*(b.x-a.x);z=a.z+t*(b.z-a.z)
+                    if xmin<=x<=xmax:points.append((x,z))
+        return hull(points)
+    specs=[
+        ('前中梁',[-105,-100,-85,-50,-25,-5,3],{0,3},-11,11),
+        ('中部机舱',[-21,-17,-2,14,43,52,64,66],{4},-30,30),
+        ('后部主机舱',[68,73,89,109,118,123,127],{5},-23,23),
+    ]
+    for sign in (-1,1):
+        specs.append(('前侧梁'+str(sign),[-105,-100,-85,-50,-25,-5,3],{0,3},12 if sign>0 else -22,22 if sign>0 else -12))
+        specs.append(('侧发动机舱'+str(sign),[81,89,106,117,121,123],{5},34 if sign>0 else -46,46 if sign>0 else -34))
+    for name,ys,mats,xmin,xmax in specs:
+        sections=[]
+        for y in ys:
+            poly=section(y,mats,xmin,xmax)
+            if len(poly)<3:continue
+            c=[sum(v[k]for v in poly)/len(poly)for k in range(2)];ring=[]
+            for j in range(16):
+                d=(math.cos(j*math.tau/16),math.sin(j*math.tau/16));hits=[]
+                for a,b in zip(poly,poly[1:]+poly[:1]):
+                    e=(b[0]-a[0],b[1]-a[1]);ac=(a[0]-c[0],a[1]-c[1]);den=cross2(d,e)
+                    if abs(den)<1e-10:continue
+                    t=cross2(ac,e)/den;u=cross2(ac,d)/den
+                    if t>0 and -.00001<=u<=1.00001:hits.append(t)
+                if not hits:raise ValueError('Open section: '+name)
+                t=max(.03,min(hits)*.86-.35);ring.append(convert((c[0]+d[0]*t,y,c[1]+d[1]*t)))
+            sections.append(ring)
+        if len(sections)<2:raise ValueError('Missing hull section: '+name)
+        vs=[v for ring in sections for v in ring];fs=[]
+        for k in range(len(sections)-1):
+            for j in range(16):fs.append([k*16+j,(k+1)*16+j,(k+1)*16+(j+1)%16,k*16+(j+1)%16])
+        # Rings run clockwise when viewed along +Z in BB coordinates.
+        fs += [list(range(16)),list(range(len(vs)-1,len(vs)-17,-1))]
+        ship.add('08_封闭内壳_'+name,vs,fs,0,False)
+
+
 def build():
     import bpy,bmesh
     bpy.ops.wm.read_factory_settings(use_empty=True)
@@ -101,33 +159,51 @@ def build():
     bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=.005)
     bmesh.ops.dissolve_degenerate(bm,edges=list(bm.edges),dist=.0001)
     bm.to_mesh(ob.data);bm.free()
+    native_source=ob.data.copy()
     mod=ob.modifiers.new('Distant silhouette','DECIMATE')
     mod.ratio=.56;mod.use_symmetry=True;mod.symmetry_axis='X'
     bpy.ops.object.modifier_apply(modifier=mod.name)
     ob.data.update()
+    # Only thin external fins and upper rails need both visible sides. Give
+    # these real thickness and capped rims, rather than disabling face culling.
+    thin=[f for f in ob.data.polygons if
+          (f.material_index==5 and abs(f.center.x)>29 and (f.center.z<10 or f.center.z>26)) or
+          (f.material_index==3 and abs(f.center.x)>12 and f.center.z>35)]
+    thin_ids={f.index for f in thin}
+    plate_mesh=bpy.data.meshes.new('Closed armor plates')
+    plate_mesh.from_pydata([v.co.copy()for v in ob.data.vertices],[],[list(f.vertices)for f in thin])
+    for f,original in zip(plate_mesh.polygons,thin):f.material_index=original.material_index
+    plate=bpy.data.objects.new('Closed armor plates',plate_mesh);bpy.context.collection.objects.link(plate)
+    for m in ob.data.materials:plate.data.materials.append(m)
+    bpy.context.view_layer.objects.active=plate
+    thick=plate.modifiers.new('Armor backs and closed rims','SOLIDIFY')
+    thick.thickness=.18;thick.offset=-1;thick.use_even_offset=False;thick.use_quality_normals=True;thick.use_rim=True
+    bpy.ops.object.modifier_apply(modifier=thick.name);plate.data.update()
     s=Ship()
     groups=['01_结构内衬','02_舰底设备','03_舰面设备','04_前部舰体','05_中部机舱','06_尾部机舱与侧板']
     # Original Blender forward is -Y. Rotating 180 degrees and converting to BB
     # keeps a right-handed mesh with the bow facing -Z and the keel centred.
     def convert(v):return (-float(v[0]),float(v[2])-19,float(v[1])-9.5)
-    for f in ob.data.polygons:
-        vs=[convert(ob.data.vertices[j].co) for j in f.vertices]
-        c=f.center;n=f.normal;mat=0
-        if f.material_index==0:mat=2
-        elif f.material_index in (1,2):mat=2
-        if n.z>.9 and f.material_index in (3,4,5):mat=1
-        if f.material_index==3 and abs(n.x)>.65 and -105<c.y<4 and c.z>22:mat=9
-        if f.material_index==5 and abs(c.x)>29 and abs(n.x)>.3 and c.y>65:mat=15
-        before=len(s.parts.get(groups[f.material_index],{}).get('f',[]))
-        s.add(groups[f.material_index],vs,[list(range(len(vs)))],mat,False)
-        # Shared spatial UVs across triangles: no per-triangle paint stretching.
-        if mat in (9,15):
-            part=s.parts[groups[f.material_index]]
-            for i in range(before,len(part['f'])):
-                ids,m,chart=part['f'][i]
-                if mat==9:chart=[((part['v'][j][2]+114.5)/110,(36-(part['v'][j][1]+19))/16) for j in ids]
-                else:chart=[((part['v'][j][2]+9.5-64)/68,(44-(part['v'][j][1]+19))/50) for j in ids]
-                part['f'][i]=(ids,m,[[max(0,min(1,a))for a in q] for q in chart])
+    for data,polygons in [(ob.data,[f for f in ob.data.polygons if f.index not in thin_ids]),(plate.data,plate.data.polygons)]:
+      for f in polygons:
+          vs=[convert(data.vertices[j].co) for j in f.vertices]
+          c=f.center;n=f.normal;mat=0
+          if f.material_index==0:mat=2
+          elif f.material_index in (1,2):mat=2
+          if n.z>.9 and f.material_index in (3,4,5):mat=1
+          if f.material_index==3 and abs(n.x)>.65 and -105<c.y<4 and c.z>22:mat=9
+          if f.material_index==5 and abs(c.x)>29 and abs(n.x)>.3 and c.y>65:mat=15
+          before=len(s.parts.get(groups[f.material_index],{}).get('f',[]))
+          s.add(groups[f.material_index],vs,[list(range(len(vs)))],mat,False)
+          # Shared spatial UVs across triangles: no per-triangle paint stretching.
+          if mat in (9,15):
+              part=s.parts[groups[f.material_index]]
+              for i in range(before,len(part['f'])):
+                  ids,m,chart=part['f'][i]
+                  if mat==9:chart=[((part['v'][j][2]+114.5)/110,(36-(part['v'][j][1]+19))/16) for j in ids]
+                  else:chart=[((part['v'][j][2]+9.5-64)/68,(44-(part['v'][j][1]+19))/50) for j in ids]
+                  part['f'][i]=(ids,m,[[max(0,min(1,a))for a in q] for q in chart])
+    add_hull_liners(s,native_source,convert)
     # Measured nozzle centres: a hexagonal group of six and two per outrigger.
     engines=[(sign*14.15,131.35,21.63,3.3)for sign in (-1,1)]
     engines += [(sign*4.95,131.25,z,3.1)for sign in (-1,1)for z in (15.35,27.92)]

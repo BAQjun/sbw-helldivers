@@ -5,13 +5,17 @@ import argparse,json,sys,math
 from pathlib import Path
 import bpy
 from mathutils import Vector
-p=argparse.ArgumentParser();p.add_argument('--model',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args(sys.argv[sys.argv.index('--')+1:]);a.output.mkdir(parents=True,exist_ok=True)
+p=argparse.ArgumentParser();p.add_argument('--model',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args(sys.argv[sys.argv.index('--')+1:]);a.model=a.model.resolve();a.output=a.output.resolve();a.output.mkdir(parents=True,exist_ok=True)
 d=json.loads(a.model.read_text(encoding='utf-8'))
 bpy.ops.wm.read_factory_settings(use_empty=True)
 mat=bpy.data.materials.new('Hull atlas + emissive mask');mat.use_nodes=True
 nt=mat.node_tree;n=nt.nodes;bs=next(q for q in n if q.type=='BSDF_PRINCIPLED');bs.inputs['Roughness'].default_value=.7;bs.inputs['Metallic'].default_value=.15
 im=n.new('ShaderNodeTexImage');im.image=bpy.data.images.load(str(a.model.parent/'贴图/舰体图集.png'));im.interpolation='Closest';nt.links.new(im.outputs['Color'],bs.inputs['Base Color'])
 em=n.new('ShaderNodeTexImage');em.image=bpy.data.images.load(str(a.model.parent/'贴图/舰体图集_自发光.png'));em.interpolation='Closest';nt.links.new(em.outputs['Color'],bs.inputs['Emission Color']);bs.inputs['Emission Strength'].default_value=1.6
+# Match Blockbench front-face culling; two-sided studio renders can hide leaks.
+geom=n.new('ShaderNodeNewGeometry');clear=n.new('ShaderNodeBsdfTransparent');mix=n.new('ShaderNodeMixShader')
+out=next(q for q in n if q.type=='OUTPUT_MATERIAL')
+nt.links.new(geom.outputs['Backfacing'],mix.inputs[0]);nt.links.new(bs.outputs[0],mix.inputs[1]);nt.links.new(clear.outputs[0],mix.inputs[2]);nt.links.new(mix.outputs[0],out.inputs['Surface'])
 for e in d['elements']:
  if e.get('type')!='mesh':continue
  names=list(e['vertices']);idx={k:i for i,k in enumerate(names)}
