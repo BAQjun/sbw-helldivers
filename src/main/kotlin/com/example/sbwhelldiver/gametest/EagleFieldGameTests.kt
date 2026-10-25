@@ -90,14 +90,18 @@ object EagleFieldGameTests {
         loaded.discard();cleanup(h,at);h.succeed()
     }
     @JvmStatic @GameTest(template="sentry_test",batch="eagle_fields_gas_height",timeoutTicks=20)
-    fun allGasSourcesReachTenBlocksWithoutChangingEms(h: GameTestHelper) {
+    fun smallGasCloudsHaveLowCanopiesWithoutChangingEagleSmokeOrEms(h: GameTestHelper) {
         val at=origin(h).add(0.0,120.0,0.0)
-        for((i,mine) in listOf(false,true).withIndex()) {
-            val p=at.add(i*30.0,0.0,0.0);val field=MortarFieldEntity.create(h.level,p,MortarFieldEntity.Kind.GAS,mineCloud=mine)
-            val high=cow(h,p.add(0.0,8.0,0.0));val above=cow(h,p.add(0.0,10.5,0.0));field.tick()
-            h.assertTrue(field.fieldHeight==10.0 && high.hasEffect(ModEffects.GAS.get()) && !above.hasEffect(ModEffects.GAS.get()),"Gas source height/effect coverage differs: mine=$mine")
-            field.discard();high.discard();above.discard()
+        for((i,radius) in listOf(6.0,7.0,12.0).withIndex()) {
+            val p=at.add(i*30.0,0.0,0.0)
+            val field=MortarFieldEntity.create(h.level,p,MortarFieldEntity.Kind.GAS,radius,mineCloud=i==0)
+            val expected=if(i==0)36.0/14 else if(i==1)3.5 else 10.0
+            val inside=cow(h,p.add(0.0,expected-.4,0.0));val above=cow(h,p.add(0.0,expected+.5,0.0));field.tick()
+            h.assertTrue(abs(field.fieldHeight-expected)<1e-6 && inside.hasEffect(ModEffects.GAS.get()) && !above.hasEffect(ModEffects.GAS.get()),"Gas height/effect coverage differs: radius=$radius height=${field.fieldHeight}")
+            field.discard();inside.discard();above.discard()
         }
+        val smoke=MortarFieldEntity.create(h.level,at,MortarFieldEntity.Kind.SMOKE)
+        h.assertTrue(smoke.fieldHeight==10.0,"Smoke height changed with gas");smoke.discard()
         val ems=MortarFieldEntity.create(h.level,at,MortarFieldEntity.Kind.EMS)
         h.assertTrue(ems.fieldHeight==3.0,"EMS height changed with gas");ems.discard();h.succeed()
     }

@@ -11,7 +11,7 @@ import java.nio.ByteBuffer;
 /** Optional Embeddium bulk writer. Keep the normal consumer fallback when absent.
  * Iris' own serializer still generates all extended shader attributes. */
 public final class PackedEntityVertices {
-    private static final int STRIDE=36, CAPACITY=256;
+    private static final int STRIDE=36, CAPACITY=4096;
     private static final ThreadLocal<ByteBuffer> SCRATCH=ThreadLocal.withInitial(()->org.lwjgl.BufferUtils.createByteBuffer(STRIDE*CAPACITY));
     private static MethodHandle of,push;
     private static Object format;
@@ -36,11 +36,16 @@ public final class PackedEntityVertices {
         catch(Throwable error){throw new IllegalStateException("Cannot obtain Embeddium vertex writer",error);}
     }
     public void vertex(float x,float y,float z,int color,float u,float v,int overlay,int light,float nx,float ny,float nz){
+        vertexPackedNormal(x,y,z,color,u,v,overlay,light,packNormal(nx,ny,nz));
+    }
+    public static int packNormal(float nx,float ny,float nz){
+        return ((int)(nx*127)&255)|(((int)(ny*127)&255)<<8)|(((int)(nz*127)&255)<<16);
+    }
+    public void vertexPackedNormal(float x,float y,float z,int color,float u,float v,int overlay,int light,int normal){
         long p=address+(long)count*STRIDE;
         MemoryUtil.memPutFloat(p,x);MemoryUtil.memPutFloat(p+4,y);MemoryUtil.memPutFloat(p+8,z);
         MemoryUtil.memPutInt(p+12,color);MemoryUtil.memPutFloat(p+16,u);MemoryUtil.memPutFloat(p+20,v);
         MemoryUtil.memPutInt(p+24,overlay);MemoryUtil.memPutInt(p+28,light);
-        int normal=((int)(nx*127)&255)|(((int)(ny*127)&255)<<8)|(((int)(nz*127)&255)<<16);
         MemoryUtil.memPutInt(p+32,normal);
         if(++count==CAPACITY)flush();
     }

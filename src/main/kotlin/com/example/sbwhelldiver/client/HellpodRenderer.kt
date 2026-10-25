@@ -44,9 +44,9 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
             checkedWreckTextureCache = true
             com.example.sbwhelldiver.LOGGER.info("WRECK_TEXTURE_CACHE_PASSED: native wreck rendering uses its prepared texture; lookupMs={}",(System.nanoTime()-began)/1_000_000.0)
         }
-        // Reduced meshes must retain triangle boundaries in the shader loader's quad stream.
+        // Cache repeated mesh vertices in both qualities; preserve Iris triangle boundaries.
         val needsShaderMeshAdapter=entity is AbstractHellpodEntity
-        val meshBuffers=if(needsShaderMeshAdapter && ShaderPackCompat.active())
+        val meshBuffers=if(needsShaderMeshAdapter)
             getCurrentModelEntry(pose,entity)?.let{entry->
                 var texture=entry.texture
                 if(!entry.isLOD())com.atsuishio.superbwarfare.data.vehicle_skin.VehicleSkin.getSkin(entity)?.texture
@@ -110,7 +110,7 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
             rotateVehicleAxis(entity, pose, yaw, partial)
             pose.scale(renderScale(), renderScale(), renderScale())
             val texture = entry.texture
-            val intactBuffers=if(needsShaderMeshAdapter && ShaderPackCompat.active())ShaderMeshBuffers.wrap(buffers,texture) else null
+            val intactBuffers=if(needsShaderMeshAdapter)ShaderMeshBuffers.wrap(buffers,texture) else null
             try {instance.renderToBuffer(pose, intactBuffers?:buffers,
                 net.minecraft.client.renderer.RenderType.entityTranslucent(texture),
                 com.github.mcmodderanchor.simplebedrockmodel.v1.client.renderer.BedrockModelRenderTypes.polyMeshCutout(texture),

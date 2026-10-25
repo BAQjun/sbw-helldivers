@@ -52,6 +52,8 @@ object ModelQualityResources : ResourceManagerReloadListener {
 
     override fun onResourceManagerReload(resources: ResourceManager) {
         refreshed.clear()
+        CachedMeshRenderer.clear()
+        BinaryEntityTextures.reload(resources)
     }
 
     /** SBW caches model entries on entities; update existing pods after resource reloads too. */
