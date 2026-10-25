@@ -10,6 +10,8 @@ uniform vec3 FogColor;
 in vec2 texCoord;
 out vec4 fragColor;
 uniform float Height;
+uniform bool Smoke;
+uniform vec3 SmokeNoiseOrigin;
 float noise(vec3 p) {
     // Smooth 3D value noise, with no surface-oriented UV coordinates.
     vec3 cell=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
@@ -19,7 +21,22 @@ float density(vec3 p) {
     float radial=length(p.xz);
     if(radial>=Radius||p.y<=0.0||p.y>=Height)return 0.0;
     vec3 flow=p*vec3(0.65,0.85,0.65)+vec3(Seed-Time*0.16,-Time*0.20,Time*0.09);
-    float n=noise(flow)*0.60+noise(flow*2.03+17.1)*0.28+noise(flow*4.07+41.7)*0.12;
+    float detail=noise(flow),fine=noise(flow*2.03+17.1);
+    if(Smoke) {
+        // A billowing half-ellipsoid, warped at two scales. Density dies before
+        // the integration/scissor bounds, so neither a flat lid nor box edges show.
+        // Keep three noise lookups per sample, including the coarse shape field.
+        // Shared world-space shape keeps overlapping canisters from filling
+        // each other's height variation into a level, flat bank.
+        float coarse=noise(p*vec3(0.22,0.30,0.22)+SmokeNoiseOrigin+vec3(9.1,0.0,42.7));
+        float n=detail*0.60+fine*0.28+coarse*0.12;
+        float rim=Radius*(0.82+0.12*coarse);
+        float cap=Height*(0.60+0.32*coarse);
+        float shape=length(vec2(radial/rim,p.y/cap));
+        float edge=smoothstep(0.0,0.18,1.0-shape+(n-0.5)*0.12);
+        return edge*smoothstep(0.0,0.30,p.y)*smoothstep(0.18,0.72,n);
+    }
+    float n=detail*0.60+fine*0.28+noise(flow*4.07+41.7)*0.12;
     float edge=smoothstep(0.0,min(1.4,Radius*0.3),Radius-radial);
     float bottom=smoothstep(0.0,0.30,p.y);
     float top=smoothstep(0.0,0.35,Height-p.y-(1.0-n)*0.15);

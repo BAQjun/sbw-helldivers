@@ -62,9 +62,18 @@ object EagleFlight {
   val lo=hi-1;val u=(d-curve.distances[lo])/(curve.distances[hi]-curve.distances[lo]);val p=curve.points[lo];val q=curve.points[hi]
   return p.first+(q.first-p.first)*u to p.second+(q.second-p.second)*u
  }
+ private val bombingStarts=java.util.concurrent.ConcurrentHashMap<EagleAttack,Double>()
+ /** Leave the whole gas/smoke salvo ahead of the aircraft at release. A long smoke
+  * salvo otherwise overtakes its compact footprint and launches its last bombs backwards.
+  * The 40 m minimum forward travel is a Minecraft ballistic adaptation, not a native offset. */
+ private fun bombingStart(attack:EagleAttack):Double = bombingStarts.computeIfAbsent(attack){
+  val nominal=-attack.spread/2-SPEED*BOMB_FLIGHT
+  if(attack!=EagleAttack.GAS&&attack!=EagleAttack.SMOKE)nominal else min(nominal,
+   (0 until attack.count).minOf {i->attack.landingOffset(i,Vec3(1.0,0.0,0.0)).x-SPEED*(attack.releaseAge(i)-attack.callTicks)-40.0})
+ }
  private fun local(age:Double,attack:EagleAttack,height:Double):Pair<Double,Double> {
   val bombing=attack.levelBombing;val startAngle=rad(ENTRY_PITCH)
-  val attackS=if(bombing)-attack.spread/2-SPEED*BOMB_FLIGHT else -attack.spread/2-height/tan(startAngle)
+  val attackS=if(bombing)bombingStart(attack) else -attack.spread/2-height/tan(startAngle)
   if(age<attackStart(attack))return approach(attack,height,attackS,age-attackStart(attack))
   val q=(age-attackStart(attack)).coerceAtMost(attack.duration.toDouble())
   val end=if(bombing)0.0 else exitPitch(height,attack)

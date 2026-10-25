@@ -182,6 +182,9 @@ public final class FieldVolumeRenderer {
                     glUniform1f(uniform("Radius"),(float)field.getRadius());glUniform1f(uniform("Time"),(field.tickCount+partial)/20f);
                     glUniform1f(uniform("Seed"),(float)((field.getX()*.731+field.getZ()*.173)%91));
                     glUniform1f(uniform("Height"),(float)field.getFieldHeight());
+                    glUniform1i(uniform("Smoke"),smoke?1:0);
+                    if(smoke)glUniform3f(uniform("SmokeNoiseOrigin"),(float)((field.getX()*.22)%64),
+                        (float)((field.getY()*.30-(mc.level.getGameTime()+(double)partial)*.055/20)%64),(float)((field.getZ()*.22)%64));
                     glUniform1f(uniform("Extinction"),(smoke?.95f:gas?.42f:.16f)*fade);
                     glUniform3f(uniform("FogColor"),smoke?.82f:gas?.48f:.38f,smoke?.84f:gas?.55f:.60f,smoke?.86f:gas?.15f:.84f);
                     glDrawArrays(GL_TRIANGLES,0,3);

@@ -30,7 +30,7 @@ class MortarFieldEntity(type: EntityType<out MortarFieldEntity>,level: Level) : 
     val kind get() = Kind.entries[entityData.get(KIND).coerceIn(0,Kind.entries.lastIndex)]
     val radius get() = entityData.get(AREA_RADIUS).toDouble().takeIf { it>0 } ?: kind.radius
     val effectTicks get() = entityData.get(EFFECT_TICKS).takeIf { it>=0 } ?: kind.effectTicks
-    val fieldHeight get() = if(kind==Kind.SMOKE) 5.0 else 3.0
+    val fieldHeight get() = if(kind==Kind.SMOKE) 10.0 else 3.0
     val remainingTicks get() = entityData.get(REMAINING)
     init { noPhysics = true }
     override fun defineSynchedData() { entityData.define(EFFECT_TICKS,-1);entityData.define(MINE_CLOUD,false);entityData.define(AREA_RADIUS,0f);entityData.define(KIND,0);entityData.define(REMAINING,300) }

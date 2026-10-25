@@ -23,6 +23,12 @@ import kotlin.math.abs
 @GameTestHolder("sbw_helldiver_eaglefields")
 @PrefixGameTestTemplate(false)
 object EagleFieldGameTests {
+    private class FieldSpawnRecorder {
+        val shots=mutableListOf<EagleFieldBombEntity>()
+        @net.minecraftforge.eventbus.api.SubscribeEvent fun joined(event:net.minecraftforge.event.entity.EntityJoinLevelEvent) {
+            (event.entity as? EagleFieldBombEntity)?.let{shots.add(it)}
+        }
+    }
     private fun origin(h: GameTestHelper)=Vec3.atBottomCenterOf(h.absolutePos(BlockPos(15,20,15)))
     private fun floor(h: GameTestHelper,at: Vec3,r: Int=16) {
         val b=BlockPos.containing(at)
@@ -85,7 +91,9 @@ object EagleFieldGameTests {
     }
     @JvmStatic @GameTest(template="sentry_test",batch="eagle_fields_smoke",timeoutTicks=20)
     fun smokeBlocksNewTargetsButPreservesVanillaGoalsAndExistingAggro(h: GameTestHelper) {
-        val at=origin(h);val mob=zombie(h,at.add(-20.0,0.0,0.0));val target=player(h,at.add(20.0,0.0,0.0))
+        // Keep this sight fixture above adjacent test structures and their floors.
+        val anchor=origin(h);val at=Vec3(anchor.x,200.0,anchor.z);val mob=zombie(h,at.add(-20.0,0.0,0.0));val target=player(h,at.add(20.0,0.0,0.0))
+        h.assertTrue(mob.hasLineOfSight(target),"Baseline smoke sight fixture is obstructed")
         val goals=mob.goalSelector.availableGoals.map{it.goal};val targets=mob.targetSelector.availableGoals.map{it.goal}
         mob.target=target;SmokeOcclusion.tick(LivingEvent.LivingTickEvent(mob))
         val field=MortarFieldEntity.create(h.level,at,MortarFieldEntity.Kind.SMOKE)
@@ -123,27 +131,37 @@ object EagleFieldGameTests {
     }
     @JvmStatic @GameTest(template="sentry_test",batch="eagle_fields_flight",timeoutTicks=20)
     fun nativeProfilesReleaseAllCanistersAndUseSharedRearm(h: GameTestHelper) {
-        for((attack,count) in listOf(EagleAttack.NAPALM to 5,EagleAttack.GAS to 4,EagleAttack.SMOKE to 9)) {
+        val record=FieldSpawnRecorder();net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(record)
+        try { for((attack,count) in listOf(EagleAttack.NAPALM to 5,EagleAttack.GAS to 4,EagleAttack.SMOKE to 9)) {
+            record.shots.clear()
             h.assertTrue(attack.perpendicular && attack.callTicks==82 && attack.defaultUses==3 && attack.count==count,"Wrong native field strike profile")
             val strike=ModEntities.EAGLE.get().create(h.level)!!;strike.configure(origin(h),Vec3(1.0,0.0,0.0),attack,null)
-            val before=h.level.getEntities(null,AABB(origin(h),origin(h)).inflate(2000.0)).map{it.uuid}.toSet()
             val tag=CompoundTag();strike.saveWithoutId(tag);tag.putLong("StartedAt",h.level.gameTime-(attack.releaseAge(count-1).toLong()+1));strike.load(tag);h.level.addFreshEntity(strike);strike.tick()
             h.assertTrue(strike.fired==count,"Field strike withdrew before releasing all payloads")
-            val shots=h.level.getEntities(null,AABB(origin(h),origin(h)).inflate(2000.0)).filterIsInstance<EagleFieldBombEntity>().filter{it.uuid !in before}.sortedBy{it.id}
+            // Observe actual accepted spawns, including entities awaiting a remote chunk's
+            // entity-ticking transition; a same-tick spatial query can omit those entities.
+            val shots=record.shots.toList()
             h.assertTrue(shots.size==count,"Carrier count differs from actual canisters: ${shots.size}/$count")
-            if(attack==EagleAttack.GAS) {
-                val expected=listOf(Vec3(-12.0,0.0,-4.0),Vec3.ZERO,Vec3(12.0,0.0,-4.0),Vec3.ZERO)
+            if(attack==EagleAttack.GAS || attack==EagleAttack.SMOKE) {
+                val expected=if(attack==EagleAttack.GAS)
+                    listOf(Vec3(-12.0,0.0,-4.0),Vec3.ZERO,Vec3(12.0,0.0,-4.0),Vec3(24.0,0.0,0.0))
+                else (0..8).map{i->Vec3(-10.0+i*5.0,0.0,if(i%2==0)5.0 else -5.0)}
+                h.assertTrue(expected.distinct().size==count,"Upgraded field canisters must not repeat a landing point")
                 for((i,shot) in shots.withIndex()) {
                     val t=EagleFlight.BOMB_FLIGHT.toDouble()
                     val landing=shot.position().add(shot.deltaMovement.scale(t)).add(0.0,-EagleFlight.BOMB_GRAVITY*t*(t-1)/2,0.0)
-                    h.assertTrue(landing.distanceTo(strike.target.add(expected[i]))<.01,"Gas canister $i misses native landing point: $landing")
+                    h.assertTrue(landing.distanceTo(strike.target.add(expected[i]))<.01,"$attack canister $i misses the continued landing pattern: $landing")
+                    h.assertTrue(shot.deltaMovement.x>=1.999,"$attack canister $i was launched backwards or stalled")
+                    h.assertTrue(shot.deltaMovement.y<0,"$attack canister $i was launched upwards")
+                    h.assertTrue(attack.releaseAge(i)<EagleFlight.attackEnd(attack),"Aircraft pulled up before canister $i")
                     val turned=attack.landingOffset(i,Vec3(0.0,0.0,1.0))
-                    h.assertTrue(turned.distanceTo(Vec3(-expected[i].z,0.0,expected[i].x))<.001,"Gas pattern fails to rotate with flight heading")
+                    h.assertTrue(turned.distanceTo(Vec3(-expected[i].z,0.0,expected[i].x))<.001,"$attack pattern fails to rotate with flight heading")
                 }
             }
             shots.forEach{it.discard()};strike.discard()
         }
-        h.level.getEntities(null,AABB(origin(h),origin(h)).inflate(2000.0)).filter{it is EagleFieldBombEntity}.forEach{it.discard()}
+        } finally {record.shots.forEach{it.discard()};net.minecraftforge.common.MinecraftForge.EVENT_BUS.unregister(record)}
+        h.level.getEntities(null,AABB(origin(h),origin(h)).inflate(2000.0)).filter{it is EagleFieldBombEntity || it is EagleEntity}.forEach{it.discard()}
         h.succeed()
     }
 }
