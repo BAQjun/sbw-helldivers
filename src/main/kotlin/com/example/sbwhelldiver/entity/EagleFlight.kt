@@ -76,7 +76,7 @@ object EagleFlight {
   val attackS=if(bombing)bombingStart(attack) else -attack.spread/2-height/tan(startAngle)
   if(age<attackStart(attack))return approach(attack,height,attackS,age-attackStart(attack))
   val q=(age-attackStart(attack)).coerceAtMost(attack.duration.toDouble())
-  val end=if(bombing)0.0 else exitPitch(height,attack)
+  val end=if(bombing||attack==EagleAttack.ROCKETS)0.0 else exitPitch(height,attack)
   val d=if(bombing)SPEED*q to 0.0 else arc(startAngle,(end-startAngle)/attack.duration,q)
   val e=(age-attackEnd(attack)).coerceAtLeast(0.0);val rate=-rad(PULL_UP_DEGREES_PER_TICK);val bendTime=((end+rad(MAX_CLIMB_DEGREES))/-rate).coerceAtLeast(0.0);val bend=arc(end,rate,min(e,bendTime));val straight=arc(-rad(MAX_CLIMB_DEGREES),0.0,(e-bendTime).coerceAtLeast(0.0))
   return attackS+d.first+bend.first+straight.first to height+d.second+bend.second+straight.second
@@ -91,7 +91,9 @@ object EagleFlight {
    val b=position(Vec3.ZERO,Vec3(0.0,0.0,1.0),age+.01,attack,height)
    return Math.toDegrees(atan2(a.y-b.y,b.z-a.z)).toFloat()
   }
-  val end=if(attack.levelBombing)0.0 else Math.toDegrees(exitPitch(height,attack))
+  // Rocket pods aim independently: level the carrier instead of making it
+  // pursue the fixed-gun strafing solution below the target's altitude.
+  val end=if(attack.levelBombing||attack==EagleAttack.ROCKETS)0.0 else Math.toDegrees(exitPitch(height,attack))
   if(age<=attackEnd(attack))return if(attack.levelBombing)0f else (ENTRY_PITCH+(end-ENTRY_PITCH)*(age-attackStart(attack))/attack.duration).toFloat()
   return (end-PULL_UP_DEGREES_PER_TICK*(age-attackEnd(attack))).coerceAtLeast(-MAX_CLIMB_DEGREES).toFloat()
  }

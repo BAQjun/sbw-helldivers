@@ -17,7 +17,7 @@ object EagleGameTests {
  private class SpawnRecorder {
   val shots=mutableListOf<net.minecraft.world.entity.Entity>()
   val aircraft=mutableListOf<EagleEntity>()
-  @net.minecraftforge.eventbus.api.SubscribeEvent fun joined(e:net.minecraftforge.event.entity.EntityJoinLevelEvent){if(e.entity is EagleEntity)aircraft.add(e.entity as EagleEntity);if(e.entity is EagleBombEntity||e.entity is EagleCannonRoundEntity)shots.add(e.entity)}
+  @net.minecraftforge.eventbus.api.SubscribeEvent fun joined(e:net.minecraftforge.event.entity.EntityJoinLevelEvent){if(e.entity is EagleEntity)aircraft.add(e.entity as EagleEntity);if(e.entity is SentryCannonShellEntity||e.entity is EagleCannonRoundEntity)shots.add(e.entity)}
  }
 
  @JvmStatic @GameTest(template="eagle_test",timeoutTicks=40)
@@ -35,7 +35,7 @@ object EagleGameTests {
  @JvmStatic @GameTest(template="eagle_test",timeoutTicks=40)
  fun bombBallisticsCenterSixSeparateImpactsOnBeacon(h:GameTestHelper){
   val target=Vec3(43.0,70.0,31.0);val f=Vec3(.6,0.0,.8);var sum=Vec3.ZERO
-  for(i in 0 until EagleFlight.BOMB_COUNT){val start=EagleFlight.position(target,f,(EagleFlight.attackStart(true)+i*4).toDouble(),true).add(0.0,-1.2,0.0);val aim=target.add(f.scale(EagleFlight.bombOffset(i)));val velocity=EagleFlight.bombVelocity(start,aim);val t=EagleFlight.BOMB_FLIGHT;val hit=start.add(velocity.scale(t.toDouble())).add(0.0,-EagleFlight.BOMB_GRAVITY*t*(t-1)/2,0.0);h.assertTrue(hit.distanceTo(aim)<1e-8,"Bomb $i misses intended line");sum=sum.add(aim)}
+  for(i in 0 until EagleFlight.BOMB_COUNT){val start=EagleFlight.position(target,f,(EagleFlight.attackStart(true)+i*4).toDouble(),true).add(0.0,-1.2,0.0);val aim=target.add(EagleAttack.AIRSTRIKE.landingOffset(i,f));val velocity=EagleFlight.bombVelocity(start,aim);val t=EagleFlight.BOMB_FLIGHT;val hit=start.add(velocity.scale(t.toDouble())).add(0.0,-EagleFlight.BOMB_GRAVITY*t*(t-1)/2,0.0);h.assertTrue(hit.distanceTo(aim)<1e-8,"Bomb $i misses intended line");sum=sum.add(aim)}
   h.assertTrue(sum.scale(1.0/6).distanceTo(target)<1e-8,"Bomb line is off centre");h.succeed()
  }
  @JvmStatic @GameTest(template="eagle_test",timeoutTicks=40)
@@ -87,7 +87,7 @@ object EagleGameTests {
   // This fixture fires outside the small structure. Supply real impact surfaces rather than
   // relying on terrain/chunk generation completing before the last projectile reaches it.
   for(i in 0 until EagleFlight.BOMB_COUNT){
-   val at=net.minecraft.core.BlockPos.containing(e.target.add(e.runDirection.scale(EagleFlight.bombOffset(i)))).below()
+   val at=net.minecraft.core.BlockPos.containing(e.target.add(e.attack.landingOffset(i,e.runDirection))).below()
    for(dx in -1..1)for(dz in -1..1)h.level.setBlockAndUpdate(at.offset(dx,0,dz),net.minecraft.world.level.block.Blocks.STONE.defaultBlockState())
   }
   h.runAfterDelay((EagleFlight.end(true)+12).toLong()){
@@ -147,11 +147,39 @@ object EagleGameTests {
  private fun eagle(h:GameTestHelper,bombing:Boolean):EagleEntity {
   val at=Vec3.atCenterOf(h.absolutePos(net.minecraft.core.BlockPos(0,100,0)));val e=ModEntities.EAGLE.get().create(h.level)!!;e.configure(at,Vec3(1.0,0.0,0.0),bombing,null);h.level.addFreshEntity(e);return e
  }
- @JvmStatic @GameTest(template="eagle_test",timeoutTicks=40)
- fun allBombsAreActualSpawnedProjectilesAndNotRepeatedOnRestore(h:GameTestHelper){
-  val record=SpawnRecorder();net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(record);val e=eagle(h,true);val n=CompoundTag();e.saveWithoutId(n);n.putLong("StartedAt",h.level.gameTime-EagleFlight.attackStart(true)-21);e.load(n);e.tick()
-  h.assertTrue(e.fired==6,"Incomplete bomb salvo");val area=e.boundingBox.inflate(130.0);val bombs=record.shots.filterIsInstance<EagleBombEntity>();h.assertTrue(bombs.size==6,"Bombs were not emitted by aircraft")
-  e.saveWithoutId(n);e.load(n);e.tick();h.assertTrue(e.fired==6&&record.shots.size==6,"Restore duplicated bomb slots");net.minecraftforge.common.MinecraftForge.EVENT_BUS.unregister(record);bombs.forEach{it.discard()};e.discard();h.succeed()
+ @JvmStatic @GameTest(template="eagle_test",batch="eagle_wing_patterns",timeoutTicks=40)
+ fun completeBombSalvosUseRealWingRacksCenteredStaggerAndRestoreOnce(h:GameTestHelper){
+  val record=SpawnRecorder();net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(record)
+  try {
+   for(attack in EagleAttack.entries.filter{it.levelBombing})for(degrees in listOf(0.0,90.0,137.0,270.0)) {
+    record.shots.clear()
+    val angle=Math.toRadians(degrees);val forward=Vec3(kotlin.math.cos(angle),0.0,kotlin.math.sin(angle));val across=Vec3(-forward.z,0.0,forward.x)
+    val target=Vec3.atCenterOf(h.absolutePos(net.minecraft.core.BlockPos(0,200,0)))
+    val e=ModEntities.EAGLE.get().create(h.level)!!;e.configure(target,forward,attack,null);h.level.addFreshEntity(e)
+    try {
+     val n=CompoundTag();e.saveWithoutId(n);n.putLong("StartedAt",h.level.gameTime-EagleFlight.attackEnd(attack));e.load(n);e.tick()
+     h.assertTrue(e.fired==attack.count&&record.shots.size==attack.count,"Incomplete actual salvo: $attack")
+     val impacts=record.shots.mapIndexed{i,shot->
+      val rack=if(attack==EagleAttack.HEAVY_BOMB)0.0 else if(i%2==0)-3.2 else 3.2
+      val release=e.positionAt(attack.releaseAge(i)).add(0.0,-1.2,0.0).add(across.scale(rack))
+      h.assertTrue(shot.position().distanceTo(release)<1e-6,"$attack bomb $i did not leave its wing rack")
+      val t=EagleFlight.BOMB_FLIGHT.toDouble()
+      val hit=shot.position().add(shot.deltaMovement.scale(t)).add(0.0,-EagleFlight.BOMB_GRAVITY*t*(t-1)/2,0.0)
+      h.assertTrue(hit.distanceTo(target.add(attack.landingOffset(i,forward)))<.002,"$attack bomb $i actual velocity misses its impact")
+      if(attack==EagleAttack.AIRSTRIKE||attack==EagleAttack.CLUSTER){
+       val side=if(attack==EagleAttack.AIRSTRIKE)(if(i%2==0)-7.0 else 7.0) else (if(i%2==0)5.0 else -5.0)
+       h.assertTrue(abs(hit.subtract(target).dot(across)-side)<.002,"$attack does not alternate actual impact rows")
+      }
+      hit.subtract(target)
+     }
+     h.assertTrue(impacts.fold(Vec3.ZERO){sum,p->sum.add(p)}.scale(1.0/attack.count).length()<.002,"$attack actual salvo is off beacon center")
+     h.assertTrue(abs(impacts.minOf{it.dot(forward)}+impacts.maxOf{it.dot(forward)})<.004&&abs(impacts.minOf{it.dot(across)}+impacts.maxOf{it.dot(across)})<.004,"$attack footprint bounds are off beacon center")
+     h.assertTrue(impacts.zipWithNext().all{(a,b)->b.dot(forward)>a.dot(forward)},"$attack final bomb doubles back")
+     e.saveWithoutId(n);e.load(n);e.tick();h.assertTrue(e.fired==attack.count&&record.shots.size==attack.count,"Restore duplicated $attack bomb slots")
+    }finally{record.shots.forEach{it.discard()};e.discard()}
+   }
+  }finally{record.shots.forEach{it.discard()};record.aircraft.forEach{it.discard()};net.minecraftforge.common.MinecraftForge.EVENT_BUS.unregister(record)}
+  h.succeed()
  }
  @JvmStatic @GameTest(template="eagle_test",timeoutTicks=40)
  fun strafeFires100RoundsWith25ExplosiveRounds(h:GameTestHelper){

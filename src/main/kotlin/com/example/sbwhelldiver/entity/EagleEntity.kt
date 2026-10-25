@@ -71,6 +71,8 @@ class EagleEntity(type:EntityType<*>,level:Level):Entity(type,level),IEntityAddi
   holdFlightChunks()
  }
  fun positionAt(t:Double)=EagleFlight.position(target,runDirection,t,attack,flightHeight)
+ fun bombReleaseAt(index:Int):Vec3 = positionAt(attack.releaseAge(index)).add(0.0,-1.2,0.0)
+  .add(Vec3(-runDirection.z,0.0,runDirection.x).scale(attack.bombRackOffset(index)))
  fun muzzleAt(t:Double):Vec3 {val a=Math.toRadians(EagleFlight.pitch(t,attack,flightHeight).toDouble());return positionAt(t).add(runDirection.scale(7.96*kotlin.math.cos(a))).add(0.0,-7.96*kotlin.math.sin(a)-.064,0.0)}
  private fun updateFlight(t:Double) {
   setPos(target);yRot=Math.toDegrees(kotlin.math.atan2(-runDirection.x,runDirection.z)).toFloat();xRot=EagleFlight.pitch(t,attack,flightHeight)
@@ -111,7 +113,7 @@ class EagleEntity(type:EntityType<*>,level:Level):Entity(type,level),IEntityAddi
    EagleAttack.SMOKE->ModEntities.EAGLE_SMOKE_BOMB.get().create(server)
    else->ModEntities.EAGLE_BOMB.get().create(server)
   }?:return false
-  val release=positionAt(attack.releaseAge(index)).add(0.0,-1.2,0.0)
+  val release=bombReleaseAt(index)
   val aim=target.add(attack.landingOffset(index,runDirection))
   if(shot is EagleClusterBombEntity)shot.configureSplit(uuid,aim,runDirection)
   shot.setPos(release);ownerUuid?.let {shot.owner=server.getEntity(it)}
@@ -159,7 +161,7 @@ class EagleEntity(type:EntityType<*>,level:Level):Entity(type,level),IEntityAddi
   // Twelve ticks give chunk loading time without holding the entire future salvo.
   val desired=mutableSetOf<ChunkPos>()
   for(index in fired until attack.count)if(attack.releaseAge(index)<=age+12)
-   desired.add(ChunkPos(net.minecraft.core.BlockPos.containing(positionAt(attack.releaseAge(index)))))
+   desired.add(ChunkPos(net.minecraft.core.BlockPos.containing(if(attack.levelBombing)bombReleaseAt(index) else muzzleAt(attack.releaseAge(index)))))
   // Follow each projectile rather than releasing a fixed flight corridor too soon on high terrain.
   for(shot in activeOrdnance.values)if(!shot.isRemoved){
    desired.add(ChunkPos(shot.blockPosition()))

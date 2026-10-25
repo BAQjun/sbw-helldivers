@@ -1,5 +1,21 @@
 # 版本记录
 
+## 0.4.8
+
+## 中文
+
+- 飞鹰空袭改为左右机翼交替投弹，落点沿投弹带左右错开，不再全部落在同一条直线上。
+- 核对全部投弹类飞鹰，补上集束炸弹母弹的左右交错落点；空袭、集束、凝固汽油弹、毒气和烟雾的多弹投放采用交替机翼挂点，500kg 保持单枚中心投放。
+- 修正凝固汽油弹第五枚炸弹折返中心的问题；五枚落点依次前进，整组着弹点及覆盖范围以信标为中心。
+- 修正 110mm 火箭巢发射后的通场高度过低，改为发射期间逐渐改平，随后连续拉升离场。
+
+## English
+
+- Eagle Airstrike now releases bombs from alternating wing racks, with staggered left/right impacts instead of a single centerline.
+- Checked every bomb-dropping Eagle and added staggered carrier-bomb impacts for Eagle Cluster Bomb. Multi-bomb airstrike, cluster, napalm, gas, and smoke payloads use alternating wing racks; the single 500kg bomb retains its central release.
+- Fixed the fifth Eagle Napalm Airstrike bomb returning to the center. All five impacts now advance in sequence, with both the complete impact pattern and its bounds centered on the beacon.
+- Fixed Eagle 110mm Rocket Pods flying excessively low after firing. The aircraft now levels out during its firing pass and climbs smoothly on departure.
+
 ## 0.4.7
 
 ## 中文

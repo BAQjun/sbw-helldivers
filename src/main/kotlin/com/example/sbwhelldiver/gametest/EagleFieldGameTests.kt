@@ -195,12 +195,14 @@ object EagleFieldGameTests {
             // entity-ticking transition; a same-tick spatial query can omit those entities.
             val shots=record.shots.toList()
             h.assertTrue(shots.size==count,"Carrier count differs from actual canisters: ${shots.size}/$count")
-            if(attack==EagleAttack.GAS || attack==EagleAttack.SMOKE) {
-                val expected=if(attack==EagleAttack.GAS)
+            if(attack==EagleAttack.NAPALM || attack==EagleAttack.GAS || attack==EagleAttack.SMOKE) {
+                val expected=if(attack==EagleAttack.NAPALM) listOf(Vec3(-28.0,0.0,1.0),Vec3(-14.0,0.0,-1.0),Vec3.ZERO,Vec3(14.0,0.0,1.0),Vec3(28.0,0.0,-1.0))
+                else if(attack==EagleAttack.GAS)
                     listOf(Vec3(-18.0,0.0,-2.0),Vec3(-6.0,0.0,2.0),Vec3(6.0,0.0,-2.0),Vec3(18.0,0.0,2.0))
                 else listOf(Vec3(-20.0,0.0,5.0),Vec3(-15.0,0.0,-5.0),Vec3(-10.0,0.0,5.0),Vec3(-5.0,0.0,-5.0),Vec3.ZERO,Vec3(5.0,0.0,5.0),Vec3(10.0,0.0,-5.0),Vec3(15.0,0.0,5.0),Vec3(20.0,0.0,-5.0))
                 h.assertTrue(expected.distinct().size==count,"Upgraded field canisters must not repeat a landing point")
                 h.assertTrue(expected.fold(Vec3.ZERO){a,p->a.add(p)}.lengthSqr()<1e-10,"Full upgraded pattern is not centered on the beacon")
+                h.assertTrue(expected.zipWithNext().all{(a,b)->b.x>a.x},"$attack bombing order returns to an earlier point")
                 for((i,shot) in shots.withIndex()) {
                     val t=EagleFlight.BOMB_FLIGHT.toDouble()
                     val landing=shot.position().add(shot.deltaMovement.scale(t)).add(0.0,-EagleFlight.BOMB_GRAVITY*t*(t-1)/2,0.0)

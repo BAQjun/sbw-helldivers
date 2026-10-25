@@ -53,6 +53,20 @@ object EaglePayloadGameTests {
   }
   h.succeed()
  }
+ @JvmStatic @GameTest(template="eagle_test",timeoutTicks=20,batch="eagle_rocket_clearance")
+ fun rocketPassLevelsBeforeEgressAndKeepsBombingHeight(h:GameTestHelper){
+  val mode=EagleAttack.ROCKETS;val target=Vec3(10.0,64.0,15.0);val f=Vec3(.6,0.0,.8)
+  for(extra in listOf(0.0,80.0,160.0)){
+   val height=mode.height+extra
+   var previous=EagleFlight.position(target,f,EagleFlight.attackEnd(mode).toDouble(),mode,height)
+   for(i in 0..(EagleFlight.end(mode)-mode.callTicks)*10){val age=mode.callTicks+i*.1;val p=EagleFlight.position(target,f,age,mode,height)
+    h.assertTrue(p.y-target.y>=EagleFlight.HEIGHT-1e-4,"Rocket pass drops below other bombing passes at $age: ${p.y-target.y}")
+    if(age>=EagleFlight.attackEnd(mode)){h.assertTrue(p.y>=previous.y-1e-6,"Rocket egress continues diving after the firing pass");previous=p}
+   }
+   h.assertTrue(kotlin.math.abs(EagleFlight.pitch(EagleFlight.attackEnd(mode).toDouble(),mode,height))<.01,"Rocket egress begins nose-down")
+  }
+  h.succeed()
+ }
  @JvmStatic @GameTest(template="eagle_test",timeoutTicks=20,batch="eagle_new_cluster")
  fun eightMothersSplitInto64OnceAndTransferBeaconLifetime(h:GameTestHelper){
   val record=Recorder();net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(record)

@@ -63,7 +63,9 @@ object StatusEffectSafetyGameTests {
         } finally { entities.forEach { it.discard() } }
         h.succeed()
     }
-    @JvmStatic @GameTest(template = "sentry_test", timeoutTicks = 10)
+    // Confusion deliberately chooses a random nearby living entity; keep other
+    // fixtures out of this batch so the asserted cow is its only possible victim.
+    @JvmStatic @GameTest(template = "sentry_test", batch = "status_confused_melee", timeoutTicks = 10)
     fun confusedMeleeStillAttacks(h: GameTestHelper) {
         val mob = spawn(h, EntityType.ZOMBIE, origin(h))
         val victim = spawn(h, EntityType.COW, origin(h).add(1.0, 0.0, 0.0))
