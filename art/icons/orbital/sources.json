@@ -30,10 +30,10 @@
   {
     "id": "orbital_120mm_he_barrage",
     "nativeSource": "content/ui/shared/resources/generated_icons/stratagem_icons.xaml",
-    "template": "DataTemplate.Icon.StratagemType.OrbitalShell",
+    "template": "DataTemplate.Icon.StratagemType.OrbitalStrike",
     "nativeStratagemType": "StratagemType_Orbital120mmHEBarrage",
     "format": "Native vector paths, existing red/cream card palette and border",
-    "sourceSha256": "535de8e9fadb36b83be76e84d162c3977258a8c8b6202eb5b89dc837639012ab"
+    "sourceSha256": "f60c6ffadf23dd632af4bab4ae3d5a3ee0ae02d6c22ca291b31696f73b3fb3e7"
   },
   {
     "id": "orbital_380mm_he_barrage",

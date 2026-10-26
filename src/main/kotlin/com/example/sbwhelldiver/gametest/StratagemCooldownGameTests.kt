@@ -24,6 +24,29 @@ object StratagemCooldownGameTests {
     private const val AIR = "eagle_airstrike"
     private const val STRAFE = "eagle_strafing_run"
     private const val MG = "machine_gun_sentry"
+    @JvmStatic @GameTest(template="sentry_test", timeoutTicks=5)
+    fun orbitalActivityPersistsWithoutChangingCooldown(h: GameTestHelper) {
+        val id="orbital_120mm_he_barrage"; val token=UUID.randomUUID(); val state=StratagemCooldownState()
+        state.reserve(id,token,0); state.beginArrival(id,token,0,100); state.advance(100)
+        val cooldownEnd=state.entry(id).end
+        state.beginActivity(id,token,100,440)
+        h.assertTrue(state.entry(id).activity(100.0)==CallPhase.ACTIVE && state.entry(id).end==cooldownEnd,"Activity changed cooldown or skipped active state")
+        var saved=StratagemCooldownState.load(state.save())
+        h.assertTrue(saved.entry(id).activity(500.0)==CallPhase.ACTIVE,"An overdue real projectile was falsely marked arrived")
+        saved.finishActivity(id,UUID.randomUUID(),441)
+        h.assertTrue(saved.entry(id).activity(441.0)==CallPhase.ACTIVE,"A stale call completed the active call")
+        saved.finishActivity(id,token,441); saved=StratagemCooldownState.load(saved.save())
+        h.assertTrue(saved.entry(id).activity(441.0)==CallPhase.ARRIVED && saved.entry(id).activity(500.99)==CallPhase.ARRIVED && saved.entry(id).activity(501.0)==null,"Arrived notice hold or persistence wrong")
+        h.assertTrue(saved.entry(id).end==cooldownEnd,"Completing activity restarted cooldown")
+        val old=saved.save();old.getList("Entries",10).forEach{raw->val n=raw as net.minecraft.nbt.CompoundTag;listOf("ActivityStart","ActivityEnd","ActivityFinished","ActivityToken").forEach(n::remove)}
+        h.assertTrue(StratagemCooldownState.load(old).entry(id).activity(500.0)==null,"Old saves created phantom ongoing calls")
+        saved.setEnabled(false,600); val next=UUID.randomUUID(); saved.beginActivity(id,next,600,940)
+        saved.finishActivity(id,token,601)
+        h.assertTrue(saved.available(id,601) && saved.entry(id).activity(601.0)==CallPhase.ACTIVE,"Disabled cooldown blocked testing or old completion hid newer call")
+        saved.cancel(id,next)
+        h.assertTrue(saved.entry(id).activity(602.0)==null,"Cancelled activity stayed visible")
+        h.succeed()
+    }
     @JvmStatic @GameTest(template="sentry_test", timeoutTicks=5, batch="cooldown_custom_config")
     fun configuredZeroAndCustomDurations(h: GameTestHelper) {
         val values=listOf(Config.cooldowns.getValue(MG),Config.cooldowns.getValue(AIR),Config.autoRearm,Config.manualRearm)

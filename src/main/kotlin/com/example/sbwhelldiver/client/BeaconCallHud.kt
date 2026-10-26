@@ -119,10 +119,11 @@ object BeaconCallHud : ResourceManagerReloadListener {
         gui.drawString(mc.font, distance, x + ICON_SIZE / 2 - mc.font.width(distance) / 2, y + ICON_SIZE + 3, 0xFFFFFF, true)
         val textX = x + ICON_SIZE + 5
         val name = Component.translatable(def.translation)
-        val remaining = ceil((current.marker.ticksLeft - partial).coerceAtLeast(0f) / 20f).toInt()
+        val countingTicks=if(current.marker.isSustainedOrbital && current.marker.orbitalFiredAt>=0)current.marker.orbitalActivityLeft else current.marker.ticksLeft
+        val remaining = ceil((countingTicks - partial).coerceAtLeast(0f) / 20f).toInt()
         val time = "%02d:%02d".format(java.util.Locale.ROOT, remaining / 60, remaining % 60)
         gui.drawString(mc.font, name, textX, current.y - 10, TITLE_COLOR, true)
-        val status=if(current.marker.hasArrived)Component.translatable("hud.$MOD_ID.arrived") else Component.translatable("hud.$MOD_ID.arrival_countdown", time)
+        val status=if(current.marker.hasArrived)Component.translatable("hud.$MOD_ID.arrived") else if(current.marker.isSustainedOrbital && current.marker.orbitalFiredAt>=0)Component.translatable("hud.$MOD_ID.in_progress",time) else Component.translatable("hud.$MOD_ID.arrival_countdown", time)
         gui.drawString(mc.font, status, textX, current.y + 2, 0xDDE1E5, true)
     }
 

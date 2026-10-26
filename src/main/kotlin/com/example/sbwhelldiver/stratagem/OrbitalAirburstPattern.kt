@@ -10,6 +10,14 @@ object OrbitalAirburstPattern {
   val fraction=(height/(source.y-target.y).coerceAtLeast(height)).coerceIn(0.0,1.0)
   return target.lerp(source,fraction)
  }
+ /** Conservative flight estimate; actual last-child collision confirms completion. */
+ fun fallTicks(source:Vec3,target:Vec3,s:AirburstSettings):Int {
+  val axis=target.subtract(source)
+  val elevation=atan2(-axis.y,axis.horizontalDistance())-Math.toRadians(s.cone)
+  var velocity=s.childSpeed*sin(elevation);var height=s.height;var ticks=0
+  while(height>0 && ticks<200){height-=velocity;velocity+=.05;ticks++}
+  return ticks
+ }
  /** Equal solid-angle strata prevent twelve fragments from randomly bunching into a single streak. */
  fun directions(axis:Vec3,settings:AirburstSettings,seed:Long):List<Vec3> {
   val forward=axis.normalize().takeIf{it.lengthSqr()>.5}?:Vec3(0.0,-1.0,0.0)

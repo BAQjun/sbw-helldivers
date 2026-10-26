@@ -53,9 +53,16 @@ object StratagemCooldownClient : ResourceManagerReloadListener {
         if(Stratagems.isOrbital(id)&&!DestroyerClient.available())return Visual(blocked=true,reason="destroyer_unavailable")
         if(id=="call_super_destroyer"&&DestroyerClient.transitionEnd>DestroyerClient.now(partial))return Visual(CallPhase.ARRIVING,DestroyerClient.transitionEnd-60,DestroyerClient.transitionEnd,blocked=true,reason="destroyer_warping")
         if(id=="call_super_destroyer"||id.startsWith("destroyer_"))return Visual()
-        if (!data.contains("Enabled") || !data.getBoolean("Enabled")) return Visual()
         val time = now(partial)
         val e = entries[id]
+        val enabled=data.contains("Enabled") && data.getBoolean("Enabled")
+        val activityStart=if(e?.contains("ActivityStart")==true)e.getLong("ActivityStart") else -1L
+        val finished=if(e?.contains("ActivityFinished")==true)e.getLong("ActivityFinished") else -1L
+        val activity=com.example.sbwhelldiver.stratagem.CallStatus.activityPhase(activityStart,finished,time)
+        if(activity!=null)
+            return Visual(activity,activityStart,if(finished<0)e!!.getLong("ActivityEnd") else finished,
+                e!!.getInt("Remaining"),blocked=enabled && e.getInt("Phase")!=CallPhase.READY.ordinal)
+        if (!enabled) return Visual()
         val eagle = id.startsWith("eagle_")
         if (eagle && data.getLong("RearmEnd") > time) return Visual(CallPhase.COOLDOWN, data.getLong("RearmStart"), data.getLong("RearmEnd"), e?.getInt("Remaining") ?: -1, true, true)
         if (id == "eagle_rearm") return Visual()
@@ -74,7 +81,7 @@ object StratagemCooldownClient : ResourceManagerReloadListener {
     }
     fun automaticNotice(id: String, partial: Float = 0f): Boolean {
         val v = visual(id, partial)
-        return v.phase == CallPhase.THROWN || v.phase == CallPhase.ARRIVING ||
+        return v.phase == CallPhase.THROWN || v.phase == CallPhase.ARRIVING || v.phase == CallPhase.ACTIVE || v.phase == CallPhase.ARRIVED ||
             v.phase == CallPhase.COOLDOWN && v.end - now(partial) in 0.0..60.0 && (v.remaining != 0 || v.rearming)
     }
     fun available(id: String) = !visual(id).blocked && (id != "eagle_rearm" || !data.contains("Enabled") || data.getBoolean("Enabled"))
@@ -82,6 +89,8 @@ object StratagemCooldownClient : ResourceManagerReloadListener {
         val key = when {
             v.reason!=null -> v.reason
             v.rearming -> "rearming"
+            v.phase == CallPhase.ACTIVE -> "in_progress"
+            v.phase == CallPhase.ARRIVED -> "arrived"
             v.phase == CallPhase.ARRIVING -> "arrival"
             v.phase == CallPhase.COOLDOWN -> "cooldown"
             v.phase == CallPhase.THROWN -> "waiting_beacon"
@@ -97,7 +106,7 @@ object StratagemCooldownClient : ResourceManagerReloadListener {
         val gray = grey[def.icon] ?: def.icon
         val arrival = v.phase == CallPhase.ARRIVING
         val cooling = v.phase == CallPhase.COOLDOWN
-        val base = if (arrival || !v.blocked) def.icon else gray
+        val base = if (arrival || !v.blocked && v.phase !in listOf(CallPhase.ACTIVE,CallPhase.ARRIVED)) def.icon else gray
         gui.blit(base, x, y, 26, 26, 0f, 0f, 64, 64, 64, 64)
         if (arrival || cooling && (v.remaining != 0 || v.rearming)) {
             val h = (v.progress(now(partial)) * 26).toInt().coerceIn(0,26)

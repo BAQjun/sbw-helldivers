@@ -208,5 +208,6 @@
   "item.sbw_helldiver.orbital_120mm_he_barrage_stratagem": "轨道120mm高爆弹火力网",
   "item.sbw_helldiver.orbital_380mm_he_barrage_stratagem": "轨道380mm高爆弹火力网",
   "item.sbw_helldiver.orbital_walking_barrage_stratagem": "轨道游走火力网",
-  "entity.sbw_helldiver.orbital_120mm_shell": "轨道120mm高爆炮弹"
+  "entity.sbw_helldiver.orbital_120mm_shell": "轨道120mm高爆炮弹",
+  "hud.sbw_helldiver.in_progress": "正在进行：%s"
 }

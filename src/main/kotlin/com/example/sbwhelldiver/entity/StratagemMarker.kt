@@ -24,7 +24,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     val arrivalDeadline get() = countdownEndsAt + landingGraceTicks
     val ticksLeft get() = if (level().isClientSide && callStartedAt >= 0) (duration - elapsedTicks).coerceAtLeast(0) else entityData.get(LEFT)
     val elapsedTicks get() = if (level().isClientSide && callStartedAt >= 0) (level().gameTime - callStartedAt).coerceAtLeast(0).toInt() else entityData.get(AGE)
-    val hasArrived get()=if(isOrbital)orbitalFiredAt>=0 else elapsedTicks>=duration+landingGraceTicks
+    val hasArrived get()=if(isSustainedOrbital)orbitalFinishedAt>=0 else if(isOrbital)orbitalFiredAt>=0 else elapsedTicks>=duration+landingGraceTicks
     val duration get() = entityData.get(DURATION)
     val color get() = entityData.get(COLOR)
     val face get() = Direction.from3DDataValue(entityData.get(FACE))
@@ -86,6 +86,28 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     val orbitalOrigin:Vec3? get()=entityData.get(ORIGIN).takeIf{it.contains("X")}?.let{Vec3(it.getDouble("X"),it.getDouble("Y"),it.getDouble("Z"))}
     val orbitalFiredAt get()=entityData.get(ORBITAL_FIRED_AT)
     val orbitalFlightTicks get()=entityData.get(ORBITAL_FLIGHT_TICKS)
+    val isSustainedOrbital get()=isOrbitalBarrage || isOrbitalGatling || isOrbitalAirburst
+    val orbitalFinishedAt get()=entityData.get(ORBITAL_FINISHED_AT)
+    val orbitalActivityTicks get()=kotlin.math.ceil(when {
+        isOrbitalBarrage -> barrageSettings.lastShotTime.toDouble()+orbitalFlightTicks
+        isOrbitalGatling -> gatlingSettings.lastShotTime+orbitalFlightTicks
+        isOrbitalAirburst -> airburstSettings.shotTime(airburstSettings.rounds-1).toDouble()+orbitalFlightTicks+
+            com.example.sbwhelldiver.stratagem.OrbitalAirburstPattern.fallTicks(orbitalOrigin?:position(),position(),airburstSettings)
+        else -> orbitalFlightTicks.toDouble()
+    }).toInt()
+    val orbitalActivityLeft get()=if(orbitalFiredAt<0)orbitalActivityTicks else
+        (orbitalFiredAt+orbitalActivityTicks-level().gameTime).coerceAtLeast(0).toInt()
+    private fun beginOrbitalActivity(server:ServerLevel) {
+        val owner=ownerUuid?:return;val token=managedRequest?:return;val id=dropTypeId?.path?:return
+        val ledger=com.example.sbwhelldiver.stratagem.StratagemCooldowns
+        ledger.change(server.server,owner){state,now->state.beginActivity(id,token,now,now+orbitalActivityTicks)}
+    }
+    private fun finishOrbitalActivity(server:ServerLevel) {
+        if(orbitalFinishedAt>=0)return
+        entityData.set(ORBITAL_FINISHED_AT,server.gameTime)
+        val owner=ownerUuid?:return;val token=managedRequest?:return;val id=dropTypeId?.path?:return
+        com.example.sbwhelldiver.stratagem.StratagemCooldowns.change(server.server,owner){state,now->state.finishActivity(id,token,now)}
+    }
     val orbitalImpactAt get()=orbitalFiredAt+orbitalFlightTicks
     fun orbitalProgress(partial:Float=0f)=if(orbitalFiredAt<0)-1.0 else (level().gameTime-orbitalFiredAt+partial.toDouble())/orbitalFlightTicks
     private val isEagle get()=dropTypeId?.path?.startsWith("eagle_")==true
@@ -160,11 +182,16 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
 
     private fun tickOrbital() {
         val server=level() as ServerLevel
+        if(isSustainedOrbital && orbitalFinishedAt>=0){
+            if(server.gameTime-orbitalFinishedAt>=20)discard()
+            return
+        }
         if(orbitalFiredAt<0 && elapsedTicks>=duration) {
             if(orbitalOrigin==null){updateCooldown(true);discard();return}
             entityData.set(ORBITAL_FIRED_AT,server.gameTime)
             if(!isOrbitalGatling&&!isOrbitalAirburst&&!isOrbitalBarrage)com.example.sbwhelldiver.stratagem.SuperDestroyers.fire(server,orbitalOrigin!!,position())
             updateCooldown()
+            if(isSustainedOrbital)beginOrbitalActivity(server)
         }
         if(orbitalFiredAt<0)return
         if(isOrbitalBarrage){tickBarrage(server);return}
@@ -199,7 +226,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         }
         barrageActive.removeAll{server.getEntity(it)==null}
         if(barrageNextShot==s.total&&(barrageActive.isEmpty()||age>s.lastShotTime+s.flightTicks+200)){
-            barrageActive.forEach{server.getEntity(it)?.discard()};discard()
+            barrageActive.forEach{server.getEntity(it)?.discard()};finishOrbitalActivity(server)
         }
     }
     private fun tickAirburst(server:ServerLevel) {
@@ -224,7 +251,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         airburstActive.removeAll{server.getEntity(it)==null}
         // Keep the beam through the last child's real collision, not just the fourth carrier's fuse.
         if(airburstNextShot==settings.rounds&&(airburstActive.isEmpty()||age>settings.shotTime(settings.rounds-1)+settings.flightTicks+200)){
-            airburstActive.forEach{server.getEntity(it)?.discard()};discard()
+            airburstActive.forEach{server.getEntity(it)?.discard()};finishOrbitalActivity(server)
         }
     }
     private fun tickGatling(server:ServerLevel) {
@@ -249,7 +276,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         }
         gatlingActive.removeAll{server.getEntity(it)==null}
         if(gatlingNextShot>=settings.total && (gatlingActive.isEmpty() || age>settings.lastShotTime+settings.flightTicks+40)) {
-            gatlingActive.forEach{server.getEntity(it)?.discard()};discard()
+            gatlingActive.forEach{server.getEntity(it)?.discard()};finishOrbitalActivity(server)
         }
     }
     private fun orbitalTerminalTicks():Int {
@@ -315,6 +342,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         entityData.define(GATLING_SETTINGS,com.example.sbwhelldiver.config.GatlingSettings().save())
         entityData.define(ORIGIN,CompoundTag())
         entityData.define(ORBITAL_FIRED_AT,-1L)
+        entityData.define(ORBITAL_FINISHED_AT,-1L)
         entityData.define(ORBITAL_FLIGHT_TICKS,30)
         entityData.define(START, -1L)
         entityData.define(GRACE, LANDING_GRACE_TICKS)
@@ -326,6 +354,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         entityData.define(STRATAGEM, "")
     }
     override fun readAdditionalSaveData(tag: CompoundTag) {
+        entityData.set(ORBITAL_FINISHED_AT,if(tag.contains("OrbitalFinishedAt"))tag.getLong("OrbitalFinishedAt") else -1L)
         if(tag.contains("BarrageSettings"))entityData.set(BARRAGE_SETTINGS,tag.getCompound("BarrageSettings"))
         if(tag.contains("BarrageTargets"))entityData.set(BARRAGE_TARGETS,tag.getCompound("BarrageTargets"))
         barragePath=null;barrageNextShot=tag.getInt("BarrageNextShot").coerceIn(0,barrageSettings.total);barrageReports=tag.getInt("BarrageReports").coerceIn(0,barrageSettings.total)
@@ -372,7 +401,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         tag.put("GatlingSettings",entityData.get(GATLING_SETTINGS));tag.putInt("GatlingNextShot",gatlingNextShot)
         tag.put("GatlingActive",net.minecraft.nbt.ListTag().also{list->gatlingActive.forEach{id->list.add(CompoundTag().also{it.putUUID("Id",id)})}})
         tag.put("OrbitalOrigin",entityData.get(ORIGIN))
-        tag.putLong("OrbitalFiredAt",orbitalFiredAt)
+        tag.putLong("OrbitalFiredAt",orbitalFiredAt);tag.putLong("OrbitalFinishedAt",orbitalFinishedAt)
         tag.putInt("OrbitalFlightTicks",orbitalFlightTicks)
         managedRequest?.let { tag.putUUID("CooldownRequest", it) }
         dropTypeId?.let { tag.putString("DropType", it.toString()) }
@@ -395,6 +424,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         private val BARRAGE_TARGETS=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.COMPOUND_TAG)
         private val AIRBURST_SETTINGS=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.COMPOUND_TAG)
         private val GATLING_SETTINGS=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.COMPOUND_TAG)
+        private val ORBITAL_FINISHED_AT = SynchedEntityData.defineId(StratagemMarker::class.java, EntityDataSerializers.LONG)
         private val ORBITAL_FIRED_AT=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.LONG)
         private val ORBITAL_FLIGHT_TICKS=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.INT)
         private val ORIGIN=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.COMPOUND_TAG)

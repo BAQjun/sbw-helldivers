@@ -6,9 +6,23 @@ import net.minecraft.nbt.ListTag
 import net.minecraft.nbt.Tag
 import java.util.UUID
 
-enum class CallPhase { READY, THROWN, ARRIVING, COOLDOWN }
+// Keep the original four ordinals stable; the appended values are presentation overlays.
+enum class CallPhase { READY, THROWN, ARRIVING, COOLDOWN, ACTIVE, ARRIVED }
 data class CallStatus(val id: String, var phase: CallPhase = CallPhase.READY,
-    var start: Long = 0, var end: Long = 0, var remaining: Int = -1, var request: UUID? = null)
+    var start: Long = 0, var end: Long = 0, var remaining: Int = -1, var request: UUID? = null,
+    var activityStart: Long = -1, var activityEnd: Long = -1, var activityFinished: Long = -1,
+    var activityToken: UUID? = null) {
+    /** Presentation overlays the existing cooldown; it never resets or delays that cooldown. */
+    fun activity(now: Double): CallPhase? = activityPhase(activityStart, activityFinished, now)
+    companion object {
+        fun activityPhase(start: Long, finished: Long, now: Double): CallPhase? = when {
+            start < 0 -> null
+            finished < 0 -> CallPhase.ACTIVE
+            now < finished + 60 -> CallPhase.ARRIVED
+            else -> null
+        }
+    }
+}
 
 /** Absolute overworld game times survive logout, dimension changes and server restarts. */
 class StratagemCooldownState {
@@ -66,7 +80,7 @@ class StratagemCooldownState {
     fun reserve(id: String, token: UUID, now: Long): Boolean {
         if (!available(id, now)) return false
         if (!enabled) return true
-        entry(id).apply { phase = CallPhase.THROWN; start = now; end = now + 1200; request = token }
+        entry(id).apply { activityStart = -1; activityEnd = -1; activityFinished = -1; activityToken = null; phase = CallPhase.THROWN; start = now; end = now + 1200; request = token }
         changed(); return true
     }
     fun beginArrival(id: String, token: UUID, now: Long, arrival: Long): Boolean {
@@ -78,8 +92,22 @@ class StratagemCooldownState {
         } else if (e.end != arrival) { e.end = arrival; changed() }
         return true
     }
+    fun beginActivity(id: String, token: UUID, start: Long, end: Long) {
+        entry(id).apply {
+            activityStart = start; activityEnd = end; activityFinished = -1; activityToken = token
+        }
+        changed()
+    }
+    fun finishActivity(id: String, token: UUID, now: Long) {
+        val e = entries[id] ?: return
+        if (e.activityToken != token || e.activityFinished >= 0) return
+        e.activityEnd = now; e.activityFinished = now; changed()
+    }
     fun cancel(id: String, token: UUID) {
         val e = entries[id] ?: return
+        if(e.activityToken == token) {
+            e.activityStart = -1; e.activityEnd = -1; e.activityFinished = -1; e.activityToken = null; changed()
+        }
         if (e.request != token || e.phase !in listOf(CallPhase.THROWN, CallPhase.ARRIVING)) return
         if (e.phase == CallPhase.ARRIVING && id.startsWith("eagle_")) e.remaining = (e.remaining + 1).coerceAtMost(StratagemCooldownConfig.maxUses(id))
         e.phase = CallPhase.READY; e.request = null; changed()
@@ -117,6 +145,8 @@ class StratagemCooldownState {
         n.putLong("TurnaroundStart", turnaroundStart); n.putLong("TurnaroundEnd", turnaroundEnd)
         n.put("Entries", ListTag().also { list -> entries.values.forEach { e -> list.add(CompoundTag().also {
             it.putString("Id", e.id); it.putInt("Phase", e.phase.ordinal); it.putLong("Start", e.start); it.putLong("End", e.end)
+            it.putLong("ActivityStart", e.activityStart); it.putLong("ActivityEnd", e.activityEnd); it.putLong("ActivityFinished", e.activityFinished)
+            e.activityToken?.let { token -> it.putUUID("ActivityToken", token) }
             it.putInt("Remaining", e.remaining); e.request?.let { token -> it.putUUID("Request", token) }
         }) } })
         n.put("EquippedEagles", ListTag().also { list -> equippedEagles.forEach { list.add(net.minecraft.nbt.StringTag.valueOf(it)) } })
@@ -130,7 +160,11 @@ class StratagemCooldownState {
                 val e = raw as CompoundTag; val id = e.getString("Id")
                 if (Stratagems.get(id) == null) continue
                 s.entries[id] = CallStatus(id, CallPhase.entries.getOrElse(e.getInt("Phase")) { CallPhase.READY }, e.getLong("Start"), e.getLong("End"),
-                    e.getInt("Remaining").coerceAtMost(StratagemCooldownConfig.maxUses(id)), if (e.hasUUID("Request")) e.getUUID("Request") else null)
+                    e.getInt("Remaining").coerceAtMost(StratagemCooldownConfig.maxUses(id)), if (e.hasUUID("Request")) e.getUUID("Request") else null,
+                    if(e.contains("ActivityStart")) e.getLong("ActivityStart") else -1,
+                    if(e.contains("ActivityEnd")) e.getLong("ActivityEnd") else -1,
+                    if(e.contains("ActivityFinished")) e.getLong("ActivityFinished") else -1,
+                    if(e.hasUUID("ActivityToken")) e.getUUID("ActivityToken") else null)
             }
             s.equippedEagles = n.getList("EquippedEagles", Tag.TAG_STRING.toInt()).map { it.asString }.filter { it in StratagemCooldownConfig.baseSeconds && it.startsWith("eagle_") }.toSet()
         }

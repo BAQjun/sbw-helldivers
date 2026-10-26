@@ -135,3 +135,10 @@ Flight originates at the fixed ship position, using glowing distant traces and r
 - `orbital.he120mmBarrage`: `directDamage`, `explosionDamage`, `innerRadius`, `outerRadius`.
 - 380mm和游走共用 / 380mm and Walking share: `orbital.precisionStrike` damage/radius settings.
 - 冷却 / Cooldown: `stratagems.orbital_120mm_he_barrage.cooldownSeconds`, `stratagems.orbital_380mm_he_barrage.cooldownSeconds`, `stratagems.orbital_walking_barrage.cooldownSeconds`.
+
+
+## 持续型轨道战备状态 / Sustained orbital status
+
+加特林、空爆、120mm、380mm与游走火力网在开炮前显示抵达倒计时，开炮后切换为“正在进行：分:秒”，覆盖所有轮次、轮间停顿和最后一轮飞行。空爆还包含子弹药下落。最后的实际炮弹结束后才显示“已抵达”：信标保留1秒，左上角提示保留3秒，然后恢复冷却状态显示。冷却仍从第一发开炮时开始，持续状态不会重启冷却。进行中与完成状态可随存档恢复。
+
+Gatling, Airburst, 120mm, 380mm and Walking Barrages show an arrival countdown before firing, then “In progress: mm:ss” across all salvos, pauses and the final flight. Airburst also includes bomblet descent. Completion is confirmed by the final real projectile; “Arrived” remains on the beacon for one second and in the upper-left list for three seconds before the normal cooldown display resumes. Cooldown still starts with the first shot and is never restarted by this display. Activity state persists across saves.

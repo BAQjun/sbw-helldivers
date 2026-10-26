@@ -208,5 +208,6 @@
   "item.sbw_helldiver.orbital_120mm_he_barrage_stratagem": "Orbital 120mm HE Barrage",
   "item.sbw_helldiver.orbital_380mm_he_barrage_stratagem": "Orbital 380mm HE Barrage",
   "item.sbw_helldiver.orbital_walking_barrage_stratagem": "Orbital Walking Barrage",
-  "entity.sbw_helldiver.orbital_120mm_shell": "Orbital 120mm HE Shell"
+  "entity.sbw_helldiver.orbital_120mm_shell": "Orbital 120mm HE Shell",
+  "hud.sbw_helldiver.in_progress": "In progress: %s"
 }

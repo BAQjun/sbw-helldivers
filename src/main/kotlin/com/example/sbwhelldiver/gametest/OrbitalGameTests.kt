@@ -236,7 +236,7 @@ object OrbitalGameTests {
   h.assertTrue(restored.getDamage()==30f&&restored.getExplosionDamage()==60f&&restored.getExplosionRadius()==4.5f,"Shell settings lost on save")
   targets.forEach{it.discard()};restored.discard();h.succeed()
  }
- @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",batch="gatling_full",timeoutTicks=365)
+ @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",batch="gatling_full",timeoutTicks=400)
  fun gatlingCompletesAllRoundsAndSurvivesMidBarrageReload(h:GameTestHelper){
   val p=pilot(h);val world=h.level;val now=StratagemCooldowns.now(p.server)
   SuperDestroyers.move(p,Stratagems.UP);SuperDestroyers.state(p).advance(now+60)
@@ -264,12 +264,13 @@ object OrbitalGameTests {
    maxActive=maxOf(maxActive,world.getEntitiesOfClass(OrbitalGatlingRoundEntity::class.java,marker.boundingBox.inflate(140.0)).size)
   }
   h.runAfterDelay(160){
+   h.assertTrue(!marker.hasArrived && marker.orbitalActivityLeft>0,"Gatling arrived before the barrage finished")
    h.assertTrue(!marker.isRemoved&&last>60&&last<180,"Barrage ended before all salvos")
    val targets=marker.gatlingTargets();val saved=CompoundTag();marker.saveWithoutId(saved);marker.discard()
    marker=ModEntities.STRATAGEM_MARKER.get().create(world)!!;marker.load(saved);world.addFreshEntity(marker)
    h.assertTrue(targets==marker.gatlingTargets()&&marker.gatlingSettings==com.example.sbwhelldiver.config.GatlingSettings.load(saved.getCompound("GatlingSettings")),"Reload changed target walk or settings")
   }
-  h.runAfterDelay(350){
+  h.runAfterDelay(380){
    h.assertTrue(last==300&&finished>0&&marker.isRemoved,"Last shells never fired or beacon ended too early")
    net.minecraftforge.common.MinecraftForge.EVENT_BUS.unregister(observer)
    h.assertTrue(seen.size==300&&seen.values.count{it}==75,"Actual shell spawns or HE ratio wrong: ${seen.size}/${seen.values.count{it}}")
@@ -437,6 +438,8 @@ object OrbitalGameTests {
   for(cx in chunk.x-6..chunk.x+6)for(cz in chunk.z-6..chunk.z+8)if(world.setChunkForced(cx,cz,true))loaded.add(cx to cz)
   for(x in -45..45)for(z in -45..115)world.setBlock(BlockPos.containing(at.add(x.toDouble(),-1.0,z.toDouble())),net.minecraft.world.level.block.Blocks.BEDROCK.defaultBlockState(),3)
   var marker=ModEntities.STRATAGEM_MARKER.get().create(world)!!;marker.moveTo(at.x,at.y,at.z,0f,0f);marker.configure(Stratagems.get(id)!!.dropId,10,p.uuid);world.addFreshEntity(marker)
+  val token=UUID.randomUUID();marker.managedRequest=token
+  val ledger=StratagemCooldowns.state(p);ledger.reserve(id,token,now);ledger.beginArrival(id,token,now,now+marker.duration)
   val settings=marker.barrageSettings;val targets=marker.barrageTargets()
   h.assertTrue(targets.size==15&&targets.all{it.y>=at.y},"Impact targets were below the supporting bedrock floor: $targets floor=$at")
   val seen=mutableMapOf<Int,Long>();var duplicates=0;var maxActive=0
@@ -455,16 +458,20 @@ object OrbitalGameTests {
   h.runAfterDelay((settings.callTicks-2).toLong()){h.assertTrue(marker.orbitalFiredAt<0&&seen.isEmpty(),"Barrage fired before native call-in delay")}
   h.onEachTick{maxActive=maxOf(maxActive,world.getEntitiesOfClass(OrbitalPrecisionShellEntity::class.java,marker.boundingBox.inflate(130.0)).size)}
   h.runAfterDelay(225){
+   h.assertTrue(!marker.hasArrived && marker.orbitalActivityLeft>0 && ledger.entry(id).activity(StratagemCooldowns.now(p.server).toDouble())==CallPhase.ACTIVE,"Ongoing barrage already displayed arrived")
    h.assertTrue(!marker.isRemoved&&seen.size in 1..14,"Barrage finished before all rounds $id: ${seen.size}")
    val t=CompoundTag();marker.saveWithoutId(t);marker.discard();marker=ModEntities.STRATAGEM_MARKER.get().create(world)!!;marker.load(t);world.addFreshEntity(marker)
    marker.yRot=90f;p.setPos(at.add(-20.0,0.0,-20.0))
    h.assertTrue(marker.barrageSettings==settings&&marker.barrageTargets()==targets,"Reload or player turning changed planned impacts")
   }
   h.runAfterDelay((settings.callTicks+settings.lastShotTime+settings.flightTicks-5).toLong()){
-   h.assertTrue(!marker.isRemoved,"Beacon disappeared before the last shell hit")
+   h.assertTrue(!marker.isRemoved && !marker.hasArrived,"Beacon arrived/disappeared before the last shell hit")
   }
   h.runAfterDelay((settings.callTicks+settings.lastShotTime+settings.flightTicks+35).toLong()){
    net.minecraftforge.common.MinecraftForge.EVENT_BUS.unregister(observer)
+   h.assertTrue(marker.hasArrived && marker.orbitalFinishedAt>=0 && ledger.entry(id).activity(StratagemCooldowns.now(p.server).toDouble())==CallPhase.ARRIVED,"Completed barrage did not display arrived")
+   val saved=CompoundTag();marker.saveWithoutId(saved);val restored=ModEntities.STRATAGEM_MARKER.get().create(world)!!;restored.load(saved)
+   h.assertTrue(restored.hasArrived && restored.orbitalFinishedAt==marker.orbitalFinishedAt,"Finished state lost on reload");restored.discard()
    h.assertTrue(seen.size==15&&duplicates==0&&marker.isRemoved,"Incomplete/duplicate barrage $id: ${seen.size}, duplicates=$duplicates removed=${marker.isRemoved}")
    for(i in 1..14)h.assertTrue(seen.getValue(i)-seen.getValue(i-1)==(settings.shotTime(i)-settings.shotTime(i-1)).toLong(),"Actual shell cadence incorrect $id #$i: $seen")
    h.assertTrue(maxActive in 1..6,"Barrage accumulated too many shell entities: $maxActive")
