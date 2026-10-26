@@ -204,5 +204,9 @@
   "entity.sbw_helldiver.orbital_gatling_round": "轨道加特林火力网",
   "item.sbw_helldiver.orbital_airburst_strike_stratagem": "轨道空爆攻击",
   "entity.sbw_helldiver.orbital_airburst_shell": "轨道空爆攻击母弹",
-  "entity.sbw_helldiver.orbital_airburst_bomblet": "轨道空爆攻击子弹"
+  "entity.sbw_helldiver.orbital_airburst_bomblet": "轨道空爆攻击子弹",
+  "item.sbw_helldiver.orbital_120mm_he_barrage_stratagem": "轨道120mm高爆弹火力网",
+  "item.sbw_helldiver.orbital_380mm_he_barrage_stratagem": "轨道380mm高爆弹火力网",
+  "item.sbw_helldiver.orbital_walking_barrage_stratagem": "轨道游走火力网",
+  "entity.sbw_helldiver.orbital_120mm_shell": "轨道120mm高爆炮弹"
 }

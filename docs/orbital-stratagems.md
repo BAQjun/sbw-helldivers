@@ -98,3 +98,40 @@ They do not directly specify a fixed burst altitude. Minecraft defaults to 20 bl
 | `bombletInnerRadius` / `bombletOuterRadius` | 3 / 6 | 子弹半径 / Bomblet radii |
 
 冷却配置 / Cooldown: `stratagems.orbital_airburst_strike.cooldownSeconds`.
+
+
+## 120mm、380mm与游走火力网 / HE and Walking Barrages
+
+三种战备均需己方超级驱逐舰支援，每次发射5轮、每轮3发，共15发。调用期间保存本次攻击参数与全部预定落点，玩家移动、转身或存档重载不会改变弹幕方向或重置发射进度。信标保留到最后一枚真实炮弹命中。
+
+| 战备 / Stratagem | 指令 / Code | 开炮前等待 / Call-in | 散布半径 / Radius | 同轮发射间隔 / Shot gap | 轮间停顿 / Round pause | 满升级冷却 / Upgraded cooldown |
+| --- | --- | --- | --- | --- | --- | --- |
+| 轨道120mm高爆弹火力网 / Orbital 120mm HE Barrage | → → ↓ ← → ↓ | 5 s | 27 m | 0.75 s | 2 s | 153.9 s |
+| 轨道380mm高爆弹火力网 / Orbital 380mm HE Barrage | → ↓ ↑ ↑ ← ↓ ↓ | 6 s | 36 m | 1.5 s | 3 s | 205.2 s |
+| 轨道游走火力网 / Orbital Walking Barrage | → ↓ → ↓ → ↓ | 3 s | 25 m，移动圆心 / moving center | 1.5 s | 3 s | 205.2 s |
+
+轮间停顿从上一轮最后一发计至下一轮第一发。120mm从首发到末发共15.5秒，380mm和游走为27秒；默认每枚炮弹飞行1.5秒。冷却从首次开炮开始。
+
+120mm造成560直击、200爆炸伤害，内半径3.3m、外半径10m。380mm与游走直接使用轨道精准打击炮弹，共享其伤害配置；默认640直击、240爆炸、内半径4m、外半径12m。
+
+游走方向为投掷位置指向信标落点的水平连线，在信标展开时固定。解包的 `BombardmentComponentData` 中，游走火力网 `speed=3`、`area_size=25`，MC据此采用每秒推进3格、半径25格的移动散布区域，默认末发圆心前移81格。每发在当时的圆形区域内独立、均匀取样；这是MC中的散布实现，组件数据不能证明原版内部使用相同的随机算法。
+
+炮弹从本次呼叫确定的驱逐舰位置射来。远距离飞行以发光航迹表示，末段生成真实碰撞炮弹；可被沿途地形或生物截住，无需加载远方舰位区块。落点按当地地表高度确定。
+
+All three barrages require an owned Super Destroyer in range and fire five salvos of three shells. Settings, planned impact positions and firing progress persist across reloads. Player movement and turning do not change the walking direction. The beacon remains until the final real shell hits.
+
+The round pause runs from a salvo's last shot to the next salvo's first. The first-to-last-shot span is 15.5 s for 120mm and 27 s for 380mm/Walking. Each shell travels for 1.5 s by default; cooldown begins with the first shot.
+
+120mm deals 560 direct and 200 blast damage with 3.3/10 m inner/outer radii. 380mm and Walking use the actual Precision Strike projectile and share its damage settings, defaulting to 640 direct, 240 blast and 4/12 m radii.
+
+Walking advances along the horizontal throw-origin-to-beacon line, fixed when the beacon deploys. Native component values `speed=3` and `area_size=25` are adapted to 3 blocks/s and a 25-block radius; the last shot's center is 81 blocks forward by default. Each impact independently samples a uniform-area disk around the current center. The original internal sampling algorithm is not available from these component records.
+
+Flight originates at the fixed ship position, using glowing distant traces and real terminal collision projectiles. Terrain and creatures can intercept incoming shells without loading distant ship chunks. Targets use the local surface height.
+
+配置 / Configuration:
+
+- `orbital.he120mmBarrage`, `orbital.he380mmBarrage`, `orbital.walkingBarrage`: `rounds`, `shotsPerRound`, `shotIntervalSeconds`, `roundPauseSeconds`, `spreadRadius`, `firingDelaySeconds`, `flightSeconds`.
+- `orbital.walkingBarrage.advanceSpeed`: 推进格/秒 / advance in blocks/s.
+- `orbital.he120mmBarrage`: `directDamage`, `explosionDamage`, `innerRadius`, `outerRadius`.
+- 380mm和游走共用 / 380mm and Walking share: `orbital.precisionStrike` damage/radius settings.
+- 冷却 / Cooldown: `stratagems.orbital_120mm_he_barrage.cooldownSeconds`, `stratagems.orbital_380mm_he_barrage.cooldownSeconds`, `stratagems.orbital_walking_barrage.cooldownSeconds`.

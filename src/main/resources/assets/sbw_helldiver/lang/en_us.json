@@ -204,5 +204,9 @@
   "entity.sbw_helldiver.orbital_gatling_round": "Orbital Gatling Barrage",
   "item.sbw_helldiver.orbital_airburst_strike_stratagem": "Orbital Airburst Strike",
   "entity.sbw_helldiver.orbital_airburst_shell": "Orbital Airburst Strike Shell",
-  "entity.sbw_helldiver.orbital_airburst_bomblet": "Orbital Airburst Strike Bomblet"
+  "entity.sbw_helldiver.orbital_airburst_bomblet": "Orbital Airburst Strike Bomblet",
+  "item.sbw_helldiver.orbital_120mm_he_barrage_stratagem": "Orbital 120mm HE Barrage",
+  "item.sbw_helldiver.orbital_380mm_he_barrage_stratagem": "Orbital 380mm HE Barrage",
+  "item.sbw_helldiver.orbital_walking_barrage_stratagem": "Orbital Walking Barrage",
+  "entity.sbw_helldiver.orbital_120mm_shell": "Orbital 120mm HE Shell"
 }

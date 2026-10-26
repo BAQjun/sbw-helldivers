@@ -1,9 +1,18 @@
 package com.example.sbwhelldiver.entity
 import com.atsuishio.superbwarfare.entity.projectile.SmallCannonShellEntity
 import com.example.sbwhelldiver.config.OrbitalConfig
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.level.Level
-class OrbitalPrecisionShellEntity(t:EntityType<out SmallCannonShellEntity>,l:Level):SentryCannonShellEntity(t,l){
- override val innerBlastRadius get()=OrbitalConfig.inner.get().coerceAtMost(OrbitalConfig.outer.get()-.001)
- init{setDamage(OrbitalConfig.direct.get().toFloat());setExplosionDamage(OrbitalConfig.blast.get().toFloat());setExplosionRadius(OrbitalConfig.outer.get().toFloat());setCustomGravity(0f)}
+
+open class OrbitalPrecisionShellEntity(t:EntityType<out SmallCannonShellEntity>,l:Level):SentryCannonShellEntity(t,l){
+ private var blastInner=4.0
+ override val innerBlastRadius get()=blastInner.coerceAtMost(getExplosionRadius().toDouble()-.001).coerceAtLeast(0.0)
+ init{configure(OrbitalConfig.direct.get().toFloat(),OrbitalConfig.blast.get().toFloat(),OrbitalConfig.inner.get(),OrbitalConfig.outer.get().toFloat())}
+ fun configure(direct:Float,blast:Float,inner:Double,outer:Float){setDamage(direct);setExplosionDamage(blast);setExplosionRadius(outer);blastInner=inner;setCustomGravity(0f)}
+ override fun addAdditionalSaveData(t:CompoundTag){super.addAdditionalSaveData(t);t.putDouble("OrbitalInnerRadius",blastInner)}
+ override fun readAdditionalSaveData(t:CompoundTag){super.readAdditionalSaveData(t);if(t.contains("OrbitalInnerRadius"))blastInner=t.getDouble("OrbitalInnerRadius");setCustomGravity(0f)}
+}
+class Orbital120ShellEntity(t:EntityType<out SmallCannonShellEntity>,l:Level):OrbitalPrecisionShellEntity(t,l){
+ init{val s=com.example.sbwhelldiver.config.OrbitalBarrageConfig.snapshot("orbital_120mm_he_barrage");configure(s.direct,s.blast,s.inner,s.outer)}
 }

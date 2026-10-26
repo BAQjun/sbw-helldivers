@@ -6,6 +6,7 @@ import kotlin.math.roundToInt
 /** Native StratagemSettings base values, with Synthetic Supplementation and Morale Augmentation. */
 object StratagemCooldownConfig {
     val baseSeconds = linkedMapOf(
+        "orbital_120mm_he_barrage" to 180.0, "orbital_380mm_he_barrage" to 240.0, "orbital_walking_barrage" to 240.0,
         "orbital_airburst_strike" to 100.0,
         "orbital_gatling_barrage" to 70.0,
         "orbital_precision_strike" to 80.0,

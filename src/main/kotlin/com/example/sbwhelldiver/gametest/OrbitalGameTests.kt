@@ -373,4 +373,109 @@ object OrbitalGameTests {
   }
  }
 
+ @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",timeoutTicks=5)
+ fun barrageNativeCadenceDirectionScatterAndPersistence(h:GameTestHelper){
+  val cfg=com.example.sbwhelldiver.config.BarrageSettings
+  val pattern=OrbitalBarragePattern
+  for((i,id) in cfg.ids.withIndex()){
+   val s=com.example.sbwhelldiver.config.OrbitalBarrageConfig.snapshot(id)
+   h.assertTrue(s==cfg.defaults(id)&&s.total==15,"Native/default settings wrong $id: $s")
+   h.assertTrue(s.lastShotTime==if(i==0)310 else 540,"Wrong salvo gaps $id")
+   for(n in 0 until s.total){
+    h.assertTrue(pattern.due(s.shotTime(n)-.001,s)==n&&pattern.due(s.shotTime(n).toDouble(),s)==n+1,"Lost shell at cadence boundary")
+    if(n>0)h.assertTrue(s.shotTime(n)-s.shotTime(n-1)==if(n%3==0)s.roundPause else s.shotGap,"Round/shot pause confused")
+   }
+   for(yaw in listOf(0f,90f,180f,-90f))for(seed in 0L..40L){
+    val targets=pattern.offsets(seed,s,yaw)
+    h.assertTrue(targets==pattern.offsets(seed,s,yaw)&&targets.toSet().size==15,"Unstable barrage samples")
+    targets.forEachIndexed{j,v->h.assertTrue(v.subtract(pattern.center(j,s,yaw)).length()<=s.radius+1e-7,"Impact outside spread disk")}
+    val center=pattern.center(14,s,yaw)
+    h.assertTrue(abs(center.length()-if(s.walking)81.0 else 0.0)<1e-6,"Wrong walking speed or direction")
+    if(s.walking)h.assertTrue(center.normalize().dot(pattern.direction(yaw))>.99999,"Walking barrage advanced backward")
+   }
+   h.assertTrue(cfg.load(s.save())==s,"NBT lost barrage configuration")
+   h.assertTrue(StratagemCooldownConfig.ticks(id)==if(i==0)3078 else 4104,"Full-upgrade cooldown wrong")
+  }
+  h.assertTrue(Stratagems.get(cfg.ids[0])!!.code==listOf(1,1,2,3,1,2)&&Stratagems.get(cfg.ids[1])!!.code==listOf(1,2,0,0,3,2,2)&&Stratagems.get(cfg.ids[2])!!.code==listOf(1,2,1,2,1,2),"Native codes incorrect")
+  val ball=StratagemBeacon(ModEntities.STRATAGEM_BEACON.get(),20.0,75.0,30.0,h.level)
+  ball.shoot(1.0,-.1,0.0,1f,0f)
+  val tag=CompoundTag();ball.saveWithoutId(tag)
+  val restored=ModEntities.STRATAGEM_BEACON.get().create(h.level)!!;restored.load(tag)
+  for(b in listOf(ball,restored)){
+   b.setPos(40.0,64.0,30.0)
+   h.assertTrue(pattern.direction(b.wallDeploymentYaw(Vec3(40.0,64.0,30.0))).dot(Vec3(1.0,0.0,0.0))>.99999,"Beacon lost throw-origin direction")
+   h.assertTrue(b.wallDeploymentYaw(Vec3(20.0,64.0,30.0)).isFinite(),"Vertical throw did not retain a finite direction")
+   b.discard()
+  }
+  h.succeed()
+ }
+ @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",timeoutTicks=5)
+ fun barrage120DirectFalloffAndPrecisionAmmoReuse(h:GameTestHelper){
+  val at=Vec3.atCenterOf(h.absolutePos(BlockPos(15,25,15)))
+  val shell=ModEntities.ORBITAL_120_SHELL.get().create(h.level)!!;shell.setPos(at);shell.tickCount=1;h.level.addFreshEntity(shell)
+  fun victim(distance:Double)=EntityType.RAVAGER.create(h.level)!!.also{m->m.isNoAi=true;m.isNoGravity=true;m.getAttribute(Attributes.ARMOR)!!.baseValue=0.0;m.getAttribute(Attributes.MAX_HEALTH)!!.baseValue=1000.0;m.health=1000f;m.setPos(at.add(distance+m.bbWidth/2,0.0,0.0));h.level.addFreshEntity(m)}
+  h.assertTrue(shell.getDamage()==560f&&shell.getExplosionDamage()==200f&&shell.getExplosionRadius()==10f,"120mm ammunition values incorrect")
+  val targets=listOf(0.0,3.3,6.65,10.0,10.1).map(::victim)
+  shell.onHitEntity(ExtendedEntityRayTraceResult(EntityResult(targets[0],at,false,false)))
+  targets.zip(listOf(760f,200f,99.5f,0f,0f)).forEachIndexed{i,(m,d)->h.assertTrue(abs(1000-m.health-d)<.03,"120mm damage $i expected $d got ${1000-m.health}")}
+  val health=targets.map{it.health};shell.causeExplode(at);h.assertTrue(health==targets.map{it.health},"120mm duplicate explosion")
+  targets.forEach{it.discard()}
+  for(id in com.example.sbwhelldiver.config.BarrageSettings.ids.drop(1)){
+   val settings=com.example.sbwhelldiver.config.OrbitalBarrageConfig.snapshot(id)
+   val a=ModEntities.ORBITAL_SHELL.get().create(h.level)!!;a.configure(settings.direct,settings.blast,settings.inner,settings.outer)
+   val t=CompoundTag();a.saveWithoutId(t);val b=ModEntities.ORBITAL_SHELL.get().create(h.level)!!;b.load(t)
+   h.assertTrue(b.type===ModEntities.ORBITAL_SHELL.get()&&b.getDamage()==640f&&b.getExplosionDamage()==240f&&b.getExplosionRadius()==12f&&t.getDouble("OrbitalInnerRadius")==4.0,"380mm/walking did not preserve precision ammunition")
+   a.discard();b.discard()
+  }
+  h.succeed()
+ }
+ private fun fullBarrage(h:GameTestHelper,id:String){
+  val p=pilot(h);val world=h.level
+  val at=Vec3.atBottomCenterOf(h.absolutePos(BlockPos(15,163,15)))
+  p.setPos(at);val now=StratagemCooldowns.now(p.server);SuperDestroyers.move(p,Stratagems.UP);SuperDestroyers.state(p).advance(now+60)
+  val loaded=mutableListOf<Pair<Int,Int>>();val chunk=net.minecraft.world.level.ChunkPos(BlockPos.containing(at))
+  for(cx in chunk.x-6..chunk.x+6)for(cz in chunk.z-6..chunk.z+8)if(world.setChunkForced(cx,cz,true))loaded.add(cx to cz)
+  for(x in -45..45)for(z in -45..115)world.setBlock(BlockPos.containing(at.add(x.toDouble(),-1.0,z.toDouble())),net.minecraft.world.level.block.Blocks.BEDROCK.defaultBlockState(),3)
+  var marker=ModEntities.STRATAGEM_MARKER.get().create(world)!!;marker.moveTo(at.x,at.y,at.z,0f,0f);marker.configure(Stratagems.get(id)!!.dropId,10,p.uuid);world.addFreshEntity(marker)
+  val settings=marker.barrageSettings;val targets=marker.barrageTargets()
+  h.assertTrue(targets.size==15&&targets.all{it.y>=at.y},"Impact targets were below the supporting bedrock floor: $targets floor=$at")
+  val seen=mutableMapOf<Int,Long>();var duplicates=0;var maxActive=0
+  val observer=object{
+   @net.minecraftforge.eventbus.api.SubscribeEvent fun shell(e:net.minecraftforge.event.entity.EntityJoinLevelEvent){
+    val shell=e.entity as? OrbitalPrecisionShellEntity?:return
+    if(shell.level()!==world||shell.deltaMovement.y>=0)return
+    val n=targets.indexOfFirst{v->val t=(v.y-shell.y)/shell.deltaMovement.y;t in 0.0..4.0&&shell.position().add(shell.deltaMovement.scale(t)).distanceTo(v)<.001}
+    if(n<0)return
+    if(seen.put(n,world.gameTime)!=null)duplicates++
+    h.assertTrue(shell.getDamage()==settings.direct&&shell.getExplosionDamage()==settings.blast,"Wrong active ammunition $id")
+    h.assertTrue((shell.type===ModEntities.ORBITAL_120_SHELL.get())==(id=="orbital_120mm_he_barrage"),"Wrong projectile registry type")
+   }
+  }
+  net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(observer)
+  h.runAfterDelay((settings.callTicks-2).toLong()){h.assertTrue(marker.orbitalFiredAt<0&&seen.isEmpty(),"Barrage fired before native call-in delay")}
+  h.onEachTick{maxActive=maxOf(maxActive,world.getEntitiesOfClass(OrbitalPrecisionShellEntity::class.java,marker.boundingBox.inflate(130.0)).size)}
+  h.runAfterDelay(225){
+   h.assertTrue(!marker.isRemoved&&seen.size in 1..14,"Barrage finished before all rounds $id: ${seen.size}")
+   val t=CompoundTag();marker.saveWithoutId(t);marker.discard();marker=ModEntities.STRATAGEM_MARKER.get().create(world)!!;marker.load(t);world.addFreshEntity(marker)
+   marker.yRot=90f;p.setPos(at.add(-20.0,0.0,-20.0))
+   h.assertTrue(marker.barrageSettings==settings&&marker.barrageTargets()==targets,"Reload or player turning changed planned impacts")
+  }
+  h.runAfterDelay((settings.callTicks+settings.lastShotTime+settings.flightTicks-5).toLong()){
+   h.assertTrue(!marker.isRemoved,"Beacon disappeared before the last shell hit")
+  }
+  h.runAfterDelay((settings.callTicks+settings.lastShotTime+settings.flightTicks+35).toLong()){
+   net.minecraftforge.common.MinecraftForge.EVENT_BUS.unregister(observer)
+   h.assertTrue(seen.size==15&&duplicates==0&&marker.isRemoved,"Incomplete/duplicate barrage $id: ${seen.size}, duplicates=$duplicates removed=${marker.isRemoved}")
+   for(i in 1..14)h.assertTrue(seen.getValue(i)-seen.getValue(i-1)==(settings.shotTime(i)-settings.shotTime(i-1)).toLong(),"Actual shell cadence incorrect $id #$i: $seen")
+   h.assertTrue(maxActive in 1..6,"Barrage accumulated too many shell entities: $maxActive")
+   loaded.forEach{(x,z)->world.setChunkForced(x,z,false)};p.discard();h.succeed()
+  }
+ }
+ @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",batch="barrage_full",timeoutTicks=780)
+ fun full120Barrage(h:GameTestHelper)=fullBarrage(h,"orbital_120mm_he_barrage")
+ @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",batch="barrage_full",timeoutTicks=780)
+ fun full380Barrage(h:GameTestHelper)=fullBarrage(h,"orbital_380mm_he_barrage")
+ @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",batch="barrage_full",timeoutTicks=780)
+ fun fullWalkingBarrage(h:GameTestHelper)=fullBarrage(h,"orbital_walking_barrage")
+
 }
