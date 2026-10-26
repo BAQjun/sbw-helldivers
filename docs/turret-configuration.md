@@ -85,3 +85,13 @@ lifetimeTicks = 0
 火焰默认 `damage = 2.5`、`rpm = 240`，直击 DPS 为 `2.5 × 240 ÷ 60 = 10`。激光默认 `damage = 7.5`、`rpm = 240`，直射 DPS 为 30。此处均不包含附带燃烧伤害。
 
 这些设置针对炮台本体与武器，不修改其他战备：地雷、护盾生成器、飞鹰和空投砸击仍使用各自规则。
+
+## 自动收回 / Automatic retraction
+
+进入世界后打开“模组 → SBW Helldivers → 配置 → 战备自动收回”。默认开启；关闭后，战备不会因弹药耗尽或工作时限到达而自动缩回，重新开启会恢复自动收回。不会补充弹药，不影响摧毁效果和玩家投送出仓回收。
+
+该开关为服务端世界设置 `autoRetract`，保存于 `serverconfig/sbw_helldiver-server.toml`，立即生效。多人游戏仅管理员（权限等级 2）可修改；其他玩家可以查看当前值。
+
+In a world, open Mods → SBW Helldivers → Config → Automatic retraction. Enabled by default. Disabling it keeps deployed stratagems extended after ammunition or operating time runs out. Re-enabling resumes automatic retraction. It does not refill ammunition or prevent destruction, and player delivery cleanup is unaffected.
+
+This is the server-owned `autoRetract` world setting in `serverconfig/sbw_helldiver-server.toml`. Changes apply immediately. Multiplayer changes require operator permission level 2; other players can view the setting.

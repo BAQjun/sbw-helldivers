@@ -81,6 +81,7 @@ class PlayerHellpodEntity(type:EntityType<*>,level:Level):AbstractHellpodEntity(
  override fun ejectPassengers(){if(level().isClientSide||releasing)super.ejectPassengers()}
  override fun interact(p:Player,hand:net.minecraft.world.InteractionHand)=net.minecraft.world.InteractionResult.PASS
  override fun hurt(source:net.minecraft.world.damagesource.DamageSource,amount:Float)=false
+ override fun automaticRetractionEnabled()=true // Passenger delivery cleanup is independent of stratagem settings.
  override fun shouldRetract()=released&&activeTicks>=60
  private var visualPhase:Phase?=null
  private var visualPhaseTick=0

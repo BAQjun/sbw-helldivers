@@ -23,6 +23,37 @@ import kotlin.math.abs
 @GameTestHolder("sbw_helldiver_eaglefields")
 @PrefixGameTestTemplate(false)
 object EagleFieldGameTests {
+    private class ImpactSoundRecorder {
+        val events=mutableListOf<net.minecraftforge.event.PlayLevelSoundEvent.AtPosition>()
+        @net.minecraftforge.eventbus.api.SubscribeEvent fun played(event:net.minecraftforge.event.PlayLevelSoundEvent.AtPosition) {
+            if(event.sound?.value()?.location?.path?.startsWith("sfx_eagle_")==true)events.add(event)
+        }
+    }
+    @JvmStatic @GameTest(template="sentry_test",batch="eagle_fields_audio",timeoutTicks=20)
+    fun gasAndSmokePlayOnceAtCollisionWithNinetySixMetreRange(h:GameTestHelper) {
+        val at=origin(h);floor(h,at)
+        val recorder=ImpactSoundRecorder();net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(recorder)
+        try {
+            for((type,eventId) in listOf(ModEntities.EAGLE_GAS_BOMB.get() to "sfx_eagle_gas_impact",ModEntities.EAGLE_SMOKE_BOMB.get() to "sfx_eagle_smoke_impact")) {
+                for(entityHit in listOf(false,true)) {
+                    val point=at.add(0.0,if(entityHit)5.0 else 0.0,0.0)
+                    val bomb=type.create(h.level)!!;bomb.setPos(point);h.level.addFreshEntity(bomb)
+                    val before=recorder.events.size
+                    if(entityHit) {
+                        val victim=cow(h,point)
+                        bomb.afterHitEntity(EntityHitResult(victim,point));victim.discard()
+                    } else bomb.afterHitBlock(BlockHitResult(point,Direction.UP,BlockPos.containing(point),false))
+                    bomb.causeExplode(point) // Multiple hit callbacks must not replay the burst.
+                    h.assertTrue(recorder.events.size==before+1,"Missing or duplicate $eventId")
+                    val sound=recorder.events.last()
+                    h.assertTrue(sound.sound?.value()==ModSounds.EVENTS.getValue(eventId).get() && sound.position.distanceTo(point)<.001,"Wrong burst event or projected ground position")
+                    h.assertTrue(sound.sound!!.value().getRange(sound.originalVolume)==96f,"Burst must remain audible at strike distance")
+                    bomb.discard()
+                }
+            }
+        } finally {net.minecraftforge.common.MinecraftForge.EVENT_BUS.unregister(recorder);cleanup(h,at)}
+        h.succeed()
+    }
     private class FieldSpawnRecorder {
         val shots=mutableListOf<EagleFieldBombEntity>()
         @net.minecraftforge.eventbus.api.SubscribeEvent fun joined(event:net.minecraftforge.event.entity.EntityJoinLevelEvent) {
@@ -93,7 +124,7 @@ object EagleFieldGameTests {
     fun smallGasCloudsHaveLowCanopiesWithoutChangingEagleSmokeOrEms(h: GameTestHelper) {
         val at=origin(h).add(0.0,120.0,0.0)
         for((i,radius) in listOf(6.0,7.0,12.0).withIndex()) {
-            val p=at.add(i*30.0,0.0,0.0)
+            val p=at // Reuse the loaded test footprint; discard each case before the next.
             val field=MortarFieldEntity.create(h.level,p,MortarFieldEntity.Kind.GAS,radius,mineCloud=i==0)
             val expected=if(i<2)4.0 else 10.0
             val inside=cow(h,p.add(0.0,expected-.4,0.0));val above=cow(h,p.add(0.0,expected+.5,0.0));field.tick()

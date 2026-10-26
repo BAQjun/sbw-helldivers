@@ -167,7 +167,7 @@ open class HmgEmplacementEntity(type: EntityType<*>, level: Level): AbstractHell
         if(!fireRound(server,player))return
         addAimRecoil()
         entityData.set(AMMO,ammoRemaining-1);entityData.set(LAST_SHOT,server.gameTime);markFired();nextShot=server.gameTime+nextShotDelayTicks()
-        if(ammoRemaining==0) { trigger=false;if(shouldRetract())enterPhase(Phase.RETRACTING) }
+        if(ammoRemaining==0) { trigger=false;if(automaticRetractionEnabled() && shouldRetract())enterPhase(Phase.RETRACTING) }
     }
     protected open fun nextShotDelayTicks(): Int {
         val interval = 1200.0 / (turretConfig?.rpm?.get() ?: 600)

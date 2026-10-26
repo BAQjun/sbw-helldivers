@@ -52,6 +52,8 @@ object StratagemClient {
     private var hudTransitionFrom = 0.0
     private var hudTargetVisible = false
 
+    private data class AutomaticRow(var definition:StratagemDefinition,var index:Int,var selected:Boolean,val slide:HudSlide=HudSlide())
+    private val automaticRows=linkedMapOf<String,AutomaticRow>()
     private var automaticLoadout = emptyList<StratagemDefinition?>()
     private var automaticSelected: StratagemDefinition? = null
     internal var lastAutomaticRows = emptyMap<String, HudLayout>()
@@ -217,7 +219,7 @@ object StratagemClient {
         if (mc.level !== previousLevel) {
             failures.clear(); failureLoadout = List(4) { "" }; prefix.clear()
             previousSlot = -1; identity = null; previousHand = null; altWasDown = false; waitForAltRelease = false
-            clearHud(); StratagemNotifications.clear(); automaticLoadout = emptyList(); automaticSelected = null; lastAutomaticRows = emptyMap(); previousLevel = mc.level;destroyerStage=0
+            clearHud(); automaticRows.clear(); StratagemNotifications.clear(); automaticLoadout = emptyList(); automaticSelected = null; lastAutomaticRows = emptyMap(); previousLevel = mc.level;destroyerStage=0
         }
         observeAutomaticLoadout()
         StratagemNotifications.tick(automaticLoadout)
@@ -315,17 +317,31 @@ object StratagemClient {
         val x = mc.window.guiScaledWidth * .023f
         val y = mc.window.guiScaledHeight * .028f
         val rows = linkedMapOf<String, HudLayout>()
-        gui.pose().pushPose()
-        gui.pose().translate(x.toDouble(), y.toDouble(), 0.0)
-        gui.pose().scale(scale, scale, 1f)
-        for ((index, def) in automaticLoadout.withIndex()) {
-            if (def == null || def != automaticSelected && !StratagemNotifications.visible(def, partial)) continue
-            val rowY = 25 + 32 * index
-            gui.fill(0, rowY - 2, 158, rowY + 30, 0x70101C18)
-            drawRow(gui, def, rowY, automaticSelected, emptyList(), emptyList(), false, false, partial, true)
-            rows[def.id] = HudLayout(x, y + (rowY - 2) * scale, 158 * scale, 32 * scale)
+        val nanos=System.nanoTime()
+        val wanted=mutableSetOf<String>()
+        for((index,def) in automaticLoadout.withIndex()) {
+            if(def==null || def!=automaticSelected && !StratagemNotifications.visible(def,partial))continue
+            wanted.add(def.id)
+            val row=automaticRows.getOrPut(def.id){AutomaticRow(def,index,def==automaticSelected)}
+            row.definition=def;row.index=index;row.selected=def==automaticSelected
+            row.slide.target(true,nanos)
         }
-        gui.pose().popPose()
+        val iterator=automaticRows.iterator()
+        while(iterator.hasNext()) {
+            val (id,row)=iterator.next()
+            if(id !in wanted)row.slide.target(false,nanos)
+            val visibility=row.slide.value(nanos)
+            if(visibility<=0.0 && id !in wanted){iterator.remove();continue}
+            val rowY=25+32*row.index
+            val screenX=(x-(158*scale+x)*(1.0-visibility)).toFloat()
+            gui.pose().pushPose()
+            gui.pose().translate(screenX.toDouble(),y.toDouble(),0.0)
+            gui.pose().scale(scale,scale,1f)
+            gui.fill(0,rowY-2,158,rowY+30,0x70101C18)
+            drawRow(gui,row.definition,rowY,if(row.selected)row.definition else null,emptyList(),emptyList(),false,false,partial,true)
+            gui.pose().popPose()
+            rows[id]=HudLayout(screenX,y+(rowY-2)*scale,158*scale,32*scale)
+        }
         lastAutomaticRows = rows
     }
 

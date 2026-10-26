@@ -1,0 +1,184 @@
+{
+  "smoke": {
+    "bank": "stratagems_eagle_airstrike_smoke",
+    "event": 256058503,
+    "procedural_wwise_generators": "not exported; recorded layers retained",
+    "variants": [
+      {
+        "file": "original/eagle/smoke_impact_1",
+        "parts": [
+          {
+            "media": 118511796,
+            "gain_db": -17,
+            "delay_seconds": 0.07,
+            "source_sha256": "f84f98f7b4905e26bafb772aa960d7cb2fca80321cfb70f63ab898af29334663"
+          },
+          {
+            "media": 536661120,
+            "gain_db": -10,
+            "delay_seconds": 0,
+            "source_sha256": "d3ba25a9e0a52a5a56520a5849fd9b2ee631b9fbb5203674ec82e01555704acd"
+          },
+          {
+            "media": 341174335,
+            "gain_db": -25,
+            "delay_seconds": 0.12,
+            "source_sha256": "4aaed5dcd86f9fdb3194854e66a910d402a57ab9f8ebc923dc6f7fe612e0d202"
+          }
+        ],
+        "sha256": "7ba4fbde4b027533d73f88fb42821cfc159fb797cbc4916bbfd84c916380d412"
+      },
+      {
+        "file": "original/eagle/smoke_impact_2",
+        "parts": [
+          {
+            "media": 848348134,
+            "gain_db": -17,
+            "delay_seconds": 0.07,
+            "source_sha256": "925e61df94dee57385b151ca761094d246520ea9e9ae8205483c9380ccc87c98"
+          },
+          {
+            "media": 795945700,
+            "gain_db": -10,
+            "delay_seconds": 0,
+            "source_sha256": "26eddf4f337172813a588f9fda7f1ded6f14f5df353ceeab1d360179a347df41"
+          },
+          {
+            "media": 639180669,
+            "gain_db": -25,
+            "delay_seconds": 0.12,
+            "source_sha256": "2b6176e705e2962585c16e8c4d6fdc4950fe1c5362f87297095ebb84d52c7134"
+          }
+        ],
+        "sha256": "ed62fce566f9c5bbc1917fdcf70b3ffa196f2a010c4ebfe6264dedf95bb6e69c"
+      },
+      {
+        "file": "original/eagle/smoke_impact_3",
+        "parts": [
+          {
+            "media": 728440307,
+            "gain_db": -17,
+            "delay_seconds": 0.07,
+            "source_sha256": "70df112b57cc36088f36c73757adc2215daba8bf164a637216085e0e2beafc3b"
+          },
+          {
+            "media": 536661120,
+            "gain_db": -10,
+            "delay_seconds": 0,
+            "source_sha256": "d3ba25a9e0a52a5a56520a5849fd9b2ee631b9fbb5203674ec82e01555704acd"
+          },
+          {
+            "media": 880037542,
+            "gain_db": -25,
+            "delay_seconds": 0.12,
+            "source_sha256": "51c03a372fdad11ebdef07d0e3e3049cc08dabdb2c1bf49d5690cdc6dc011d2b"
+          }
+        ],
+        "sha256": "113e5d279307565624c8c825882b5bda0171b2fc7142a0f8597a6724586add1f"
+      },
+      {
+        "file": "original/eagle/smoke_impact_4",
+        "parts": [
+          {
+            "media": 1046090634,
+            "gain_db": -17,
+            "delay_seconds": 0.07,
+            "source_sha256": "2a141a79171e349a58128bc9737d1448e4fa665796872ac4f0a7c46b7763d19e"
+          },
+          {
+            "media": 795945700,
+            "gain_db": -10,
+            "delay_seconds": 0,
+            "source_sha256": "26eddf4f337172813a588f9fda7f1ded6f14f5df353ceeab1d360179a347df41"
+          },
+          {
+            "media": 341174335,
+            "gain_db": -25,
+            "delay_seconds": 0.12,
+            "source_sha256": "4aaed5dcd86f9fdb3194854e66a910d402a57ab9f8ebc923dc6f7fe612e0d202"
+          }
+        ],
+        "sha256": "d39d0f97ae8d3c759e6fd12878c552bd0aea5d3e90442d3eae6f6d2a525e2068"
+      }
+    ]
+  },
+  "gas": {
+    "bank": "stratagems_eagle_gas_strike",
+    "event": 2913798922,
+    "procedural_wwise_generators": "not exported; recorded layers retained",
+    "variants": [
+      {
+        "file": "original/eagle/gas_impact_1",
+        "parts": [
+          {
+            "media": 375198800,
+            "gain_db": -6,
+            "delay_seconds": 0,
+            "source_sha256": "206887ba38e8ecbf4b4d913b00388e8fb0b11938153e3ce28880d54e124278e8"
+          },
+          {
+            "media": 386330197,
+            "gain_db": -5.1,
+            "delay_seconds": 0,
+            "source_sha256": "37d3ce2dc28dd223788448df961b37133bd10815e1ba02e24cf1bcfae105fad7"
+          }
+        ],
+        "sha256": "6811d66a8c21fccf05fa53a848d9114cca01ebb3229238d756308383cfd8f698"
+      },
+      {
+        "file": "original/eagle/gas_impact_2",
+        "parts": [
+          {
+            "media": 802376076,
+            "gain_db": -4.5,
+            "delay_seconds": 0,
+            "source_sha256": "ebdd8c79faad3101e934f7d8c7586183d1cdc13a0ba2ec90bd92adfa622fb3fc"
+          },
+          {
+            "media": 282731215,
+            "gain_db": -4.7,
+            "delay_seconds": 0,
+            "source_sha256": "a3400ba7e923ce9c8911f16cb59f5fe6cae11e7c4f5b54880a81c858e12c2a84"
+          }
+        ],
+        "sha256": "1233eb9e315e30525a927b87501f685f85670385888aa20d93b486e97b167ee4"
+      },
+      {
+        "file": "original/eagle/gas_impact_3",
+        "parts": [
+          {
+            "media": 745502793,
+            "gain_db": -4.5,
+            "delay_seconds": 0,
+            "source_sha256": "0e68d54e09b9473dd41bb1ac0c62edfaf9182dbd796175c2242c843e25fed407"
+          },
+          {
+            "media": 969731592,
+            "gain_db": -5.2,
+            "delay_seconds": 0,
+            "source_sha256": "0254c52aa381658d1ff09c6abfe64fb78a507976d98e81985e97233ad2baf722"
+          }
+        ],
+        "sha256": "7d186a7868530a4c7a13a35ff2c1001e53bf398d0279fc9644b3b8dcb83e8b97"
+      },
+      {
+        "file": "original/eagle/gas_impact_4",
+        "parts": [
+          {
+            "media": 375198800,
+            "gain_db": -6,
+            "delay_seconds": 0,
+            "source_sha256": "206887ba38e8ecbf4b4d913b00388e8fb0b11938153e3ce28880d54e124278e8"
+          },
+          {
+            "media": 386330197,
+            "gain_db": -5.1,
+            "delay_seconds": 0,
+            "source_sha256": "37d3ce2dc28dd223788448df961b37133bd10815e1ba02e24cf1bcfae105fad7"
+          }
+        ],
+        "sha256": "480b1752860b27bb0e401e4f1850044c116e73e277054db4319365bef804fcfb"
+      }
+    ]
+  }
+}

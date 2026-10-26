@@ -1,6 +1,8 @@
 package com.example.sbwhelldiver.entity
 
 import com.atsuishio.superbwarfare.entity.projectile.SmallCannonShellEntity
+import com.example.sbwhelldiver.init.ModSounds
+import net.minecraft.sounds.SoundSource
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.level.Level
@@ -23,10 +25,13 @@ abstract class EagleFieldBombEntity(type: EntityType<out SmallCannonShellEntity>
         val at=if(ground.type==net.minecraft.world.phys.HitResult.Type.BLOCK)ground.location else vec3
         when(attack) {
             EagleAttack.NAPALM -> GroundFireEntity.create(server,at,owner,GroundFireEntity.NAPALM_RADIUS,true)
-            EagleAttack.GAS -> MortarFieldEntity.create(server,at,MortarFieldEntity.Kind.GAS,12.0,effectTicks=120)
+            EagleAttack.GAS -> {
+                MortarFieldEntity.create(server,at,MortarFieldEntity.Kind.GAS,12.0,effectTicks=120)
+                server.playSound(null,vec3.x,vec3.y,vec3.z,ModSounds.EVENTS.getValue("sfx_eagle_gas_impact").get(),SoundSource.HOSTILE,4f,1f)
+            }
             EagleAttack.SMOKE -> {
                 MortarFieldEntity.create(server,at,MortarFieldEntity.Kind.SMOKE)
-                server.playSound(null,at.x,at.y,at.z,net.minecraft.sounds.SoundEvents.FIRE_EXTINGUISH,net.minecraft.sounds.SoundSource.NEUTRAL,2f,.65f)
+                server.playSound(null,vec3.x,vec3.y,vec3.z,ModSounds.EVENTS.getValue("sfx_eagle_smoke_impact").get(),SoundSource.HOSTILE,4f,1f)
             }
             else -> error("Not a field payload")
         }

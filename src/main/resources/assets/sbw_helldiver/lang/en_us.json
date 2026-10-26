@@ -146,7 +146,7 @@
   "commands.sbw_helldiver.cooldown.set": "Stratagem cooldowns for %s: %s",
   "subtitle.sbw_helldiver.stratagem_countdown": "Stratagem countdown",
   "subtitle.sbw_helldiver.stratagem_ready": "Stratagem ready",
-  "config.sbw_helldiver.title": "SBW Helldivers · Client Settings",
+  "config.sbw_helldiver.title": "SBW Helldivers · Mod Settings",
   "config.sbw_helldiver.low_quality_models": "Low Quality Models",
   "config.sbw_helldiver.low_quality_models.value": "Low Quality Models: %s",
   "config.sbw_helldiver.low_quality_models.tooltip": "Reduce model polygons to improve performance while preserving textures and animations.",
@@ -187,5 +187,13 @@
   "hud.sbw_helldiver.destroyer_depart": "Depart",
   "hud.sbw_helldiver.destroyer_direction": "Bearing",
   "subtitles.sbw_helldiver.super_destroyer_warp_in": "Super Destroyer warps in",
-  "subtitles.sbw_helldiver.super_destroyer_warp_out": "Super Destroyer warps out"
+  "subtitles.sbw_helldiver.super_destroyer_warp_out": "Super Destroyer warps out",
+  "subtitles.sbw_helldiver.sfx_eagle_smoke_impact": "Eagle smoke bomb bursts",
+  "subtitles.sbw_helldiver.sfx_eagle_gas_impact": "Eagle gas bomb bursts",
+  "config.sbw_helldiver.auto_retract": "Automatic stratagem retraction",
+  "config.sbw_helldiver.auto_retract.value": "Automatic retraction: %s",
+  "config.sbw_helldiver.auto_retract.tooltip": "When disabled, deployed stratagems remain extended after ammunition or operating time runs out. Does not refill ammunition or prevent destruction. Player delivery cleanup is unaffected. Applies immediately to this world.",
+  "config.sbw_helldiver.auto_retract.enter_world": "Enter a world to change its automatic retraction setting.",
+  "config.sbw_helldiver.auto_retract.permission": "This server setting can only be changed by an operator or the singleplayer owner.",
+  "config.sbw_helldiver.hint": "Click Save to apply. Automatic retraction applies to the current world."
 }

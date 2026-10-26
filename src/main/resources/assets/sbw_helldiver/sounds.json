@@ -5069,5 +5069,47 @@
         "stream": false
       }
     ]
+  },
+  "sfx_eagle_smoke_impact": {
+    "subtitle": "subtitles.sbw_helldiver.sfx_eagle_smoke_impact",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/eagle/smoke_impact_1",
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/eagle/smoke_impact_2",
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/eagle/smoke_impact_3",
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/eagle/smoke_impact_4",
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_eagle_gas_impact": {
+    "subtitle": "subtitles.sbw_helldiver.sfx_eagle_gas_impact",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/eagle/gas_impact_1",
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/eagle/gas_impact_2",
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/eagle/gas_impact_3",
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/eagle/gas_impact_4",
+        "attenuation_distance": 96
+      }
+    ]
   }
 }

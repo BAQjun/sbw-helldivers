@@ -225,7 +225,7 @@ abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAi
             Phase.ACTIVE -> {
                 activeTicks++
                 tickActive()
-                if (shouldRetract()) enterPhase(Phase.RETRACTING)
+                if (automaticRetractionEnabled() && shouldRetract()) enterPhase(Phase.RETRACTING)
             }
             Phase.RETRACTING -> if (phaseTicks >= retractTicks) enterPhase(Phase.DONE)
             Phase.DONE -> if (phaseTicks >= CLOSED_LINGER_TICKS) discard()
@@ -281,6 +281,8 @@ abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAi
     protected open fun tickActive() {}
     protected open fun tickClient() {}
     protected open fun onClientPhaseChanged(next: Phase) {}
+    protected open fun automaticRetractionEnabled() = HelldiversConfig.autoRetract.get()
+
     protected open fun shouldRetract(): Boolean {
         return lifetimeExpired()
     }

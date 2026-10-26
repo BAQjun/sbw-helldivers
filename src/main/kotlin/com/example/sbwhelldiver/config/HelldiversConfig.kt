@@ -22,6 +22,11 @@ object HelldiversConfig {
         "旧版默认 5.3 / 5.37 会按新版模型校准到 5.45。",
         "不改变地形方块；开仓后的内部通过舱口局部深度渲染显示。")
         .defineInRange("burialDepth", 5.45, 0.0, 6.5)
+    val autoRetract = builder.comment(
+        "战备弹药耗尽或工作时限到达后是否自动缩回空投仓；不影响被摧毁的效果或玩家投送出仓。",
+        "Automatically retract deployed stratagems when ammunition or operating time runs out.")
+        .translation("config.sbw_helldiver.auto_retract")
+        .define("autoRetract", true)
     val sentryLifetimeTicks = builder.comment("工作时限（tick），默认 150 秒；0 表示只按弹药耗尽回收。")
         .defineInRange("sentryLifetimeTicks", 3000, 0, 240000)
     val capLifetimeTicks = builder.comment("弹出的独立盖板落地后保留多久（tick），默认 600 = 30 秒。")
