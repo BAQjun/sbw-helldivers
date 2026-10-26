@@ -22,6 +22,7 @@ data class StratagemDefinition(val id: String, val code: List<Int>, val category
 
 /** Direction order and codes taken from the installed game's StratagemSettings. */
 object Stratagems {
+    fun dimensionAllowed(dimension: String) = dimension != "minecraft:the_nether"
     const val UP = 0
     const val RIGHT = 1
     const val DOWN = 2

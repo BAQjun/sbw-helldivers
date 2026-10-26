@@ -58,6 +58,7 @@ object DestroyerClient:ResourceManagerReloadListener {
  private val buffers=MultiBufferSource.immediate(BufferBuilder(1048576))
  @SubscribeEvent fun render(e:RenderLevelStageEvent){
   if(ShaderPackCompat.shadowPass())return
+  if(Minecraft.getInstance().level?.dimension()==net.minecraft.world.level.Level.NETHER)return
   val mc=Minecraft.getInstance();val level=mc.level?:return
   if(e.stage==RenderLevelStageEvent.Stage.AFTER_SKY){
    val fogStart=RenderSystem.getShaderFogStart();val fogEnd=RenderSystem.getShaderFogEnd()

@@ -22,6 +22,10 @@ object OrbitalAudio {
     private val sounds = mutableListOf<SpatialSound>()
     private var currentLevel: net.minecraft.client.multiplayer.ClientLevel? = null
 
+    fun fire(source: Vec3) {
+        if (Minecraft.getInstance().level == null) return
+        play(SpatialSound("sfx_orbital_fire", source))
+    }
     fun warp(source: Vec3, departing: Boolean) {
         if (Minecraft.getInstance().level == null) return
         play(SpatialSound(if (departing) "super_destroyer_warp_out" else "super_destroyer_warp_in", source))

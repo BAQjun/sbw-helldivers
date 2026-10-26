@@ -29,3 +29,12 @@ data class DestroyerWarpPacket(val position:net.minecraft.world.phys.Vec3,val de
   fun handle(p:DestroyerWarpPacket,s:Supplier<NetworkEvent.Context>){val c=s.get();c.enqueueWork{DistExecutor.unsafeRunWhenOn(Dist.CLIENT){Runnable{com.example.sbwhelldiver.client.OrbitalAudio.warp(p.position,p.departing)}}};c.packetHandled=true}
  }
 }
+
+/** A distant cannon report, sent exactly when the orbital shot starts. */
+data class DestroyerFirePacket(val position:net.minecraft.world.phys.Vec3){
+ fun encode(b:FriendlyByteBuf){b.writeDouble(position.x);b.writeDouble(position.y);b.writeDouble(position.z)}
+ companion object{
+  fun decode(b:FriendlyByteBuf)=DestroyerFirePacket(net.minecraft.world.phys.Vec3(b.readDouble(),b.readDouble(),b.readDouble()))
+  fun handle(p:DestroyerFirePacket,s:Supplier<NetworkEvent.Context>){val c=s.get();c.enqueueWork{DistExecutor.unsafeRunWhenOn(Dist.CLIENT){Runnable{com.example.sbwhelldiver.client.OrbitalAudio.fire(p.position)}}};c.packetHandled=true}
+ }
+}

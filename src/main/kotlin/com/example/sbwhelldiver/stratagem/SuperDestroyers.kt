@@ -48,7 +48,7 @@ class DestroyerState {
   if(transitionEnd==0L||now<transitionEnd)return false
   anchor=destination;destination=null;appearedAt=transitionEnd;transitionEnd=0;return true
  }
- fun available(dimension:String,point:Vec3,radius:Double,now:Long)=!transitioning(now)&&anchor?.covers(dimension,point,radius)==true
+ fun available(dimension:String,point:Vec3,radius:Double,now:Long)=Stratagems.dimensionAllowed(dimension)&&!transitioning(now)&&anchor?.covers(dimension,point,radius)==true
  fun save()=CompoundTag().also{t->anchor?.let{t.put("Anchor",it.save())};destination?.let{t.put("Destination",it.save())};t.putLong("TransitionEnd",transitionEnd);t.putLong("AppearedAt",appearedAt)}
  companion object{fun load(t:CompoundTag)=DestroyerState().apply{
   anchor=if(t.contains("Anchor"))DestroyerAnchor.load(t.getCompound("Anchor")) else null
@@ -73,7 +73,7 @@ object SuperDestroyers {
   return s.anchor!!.position.add(0.0,-15.0,0.0)
  }
  fun move(p:ServerPlayer,direction:Int):Boolean {
-  if(!hasOrbital(p)||direction !in 0..3)return false
+  if(!Stratagems.dimensionAllowed(p.level().dimension().location().toString())||!hasOrbital(p)||direction !in 0..3)return false
   val destination=DestroyerAnchor.at(p.level().dimension().location().toString(),p.position(),direction,OrbitalConfig.offset.get(),OrbitalConfig.altitude.get())
   if(!state(p).schedule(destination,StratagemCooldowns.now(p.server)))return false
   fleet(p.server).setDirty();syncAll(p.server);return true
@@ -89,9 +89,16 @@ object SuperDestroyers {
   val data=CompoundTag();data.put("Ships",list);data.put("Own",state(p).save());data.putDouble("Range",OrbitalConfig.range.get());data.putBoolean("Equipped",hasOrbital(p))
   BeaconNetwork.CHANNEL.send(PacketDistributor.PLAYER.with{p},DestroyerSnapshotPacket(StratagemCooldowns.now(p.server),data))
  }
+ fun fire(level:net.minecraft.server.level.ServerLevel,origin:Vec3,target:Vec3){
+  if(!Stratagems.dimensionAllowed(level.dimension().location().toString()))return
+  val reach=OrbitalConfig.range.get()
+  level.players().filter{it.position().distanceToSqr(target)<=reach*reach}.forEach{
+   BeaconNetwork.CHANNEL.send(PacketDistributor.PLAYER.with{it},DestroyerFirePacket(origin))
+  }
+ }
  private fun syncAll(s:MinecraftServer)=s.playerList.players.forEach(::sync)
  private fun cue(s:MinecraftServer,anchor:DestroyerAnchor?,name:String){
-  if(anchor==null)return
+  if(anchor==null||!Stratagems.dimensionAllowed(anchor.dimension))return
   s.playerList.players.filter{it.level().dimension().location().toString()==anchor.dimension&&it.position().distanceToSqr(anchor.center)<4096.0*4096.0}.forEach{
    BeaconNetwork.CHANNEL.send(PacketDistributor.PLAYER.with{it},DestroyerWarpPacket(anchor.position,name=="super_destroyer_warp_out"))
   }

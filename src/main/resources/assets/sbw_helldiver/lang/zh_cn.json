@@ -196,5 +196,7 @@
   "config.sbw_helldiver.auto_retract.enter_world": "进入世界后可修改该世界的自动收回设置。",
   "config.sbw_helldiver.auto_retract.permission": "该设置由服务器控制，仅服务器管理员或单人世界主人可以修改。",
   "config.sbw_helldiver.hint": "更改后点击保存。自动收回设置仅针对当前世界。",
-  "subtitles.sbw_helldiver.sfx_orbital_incoming": "轨道炮弹呼啸"
+  "subtitles.sbw_helldiver.sfx_orbital_incoming": "轨道炮弹呼啸",
+  "hud.sbw_helldiver.dimension_unavailable": "下界无法使用战备",
+  "subtitles.sbw_helldiver.sfx_orbital_fire": "超级驱逐舰开炮"
 }

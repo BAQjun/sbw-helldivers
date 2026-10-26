@@ -48,6 +48,8 @@ object StratagemCooldownClient : ResourceManagerReloadListener {
     }
     fun now(partial: Float = 0f) = serverTime + ((Minecraft.getInstance().level?.gameTime ?: localTime) - localTime).toDouble() + partial
     fun visual(id: String, partial: Float = 0f): Visual {
+        if(Minecraft.getInstance().level?.let{!Stratagems.dimensionAllowed(it.dimension().location().toString())}==true)
+            return Visual(blocked=true,reason="dimension_unavailable")
         if(Stratagems.isOrbital(id)&&!DestroyerClient.available())return Visual(blocked=true,reason="destroyer_unavailable")
         if(id=="call_super_destroyer"&&DestroyerClient.transitionEnd>DestroyerClient.now(partial))return Visual(CallPhase.ARRIVING,DestroyerClient.transitionEnd-60,DestroyerClient.transitionEnd,blocked=true,reason="destroyer_warping")
         if(id=="call_super_destroyer"||id.startsWith("destroyer_"))return Visual()

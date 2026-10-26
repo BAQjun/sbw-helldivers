@@ -1,0 +1,60 @@
+{
+  "event": "sfx_orbital_fire",
+  "source_game": "Helldivers 2",
+  "bank": "weapons_superearth",
+  "native_event": 3503223889,
+  "play_action": 213547346,
+  "random_container": 498697372,
+  "playback": "Original finite random fire-orbit reports. Sent at the firing instant from the captured ship origin. Mono positional cue preserves the world bearing.",
+  "mix": "Static hierarchy and makeup gains retained; excludes WWiser automatic +2 dB master adjustment. Native RTPC and reverb mix are not reproduced.",
+  "variants": [
+    {
+      "media": 73462018,
+      "sound_node": 183113146,
+      "static_gain_db": -4.8,
+      "duration_seconds": 3.556,
+      "channels": 1,
+      "decoded_source_sha256": "ca667cecd8685702d1891520ce2c41b006bcd2c4d66ac3c5f21bed09bbb001bc",
+      "output_sha256": "5a707dc67c9fd0465a1b00e328bfad4946dcc35880b55ba285565adadaf61e4d"
+    },
+    {
+      "media": 907885375,
+      "sound_node": 444541330,
+      "static_gain_db": -3.7,
+      "duration_seconds": 3.8733333333333335,
+      "channels": 1,
+      "decoded_source_sha256": "5ca962f728911cdf1cf70bcee19f61d2d3b95cd85dd219b266b927b0993fd66c",
+      "output_sha256": "e3f1b50239935c2196b5f2d93a3ccea37b7389a0632412556d818e7fed4381ca"
+    },
+    {
+      "media": 831436773,
+      "sound_node": 788633863,
+      "static_gain_db": -4.2,
+      "duration_seconds": 4.041333333333333,
+      "channels": 1,
+      "decoded_source_sha256": "db3df67ca7a4b6f52693d80076e59a34c22b7943f59fbcaf38a64b98b9deea96",
+      "output_sha256": "d324e34d78ab9c838f2054ff59d94af4efa87e8571326905347692ecdd6392c3"
+    },
+    {
+      "media": 821916699,
+      "sound_node": 931573476,
+      "static_gain_db": -4.7,
+      "duration_seconds": 3.1266666666666665,
+      "channels": 1,
+      "decoded_source_sha256": "d12fb1299524f46f227d392493cb45623dd3394dfe55e2550b90295d748d12e2",
+      "output_sha256": "be74174f9b9424fe0561012d4d0a7721fa06ec6ad2201e72f11f7014b089094a"
+    },
+    {
+      "media": 681023606,
+      "sound_node": 1060603310,
+      "static_gain_db": -2.0,
+      "duration_seconds": 2.937333333333333,
+      "channels": 1,
+      "decoded_source_sha256": "df1c470b3aeb14476bcb53b9003c2ea692c8fa9b7059f834ae32759682fc26d2",
+      "output_sha256": "c7e1b4d1fa4f894d893268f9b92cf2277d5478053489e8e65446854d3f785d8e"
+    }
+  ],
+  "bank_sha256": "9c11f8cc925de4c373fc9823907e27bc21bf9a38878777ee625eb5a0076dc142",
+  "attenuation_distance": 128,
+  "label_reference": "https://github.com/Dekr0/hd2_audio_db/blob/97bf9aa85ee99715dfa1ec9730af28f363e02a43/label/weapons_stratagems/safe/orbital_precision_strike.json"
+}

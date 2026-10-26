@@ -196,5 +196,7 @@
   "config.sbw_helldiver.auto_retract.enter_world": "Enter a world to change its automatic retraction setting.",
   "config.sbw_helldiver.auto_retract.permission": "This server setting can only be changed by an operator or the singleplayer owner.",
   "config.sbw_helldiver.hint": "Click Save to apply. Automatic retraction applies to the current world.",
-  "subtitles.sbw_helldiver.sfx_orbital_incoming": "Orbital shell whistles"
+  "subtitles.sbw_helldiver.sfx_orbital_incoming": "Orbital shell whistles",
+  "hud.sbw_helldiver.dimension_unavailable": "Unavailable in the Nether",
+  "subtitles.sbw_helldiver.sfx_orbital_fire": "Super Destroyer fires"
 }

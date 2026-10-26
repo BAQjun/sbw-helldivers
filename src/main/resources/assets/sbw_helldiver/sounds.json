@@ -5181,5 +5181,30 @@
         "attenuation_distance": 128
       }
     ]
+  },
+  "sfx_orbital_fire": {
+    "subtitle": "subtitles.sbw_helldiver.sfx_orbital_fire",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/orbital_precision/fire_1",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_precision/fire_2",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_precision/fire_3",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_precision/fire_4",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_precision/fire_5",
+        "attenuation_distance": 128
+      }
+    ]
   }
 }

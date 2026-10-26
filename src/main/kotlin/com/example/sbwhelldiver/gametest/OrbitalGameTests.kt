@@ -130,4 +130,40 @@ object OrbitalGameTests {
   }
  }
 
+ @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",timeoutTicks=10)
+ fun netherBlocksEveryStratagemAndPreactivatedBeacons(h:GameTestHelper){
+  val nether=h.level.server.getLevel(net.minecraft.world.level.Level.NETHER)!!
+  val p=FakePlayerFactory.get(nether,GameProfile(UUID.randomUUID(),"NetherStratTest"))
+  p.inventory.clearContent();p.inventory.selected=0;p.setPos(0.5,80.0,0.5)
+  val beacon=ItemStack(ModItems.BEACON.get());BeaconData.ensureIdentity(beacon)
+  BeaconData.setItems(beacon,listOf(ItemStack(ModItems.ORBITAL_PRECISION_STRIKE.get())))
+  p.setItemInHand(InteractionHand.MAIN_HAND,beacon)
+  val id=BeaconData.identity(beacon)!!
+  val all=Stratagems.definitions+listOf(Stratagems.destroyerCall,Stratagems.eagleRearm)
+  for(enabled in listOf(true,false)){
+   StratagemCooldowns.setEnabled(p,enabled)
+   for(def in all){
+    h.assertTrue(!StratagemCooldowns.available(p,def.id),"Nether accepted availability: ${def.id} cooldown=$enabled")
+    h.assertTrue(!StratagemCooldowns.reserve(p,def.id,UUID.randomUUID()),"Nether reserved: ${def.id}")
+   }
+   h.assertTrue(!SuperDestroyers.move(p,Stratagems.UP)&&SuperDestroyers.state(p).destination==null,"Nether scheduled a ship")
+   h.assertTrue(!StratagemCooldowns.rearm(p),"Nether allowed rearming")
+   Stratagems.destroyerCall.code.forEach{BeaconInput.accept(p,InteractionHand.MAIN_HAND,id,it)}
+   h.assertTrue(BeaconInput.menuStage(p.uuid)==0,"Nether opened ship menu")
+   val def=Stratagems.get("machine_gun_sentry")!!
+   BeaconData.setItems(beacon,listOf(ItemStack(net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(def.itemId)!!)))
+   def.code.forEach{BeaconInput.accept(p,InteractionHand.MAIN_HAND,id,it)}
+   h.assertTrue(BeaconData.selected(beacon)==null,"Nether accepted beacon input")
+   BeaconData.activate(beacon,def)
+   h.assertTrue(!(beacon.item as com.example.sbwhelldiver.item.BeaconItem).throwActivated(p,InteractionHand.MAIN_HAND,id),"Nether threw a preactivated beacon")
+   BeaconData.clear(beacon)
+  }
+  val state=DestroyerState();state.schedule(DestroyerAnchor.at("minecraft:the_nether",p.position(),0,700.0,900.0),0);state.advance(60)
+  h.assertTrue(!state.available("minecraft:the_nether",p.position(),1024.0,60),"Legacy Nether ship remained usable")
+  h.assertTrue(Stratagems.dimensionAllowed("minecraft:overworld")&&Stratagems.dimensionAllowed("minecraft:the_end"),"Other dimensions were blocked")
+  val marker=ModEntities.STRATAGEM_MARKER.get().create(nether)!!;marker.setPos(p.position());marker.configure(Stratagems.get("machine_gun_sentry")!!.dropId,20,p.uuid);marker.tick()
+  h.assertTrue(marker.isRemoved&&marker.podUUID==null,"Nether marker spawned a pod")
+  BeaconInput.logout(p.uuid);StratagemCooldowns.setEnabled(p,true);p.discard();h.succeed()
+ }
+
 }

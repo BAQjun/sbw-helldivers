@@ -392,7 +392,7 @@ object StratagemClient {
             drawHudText(gui, Component.translatable("message.sbw_helldiver.deployment_failed"), textX, y + 17, 0xF07668)
             return
         }
-        val statusText = if (automatic && selected == def) Component.translatable("hud.sbw_helldiver.ready") else StratagemCooldownClient.text(status, partial)
+        val statusText = if (automatic && selected == def && !status.blocked) Component.translatable("hud.sbw_helldiver.ready") else StratagemCooldownClient.text(status, partial)
         if (statusText != null) {
             gui.pose().pushPose()
             gui.pose().translate(textX.toDouble(), (y + 17).toDouble(), 0.0)

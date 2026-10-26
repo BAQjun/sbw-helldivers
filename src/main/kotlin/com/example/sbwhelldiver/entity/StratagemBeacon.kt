@@ -141,6 +141,9 @@ class StratagemBeacon(type: EntityType<StratagemBeacon>, level: Level) :
     }
 
     private fun respondToContact(result: BlockHitResult, normal: Vec3, flatTop: Boolean) {
+        if (!level().isClientSide && !com.example.sbwhelldiver.stratagem.Stratagems.dimensionAllowed(level().dimension().location().toString())) {
+            failDeployment(); return
+        }
         if (!level().isClientSide && flatTop && hasOpenDeploymentColumns(result)) {
             val selected = BeaconData.selected(item)
             if (selected != null) {

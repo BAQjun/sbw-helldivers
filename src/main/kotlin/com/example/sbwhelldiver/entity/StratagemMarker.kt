@@ -88,6 +88,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     override fun tick() {
         super.tick()
         if (level().isClientSide) return
+        if (!Stratagems.dimensionAllowed(level().dimension().location().toString())) { updateCooldown(true); discard(); return }
         if (startedAt < 0 && dropTypeId == null) {
             startedAt = level().gameTime
             entityData.set(START, startedAt)
@@ -124,6 +125,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         if(orbitalFiredAt<0 && elapsedTicks>=duration) {
             if(orbitalOrigin==null){updateCooldown(true);discard();return}
             entityData.set(ORBITAL_FIRED_AT,server.gameTime)
+            com.example.sbwhelldiver.stratagem.SuperDestroyers.fire(server,orbitalOrigin!!,position())
             updateCooldown()
         }
         if(orbitalFiredAt<0)return

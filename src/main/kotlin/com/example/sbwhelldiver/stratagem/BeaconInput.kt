@@ -49,6 +49,11 @@ object BeaconInput {
             player.inventory.setChanged(); player.containerMenu.broadcastChanges()
             return false
         }
+        if (!Stratagems.dimensionAllowed(player.level().dimension().location().toString())) {
+            reset(player.uuid)
+            player.playNotifySound(ModSounds.EVENTS.getValue("beacon_input_error").get(), SoundSource.PLAYERS, 1f, 1f)
+            return false
+        }
         if (direction !in 0..3 || BeaconData.selected(stack) != null) return false
         val tick = player.level().gameTime
         var session = sessions[player.uuid]

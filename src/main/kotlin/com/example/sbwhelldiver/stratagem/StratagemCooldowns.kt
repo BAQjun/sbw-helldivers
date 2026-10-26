@@ -61,16 +61,17 @@ object StratagemCooldowns {
     }
     fun available(player: ServerPlayer, id: String) = change(player.server, player.uuid) { s, time ->
         s.equip(equipped(player))
-        if(id=="call_super_destroyer") SuperDestroyers.hasOrbital(player) && !SuperDestroyers.state(player).transitioning(time)
+        if(!Stratagems.dimensionAllowed(player.level().dimension().location().toString())) false
+        else if(id=="call_super_destroyer") SuperDestroyers.hasOrbital(player) && !SuperDestroyers.state(player).transitioning(time)
         else if(Stratagems.isOrbital(id) && !SuperDestroyers.available(player)) false
         else if (id == "eagle_rearm") s.enabled && s.equippedEagles.isNotEmpty() && !s.rearming(time)
         else s.available(id, time)
     }
-    fun reserve(player: ServerPlayer, id: String, token: UUID) = change(player.server, player.uuid) { s, time -> (!Stratagems.isOrbital(id) || SuperDestroyers.available(player)) && s.reserve(id, token, time) }
+    fun reserve(player: ServerPlayer, id: String, token: UUID) = change(player.server, player.uuid) { s, time -> Stratagems.dimensionAllowed(player.level().dimension().location().toString()) && (!Stratagems.isOrbital(id) || SuperDestroyers.available(player)) && s.reserve(id, token, time) }
     fun arrival(server: MinecraftServer, player: UUID, id: String, token: UUID, deadline: Long) =
         change(server, player) { s, time -> s.beginArrival(id, token, time, deadline) }
     fun cancel(server: MinecraftServer, player: UUID, id: String, token: UUID) = change(server, player) { s, _ -> s.cancel(id, token) }
-    fun rearm(player: ServerPlayer) = change(player.server, player.uuid) { s, time -> s.equip(equipped(player)); s.rearm(time) }
+    fun rearm(player: ServerPlayer) = change(player.server, player.uuid) { s, time -> s.equip(equipped(player)); Stratagems.dimensionAllowed(player.level().dimension().location().toString()) && s.rearm(time) }
     fun setEnabled(player: ServerPlayer, enabled: Boolean) = change(player.server, player.uuid) { s, time -> s.setEnabled(enabled, time) }
     fun sync(player: ServerPlayer) {
         if (player is FakePlayer) return
