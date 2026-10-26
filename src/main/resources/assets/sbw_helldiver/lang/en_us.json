@@ -172,5 +172,20 @@
   "item.sbw_helldiver.eagle_smoke_strike_stratagem": "Eagle Smoke Strike",
   "entity.sbw_helldiver.eagle_smoke_strike_bomb": "Eagle Smoke Strike — Bomb",
   "death.attack.sbw_helldiver.heavy_burning": "%1$s was consumed by napalm",
-  "death.attack.sbw_helldiver.heavy_burning.player": "%1$s was consumed by %2$s’s napalm"
+  "death.attack.sbw_helldiver.heavy_burning.player": "%1$s was consumed by %2$s’s napalm",
+  "item.sbw_helldiver.orbital_precision_strike_stratagem": "Orbital Precision Strike",
+  "item.sbw_helldiver.call_super_destroyer_stratagem": "Call In Super Destroyer",
+  "item.sbw_helldiver.destroyer_direction_stratagem": "Super Destroyer Bearing",
+  "item.sbw_helldiver.destroyer_manage_stratagem": "Super Destroyer Orders",
+  "entity.sbw_helldiver.orbital_precision_shell": "Orbital Precision Shell",
+  "hud.sbw_helldiver.destroyer_unavailable": "Super Destroyer unavailable",
+  "hud.sbw_helldiver.destroyer_warping": "Warp countdown %s",
+  "hud.sbw_helldiver.destroyer_north": "N",
+  "hud.sbw_helldiver.destroyer_west": "W",
+  "hud.sbw_helldiver.destroyer_east": "E",
+  "hud.sbw_helldiver.destroyer_south": "S",
+  "hud.sbw_helldiver.destroyer_depart": "Depart",
+  "hud.sbw_helldiver.destroyer_direction": "Bearing",
+  "subtitles.sbw_helldiver.super_destroyer_warp_in": "Super Destroyer warps in",
+  "subtitles.sbw_helldiver.super_destroyer_warp_out": "Super Destroyer warps out"
 }

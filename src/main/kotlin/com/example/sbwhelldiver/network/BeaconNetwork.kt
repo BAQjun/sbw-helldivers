@@ -60,8 +60,10 @@ data class BeaconFailurePacket(val stratagemId: String, val loadoutIds: List<Str
 }
 
 object BeaconNetwork {
-    val CHANNEL = NetworkRegistry.newSimpleChannel(ResourceLocation(MOD_ID, "beacon"), { "8" }, { it == "8" }, { it == "8" })
+    val CHANNEL = NetworkRegistry.newSimpleChannel(ResourceLocation(MOD_ID, "beacon"), { "9" }, { it == "9" }, { it == "9" })
     fun register() {
+        CHANNEL.registerMessage(13,DestroyerSnapshotPacket::class.java,{p,b->p.encode(b)},DestroyerSnapshotPacket::decode,DestroyerSnapshotPacket::handle,Optional.of(NetworkDirection.PLAY_TO_CLIENT))
+        CHANNEL.registerMessage(14,DestroyerMenuPacket::class.java,{p,b->p.encode(b)},DestroyerMenuPacket::decode,DestroyerMenuPacket::handle,Optional.of(NetworkDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(12,CooldownSnapshotPacket::class.java,{p,b->p.encode(b)},CooldownSnapshotPacket::decode,CooldownSnapshotPacket::handle,Optional.of(NetworkDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(11,DropSteerPacket::class.java,{p,b->p.encode(b)},DropSteerPacket::decode,DropSteerPacket::handle,Optional.of(NetworkDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(8,DropPreparePacket::class.java,{p,b->p.encode(b)},DropPreparePacket::decode,DropPreparePacket::handle,Optional.of(NetworkDirection.PLAY_TO_CLIENT))

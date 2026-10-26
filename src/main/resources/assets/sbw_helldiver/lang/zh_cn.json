@@ -172,5 +172,20 @@
   "item.sbw_helldiver.eagle_smoke_strike_stratagem": "“飞鹰”烟雾攻击",
   "entity.sbw_helldiver.eagle_smoke_strike_bomb": "“飞鹰”烟雾炸弹",
   "death.attack.sbw_helldiver.heavy_burning": "%1$s 被凝固汽油烧成了灰烬",
-  "death.attack.sbw_helldiver.heavy_burning.player": "%1$s 被 %2$s 的凝固汽油烧成了灰烬"
+  "death.attack.sbw_helldiver.heavy_burning.player": "%1$s 被 %2$s 的凝固汽油烧成了灰烬",
+  "item.sbw_helldiver.orbital_precision_strike_stratagem": "轨道精准打击",
+  "item.sbw_helldiver.call_super_destroyer_stratagem": "呼叫超级驱逐舰",
+  "item.sbw_helldiver.destroyer_direction_stratagem": "超级驱逐舰方位",
+  "item.sbw_helldiver.destroyer_manage_stratagem": "超级驱逐舰指令",
+  "entity.sbw_helldiver.orbital_precision_shell": "轨道精准打击炮弹",
+  "hud.sbw_helldiver.destroyer_unavailable": "超级驱逐舰不可用",
+  "hud.sbw_helldiver.destroyer_warping": "跃迁倒计时 %s",
+  "hud.sbw_helldiver.destroyer_north": "北",
+  "hud.sbw_helldiver.destroyer_west": "西",
+  "hud.sbw_helldiver.destroyer_east": "东",
+  "hud.sbw_helldiver.destroyer_south": "南",
+  "hud.sbw_helldiver.destroyer_depart": "撤离",
+  "hud.sbw_helldiver.destroyer_direction": "方位",
+  "subtitles.sbw_helldiver.super_destroyer_warp_in": "超级驱逐舰跃迁抵达",
+  "subtitles.sbw_helldiver.super_destroyer_warp_out": "超级驱逐舰跃迁撤离"
 }

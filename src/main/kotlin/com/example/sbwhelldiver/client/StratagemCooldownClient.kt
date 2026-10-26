@@ -24,7 +24,7 @@ import kotlin.math.ceil
 @Mod.EventBusSubscriber(modid = MOD_ID, value = [Dist.CLIENT])
 object StratagemCooldownClient : ResourceManagerReloadListener {
     data class Visual(val phase: CallPhase = CallPhase.READY, val start: Long = 0, val end: Long = 0,
-                      val remaining: Int = -1, val rearming: Boolean = false, val blocked: Boolean = false) {
+                      val remaining: Int = -1, val rearming: Boolean = false, val blocked: Boolean = false, val reason:String?=null) {
         fun progress(now: Double) = if (end <= start) 1.0 else ((now - start) / (end - start)).coerceIn(0.0, 1.0)
     }
     private var data = CompoundTag()
@@ -38,10 +38,19 @@ object StratagemCooldownClient : ResourceManagerReloadListener {
         localTime = Minecraft.getInstance().level?.gameTime ?: 0
     }
     @SubscribeEvent fun logout(event: ClientPlayerNetworkEvent.LoggingOut) { data = CompoundTag(); entries = emptyMap(); serverTime = 0; localTime = 0 }
-    fun commands(loadout: List<StratagemDefinition?>) = Stratagems.commands(loadout,
+    fun commands(loadout: List<StratagemDefinition?>):List<StratagemDefinition?> {
+        val stage=StratagemClient.destroyerStage
+        val task=when(stage){1->Stratagems.destroyerDirection;2->Stratagems.destroyerManage;else->null}
+        val base=Stratagems.commands(loadout,
         !data.getList("EquippedEagles", Tag.TAG_STRING.toInt()).isEmpty() || loadout.any { it?.id?.startsWith("eagle_") == true })
+        val all=if(DestroyerClient.equipped && Stratagems.destroyerCall !in base)listOf(Stratagems.destroyerCall)+base else base
+        return if(task==null)all else all.map{if(it==Stratagems.destroyerCall)task else it}
+    }
     fun now(partial: Float = 0f) = serverTime + ((Minecraft.getInstance().level?.gameTime ?: localTime) - localTime).toDouble() + partial
     fun visual(id: String, partial: Float = 0f): Visual {
+        if(Stratagems.isOrbital(id)&&!DestroyerClient.available())return Visual(blocked=true,reason="destroyer_unavailable")
+        if(id=="call_super_destroyer"&&DestroyerClient.transitionEnd>DestroyerClient.now(partial))return Visual(CallPhase.ARRIVING,DestroyerClient.transitionEnd-60,DestroyerClient.transitionEnd,blocked=true,reason="destroyer_warping")
+        if(id=="call_super_destroyer"||id.startsWith("destroyer_"))return Visual()
         if (!data.contains("Enabled") || !data.getBoolean("Enabled")) return Visual()
         val time = now(partial)
         val e = entries[id]
@@ -69,6 +78,7 @@ object StratagemCooldownClient : ResourceManagerReloadListener {
     fun available(id: String) = !visual(id).blocked && (id != "eagle_rearm" || !data.contains("Enabled") || data.getBoolean("Enabled"))
     fun text(v: Visual, partial: Float): Component? {
         val key = when {
+            v.reason!=null -> v.reason
             v.rearming -> "rearming"
             v.phase == CallPhase.ARRIVING -> "arrival"
             v.phase == CallPhase.COOLDOWN -> "cooldown"
@@ -95,7 +105,7 @@ object StratagemCooldownClient : ResourceManagerReloadListener {
     override fun onResourceManagerReload(manager: ResourceManager) {
         val textures = Minecraft.getInstance().textureManager
         grey.values.forEach(textures::release); grey.clear()
-        for (def in Stratagems.definitions + Stratagems.eagleRearm) {
+        for (def in Stratagems.definitions + listOf(Stratagems.eagleRearm,Stratagems.destroyerCall,Stratagems.destroyerDirection,Stratagems.destroyerManage)) {
             val resource = manager.getResource(def.icon).orElse(null) ?: continue
             val pixels = resource.open().use(NativeImage::read)
             // Native icons encode category and ammunition as two independent masks.

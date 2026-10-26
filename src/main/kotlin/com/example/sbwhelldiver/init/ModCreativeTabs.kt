@@ -25,6 +25,7 @@ object ModCreativeTabs {
             .icon { ItemStack(ModItems.BEACON.get()) }
             .displayItems { _, output ->
                 output.accept(ModItems.BEACON.get())
+                output.accept(ModItems.ORBITAL_PRECISION_STRIKE.get())
                 output.accept(ModItems.EAGLE_CLUSTER_BOMB.get())
                 output.accept(ModItems.EAGLE_110MM_ROCKET_PODS.get())
                 output.accept(ModItems.EAGLE_500KG_BOMB.get())

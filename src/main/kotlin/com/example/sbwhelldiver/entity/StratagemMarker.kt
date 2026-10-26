@@ -47,6 +47,8 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     private var surfaceY = 0.0
     private var podSpawned = false
     private var activationPlayed = false
+    val isOrbital get()=dropTypeId?.path?.startsWith("orbital_")==true
+    val orbitalOrigin:Vec3? get()=entityData.get(ORIGIN).takeIf{it.contains("X")}?.let{Vec3(it.getDouble("X"),it.getDouble("Y"),it.getDouble("Z"))}
     private val isEagle get()=dropTypeId?.path?.startsWith("eagle_")==true
     private val eagleCallTicks get()=EagleAttack.fromId(dropTypeId?.path).callTicks
     private var descentTicks = AbstractHellpodEntity.FALL_TICKS
@@ -56,15 +58,21 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         ownerUuid = owner
         startedAt = level().gameTime
         entityData.set(START, startedAt)
-        entityData.set(GRACE, if(isEagle) 0 else LANDING_GRACE_TICKS)
+        entityData.set(GRACE, if(isEagle || isOrbital) 0 else LANDING_GRACE_TICKS)
         surfaceY = groundY
-        descentTicks = if(isEagle) eagleCallTicks else AbstractHellpodEntity.FALL_TICKS
-        entityData.set(DURATION, if(isEagle) eagleCallTicks else delayTicks.coerceAtLeast(maxOf(20, descentTicks - landingGraceTicks)))
+        descentTicks = if(isOrbital) orbitalTerminalTicks() else if(isEagle) eagleCallTicks else AbstractHellpodEntity.FALL_TICKS
+        entityData.set(DURATION, if(isOrbital) com.example.sbwhelldiver.config.OrbitalConfig.callTicks() else if(isEagle) eagleCallTicks else delayTicks.coerceAtLeast(maxOf(20, descentTicks - landingGraceTicks)))
         entityData.set(LEFT, duration)
         entityData.set(AGE, 0)
         entityData.set(FACE, normal.get3DDataValue())
         entityData.set(COLOR, beamColor)
         entityData.set(STRATAGEM, dropType.path)
+        if(isOrbital){
+            val server=level().server
+            val origin=server?.let{com.example.sbwhelldiver.stratagem.SuperDestroyers.origin(it,owner,level().dimension().location().toString(),position())}
+            entityData.set(ORIGIN,CompoundTag().also{t->origin?.let{t.putDouble("X",it.x);t.putDouble("Y",it.y);t.putDouble("Z",it.z)}})
+        }
+        if(isOrbital) descentTicks=orbitalTerminalTicks()
         // Start the 4.75-second flight in time for impact one second after countdown zero.
         // Waiting happens before spawning, never by making the pod hover near the ground.
         isNoGravity = true
@@ -83,7 +91,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         entityData.set(LEFT, (duration - age).coerceAtLeast(0))
         playActivationSound()
         if (!podSpawned && age >= duration + landingGraceTicks - descentTicks) {
-            if (!(if(isEagle) spawnEagle() else spawnHellpod())) { updateCooldown(true); discard(); return }
+            if (!(if(isOrbital) spawnOrbitalShell() else if(isEagle) spawnEagle() else spawnHellpod())) { updateCooldown(true); discard(); return }
             podSpawned = true
             updateCooldown()
         }
@@ -104,6 +112,29 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         level().playSound(null, x, y, z, ModSounds.EVENTS.getValue("beacon_deploy").get(), SoundSource.PLAYERS, 1f, 1f)
     }
 
+    private fun orbitalTerminalTicks():Int {
+        val speed=(orbitalOrigin?.distanceTo(Vec3(x,surfaceY+.02,z))?:1.0)/duration
+        return minOf(3,(128.0/speed.coerceAtLeast(.01)).toInt().coerceAtLeast(1))
+    }
+    private fun spawnOrbitalShell():Boolean {
+        val server=level() as? ServerLevel?:return false
+        val origin=orbitalOrigin?:return false
+        val target=Vec3(x,surfaceY+.02,z)
+        val inward=target.subtract(origin).normalize()
+        // Match the distant visual trajectory exactly, enabling collision only near the target.
+        val terminal=orbitalTerminalTicks()
+        val speed=origin.distanceTo(target)/duration
+        val launch=target.subtract(inward.scale(speed*terminal))
+        val shell=com.example.sbwhelldiver.init.ModEntities.ORBITAL_SHELL.get().create(server)?:return false
+        shell.moveTo(launch.x,launch.y,launch.z,0f,0f)
+        ownerUuid?.let{server.getEntity(it)}?.let{shell.owner=it}
+        shell.shoot(inward.x,inward.y,inward.z,speed.toFloat(),0f)
+        val arrival=maxOf(arrivalDeadline,server.gameTime+terminal)
+        entityData.set(DURATION,(arrival-startedAt).toInt())
+        if(!server.addFreshEntity(shell))return false
+        podUUID=shell.uuid
+        return true
+    }
     private fun spawnEagle():Boolean {
         val server=level() as? ServerLevel?:return false
         val mode=EagleAttack.fromId(dropTypeId?.path)
@@ -140,6 +171,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
 
     override fun defineSynchedData() {
+        entityData.define(ORIGIN,CompoundTag())
         entityData.define(START, -1L)
         entityData.define(GRACE, LANDING_GRACE_TICKS)
         entityData.define(LEFT, 0)
@@ -150,6 +182,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         entityData.define(STRATAGEM, "")
     }
     override fun readAdditionalSaveData(tag: CompoundTag) {
+        entityData.set(ORIGIN,tag.getCompound("OrbitalOrigin"))
         managedRequest = if (tag.hasUUID("CooldownRequest")) tag.getUUID("CooldownRequest") else null
         dropTypeId = ResourceLocation.tryParse(tag.getString("DropType"))
         if (tag.hasUUID("Owner")) ownerUuid = tag.getUUID("Owner")
@@ -168,11 +201,12 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         entityData.set(STRATAGEM, dropTypeId?.path ?: "")
         podSpawned = tag.getBoolean("PodSpawned")
         activationPlayed = tag.getBoolean("ActivationPlayed")
-        descentTicks = if(isEagle)eagleCallTicks else AbstractHellpodEntity.FALL_TICKS
+        descentTicks = if(isOrbital)orbitalTerminalTicks() else if(isEagle)eagleCallTicks else AbstractHellpodEntity.FALL_TICKS
         isNoGravity = true
         noPhysics = true
     }
     override fun addAdditionalSaveData(tag: CompoundTag) {
+        tag.put("OrbitalOrigin",entityData.get(ORIGIN))
         managedRequest?.let { tag.putUUID("CooldownRequest", it) }
         dropTypeId?.let { tag.putString("DropType", it.toString()) }
         ownerUuid?.let { tag.putUUID("Owner", it) }
@@ -190,6 +224,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
     companion object {
         const val LANDING_GRACE_TICKS = 20
+        private val ORIGIN=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.COMPOUND_TAG)
         private val START = SynchedEntityData.defineId(StratagemMarker::class.java, EntityDataSerializers.LONG)
         private val GRACE = SynchedEntityData.defineId(StratagemMarker::class.java, EntityDataSerializers.INT)
         private val LEFT = SynchedEntityData.defineId(StratagemMarker::class.java, EntityDataSerializers.INT)

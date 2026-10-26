@@ -21,6 +21,7 @@ object ModEntities {
 
     val PLAYER_HELLPOD=ENTITIES.register("player_hellpod"){vehicle{t,l->com.example.sbwhelldiver.entity.PlayerHellpodEntity(t,l)}.sized(2.65f,.2f).build("player_hellpod")}
 
+    val ORBITAL_SHELL=ENTITIES.register("orbital_precision_shell"){EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.OrbitalPrecisionShellEntity(t,l)},MobCategory.MISC).sized(.3f,.3f).clientTrackingRange(32).updateInterval(1).build("orbital_precision_shell")}
     val EAGLE=ENTITIES.register("eagle") { EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.EagleEntity(t,l)},MobCategory.MISC).sized(17.8f,8.3f).clientTrackingRange(64).updateInterval(1).fireImmune().build("eagle") }
     val EAGLE_CLUSTER_BOMB=ENTITIES.register("eagle_cluster_bomb") { EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.EagleClusterBombEntity(t,l)},MobCategory.MISC).sized(0.35f,0.9f).clientTrackingRange(32).updateInterval(1).build("eagle_cluster_bomb") }
     val EAGLE_110MM_ROCKET=ENTITIES.register("eagle_110mm_rocket") { EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.Eagle110mmRocketEntity(t,l)},MobCategory.MISC).sized(0.2f,1.2f).clientTrackingRange(32).updateInterval(1).build("eagle_110mm_rocket") }

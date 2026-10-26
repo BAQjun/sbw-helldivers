@@ -1,0 +1,121 @@
+{
+  "in": {
+    "event": 411465629,
+    "bank": "env_ship",
+    "random_layers": 2,
+    "variants": [
+      {
+        "media": [
+          172661177,
+          357741275
+        ],
+        "delay_seconds": [
+          0.05,
+          0
+        ],
+        "gain_db": [
+          -22,
+          -22
+        ],
+        "sha256": "34f3e5357e51d379fd15d92ecc95007416d4067e075c777e273f0c8cbd400462"
+      },
+      {
+        "media": [
+          294718914,
+          574500365
+        ],
+        "delay_seconds": [
+          0.05,
+          0
+        ],
+        "gain_db": [
+          -22,
+          -22
+        ],
+        "sha256": "699d4b6350801ee0111fbf268f7962a5824aebe0f03051114ec1acb92cec41aa"
+      },
+      {
+        "media": [
+          357741275,
+          172661177
+        ],
+        "delay_seconds": [
+          0.05,
+          0
+        ],
+        "gain_db": [
+          -22,
+          -22
+        ],
+        "sha256": "b58a099aa064e3da9f773b0f039d8d2905f4c3959fc4e78515ac0cb575e7e7d7"
+      },
+      {
+        "media": [
+          574500365,
+          294718914
+        ],
+        "delay_seconds": [
+          0.05,
+          0
+        ],
+        "gain_db": [
+          -22,
+          -22
+        ],
+        "sha256": "fa344bfbab44060eb2fb19fc1383823c4d5ec5e33204d9ec123b62c41655c540"
+      }
+    ]
+  },
+  "out": {
+    "event": 498936900,
+    "bank": "env_ship",
+    "random_layers": 2,
+    "variants": [
+      {
+        "media": [
+          444583621,
+          278326420
+        ],
+        "delay_seconds": [
+          0.05,
+          0
+        ],
+        "gain_db": [
+          -25,
+          -22
+        ],
+        "sha256": "acbf593f445b8e00e20f8b87c23b3fb1ff416dc5f21c41ca4a860e4cd52b3e34"
+      },
+      {
+        "media": [
+          847833510,
+          1063864149
+        ],
+        "delay_seconds": [
+          0.05,
+          0
+        ],
+        "gain_db": [
+          -25,
+          -22
+        ],
+        "sha256": "3070c560733a729217019eaaef37057b87bb53d1f7d0ace8943d0164d2b9c8c0"
+      },
+      {
+        "media": [
+          696418108,
+          709961804
+        ],
+        "delay_seconds": [
+          0.05,
+          0
+        ],
+        "gain_db": [
+          -25,
+          -22
+        ],
+        "sha256": "55045d2c7bd85ea065e409dc85d66a510f1cdbe55f149fb573966c41f7ecbc44"
+      }
+    ]
+  }
+}

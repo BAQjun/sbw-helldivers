@@ -58,6 +58,7 @@ object ClientSetup {
         event.registerReloadListener(HellpodCapRenderer.Model)
         event.registerReloadListener(AntiPersonnelMineRenderer.Model)
         event.registerReloadListener(EagleRenderer.Model)
+        event.registerReloadListener(DestroyerClient)
         event.registerReloadListener(BeaconModel)
         event.registerReloadListener(MortarShellRenderer.Model)
         event.registerReloadListener(HmgFeedRenderer)
@@ -82,6 +83,7 @@ object ClientSetup {
     fun registerRenderers(event: EntityRenderersEvent.RegisterRenderers) {
         event.registerEntityRenderer<AutoAimableEntity>(ModEntities.PLAYER_HELLPOD.get(),::HellpodRenderer)
         event.registerEntityRenderer(ModEntities.EAGLE.get(),::EagleRenderer)
+        event.registerEntityRenderer(ModEntities.ORBITAL_SHELL.get(),{net.minecraft.client.renderer.entity.NoopRenderer(it)})
         event.registerEntityRenderer(ModEntities.EAGLE_NAPALM_BOMB.get()){EagleBombRenderer<com.example.sbwhelldiver.entity.EagleNapalmBombEntity>(it)}
         event.registerEntityRenderer(ModEntities.EAGLE_GAS_BOMB.get()){EagleBombRenderer<com.example.sbwhelldiver.entity.EagleGasBombEntity>(it)}
         event.registerEntityRenderer(ModEntities.EAGLE_SMOKE_BOMB.get()){EagleBombRenderer<com.example.sbwhelldiver.entity.EagleSmokeBombEntity>(it)}

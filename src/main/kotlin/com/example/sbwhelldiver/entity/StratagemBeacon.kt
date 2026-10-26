@@ -144,6 +144,11 @@ class StratagemBeacon(type: EntityType<StratagemBeacon>, level: Level) :
         if (!level().isClientSide && flatTop && hasOpenDeploymentColumns(result)) {
             val selected = BeaconData.selected(item)
             if (selected != null) {
+                if(com.example.sbwhelldiver.stratagem.Stratagems.isOrbital(selected.id)){
+                    val s=level().server
+                    val origin=s?.let{com.example.sbwhelldiver.stratagem.SuperDestroyers.origin(it,owner?.uuid?:savedCallOwner,level().dimension().location().toString(),result.location)}
+                    if(origin==null){failDeployment();return}
+                }
                 val marker = StratagemMarker(ModEntities.STRATAGEM_MARKER.get(), level())
                 val deployYaw=if(selected.dropId.path=="grenadier_battlement" || selected.category==com.example.sbwhelldiver.stratagem.StratagemCategory.RED)wallDeploymentYaw(result.location) else yRot
                 marker.moveTo(result.location.x, result.location.y + 0.015, result.location.z, deployYaw, 0f)

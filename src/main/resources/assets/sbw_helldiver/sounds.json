@@ -5031,5 +5031,43 @@
         "attenuation_distance": 128
       }
     ]
+  },
+  "super_destroyer_warp_in": {
+    "subtitle": "subtitles.sbw_helldiver.super_destroyer_warp_in",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/destroyer/warp_in_1",
+        "stream": false
+      },
+      {
+        "name": "sbw_helldiver:original/destroyer/warp_in_2",
+        "stream": false
+      },
+      {
+        "name": "sbw_helldiver:original/destroyer/warp_in_3",
+        "stream": false
+      },
+      {
+        "name": "sbw_helldiver:original/destroyer/warp_in_4",
+        "stream": false
+      }
+    ]
+  },
+  "super_destroyer_warp_out": {
+    "subtitle": "subtitles.sbw_helldiver.super_destroyer_warp_out",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/destroyer/warp_out_1",
+        "stream": false
+      },
+      {
+        "name": "sbw_helldiver:original/destroyer/warp_out_2",
+        "stream": false
+      },
+      {
+        "name": "sbw_helldiver:original/destroyer/warp_out_3",
+        "stream": false
+      }
+    ]
   }
 }

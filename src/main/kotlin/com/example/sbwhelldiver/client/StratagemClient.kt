@@ -134,7 +134,7 @@ object StratagemClient {
         val player = mc.player
         if (beaconBlocked()) {
             prefix.clear(); identity = null; previousHand = null; errorUntil = 0L
-            altWasDown = false; clearHud()
+            altWasDown = false; destroyerStage=0;clearHud()
             return
         }
         val down = holdingAlt()
@@ -182,6 +182,8 @@ object StratagemClient {
         }
         input(direction)
     }
+    var destroyerStage=0;private set
+    fun destroyerMenu(stage:Int){destroyerStage=stage;prefix.clear();lastInput=Minecraft.getInstance().level?.gameTime?:0}
     fun input(direction: Int) {
         updateAlt()
         val mc = Minecraft.getInstance()
@@ -191,6 +193,11 @@ object StratagemClient {
         val token = BeaconData.identity(stack) ?: return
         if (BeaconData.selected(stack) != null) return
         if (identity != token || previousHand != hand) { prefix.clear(); identity = token; previousHand = hand }
+        if(destroyerStage!=0){
+            lastInput=mc.level?.gameTime?:0
+            BeaconNetwork.CHANNEL.sendToServer(BeaconKeyPacket(hand,token,direction))
+            return
+        }
         prefix.add(direction)
         lastInput = mc.level?.gameTime ?: 0
         if (Stratagems.matching(StratagemCooldownClient.commands(BeaconData.loadout(stack)), prefix).filter { StratagemCooldownClient.available(it.id) }.isEmpty()) {
@@ -210,7 +217,7 @@ object StratagemClient {
         if (mc.level !== previousLevel) {
             failures.clear(); failureLoadout = List(4) { "" }; prefix.clear()
             previousSlot = -1; identity = null; previousHand = null; altWasDown = false; waitForAltRelease = false
-            clearHud(); StratagemNotifications.clear(); automaticLoadout = emptyList(); automaticSelected = null; lastAutomaticRows = emptyMap(); previousLevel = mc.level
+            clearHud(); StratagemNotifications.clear(); automaticLoadout = emptyList(); automaticSelected = null; lastAutomaticRows = emptyMap(); previousLevel = mc.level;destroyerStage=0
         }
         observeAutomaticLoadout()
         StratagemNotifications.tick(automaticLoadout)
@@ -222,9 +229,9 @@ object StratagemClient {
         previousSlot = slot
         val token = hand?.let { mc.player?.getItemInHand(it)?.let(BeaconData::identity) }
         if (!holdingAlt() || mc.screen != null || token != identity || hand != previousHand || (mc.level?.gameTime ?: 0) - lastInput > 100) {
-            if (prefix.isNotEmpty()) {
+            if (prefix.isNotEmpty() || destroyerStage!=0) {
                 if (identity != null && previousHand != null && mc.connection != null) BeaconNetwork.CHANNEL.sendToServer(BeaconKeyPacket(previousHand!!, identity!!, -1))
-                prefix.clear()
+                prefix.clear();destroyerStage=0
             }
             identity = token; previousHand = hand
         }
@@ -287,10 +294,12 @@ object StratagemClient {
         gui.pose().scale(scale, scale, 1f)
         gui.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, 0x70101C18)
         drawHudText(gui, Component.translatable("hud.sbw_helldiver.stratagems"), panelX + 8, panelY + 6, 0xEAF0EB)
+        var equipmentSlot = 0
         for (i in loadout.indices) {
             val def = loadout[i]
+            if (def == null || def in Stratagems.definitions) equipmentSlot++
             val y = panelY + 25 + rowHeight * i
-            if (def == null) { drawHudText(gui, Component.translatable("hud.sbw_helldiver.empty_slot", i + 1), textX, y + 6, 0x9DAFA3); continue }
+            if (def == null) { drawHudText(gui, Component.translatable("hud.sbw_helldiver.empty_slot", equipmentSlot), textX, y + 6, 0x9DAFA3); continue }
             drawRow(gui, def, y, selected, visiblePrefix, candidates, contents.inputError, i in lastFailureRows, partial)
         }
         if (selected != null) {
@@ -337,10 +346,32 @@ object StratagemClient {
         }
         val enabled = StratagemCooldownClient.available(def.id) && (visiblePrefix.isEmpty() || def in candidates || selected == def)
         val label = Component.translatable(def.translation).string
+        if(def==Stratagems.destroyerDirection||def==Stratagems.destroyerManage){
+            gui.pose().pushPose();gui.pose().translate(textX.toDouble(),y.toDouble(),0.0)
+            gui.drawString(mc.font,Component.translatable(def.translation),0,0,0xF4F4EF,true)
+            val options=if(def==Stratagems.destroyerDirection)listOf(0 to "north",3 to "west",1 to "east",2 to "south") else listOf(3 to "depart",1 to "direction")
+            options.forEachIndexed { i, (arrow, key) ->
+                val width = if (options.size == 4) 30 else 58
+                val x = i * width
+                ArrowGlyph.draw(gui, x, 18, arrow, 0xFFE6ECE6.toInt(), 1)
+                val text = Component.translatable("hud.sbw_helldiver.destroyer_$key")
+                val scale = minOf(1f, (width - 11f) / mc.font.width(text).coerceAtLeast(1))
+                gui.pose().pushPose()
+                gui.pose().translate((x + 9).toDouble(), 17.0, 0.0)
+                gui.pose().scale(scale, scale, 1f)
+                gui.drawString(mc.font, text, 0, 0, 0xE6ECE6, true)
+                gui.pose().popPose()
+            }
+            gui.pose().popPose();return
+        }
         val maxLabelWidth = ((panelWidth - 40) / 1.5f).toInt()
         val fittedLabel = if (mc.font.width(label) <= maxLabelWidth) label
             else mc.font.plainSubstrByWidth(label, maxLabelWidth - mc.font.width("…")) + "…"
-        drawHudText(gui, Component.literal(fittedLabel), textX, y, if (enabled) 0xF4F4EF else 0x95A79B)
+        if(def==Stratagems.destroyerCall){
+            gui.pose().pushPose();gui.pose().translate(textX.toDouble(),y.toDouble(),0.0)
+            val labelScale=minOf(1.5f,120f/mc.font.width(label).coerceAtLeast(1));gui.pose().scale(labelScale,labelScale,1f)
+            gui.drawString(mc.font,label,0,0,if(enabled)0xF4F4EF else 0x95A79B,true);gui.pose().popPose()
+        }else drawHudText(gui, Component.literal(fittedLabel), textX, y, if (enabled) 0xF4F4EF else 0x95A79B)
         if (failure) {
             drawHudText(gui, Component.translatable("message.sbw_helldiver.deployment_failed"), textX, y + 17, 0xF07668)
             return
@@ -355,7 +386,7 @@ object StratagemClient {
         }
         gui.pose().pushPose()
         gui.pose().translate(textX.toDouble(), (y + 17).toDouble(), 0.0)
-        gui.pose().scale(1.5f, 1.5f, 1f)
+        val arrowScale=minOf(1.5f,120f/(def.code.size.coerceAtLeast(1)*12));gui.pose().scale(arrowScale,arrowScale,1f)
         val revealed = if (automatic) StratagemNotifications.revealedArrows(def, partial) ?: def.code.size else def.code.size
         def.code.forEachIndexed { index, direction ->
             if (index >= revealed) return@forEachIndexed
