@@ -20,6 +20,10 @@ import net.minecraftforge.client.event.ClientPlayerNetworkEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.roundToInt
+import kotlin.math.min
+import kotlin.math.max
 
 @Mod.EventBusSubscriber(modid = MOD_ID, value = [Dist.CLIENT])
 object StratagemCooldownClient : ResourceManagerReloadListener {
@@ -31,6 +35,54 @@ object StratagemCooldownClient : ResourceManagerReloadListener {
     private var serverTime = 0L
     private var localTime = 0L
     private val grey = mutableMapOf<ResourceLocation, ResourceLocation>()
+    private data class HudIcon(val colour: ResourceLocation, val gray: ResourceLocation, val size: Int)
+    private var barrageSource: NativeImage? = null
+    private val barrageIcons = mutableMapOf<Int, HudIcon>()
+
+    // Prefilter once per physical HUD size. Nearest sampling from the 64px item
+    // texture can erase one-pixel shoulders; changing the artwork distorts it.
+    private fun barrageIcon(): HudIcon? {
+        val source = barrageSource ?: return null
+        val mc = Minecraft.getInstance()
+        val side = (26 * mc.window.guiScale).roundToInt().coerceIn(26, 512)
+        return barrageIcons.getOrPut(side) {
+            val colour = NativeImage(side, side, false)
+            val gray = NativeImage(side, side, false)
+            val stepX = source.width.toDouble() / side
+            val stepY = source.height.toDouble() / side
+            for (y in 0 until side) for (x in 0 until side) {
+                val left = x * stepX; val right = (x + 1) * stepX
+                val top = y * stepY; val bottom = (y + 1) * stepY
+                var red = 0.0; var green = 0.0; var blue = 0.0; var alpha = 0.0
+                for (sy in floor(top).toInt() until ceil(bottom).toInt().coerceAtMost(source.height))
+                    for (sx in floor(left).toInt() until ceil(right).toInt().coerceAtMost(source.width)) {
+                        val weight = (min(right, sx + 1.0) - max(left, sx.toDouble())) *
+                            (min(bottom, sy + 1.0) - max(top, sy.toDouble()))
+                        val c = source.getPixelRGBA(sx, sy)
+                        val a = (c ushr 24) * weight
+                        alpha += a
+                        red += (c and 255) * a; green += (c ushr 8 and 255) * a; blue += (c ushr 16 and 255) * a
+                    }
+                val r = if (alpha > 0) red / alpha else 0.0
+                val g = if (alpha > 0) green / alpha else 0.0
+                val b = if (alpha > 0) blue / alpha else 0.0
+                val a = (alpha / (stepX * stepY)).roundToInt().coerceIn(0, 255) shl 24
+                colour.setPixelRGBA(x, y, a or r.roundToInt() or (g.roundToInt() shl 8) or (b.roundToInt() shl 16))
+                // Recover red-category and cream-artwork coverage, as below.
+                val da = (r - 25) * 195 + (g - 3) * 97 + (b - 1) * 84
+                val db = (r - 25) * 230 + (g - 3) * 252 + (b - 1) * 237
+                val coverage = ((da * (172573.0 - 89202.0) + db * (54490.0 - 89202.0)) /
+                    (54490.0 * 172573.0 - 89202.0 * 89202.0)).coerceIn(0.0, 1.0)
+                val v = (96 + 159 * coverage).roundToInt()
+                gray.setPixelRGBA(x, y, a or v or (v shl 8) or (v shl 16))
+            }
+            val colourId = ResourceLocation(MOD_ID, "dynamic/cooldowns/120mm_colour_$side")
+            val grayId = ResourceLocation(MOD_ID, "dynamic/cooldowns/120mm_gray_$side")
+            mc.textureManager.register(colourId, DynamicTexture(colour))
+            mc.textureManager.register(grayId, DynamicTexture(gray))
+            HudIcon(colourId, grayId, side)
+        }
+    }
     private var entries = emptyMap<String, CompoundTag>()
     fun receive(packet: CooldownSnapshotPacket) {
         data = packet.state; serverTime = packet.serverTime
@@ -103,19 +155,27 @@ object StratagemCooldownClient : ResourceManagerReloadListener {
     }
     fun drawIcon(gui: GuiGraphics, def: StratagemDefinition, x: Int, y: Int, partial: Float) {
         val v = visual(def.id, partial)
-        val gray = grey[def.icon] ?: def.icon
+        val filtered = if (def.id == "orbital_120mm_he_barrage") barrageIcon() else null
+        val colour = filtered?.colour ?: def.icon
+        val gray = filtered?.gray ?: grey[def.icon] ?: def.icon
+        val size = filtered?.size ?: 64
         val arrival = v.phase == CallPhase.ARRIVING
         val cooling = v.phase == CallPhase.COOLDOWN
-        val base = if (arrival || !v.blocked && v.phase !in listOf(CallPhase.ACTIVE,CallPhase.ARRIVED)) def.icon else gray
-        gui.blit(base, x, y, 26, 26, 0f, 0f, 64, 64, 64, 64)
+        val base = if (arrival || !v.blocked && v.phase !in listOf(CallPhase.ACTIVE,CallPhase.ARRIVED)) colour else gray
+        gui.blit(base, x, y, 26, 26, 0f, 0f, size, size, size, size)
         if (arrival || cooling && (v.remaining != 0 || v.rearming)) {
             val h = (v.progress(now(partial)) * 26).toInt().coerceIn(0,26)
-            if (h > 0) gui.blit(if (arrival) gray else def.icon, x, y, 26, h, 0f, 0f, 64, (h * 64f / 26).toInt(), 64, 64)
+            if (h > 0) gui.blit(if (arrival) gray else colour, x, y, 26, h, 0f, 0f, size, (h * size.toFloat() / 26).roundToInt(), size, size)
         }
     }
     override fun onResourceManagerReload(manager: ResourceManager) {
         val textures = Minecraft.getInstance().textureManager
         grey.values.forEach(textures::release); grey.clear()
+        barrageIcons.values.forEach { textures.release(it.colour); textures.release(it.gray) }
+        barrageIcons.clear()
+        barrageSource?.close()
+        barrageSource = manager.getResource(ResourceLocation(MOD_ID, "textures/gui/stratagems/orbital_120mm_he_barrage.png"))
+            .orElse(null)?.open()?.use(NativeImage::read)
         for (def in Stratagems.definitions + listOf(Stratagems.eagleRearm,Stratagems.destroyerCall,Stratagems.destroyerDirection,Stratagems.destroyerManage)) {
             val resource = manager.getResource(def.icon).orElse(null) ?: continue
             val pixels = resource.open().use(NativeImage::read)

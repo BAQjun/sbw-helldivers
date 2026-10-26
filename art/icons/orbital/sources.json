@@ -32,8 +32,8 @@
     "nativeSource": "content/ui/shared/resources/generated_icons/stratagem_icons.xaml",
     "template": "DataTemplate.Icon.StratagemType.OrbitalStrike",
     "nativeStratagemType": "StratagemType_Orbital120mmHEBarrage",
-    "format": "Native shell motif adapted for small HUD sizes: broadened bodies retain a visible shoulder on both sides of every shell; shared two-pixel frame",
-    "sourceSha256": "5dd146ae849640434796aa39e1f7f451607bf54513d0988a5717b809c2c5e092"
+    "format": "Native vector paths with a shared two-pixel red frame; high-resolution HUD source preserves the original shell proportions",
+    "sourceSha256": "3e3852af76b675117893662a4e04b1eea45bb0a2125d0ab7b1a89c19b4074098"
   },
   {
     "id": "orbital_380mm_he_barrage",
