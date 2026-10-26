@@ -17,3 +17,8 @@ for id,hash in [('orbital_precision_strike','53031033ee7a60e3'),('call_super_des
  evidence.append({'id':id,'nativeHash':'0x'+hash,'sourceSha256':hashlib.sha256(source.read_bytes()).hexdigest(),'nativeStratagemType':'StratagemType_OrbitalPrecisionStrike' if id.startswith('orbital') else 'StratagemType_CallInSuperDestroyer'})
 (R/'art/icons/orbital/sources.json').write_text(json.dumps(evidence,indent=2)+'\n')
 print('Native mission and orbital icons staged')
+
+# Keep native mask exports consistent with the defensive card frame.
+import subprocess
+subprocess.run(["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
+                str(Path(__file__).with_name("normalize_red_stratagem_frames.ps1"))], check=True)

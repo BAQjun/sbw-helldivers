@@ -16,39 +16,39 @@
     "nativeSource": "content/ui/shared/resources/generated_icons/stratagem_icons.xaml",
     "template": "DataTemplate.Icon.StratagemType.OrbitalGatlingBarrage",
     "nativeStratagemType": "StratagemType_OrbitalGatlingBarrage",
-    "format": "Native vector paths, existing red/cream card palette and border",
-    "sourceSha256": "c9eb4d2eac7406db4da0eb5942b474765ab8c22b96626eea3d9eead2f197f155"
+    "format": "Native vector paths with a shared two-pixel red frame",
+    "sourceSha256": "e67337fbf70607b0bd1250a10400ecb56fdbe96d8e1204b96d156b0f6d5d3a07"
   },
   {
     "id": "orbital_airburst_strike",
     "nativeSource": "content/ui/shared/resources/generated_icons/stratagem_icons.xaml",
     "template": "DataTemplate.Icon.StratagemType.OrbitalShot",
     "nativeStratagemType": "StratagemType_OrbitalShot",
-    "format": "Native vector paths, existing red/cream card palette and border",
-    "sourceSha256": "99083ac11f1ae581a26de12d22f0a7f94ea76c22630d5a6992fcfbfae137c315"
+    "format": "Native vector paths with a shared two-pixel red frame",
+    "sourceSha256": "cde010931ed42d8afdc8e3516f9fdd200c58ab5d15a0c08bd21e634e0b329cdb"
   },
   {
     "id": "orbital_120mm_he_barrage",
     "nativeSource": "content/ui/shared/resources/generated_icons/stratagem_icons.xaml",
     "template": "DataTemplate.Icon.StratagemType.OrbitalStrike",
     "nativeStratagemType": "StratagemType_Orbital120mmHEBarrage",
-    "format": "Native vector paths, existing red/cream card palette and border",
-    "sourceSha256": "f60c6ffadf23dd632af4bab4ae3d5a3ee0ae02d6c22ca291b31696f73b3fb3e7"
+    "format": "Native vector paths with a shared two-pixel red frame; identical shell outlines aligned to the 64-pixel grid",
+    "sourceSha256": "d1c86d85940b37a9de60fc99694234e78bb50180db6de25a0626f39f58a2e033"
   },
   {
     "id": "orbital_380mm_he_barrage",
     "nativeSource": "content/ui/shared/resources/generated_icons/stratagem_icons.xaml",
     "template": "DataTemplate.Icon.StratagemType.OrbitalBarrage",
     "nativeStratagemType": "StratagemType_Orbital380mmHEBarrage",
-    "format": "Native vector paths, existing red/cream card palette and border",
-    "sourceSha256": "de7a29dc74c0a42874b850662c0687c2d63b08e641c6b136498b2b1e223a5d46"
+    "format": "Native vector paths with a shared two-pixel red frame",
+    "sourceSha256": "991d7b0e9539b8275587a48d49260758c19a60dd117f1d14f8b8a11799d4cb9a"
   },
   {
     "id": "orbital_walking_barrage",
     "nativeSource": "content/ui/shared/resources/generated_icons/stratagem_icons.xaml",
     "template": "DataTemplate.Icon.StratagemType.OrbitalWalkingBarrage",
     "nativeStratagemType": "StratagemType_OrbitalWalkingBarrage",
-    "format": "Native vector paths, existing red/cream card palette and border",
-    "sourceSha256": "66b61237671fb29be4a39e80e0cb99ef2f2fe96314b4e1d92437941e4f57159f"
+    "format": "Native vector paths with a shared two-pixel red frame",
+    "sourceSha256": "f6e7dfe861a93235294325330e2ecff6d500850d328a6ccb5ae8617af76704e6"
   }
 ]

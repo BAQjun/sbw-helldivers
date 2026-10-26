@@ -1,6 +1,6 @@
 """Stage Eagle field cards from native R/G masks. Run with Blender's Python."""
 from pathlib import Path
-import argparse,hashlib,json,struct,zlib
+import argparse,hashlib,json,struct,zlib,subprocess
 import bpy,numpy as np
 ROOT=Path(__file__).resolve().parents[1]
 CARDS={'eagle_napalm_airstrike':('napalm','3ec6a98542325181'),'eagle_gas_strike':('gas','0d3c8f39571eaea9'),'eagle_smoke_strike':('smoke','e768c8e161674303')}
@@ -26,4 +26,7 @@ def main():
   evidence.append({'id':id,'nativeHash':'0x'+hash,'nativeSha256':hashlib.sha256(source.read_bytes()).hexdigest()})
  (ROOT/'art/icons/eagle_fields/sources.json').write_text(json.dumps(evidence,indent=2)+'\n')
  print('Eagle field cards staged from native red/green masks')
+ # Match native mask exports to the shared defensive-card frame.
+ subprocess.run(["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
+                 str(Path(__file__).with_name("normalize_red_stratagem_frames.ps1"))], check=True)
 if __name__=='__main__':main()

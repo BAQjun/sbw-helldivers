@@ -27,3 +27,6 @@ $bitmap.Render($canvas)
 $encoder=[System.Windows.Media.Imaging.PngBitmapEncoder]::new();$encoder.Frames.Add([System.Windows.Media.Imaging.BitmapFrame]::Create($bitmap))
 $stream=[IO.File]::Create((Join-Path $repo 'src/main/resources/assets/sbw_helldiver/textures/item/orbital_airburst_strike_stratagem.png'))
 try{$encoder.Save($stream)}finally{$stream.Dispose()}
+
+# Use the same frame inset and thickness as defensive stratagem cards.
+& (Join-Path $PSScriptRoot "normalize_red_stratagem_frames.ps1")

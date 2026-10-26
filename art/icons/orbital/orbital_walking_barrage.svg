@@ -16,5 +16,5 @@
 <path fill="#FFFFEE" d="M140,72h8v8h-8z"/>
 <path fill="#FFFFEE" d="M140,56h8v8h-8z"/>
 <path fill="#FFFFEE" d="M140,40h8v8h-8z"/>
-<rect x="10" y="10" width="236" height="236" fill="none" stroke="#DC6455" stroke-width="12"/>
+<rect x="8" y="8" width="240" height="240" fill="none" stroke="#DC6455" stroke-width="8"/>
 </svg>
