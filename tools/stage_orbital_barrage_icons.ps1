@@ -21,17 +21,6 @@ foreach($node in $svg.svg.ChildNodes){
  }
  $canvas.Children.Add($shape)|Out-Null
 }
-# Keep native resolution for the 120mm HUD's screen-size prefilter.
-if($icon -eq 'orbital_120mm_he_barrage'){
- $canvas.Measure([System.Windows.Size]::new(256,256));$canvas.Arrange([System.Windows.Rect]::new(0,0,256,256));$canvas.UpdateLayout()
- $hud=[System.Windows.Media.Imaging.RenderTargetBitmap]::new(256,256,96,96,[System.Windows.Media.PixelFormats]::Pbgra32)
- $hud.Render($canvas)
- $hudEncoder=[System.Windows.Media.Imaging.PngBitmapEncoder]::new();$hudEncoder.Frames.Add([System.Windows.Media.Imaging.BitmapFrame]::Create($hud))
- $hudDirectory=Join-Path $repo 'src/main/resources/assets/sbw_helldiver/textures/gui/stratagems'
- [IO.Directory]::CreateDirectory($hudDirectory)|Out-Null
- $hudStream=[IO.File]::Create((Join-Path $hudDirectory ($icon+'.png')))
- try{$hudEncoder.Save($hudStream)}finally{$hudStream.Dispose()}
-}
 $canvas.LayoutTransform=[System.Windows.Media.ScaleTransform]::new(.25,.25)
 $canvas.Measure([System.Windows.Size]::new(64,64));$canvas.Arrange([System.Windows.Rect]::new(0,0,64,64));$canvas.UpdateLayout()
 $bitmap=[System.Windows.Media.Imaging.RenderTargetBitmap]::new(64,64,96,96,[System.Windows.Media.PixelFormats]::Pbgra32)
