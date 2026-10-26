@@ -85,7 +85,7 @@ object MortarFieldAudio : ResourceManagerReloadListener {
     }
     private class FieldSound(field: MortarFieldEntity, val effect: String, private val duration: Int,
                              val gasAmbient: Boolean) : AbstractTickableSoundInstance(
-        SoundEvent.createFixedRangeEvent(AssetCatalog.sound(effect), if (gasAmbient) 32f else 96f),
+        SoundEvent.createFixedRangeEvent(AssetCatalog.sound(effect), if (gasAmbient) 64f else 96f),
         SoundSource.NEUTRAL, RandomSource.create()) {
         private val reference = WeakReference(field)
         private val sourceLevel = field.level()

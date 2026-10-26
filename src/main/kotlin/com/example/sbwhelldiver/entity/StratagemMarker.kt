@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level
 import java.util.UUID
 import net.minecraft.world.phys.Vec3
 
-/** The visible countdown ends one second before impact; the pod flies for 95 ticks. */
+/** Hellpods have a landing grace period; orbital fire begins only after its countdown. */
 class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     val callStartedAt get() = entityData.get(START)
     val countdownEndsAt get() = callStartedAt + duration
@@ -24,7 +24,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     val arrivalDeadline get() = countdownEndsAt + landingGraceTicks
     val ticksLeft get() = if (level().isClientSide && callStartedAt >= 0) (duration - elapsedTicks).coerceAtLeast(0) else entityData.get(LEFT)
     val elapsedTicks get() = if (level().isClientSide && callStartedAt >= 0) (level().gameTime - callStartedAt).coerceAtLeast(0).toInt() else entityData.get(AGE)
-    val hasArrived get()=elapsedTicks>=duration+landingGraceTicks
+    val hasArrived get()=if(isOrbital)orbitalFiredAt>=0 else elapsedTicks>=duration+landingGraceTicks
     val duration get() = entityData.get(DURATION)
     val color get() = entityData.get(COLOR)
     val face get() = Direction.from3DDataValue(entityData.get(FACE))
@@ -47,8 +47,12 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     private var surfaceY = 0.0
     private var podSpawned = false
     private var activationPlayed = false
-    val isOrbital get()=dropTypeId?.path?.startsWith("orbital_")==true
+    val isOrbital get()=(dropTypeId?.path ?: entityData.get(STRATAGEM)).startsWith("orbital_")
     val orbitalOrigin:Vec3? get()=entityData.get(ORIGIN).takeIf{it.contains("X")}?.let{Vec3(it.getDouble("X"),it.getDouble("Y"),it.getDouble("Z"))}
+    val orbitalFiredAt get()=entityData.get(ORBITAL_FIRED_AT)
+    val orbitalFlightTicks get()=entityData.get(ORBITAL_FLIGHT_TICKS)
+    val orbitalImpactAt get()=orbitalFiredAt+orbitalFlightTicks
+    fun orbitalProgress(partial:Float=0f)=if(orbitalFiredAt<0)-1.0 else (level().gameTime-orbitalFiredAt+partial.toDouble())/orbitalFlightTicks
     private val isEagle get()=dropTypeId?.path?.startsWith("eagle_")==true
     private val eagleCallTicks get()=EagleAttack.fromId(dropTypeId?.path).callTicks
     private var descentTicks = AbstractHellpodEntity.FALL_TICKS
@@ -68,6 +72,8 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         entityData.set(COLOR, beamColor)
         entityData.set(STRATAGEM, dropType.path)
         if(isOrbital){
+            entityData.set(ORBITAL_FLIGHT_TICKS,com.example.sbwhelldiver.config.OrbitalConfig.flightTicks())
+            entityData.set(ORBITAL_FIRED_AT,-1L)
             val server=level().server
             val origin=server?.let{com.example.sbwhelldiver.stratagem.SuperDestroyers.origin(it,owner,level().dimension().location().toString(),position())}
             entityData.set(ORIGIN,CompoundTag().also{t->origin?.let{t.putDouble("X",it.x);t.putDouble("Y",it.y);t.putDouble("Z",it.z)}})
@@ -90,8 +96,9 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         entityData.set(AGE, age)
         entityData.set(LEFT, (duration - age).coerceAtLeast(0))
         playActivationSound()
+        if(isOrbital){tickOrbital();return}
         if (!podSpawned && age >= duration + landingGraceTicks - descentTicks) {
-            if (!(if(isOrbital) spawnOrbitalShell() else if(isEagle) spawnEagle() else spawnHellpod())) { updateCooldown(true); discard(); return }
+            if (!(if(isEagle) spawnEagle() else spawnHellpod())) { updateCooldown(true); discard(); return }
             podSpawned = true
             updateCooldown()
         }
@@ -112,8 +119,23 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         level().playSound(null, x, y, z, ModSounds.EVENTS.getValue("beacon_deploy").get(), SoundSource.PLAYERS, 1f, 1f)
     }
 
+    private fun tickOrbital() {
+        val server=level() as ServerLevel
+        if(orbitalFiredAt<0 && elapsedTicks>=duration) {
+            if(orbitalOrigin==null){updateCooldown(true);discard();return}
+            entityData.set(ORBITAL_FIRED_AT,server.gameTime)
+            updateCooldown()
+        }
+        if(orbitalFiredAt<0)return
+        if(!podSpawned && server.gameTime>=orbitalImpactAt-orbitalTerminalTicks()) {
+            if(!spawnOrbitalShell()){discard();return}
+            podSpawned=true
+        }
+        // Keep the beam until the real terminal shell hits terrain or a creature.
+        if(podSpawned && (podUUID?.let(server::getEntity)==null || server.gameTime>orbitalImpactAt+40))discard()
+    }
     private fun orbitalTerminalTicks():Int {
-        val speed=(orbitalOrigin?.distanceTo(Vec3(x,surfaceY+.02,z))?:1.0)/duration
+        val speed=(orbitalOrigin?.distanceTo(Vec3(x,surfaceY+.02,z))?:1.0)/orbitalFlightTicks
         return minOf(3,(128.0/speed.coerceAtLeast(.01)).toInt().coerceAtLeast(1))
     }
     private fun spawnOrbitalShell():Boolean {
@@ -123,14 +145,12 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         val inward=target.subtract(origin).normalize()
         // Match the distant visual trajectory exactly, enabling collision only near the target.
         val terminal=orbitalTerminalTicks()
-        val speed=origin.distanceTo(target)/duration
+        val speed=origin.distanceTo(target)/orbitalFlightTicks
         val launch=target.subtract(inward.scale(speed*terminal))
         val shell=com.example.sbwhelldiver.init.ModEntities.ORBITAL_SHELL.get().create(server)?:return false
         shell.moveTo(launch.x,launch.y,launch.z,0f,0f)
         ownerUuid?.let{server.getEntity(it)}?.let{shell.owner=it}
         shell.shoot(inward.x,inward.y,inward.z,speed.toFloat(),0f)
-        val arrival=maxOf(arrivalDeadline,server.gameTime+terminal)
-        entityData.set(DURATION,(arrival-startedAt).toInt())
         if(!server.addFreshEntity(shell))return false
         podUUID=shell.uuid
         return true
@@ -172,6 +192,8 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
 
     override fun defineSynchedData() {
         entityData.define(ORIGIN,CompoundTag())
+        entityData.define(ORBITAL_FIRED_AT,-1L)
+        entityData.define(ORBITAL_FLIGHT_TICKS,30)
         entityData.define(START, -1L)
         entityData.define(GRACE, LANDING_GRACE_TICKS)
         entityData.define(LEFT, 0)
@@ -183,6 +205,8 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
     override fun readAdditionalSaveData(tag: CompoundTag) {
         entityData.set(ORIGIN,tag.getCompound("OrbitalOrigin"))
+        entityData.set(ORBITAL_FIRED_AT,if(tag.contains("OrbitalFiredAt"))tag.getLong("OrbitalFiredAt") else -1L)
+        entityData.set(ORBITAL_FLIGHT_TICKS,if(tag.contains("OrbitalFlightTicks"))tag.getInt("OrbitalFlightTicks").coerceAtLeast(10) else com.example.sbwhelldiver.config.OrbitalConfig.flightTicks())
         managedRequest = if (tag.hasUUID("CooldownRequest")) tag.getUUID("CooldownRequest") else null
         dropTypeId = ResourceLocation.tryParse(tag.getString("DropType"))
         if (tag.hasUUID("Owner")) ownerUuid = tag.getUUID("Owner")
@@ -200,6 +224,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         entityData.set(FACE, if (tag.contains("SurfaceFace")) tag.getInt("SurfaceFace") else Direction.UP.get3DDataValue())
         entityData.set(STRATAGEM, dropTypeId?.path ?: "")
         podSpawned = tag.getBoolean("PodSpawned")
+        if(isOrbital && podSpawned && !tag.contains("OrbitalFiredAt")) entityData.set(ORBITAL_FIRED_AT,startedAt+length-orbitalFlightTicks)
         activationPlayed = tag.getBoolean("ActivationPlayed")
         descentTicks = if(isOrbital)orbitalTerminalTicks() else if(isEagle)eagleCallTicks else AbstractHellpodEntity.FALL_TICKS
         isNoGravity = true
@@ -207,6 +232,8 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
     override fun addAdditionalSaveData(tag: CompoundTag) {
         tag.put("OrbitalOrigin",entityData.get(ORIGIN))
+        tag.putLong("OrbitalFiredAt",orbitalFiredAt)
+        tag.putInt("OrbitalFlightTicks",orbitalFlightTicks)
         managedRequest?.let { tag.putUUID("CooldownRequest", it) }
         dropTypeId?.let { tag.putString("DropType", it.toString()) }
         ownerUuid?.let { tag.putUUID("Owner", it) }
@@ -224,6 +251,8 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
     companion object {
         const val LANDING_GRACE_TICKS = 20
+        private val ORBITAL_FIRED_AT=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.LONG)
+        private val ORBITAL_FLIGHT_TICKS=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.INT)
         private val ORIGIN=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.COMPOUND_TAG)
         private val START = SynchedEntityData.defineId(StratagemMarker::class.java, EntityDataSerializers.LONG)
         private val GRACE = SynchedEntityData.defineId(StratagemMarker::class.java, EntityDataSerializers.INT)

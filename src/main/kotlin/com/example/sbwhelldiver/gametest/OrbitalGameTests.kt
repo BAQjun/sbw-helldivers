@@ -92,4 +92,42 @@ object OrbitalGameTests {
   val after=victims.map{it.health};shell.causeExplode(origin);h.assertTrue(after==victims.map{it.health},"Duplicate blast")
   victims.forEach{it.discard()};h.succeed()
  }
+ @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",timeoutTicks=5)
+ fun spatialWarpBearingAndMinimumSoundReach(h:GameTestHelper){
+  val eye=Vec3(20.0,70.0,30.0)
+  for(offset in listOf(Vec3(700.0,900.0,0.0),Vec3(-700.0,900.0,0.0),Vec3(0.0,900.0,700.0),Vec3(0.0,900.0,-700.0))){
+   val projected=OrbitalAudioPosition.project(eye,eye.add(offset),horizon=true).subtract(eye)
+   h.assertTrue(abs(projected.length()-24.0)<1e-6,"Warp cue outside audible projection")
+   h.assertTrue(projected.horizontalDistance()>20.0&&projected.x*offset.z-projected.z*offset.x==0.0&&projected.dot(offset)>0,"Warp cue lost horizontal bearing")
+  }
+  ModSounds.EVENTS.forEach{(key,event)->h.assertTrue(event.get().getRange(1f)>=64f,"Sound below 64 blocks: $key")}
+  h.assertTrue(ModSounds.EVENTS.getValue("sfx_orbital_incoming").get().getRange(1f)==128f,"Incoming shell range lost")
+  h.succeed()
+ }
+ @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",timeoutTicks=125)
+ fun countdownThenFlightKeepsBeaconUntilImpact(h:GameTestHelper){
+  val p=pilot(h);val world=h.level;val now=StratagemCooldowns.now(p.server)
+  SuperDestroyers.move(p,Stratagems.UP);SuperDestroyers.state(p).advance(now+60)
+  val target=Vec3.atBottomCenterOf(h.absolutePos(BlockPos(15,3,15)))
+  for(x in -2..2)for(z in -2..2)world.setBlock(net.minecraft.core.BlockPos.containing(target.add(x.toDouble(),-1.0,z.toDouble())),net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(),3)
+  val marker=ModEntities.STRATAGEM_MARKER.get().create(world)!!;marker.setPos(target)
+  marker.configure(Stratagems.get("orbital_precision_strike")!!.dropId,10,p.uuid,groundY=target.y)
+  h.assertTrue(marker.duration==60&&marker.orbitalFlightTicks==30&&marker.orbitalOrigin!=null,"Firing/flight defaults incorrect")
+  world.addFreshEntity(marker)
+  h.runAfterDelay(58){h.assertTrue(marker.orbitalFiredAt<0&&marker.orbitalProgress()<0&&marker.podUUID==null,"Orbital shell fired before countdown zero")}
+  h.runAfterDelay(65){
+   h.assertTrue(marker.orbitalFiredAt-marker.callStartedAt==60L&&!marker.isRemoved&&marker.podUUID==null,"Firing did not start at three seconds or skipped shell flight")
+   val saved=CompoundTag();marker.saveWithoutId(saved)
+   val restored=ModEntities.STRATAGEM_MARKER.get().create(world)!!;restored.load(saved)
+   h.assertTrue(restored.orbitalFiredAt==marker.orbitalFiredAt&&restored.orbitalImpactAt==marker.orbitalImpactAt&&restored.orbitalOrigin==marker.orbitalOrigin,"Midflight reload reset shot timing")
+   restored.discard()
+  }
+  h.runAfterDelay(83){h.assertTrue(!marker.isRemoved&&marker.orbitalProgress() in .65.. .9,"Beacon disappeared during flight")}
+  h.runAfterDelay(103){
+   h.assertTrue(marker.isRemoved&&marker.podUUID!=null,"Terminal shell never hit or beacon remained after impact")
+   h.assertTrue(world.getEntity(marker.podUUID!!)==null,"Terminal shell survived impact")
+   p.discard();h.succeed()
+  }
+ }
+
 }

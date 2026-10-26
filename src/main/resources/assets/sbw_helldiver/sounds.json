@@ -97,25 +97,25 @@
         "name": "sbw_helldiver:original/stratagems_shared/991190436",
         "stream": false,
         "volume": 0.27227,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/150551912",
         "stream": false,
         "volume": 0.260016,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/865202699",
         "stream": false,
         "volume": 0.266073,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/187293295",
         "stream": false,
         "volume": 0.25704,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       }
     ]
   },
@@ -181,25 +181,25 @@
         "name": "sbw_helldiver:original/stratagems_sentry_gatling/725999846",
         "stream": false,
         "volume": 0.125893,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_sentry_gatling/894949674",
         "stream": false,
         "volume": 0.141254,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_sentry_gatling/587034285",
         "stream": false,
         "volume": 0.177828,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_sentry_gatling/199721999",
         "stream": false,
         "volume": 0.158489,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       }
     ]
   },
@@ -209,25 +209,25 @@
         "name": "sbw_helldiver:original/stratagems_sentry_gatling/176071137",
         "stream": false,
         "volume": 0.158489,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_sentry_gatling/150128688",
         "stream": false,
         "volume": 0.11885,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_sentry_gatling/120052619",
         "stream": false,
         "volume": 0.158489,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_sentry_gatling/115005708",
         "stream": false,
         "volume": 0.133352,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       }
     ]
   },
@@ -321,37 +321,37 @@
         "name": "sbw_helldiver:original/stratagems_shared/755719683",
         "stream": false,
         "volume": 0.354813,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/390981851",
         "stream": false,
         "volume": 0.354813,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/708837183",
         "stream": false,
         "volume": 0.354813,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/251293470",
         "stream": false,
         "volume": 0.354813,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/413433671",
         "stream": false,
         "volume": 0.354813,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/639096707",
         "stream": false,
         "volume": 0.354813,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       }
     ]
   },
@@ -361,37 +361,37 @@
         "name": "sbw_helldiver:original/stratagems_shared/899338658",
         "stream": false,
         "volume": 0.186209,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/79020237",
         "stream": false,
         "volume": 0.17378,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/998298968",
         "stream": false,
         "volume": 0.177828,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/955210200",
         "stream": false,
         "volume": 0.184077,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/1050909716",
         "stream": false,
         "volume": 0.184077,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/944254596",
         "stream": false,
         "volume": 0.199526,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       }
     ]
   },
@@ -837,28 +837,28 @@
         "stream": false,
         "volume": 0.089125,
         "weight": 1,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_sentry_rocket/996112203",
         "stream": false,
         "volume": 0.089125,
         "weight": 1,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_sentry_rocket/242383957",
         "stream": false,
         "volume": 0.089125,
         "weight": 1,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_sentry_rocket/97740436",
         "stream": false,
         "volume": 0.089125,
         "weight": 1,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       }
     ]
   },
@@ -970,25 +970,25 @@
         "name": "sbw_helldiver:original/stratagems_sentry_rocket/719329833",
         "stream": false,
         "volume": 0.421697,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_sentry_rocket/617040373",
         "stream": false,
         "volume": 0.334965,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_sentry_rocket/555944448",
         "stream": false,
         "volume": 0.298538,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_sentry_rocket/245603530",
         "stream": false,
         "volume": 0.398107,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       }
     ]
   },
@@ -1182,25 +1182,25 @@
         "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/191198107",
         "stream": false,
         "volume": 0.288403,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/969561960",
         "stream": false,
         "volume": 0.275423,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/828593637",
         "stream": false,
         "volume": 0.291743,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_sentry_auto_cannon/1013703909",
         "stream": false,
         "volume": 0.278612,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       }
     ]
   },
@@ -1209,7 +1209,8 @@
     "sounds": [
       {
         "name": "sbw_helldiver:beacon/beacon_ready",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 64
       }
     ]
   },
@@ -1228,7 +1229,8 @@
     "sounds": [
       {
         "name": "sbw_helldiver:beacon/arrow_input_1",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 64
       }
     ]
   },
@@ -1237,7 +1239,8 @@
     "sounds": [
       {
         "name": "sbw_helldiver:beacon/arrow_input_2",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 64
       }
     ]
   },
@@ -1246,7 +1249,8 @@
     "sounds": [
       {
         "name": "sbw_helldiver:beacon/arrow_input_3",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 64
       }
     ]
   },
@@ -1255,7 +1259,8 @@
     "sounds": [
       {
         "name": "sbw_helldiver:beacon/arrow_input_4",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 64
       }
     ]
   },
@@ -1264,7 +1269,8 @@
     "sounds": [
       {
         "name": "sbw_helldiver:beacon/arrow_input_5",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 64
       }
     ]
   },
@@ -1273,7 +1279,8 @@
     "sounds": [
       {
         "name": "sbw_helldiver:beacon/arrow_input_6",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 64
       }
     ]
   },
@@ -1282,7 +1289,8 @@
     "sounds": [
       {
         "name": "sbw_helldiver:beacon/arrow_input_7",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 64
       }
     ]
   },
@@ -1291,7 +1299,8 @@
     "sounds": [
       {
         "name": "sbw_helldiver:beacon/arrow_input_8",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 64
       }
     ]
   },
@@ -1300,11 +1309,13 @@
     "sounds": [
       {
         "name": "sbw_helldiver:beacon/input_error_1",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:beacon/input_error_2",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 64
       }
     ]
   },
@@ -1430,25 +1441,25 @@
         "name": "sbw_helldiver:mortar/759322321",
         "volume": 1.0,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:mortar/777912252",
         "volume": 0.8413951416451951,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:mortar/320784744",
         "volume": 1.0,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:mortar/613524158",
         "volume": 0.7079457843841379,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       }
     ],
     "subtitle": "subtitle.sbw_helldiver.mortar_deploy"
@@ -1459,25 +1470,25 @@
         "name": "sbw_helldiver:mortar/894015766",
         "volume": 1.0,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:mortar/1018756368",
         "volume": 0.8413951416451951,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:mortar/639305070",
         "volume": 1.0,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:mortar/770481714",
         "volume": 1.0,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       }
     ],
     "subtitle": "subtitle.sbw_helldiver.mortar_retract"
@@ -1488,25 +1499,25 @@
         "name": "sbw_helldiver:mortar/809663379",
         "volume": 0.31622776601683794,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:mortar/14050216",
         "volume": 0.31622776601683794,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:mortar/723197760",
         "volume": 0.31622776601683794,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:mortar/448271394",
         "volume": 0.31622776601683794,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       }
     ],
     "subtitle": "subtitle.sbw_helldiver.mortar_feed"
@@ -1945,7 +1956,7 @@
         "name": "sbw_helldiver:original/status_mortar/stratagems_sentry_mortar_gas/994280156",
         "stream": true,
         "volume": 0.18836490894898006,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       }
     ]
   },
@@ -1955,19 +1966,19 @@
         "name": "sbw_helldiver:original/flame_sentry/226001639",
         "volume": 1.0,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/flame_sentry/764443144",
         "volume": 1.0,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/flame_sentry/311732945",
         "volume": 1.0,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       }
     ]
   },
@@ -2051,7 +2062,7 @@
         "name": "sbw_helldiver:original/flame_sentry/899719403",
         "volume": 0.35481338923357547,
         "stream": true,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       }
     ]
   },
@@ -2061,55 +2072,55 @@
         "name": "sbw_helldiver:original/flame_sentry/1029095425",
         "volume": 0.6309573444801932,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/flame_sentry/872899162",
         "volume": 0.6309573444801932,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/flame_sentry/644610683",
         "volume": 0.5623413251903491,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/flame_sentry/709761443",
         "volume": 0.5623413251903491,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/flame_sentry/803028819",
         "volume": 0.5956621435290105,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/flame_sentry/528415197",
         "volume": 0.6309573444801932,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/flame_sentry/362023796",
         "volume": 0.7943282347242815,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/flame_sentry/871686090",
         "volume": 0.7943282347242815,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/flame_sentry/336105898",
         "volume": 1.0,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       }
     ]
   },
@@ -2119,55 +2130,55 @@
         "name": "sbw_helldiver:original/flame_sentry/1029095425",
         "volume": 0.6309573444801932,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/flame_sentry/872899162",
         "volume": 0.6309573444801932,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/flame_sentry/644610683",
         "volume": 0.5623413251903491,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/flame_sentry/709761443",
         "volume": 0.5623413251903491,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/flame_sentry/803028819",
         "volume": 0.5956621435290105,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/flame_sentry/528415197",
         "volume": 0.6309573444801932,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/flame_sentry/362023796",
         "volume": 0.7943282347242815,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/flame_sentry/871686090",
         "volume": 0.7943282347242815,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/flame_sentry/336105898",
         "volume": 1.0,
         "stream": false,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       }
     ]
   },
@@ -3303,31 +3314,31 @@
         "name": "sbw_helldiver:original/tesla_tower/49840267",
         "volume": 1.0,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/739860147",
         "volume": 1.0,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/592294010",
         "volume": 0.8912509381337456,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/314930401",
         "volume": 0.8912509381337456,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/957439613",
         "volume": 1.0,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       }
     ]
   },
@@ -3337,7 +3348,7 @@
         "name": "sbw_helldiver:original/tesla_tower/615777299",
         "volume": 1.0,
         "stream": true,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       }
     ]
   },
@@ -3347,67 +3358,67 @@
         "name": "sbw_helldiver:original/tesla_tower/810698293",
         "volume": 1.0,
         "stream": true,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/398991475",
         "volume": 1.0,
         "stream": true,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/936597116",
         "volume": 1.0,
         "stream": true,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/887901895",
         "volume": 1.0,
         "stream": true,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/922268032",
         "volume": 1.0,
         "stream": true,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/940175504",
         "volume": 1.0,
         "stream": true,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/883410790",
         "volume": 1.0,
         "stream": true,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/757510066",
         "volume": 1.0,
         "stream": true,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/284222402",
         "volume": 1.0,
         "stream": true,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/439763284",
         "volume": 1.0,
         "stream": true,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/573233571",
         "volume": 1.0,
         "stream": true,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       }
     ]
   },
@@ -3417,7 +3428,7 @@
         "name": "sbw_helldiver:original/tesla_tower/629370229",
         "volume": 1.0,
         "stream": true,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       }
     ]
   },
@@ -3427,7 +3438,7 @@
         "name": "sbw_helldiver:original/tesla_tower/215730216",
         "volume": 1.0,
         "stream": true,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       }
     ]
   },
@@ -3437,7 +3448,7 @@
         "name": "sbw_helldiver:original/tesla_tower/25773220",
         "volume": 0.7943282347242815,
         "stream": true,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       }
     ]
   },
@@ -3447,7 +3458,7 @@
         "name": "sbw_helldiver:original/tesla_tower/185188617",
         "volume": 0.7943282347242815,
         "stream": true,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       }
     ]
   },
@@ -3457,7 +3468,7 @@
         "name": "sbw_helldiver:original/tesla_tower/710414182",
         "volume": 0.7943282347242815,
         "stream": true,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       }
     ]
   },
@@ -3467,31 +3478,31 @@
         "name": "sbw_helldiver:original/tesla_tower/49840267",
         "volume": 1.0,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/739860147",
         "volume": 1.0,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/592294010",
         "volume": 0.8912509381337456,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/314930401",
         "volume": 0.8912509381337456,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/957439613",
         "volume": 1.0,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       }
     ]
   },
@@ -3501,31 +3512,31 @@
         "name": "sbw_helldiver:original/tesla_tower/35364710",
         "volume": 0.8912509381337456,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/609547682",
         "volume": 1.0,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/336348342",
         "volume": 1.0,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/1769567",
         "volume": 0.7943282347242815,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/206464006",
         "volume": 0.8912509381337456,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       }
     ]
   },
@@ -3535,37 +3546,37 @@
         "name": "sbw_helldiver:original/tesla_tower/65694676",
         "volume": 1.0,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/894665771",
         "volume": 1.0,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/327821616",
         "volume": 1.0,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/374364121",
         "volume": 1.0,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/947913849",
         "volume": 1.0,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/tesla_tower/179631994",
         "volume": 1.0,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       }
     ]
   },
@@ -3575,7 +3586,7 @@
         "name": "sbw_helldiver:original/tesla_tower/648915428",
         "volume": 0.7943282347242815,
         "stream": true,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       }
     ]
   },
@@ -3585,19 +3596,19 @@
         "name": "sbw_helldiver:original/ap_mine/671106268",
         "volume": 0.35,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/ap_mine/906361877",
         "volume": 0.35,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/ap_mine/516417899",
         "volume": 0.35,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       }
     ]
   },
@@ -3607,19 +3618,19 @@
         "name": "sbw_helldiver:original/ap_mine/610010459",
         "volume": 0.2780148821534985,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/ap_mine/214063535",
         "volume": 0.24778102453444825,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/ap_mine/694800652",
         "volume": 0.2780148821534985,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       }
     ]
   },
@@ -3629,7 +3640,7 @@
         "name": "sbw_helldiver:original/ap_mine/940777151",
         "volume": 0.35,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       }
     ]
   },
@@ -3639,13 +3650,13 @@
         "name": "sbw_helldiver:original/ap_mine/578350274",
         "volume": 0.35,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/ap_mine/131934231",
         "volume": 0.31193782834681094,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       }
     ]
   },
@@ -3655,31 +3666,31 @@
         "name": "sbw_helldiver:original/ap_mine/spin_shuffle4_0",
         "volume": 0.35,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/ap_mine/spin_shuffle4_1",
         "volume": 0.35,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/ap_mine/spin_shuffle4_2",
         "volume": 0.35,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/ap_mine/spin_shuffle4_3",
         "volume": 0.35,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/ap_mine/spin_shuffle4_4",
         "volume": 0.35,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       }
     ]
   },
@@ -3689,37 +3700,37 @@
         "name": "sbw_helldiver:original/ap_mine/217835974",
         "volume": 0.2,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/ap_mine/987223241",
         "volume": 0.2,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/ap_mine/662045881",
         "volume": 0.2,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/ap_mine/181683705",
         "volume": 0.2,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/ap_mine/1030564183",
         "volume": 0.2,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/ap_mine/192972041",
         "volume": 0.2,
         "stream": false,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       }
     ]
   },
@@ -3869,25 +3880,25 @@
         "name": "sbw_helldiver:original/ap_mine/77716358",
         "volume": 0.10619186765762069,
         "stream": false,
-        "attenuation_distance": 16
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/ap_mine/794374172",
         "volume": 0.08148755017121456,
         "stream": false,
-        "attenuation_distance": 16
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/ap_mine/373652548",
         "volume": 0.15,
         "stream": false,
-        "attenuation_distance": 16
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/ap_mine/738734068",
         "volume": 0.12620927124677928,
         "stream": false,
-        "attenuation_distance": 16
+        "attenuation_distance": 64
       }
     ]
   },
@@ -3897,37 +3908,37 @@
         "name": "sbw_helldiver:original/stratagems_shared/755719683",
         "stream": false,
         "volume": 0.354813,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/390981851",
         "stream": false,
         "volume": 0.354813,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/708837183",
         "stream": false,
         "volume": 0.354813,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/251293470",
         "stream": false,
         "volume": 0.354813,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/413433671",
         "stream": false,
         "volume": 0.354813,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/639096707",
         "stream": false,
         "volume": 0.354813,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       }
     ]
   },
@@ -3937,37 +3948,37 @@
         "name": "sbw_helldiver:original/stratagems_shared/899338658",
         "stream": false,
         "volume": 0.186209,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/79020237",
         "stream": false,
         "volume": 0.17378,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/998298968",
         "stream": false,
         "volume": 0.177828,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/955210200",
         "stream": false,
         "volume": 0.184077,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/1050909716",
         "stream": false,
         "volume": 0.184077,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/944254596",
         "stream": false,
         "volume": 0.199526,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       }
     ]
   },
@@ -3977,25 +3988,25 @@
         "name": "sbw_helldiver:original/stratagems_shared/991190436",
         "stream": false,
         "volume": 0.27227,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/150551912",
         "stream": false,
         "volume": 0.260016,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/865202699",
         "stream": false,
         "volume": 0.266073,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagems_shared/187293295",
         "stream": false,
         "volume": 0.25704,
-        "attenuation_distance": 32
+        "attenuation_distance": 64
       }
     ]
   },
@@ -4148,7 +4159,7 @@
       {
         "name": "sbw_helldiver:original/anti_tank_emplacement/deploy",
         "volume": 1,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       }
     ]
   },
@@ -4233,7 +4244,7 @@
       {
         "name": "sbw_helldiver:original/grenadier_battlement/unfold",
         "volume": 1,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       }
     ]
   },
@@ -4242,22 +4253,22 @@
       {
         "name": "sbw_helldiver:original/shield_generator/unfold_1",
         "volume": 1,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/shield_generator/unfold_2",
         "volume": 1,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/shield_generator/unfold_3",
         "volume": 1,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/shield_generator/unfold_4",
         "volume": 1,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       }
     ]
   },
@@ -4266,22 +4277,22 @@
       {
         "name": "sbw_helldiver:original/shield_generator/retract_1",
         "volume": 1,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/shield_generator/retract_2",
         "volume": 1,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/shield_generator/retract_3",
         "volume": 1,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/shield_generator/retract_4",
         "volume": 1,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       }
     ]
   },
@@ -4290,22 +4301,22 @@
       {
         "name": "sbw_helldiver:original/shield_generator/break_1",
         "volume": 1,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/shield_generator/break_2",
         "volume": 1,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/shield_generator/break_3",
         "volume": 1,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/shield_generator/break_4",
         "volume": 1,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       }
     ]
   },
@@ -4314,22 +4325,22 @@
       {
         "name": "sbw_helldiver:original/shield_generator/online_1",
         "volume": 1,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/shield_generator/online_2",
         "volume": 1,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/shield_generator/online_3",
         "volume": 1,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/shield_generator/online_4",
         "volume": 1,
-        "attenuation_distance": 48
+        "attenuation_distance": 64
       }
     ]
   },
@@ -4338,7 +4349,7 @@
       {
         "name": "sbw_helldiver:original/shield_generator/maintain_1",
         "volume": 1,
-        "attenuation_distance": 28
+        "attenuation_distance": 64
       }
     ]
   },
@@ -4346,19 +4357,23 @@
     "sounds": [
       {
         "name": "sbw_helldiver:original/target_marks/cancel_1",
-        "volume": 0.11220184543019636
+        "volume": 0.11220184543019636,
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/target_marks/cancel_2",
-        "volume": 0.11220184543019636
+        "volume": 0.11220184543019636,
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/target_marks/cancel_3",
-        "volume": 0.11885022274370183
+        "volume": 0.11885022274370183,
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/target_marks/cancel_4",
-        "volume": 0.11220184543019636
+        "volume": 0.11220184543019636,
+        "attenuation_distance": 64
       }
     ]
   },
@@ -4366,19 +4381,23 @@
     "sounds": [
       {
         "name": "sbw_helldiver:original/target_marks/enemy_1",
-        "volume": 0.1445439771241875
+        "volume": 0.1445439771241875,
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/target_marks/enemy_2",
-        "volume": 0.1445439771241875
+        "volume": 0.1445439771241875,
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/target_marks/enemy_3",
-        "volume": 0.15848931924611134
+        "volume": 0.15848931924611134,
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/target_marks/enemy_4",
-        "volume": 0.1479108389183207
+        "volume": 0.1479108389183207,
+        "attenuation_distance": 64
       }
     ]
   },
@@ -4386,19 +4405,23 @@
     "sounds": [
       {
         "name": "sbw_helldiver:original/target_marks/location_1",
-        "volume": 0.3467368503335621
+        "volume": 0.3467368503335621,
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/target_marks/location_2",
-        "volume": 0.3427677860760195
+        "volume": 0.3427677860760195,
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/target_marks/location_3",
-        "volume": 0.4216965034285822
+        "volume": 0.4216965034285822,
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/target_marks/location_4",
-        "volume": 0.35481338923357547
+        "volume": 0.35481338923357547,
+        "attenuation_distance": 64
       }
     ]
   },
@@ -4406,19 +4429,23 @@
     "sounds": [
       {
         "name": "sbw_helldiver:original/target_marks/generic_1",
-        "volume": 0.33496543915782767
+        "volume": 0.33496543915782767,
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/target_marks/generic_2",
-        "volume": 0.3388441559066796
+        "volume": 0.3388441559066796,
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/target_marks/generic_3",
-        "volume": 0.3801893973641413
+        "volume": 0.3801893973641413,
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/target_marks/generic_4",
-        "volume": 0.3388441559066796
+        "volume": 0.3388441559066796,
+        "attenuation_distance": 64
       }
     ]
   },
@@ -4923,15 +4950,18 @@
     "sounds": [
       {
         "name": "sbw_helldiver:original/stratagem_ui/343379494",
-        "volume": 0.05623413251903491
+        "volume": 0.05623413251903491,
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagem_ui/1025962110",
-        "volume": 0.05623413251903491
+        "volume": 0.05623413251903491,
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagem_ui/438112912",
-        "volume": 0.05623413251903491
+        "volume": 0.05623413251903491,
+        "attenuation_distance": 64
       }
     ]
   },
@@ -4940,7 +4970,8 @@
     "sounds": [
       {
         "name": "sbw_helldiver:original/stratagem_ui/205963285",
-        "volume": 0.06309573444801933
+        "volume": 0.06309573444801933,
+        "attenuation_distance": 64
       }
     ]
   },
@@ -4949,7 +4980,8 @@
     "sounds": [
       {
         "name": "sbw_helldiver:original/stratagem_ui/476404362",
-        "volume": 0.06309573444801933
+        "volume": 0.06309573444801933,
+        "attenuation_distance": 64
       }
     ]
   },
@@ -4958,15 +4990,18 @@
     "sounds": [
       {
         "name": "sbw_helldiver:original/stratagem_ui/356476257",
-        "volume": 0.12589254117941673
+        "volume": 0.12589254117941673,
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagem_ui/660182206",
-        "volume": 0.12589254117941673
+        "volume": 0.12589254117941673,
+        "attenuation_distance": 64
       },
       {
         "name": "sbw_helldiver:original/stratagem_ui/151524753",
-        "volume": 0.12589254117941673
+        "volume": 0.12589254117941673,
+        "attenuation_distance": 64
       }
     ]
   },
@@ -4975,7 +5010,8 @@
     "sounds": [
       {
         "name": "sbw_helldiver:original/stratagem_ui/991269580",
-        "volume": 0.05623413251903491
+        "volume": 0.05623413251903491,
+        "attenuation_distance": 64
       }
     ]
   },
@@ -4984,7 +5020,8 @@
     "sounds": [
       {
         "name": "sbw_helldiver:original/stratagem_ui/261668816",
-        "volume": 0.05623413251903491
+        "volume": 0.05623413251903491,
+        "attenuation_distance": 64
       }
     ]
   },
@@ -4993,7 +5030,8 @@
     "sounds": [
       {
         "name": "sbw_helldiver:original/stratagem_ui/738834294",
-        "volume": 0.05623413251903491
+        "volume": 0.05623413251903491,
+        "attenuation_distance": 64
       }
     ]
   },
@@ -5037,19 +5075,23 @@
     "sounds": [
       {
         "name": "sbw_helldiver:original/destroyer/warp_in_1",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 128
       },
       {
         "name": "sbw_helldiver:original/destroyer/warp_in_2",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 128
       },
       {
         "name": "sbw_helldiver:original/destroyer/warp_in_3",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 128
       },
       {
         "name": "sbw_helldiver:original/destroyer/warp_in_4",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 128
       }
     ]
   },
@@ -5058,15 +5100,18 @@
     "sounds": [
       {
         "name": "sbw_helldiver:original/destroyer/warp_out_1",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 128
       },
       {
         "name": "sbw_helldiver:original/destroyer/warp_out_2",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 128
       },
       {
         "name": "sbw_helldiver:original/destroyer/warp_out_3",
-        "stream": false
+        "stream": false,
+        "attenuation_distance": 128
       }
     ]
   },
@@ -5109,6 +5154,31 @@
       {
         "name": "sbw_helldiver:original/eagle/gas_impact_4",
         "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_orbital_incoming": {
+    "subtitle": "subtitles.sbw_helldiver.sfx_orbital_incoming",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/orbital_precision/incoming_1",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_precision/incoming_2",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_precision/incoming_3",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_precision/incoming_4",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_precision/incoming_5",
+        "attenuation_distance": 128
       }
     ]
   }

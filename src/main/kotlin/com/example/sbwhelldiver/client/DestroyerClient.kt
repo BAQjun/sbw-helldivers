@@ -86,7 +86,7 @@ object DestroyerClient:ResourceManagerReloadListener {
    val camera=e.camera.position;val p=e.poseStack
    for(marker in level.entitiesForRendering().filterIsInstance<StratagemMarker>()){
     val origin=marker.orbitalOrigin?:continue
-    val target=marker.position();val t=((marker.elapsedTicks+e.partialTick)/marker.duration).toDouble()
+    val target=marker.position();val t=marker.orbitalProgress(e.partialTick)
     if(t !in 0.0..1.0)continue
     val head=origin.lerp(target,t);val tail=origin.lerp(target,(t-.018).coerceAtLeast(0.0))
     val direction=head.subtract(tail).normalize();var right=direction.cross(head.subtract(camera)).normalize().scale(.24)

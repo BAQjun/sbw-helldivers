@@ -1,0 +1,63 @@
+{
+  "event": "sfx_orbital_incoming",
+  "source_game": "Helldivers 2",
+  "bank": "weapons_superearth",
+  "bank_sha256": "9c11f8cc925de4c373fc9823907e27bc21bf9a38878777ee625eb5a0076dc142",
+  "native_event": 790805373,
+  "play_action": 10230250,
+  "random_container": 490382059,
+  "native_stop_event": 1575262580,
+  "native_stop_action": 13086182,
+  "playback": "Native finite random incoming-warhead variants. One-shot in the final 1.5 seconds of flight; stopped when the marker impacts. Mono for positional playback. No Superb Warfare shell_fly substitution.",
+  "mix": "Static hierarchy gain and per-sound makeup gain retained; WWiser automatic -5 dB headroom excluded. Game RTPC, reverb and synthesis-plugin layers are not reproduced.",
+  "identification": "Native local bank event/action/container/media chain, cross-checked against community precision-strike labels.",
+  "label_reference": "https://github.com/Dekr0/hd2_audio_db/blob/97bf9aa85ee99715dfa1ec9730af28f363e02a43/label/weapons_stratagems/safe/orbital_precision_strike.json",
+  "attenuation_distance": 128,
+  "variants": [
+    {
+      "media": 275858609,
+      "sound_node": 156278756,
+      "static_gain_db": -3.5,
+      "duration_seconds": 1.4973333333333334,
+      "channels": 1,
+      "decoded_source_sha256": "6e50d05039a2f746017b47420cb6d370af43ded4cf8579382331b09e1d2e589b",
+      "output_sha256": "f6e1c01552c1b84ea199cab43c935bbf4d1574901b6e711deca4dbe14298b6f6"
+    },
+    {
+      "media": 460616011,
+      "sound_node": 217011672,
+      "static_gain_db": -6,
+      "duration_seconds": 1.4866666666666666,
+      "channels": 1,
+      "decoded_source_sha256": "36c4644a5bc83b6422235576ba7c2f6aac25285a33f8102ce503c2005aa7f693",
+      "output_sha256": "b7da1116f9f74ebee6a6b2a4f99b26ac71c1eb756015d1db7e345f1d6a627d6c"
+    },
+    {
+      "media": 48116275,
+      "sound_node": 359854618,
+      "static_gain_db": -5.5,
+      "duration_seconds": 1.4893333333333334,
+      "channels": 1,
+      "decoded_source_sha256": "6d98fdd7849b8be606861746322d6149a944f41bd4280ccf811d3eb05c724ba1",
+      "output_sha256": "17c9ab2bf1619a64bf2146aaea343c57f21bf93087e44324ecf57d63fb40b8ae"
+    },
+    {
+      "media": 818009219,
+      "sound_node": 650132556,
+      "static_gain_db": -4.5,
+      "duration_seconds": 1.4813333333333334,
+      "channels": 1,
+      "decoded_source_sha256": "a31faad2fb165c9d8b56cd8e1a476f8f57af9c20cb440e375f94b3e75ba82908",
+      "output_sha256": "9400eb5b2867efd12a9b031aae859f40e2fd02ad9ea5dc15b55d94958221d467"
+    },
+    {
+      "media": 537115787,
+      "sound_node": 924423557,
+      "static_gain_db": -7.5,
+      "duration_seconds": 1.484,
+      "channels": 1,
+      "decoded_source_sha256": "26a5cfe4e4836fdb7a39c8b71802b625e8b253365366a39fac132b75250d1fff",
+      "output_sha256": "18e84094589fb4c00f44296861c81d719f104150898a75b215884e324b269e2d"
+    }
+  ]
+}

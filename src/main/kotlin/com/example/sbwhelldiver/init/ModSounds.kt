@@ -10,16 +10,8 @@ object ModSounds {
     val SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, MOD_ID)
     val EVENTS = AssetCatalog.audibleEffects.associateWith { effect ->
         SOUNDS.register(effect) {
-            if (effect == "beacon_deploy") SoundEvent.createFixedRangeEvent(AssetCatalog.sound(effect), 64f)
-            else if (effect == "sfx_ap_mine_explosion_1") SoundEvent.createFixedRangeEvent(AssetCatalog.sound(effect), 64f)
-            else if (effect == "sfx_gas_mortar_loop") SoundEvent.createFixedRangeEvent(AssetCatalog.sound(effect), 32f)
-            else if (effect.startsWith("sfx_gas_mortar_") || effect.startsWith("sfx_ems_mortar_"))
-                SoundEvent.createFixedRangeEvent(AssetCatalog.sound(effect), 96f)
-            else if (effect == "sfx_eagle_smoke_impact" || effect == "sfx_eagle_gas_impact")
-                SoundEvent.createFixedRangeEvent(AssetCatalog.sound(effect), 96f)
-            else if (effect == "sfx_eagle_500kg_impact" || effect == "sfx_eagle_500kg_fuse")
-                SoundEvent.createFixedRangeEvent(AssetCatalog.sound(effect), 128f)
-            else SoundEvent.createVariableRangeEvent(AssetCatalog.sound(effect))
+            // Never broadcast less far than the selected sound can be heard on the client.
+            SoundEvent.createFixedRangeEvent(AssetCatalog.sound(effect),AssetCatalog.soundRanges.getValue(effect))
         }
     }
 }

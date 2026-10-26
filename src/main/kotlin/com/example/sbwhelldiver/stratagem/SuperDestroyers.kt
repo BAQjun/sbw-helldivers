@@ -2,14 +2,12 @@ package com.example.sbwhelldiver.stratagem
 
 import com.example.sbwhelldiver.MOD_ID
 import com.example.sbwhelldiver.config.OrbitalConfig
-import com.example.sbwhelldiver.init.ModSounds
 import com.example.sbwhelldiver.network.*
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.ListTag
 import net.minecraft.nbt.Tag
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerPlayer
-import net.minecraft.sounds.SoundSource
 import net.minecraft.world.level.saveddata.SavedData
 import net.minecraft.world.phys.Vec3
 import net.minecraftforge.event.TickEvent
@@ -95,7 +93,7 @@ object SuperDestroyers {
  private fun cue(s:MinecraftServer,anchor:DestroyerAnchor?,name:String){
   if(anchor==null)return
   s.playerList.players.filter{it.level().dimension().location().toString()==anchor.dimension&&it.position().distanceToSqr(anchor.center)<4096.0*4096.0}.forEach{
-   it.playNotifySound(ModSounds.EVENTS.getValue(name).get(),SoundSource.AMBIENT,.85f,1f)
+   BeaconNetwork.CHANNEL.send(PacketDistributor.PLAYER.with{it},DestroyerWarpPacket(anchor.position,name=="super_destroyer_warp_out"))
   }
  }
  @SubscribeEvent fun tick(e:TickEvent.ServerTickEvent){

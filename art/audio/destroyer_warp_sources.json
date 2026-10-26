@@ -17,7 +17,9 @@
           -22,
           -22
         ],
-        "sha256": "34f3e5357e51d379fd15d92ecc95007416d4067e075c777e273f0c8cbd400462"
+        "sha256": "db6edbb0ef09ca564caec10c548533483f2be3c76a1dfd43a7ffb53d62318ab1",
+        "presentation_gain_db": 12,
+        "channels": 1
       },
       {
         "media": [
@@ -32,7 +34,9 @@
           -22,
           -22
         ],
-        "sha256": "699d4b6350801ee0111fbf268f7962a5824aebe0f03051114ec1acb92cec41aa"
+        "sha256": "fcb6668e94bf18cc05c39df70f6a96ba96db38f15107f815ab42cfdee15e6ca4",
+        "presentation_gain_db": 12,
+        "channels": 1
       },
       {
         "media": [
@@ -47,7 +51,9 @@
           -22,
           -22
         ],
-        "sha256": "b58a099aa064e3da9f773b0f039d8d2905f4c3959fc4e78515ac0cb575e7e7d7"
+        "sha256": "9d600272b40e523686a427529c8cf32d48f2e6ddc81f1c0c8a5a5c3c87fbf4ef",
+        "presentation_gain_db": 12,
+        "channels": 1
       },
       {
         "media": [
@@ -62,7 +68,9 @@
           -22,
           -22
         ],
-        "sha256": "fa344bfbab44060eb2fb19fc1383823c4d5ec5e33204d9ec123b62c41655c540"
+        "sha256": "60b4671c47583295bbf5575581d8608444367fd7a3b95068f16127070e87b0f9",
+        "presentation_gain_db": 12,
+        "channels": 1
       }
     ]
   },
@@ -84,7 +92,9 @@
           -25,
           -22
         ],
-        "sha256": "acbf593f445b8e00e20f8b87c23b3fb1ff416dc5f21c41ca4a860e4cd52b3e34"
+        "sha256": "6e68fd8b2464f1a3c8f5de7b0eed977085f1391cd9baae8fb786743652f5f82a",
+        "presentation_gain_db": 12,
+        "channels": 1
       },
       {
         "media": [
@@ -99,7 +109,9 @@
           -25,
           -22
         ],
-        "sha256": "3070c560733a729217019eaaef37057b87bb53d1f7d0ace8943d0164d2b9c8c0"
+        "sha256": "63a091491624917878a38c2bc9e50eee6b0743e3aef100b4039bc8f10da631a6",
+        "presentation_gain_db": 12,
+        "channels": 1
       },
       {
         "media": [
@@ -114,7 +126,9 @@
           -25,
           -22
         ],
-        "sha256": "55045d2c7bd85ea065e409dc85d66a510f1cdbe55f149fb573966c41f7ecbc44"
+        "sha256": "69557de945552f92d28709662585949399e5362e4391a1b104cd97c6e88227ff",
+        "presentation_gain_db": 12,
+        "channels": 1
       }
     ]
   }

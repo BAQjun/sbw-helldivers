@@ -60,5 +60,15 @@ object AssetCatalog {
         val stream = requireNotNull(javaClass.classLoader.getResourceAsStream("assets/$MOD_ID/sounds.json"))
         stream.bufferedReader(Charsets.UTF_8).use { JsonParser.parseReader(it).asJsonObject.keySet().toSet() }
     }
+    val soundRanges:Map<String,Float> = run {
+        val stream=requireNotNull(javaClass.classLoader.getResourceAsStream("assets/$MOD_ID/sounds.json"))
+        stream.bufferedReader(Charsets.UTF_8).use { reader ->
+            JsonParser.parseReader(reader).asJsonObject.entrySet().associate { (id,raw) ->
+                id to raw.asJsonObject.getAsJsonArray("sounds").maxOfOrNull { sound ->
+                    if(sound.isJsonObject) sound.asJsonObject.get("attenuation_distance")?.asFloat ?: 16f else 16f
+                }.let{maxOf(64f,it?:64f)}
+            }
+        }
+    }
     fun sound(effect: String) = ResourceLocation(MOD_ID, effect)
 }
