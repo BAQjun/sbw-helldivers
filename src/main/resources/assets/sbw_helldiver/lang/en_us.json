@@ -201,5 +201,8 @@
   "subtitles.sbw_helldiver.sfx_orbital_fire": "Super Destroyer fires",
   "item.sbw_helldiver.orbital_gatling_barrage_stratagem": "Orbital Gatling Barrage",
   "subtitles.sbw_helldiver.sfx_orbital_gatling": "Orbital Gatling Barrage fires",
-  "entity.sbw_helldiver.orbital_gatling_round": "Orbital Gatling Barrage"
+  "entity.sbw_helldiver.orbital_gatling_round": "Orbital Gatling Barrage",
+  "item.sbw_helldiver.orbital_airburst_strike_stratagem": "Orbital Airburst Strike",
+  "entity.sbw_helldiver.orbital_airburst_shell": "Orbital Airburst Strike Shell",
+  "entity.sbw_helldiver.orbital_airburst_bomblet": "Orbital Airburst Strike Bomblet"
 }

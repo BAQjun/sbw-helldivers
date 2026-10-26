@@ -24,6 +24,7 @@ object OrbitalConfig {
   outer=b.defineInRange("outerRadius",12.0,.1,256.0)
   b.pop()
   OrbitalGatlingConfig.register(b)
+  OrbitalAirburstConfig.register(b)
   b.pop()
  }
  fun callTicks()=(callSeconds.get()*20).toInt().coerceAtLeast(10)

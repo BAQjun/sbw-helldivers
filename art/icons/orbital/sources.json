@@ -18,5 +18,13 @@
     "nativeStratagemType": "StratagemType_OrbitalGatlingBarrage",
     "format": "Native vector paths, existing red/cream card palette and border",
     "sourceSha256": "c9eb4d2eac7406db4da0eb5942b474765ab8c22b96626eea3d9eead2f197f155"
+  },
+  {
+    "id": "orbital_airburst_strike",
+    "nativeSource": "content/ui/shared/resources/generated_icons/stratagem_icons.xaml",
+    "template": "DataTemplate.Icon.StratagemType.OrbitalShot",
+    "nativeStratagemType": "StratagemType_OrbitalShot",
+    "format": "Native vector paths, existing red/cream card palette and border",
+    "sourceSha256": "99083ac11f1ae581a26de12d22f0a7f94ea76c22630d5a6992fcfbfae137c315"
   }
 ]

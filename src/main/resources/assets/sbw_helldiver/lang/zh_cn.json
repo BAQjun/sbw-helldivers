@@ -201,5 +201,8 @@
   "subtitles.sbw_helldiver.sfx_orbital_fire": "超级驱逐舰开炮",
   "item.sbw_helldiver.orbital_gatling_barrage_stratagem": "轨道加特林火力网",
   "subtitles.sbw_helldiver.sfx_orbital_gatling": "轨道加特林持续扫射",
-  "entity.sbw_helldiver.orbital_gatling_round": "轨道加特林火力网"
+  "entity.sbw_helldiver.orbital_gatling_round": "轨道加特林火力网",
+  "item.sbw_helldiver.orbital_airburst_strike_stratagem": "轨道空爆攻击",
+  "entity.sbw_helldiver.orbital_airburst_shell": "轨道空爆攻击母弹",
+  "entity.sbw_helldiver.orbital_airburst_bomblet": "轨道空爆攻击子弹"
 }

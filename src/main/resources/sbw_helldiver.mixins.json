@@ -10,7 +10,8 @@
     "SmokeSightMixin",
     "SmokeNavigationAccess",
     "SmokeNavigationMixin",
-    "SmokeTargetConditionsMixin"
+    "SmokeTargetConditionsMixin",
+    "ExplosionShakeMixin"
   ],
   "client": [
     "EagleProjectileRenderMixin",

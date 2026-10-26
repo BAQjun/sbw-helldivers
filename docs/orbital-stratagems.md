@@ -1,6 +1,6 @@
 # 超级驱逐舰与轨道战备
 
-将“轨道精准打击”装入战备信标球后，战备列表顶部自动出现“呼叫超级驱逐舰”。按住战备键输入 `↑ ↑ ↓ ↓ ← → ← →`，再输入一个方向：`↑ 北`、`← 西`、`→ 东`、`↓ 南`。舰船在最后 0.15 秒沿舰艏方向高速飞入，在三秒等待结束时骤停至所选方位。
+将任一轨道战备装入战备信标球后，战备列表顶部自动出现“呼叫超级驱逐舰”。按住战备键输入 `↑ ↑ ↓ ↓ ← → ← →`，再输入一个方向：`↑ 北`、`← 西`、`→ 东`、`↓ 南`。舰船在最后 0.15 秒沿舰艏方向高速飞入，在三秒等待结束时骤停至所选方位。
 
 下界禁用所有战备，包括舰船呼叫、轨道打击、飞鹰与地面部署，关闭冷却也不能绕过限制。All stratagems are unavailable in the Nether, including ship calls, orbital strikes, Eagle attacks and ground deployments, regardless of the cooldown setting.
 
@@ -61,3 +61,40 @@ Only terminal flight segments are collision entities, avoiding distant ship-chun
 
 同维度调整方位时，驱逐舰从当前舰位直接高速跃迁至目标舰位。红色战备不再要求周围 3×3 空地；实体空投战备保留空间检查。
 Within one dimension, ship relocation warps directly between its current and new anchors. Red stratagems bypass the 3×3 deployment-clearance requirement; hellpod deployments retain it.
+
+
+## 轨道空爆攻击 / Orbital Airburst Strike
+
+指令 → → →。需要己方超级驱逐舰支援，信标展开 2 秒后开炮。共 4 轮，每轮间隔 4 秒，每轮一枚母弹，空爆后分裂为 12 枚子弹。
+母弹与子弹均为 50 直击伤害、60 爆炸伤害。母弹全额／外半径为 0.2／0.5 格，子弹为 3／6 格；外圈伤害随距离衰减。
+信标保持到最后一轮子弹命中，冷却从首次开炮开始，满升级默认 85.5 秒。
+
+本地原版弹药表记录母弹寿命 0.95 秒、初速 400 m/s，分裂数量 12、锥角参数 35°，子弹初速 300 m/s。
+这些记录没有直接给出固定的离地空爆高度；MC 默认在信标上方 20 格的入射轨迹上空爆。
+分裂围绕母弹飞行方向散布，使用均匀立体角分层采样，这是 MC 适配实现。
+
+Code: Right, Right, Right. Requires an owned Super Destroyer in range. Fires after two seconds, with four single-shell salvos four seconds apart, each splitting into 12 bomblets.
+Both carrier and bomblets deal 50 direct and 60 blast damage; inner/outer radii are 0.2/0.5 m and 3/6 m respectively.
+The beacon remains through the final bomblet impacts. Cooldown starts with the first shot; fully upgraded default: 85.5 seconds.
+
+The local native ammunition records specify a 0.95 s carrier lifetime at 400 m/s, 12 fragments, a 35° cone parameter and 300 m/s bomblets.
+They do not directly specify a fixed burst altitude. Minecraft defaults to 20 blocks above the beacon, on the incoming trajectory, with stratified solid-angle sampling around the incoming direction.
+
+配置分区 / Configuration: `orbital.airburstStrike`
+
+| 字段 / Field | 默认 / Default | 含义 / Meaning |
+| --- | --- | --- |
+| `rounds` | 4 | 轮数 / Salvos |
+| `salvoIntervalSeconds` | 4 | 发射间隔 / Firing interval |
+| `firingDelaySeconds` | 2 | 展开至开炮 / Call-in delay |
+| `flightSeconds` | 1.5 | 母弹飞行时间 / Carrier flight |
+| `burstHeight` | 20 | 信标上方空爆高度 / Burst height above beacon |
+| `spreadAngleDegrees` | 35 | 入射方向散布锥角 / Spread cone angle |
+| `bombletsPerShell` | 12 | 子弹数量 / Bomblets |
+| `bombletSpeed` | 300 | 格/秒 / Blocks per second |
+| `directDamage` / `explosionDamage` | 50 / 60 | 母弹伤害 / Carrier damage |
+| `innerRadius` / `outerRadius` | 0.2 / 0.5 | 母弹半径 / Carrier radii |
+| `bombletDirectDamage` / `bombletExplosionDamage` | 50 / 60 | 子弹伤害 / Bomblet damage |
+| `bombletInnerRadius` / `bombletOuterRadius` | 3 / 6 | 子弹半径 / Bomblet radii |
+
+冷却配置 / Cooldown: `stratagems.orbital_airburst_strike.cooldownSeconds`.

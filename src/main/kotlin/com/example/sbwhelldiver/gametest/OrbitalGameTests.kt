@@ -297,4 +297,80 @@ object OrbitalGameTests {
   }
  }
 
+ @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",timeoutTicks=5)
+ fun airburstPatternAndShakeSelection(h:GameTestHelper){
+  val s=com.example.sbwhelldiver.config.OrbitalAirburstConfig.snapshot()
+  h.assertTrue(s==com.example.sbwhelldiver.config.AirburstSettings(),"Wrong default airburst settings")
+  h.assertTrue(Stratagems.get("orbital_airburst_strike")!!.code==listOf(1,1,1)&&StratagemCooldownConfig.ticks("orbital_airburst_strike")==1710,"Airburst code or upgraded cooldown wrong")
+  val target=Vec3(20.0,64.0,30.0);val source=target.add(700.0,900.0,0.0)
+  val burst=OrbitalAirburstPattern.burstPoint(source,target,s.height);val axis=target.subtract(source).normalize()
+  h.assertTrue(abs(burst.y-target.y-20)<1e-8&&burst.subtract(source).normalize().dot(axis)>.999999,"Burst off ship-to-beacon line")
+  for(seed in 0L..20L){
+   val directions=OrbitalAirburstPattern.directions(axis,s,seed)
+   h.assertTrue(directions.size==12&&directions.toSet().size==12&&directions.all{it.y<0&&abs(it.length()-1)<1e-8&&it.dot(axis)>=kotlin.math.cos(Math.toRadians(35.0))},"Fragments outside downward 35-degree cone")
+   h.assertTrue(directions==OrbitalAirburstPattern.directions(axis,s,seed),"Reload altered fragmentation pattern")
+  }
+  val ordinary=ModEntities.ORBITAL_GATLING_ROUND.get().create(h.level)!!
+  val cannon=ModEntities.SENTRY_CANNON_SHELL.get().create(h.level)!!
+  val rocket=ModEntities.SENTRY_ROCKET.get().create(h.level)!!
+  val precision=ModEntities.ORBITAL_SHELL.get().create(h.level)!!
+  h.assertTrue(ExplosionShakePolicy.scale(ordinary)==0.0&&ExplosionShakePolicy.scale(cannon)==.35&&ExplosionShakePolicy.scale(rocket)==.35&&ExplosionShakePolicy.scale(precision)==1.0,"Shake selection leaked into other explosions")
+  listOf(ordinary,cannon,rocket,precision).forEach{it.discard()};h.succeed()
+ }
+ @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",timeoutTicks=5)
+ fun airburstDirectBlastAndSingleSplit(h:GameTestHelper){
+  val at=Vec3.atCenterOf(h.absolutePos(BlockPos(15,25,15)))
+  fun victim(distance:Double)=EntityType.RAVAGER.create(h.level)!!.also{m->m.isNoAi=true;m.isNoGravity=true;m.getAttribute(Attributes.ARMOR)!!.baseValue=0.0;m.getAttribute(Attributes.MAX_HEALTH)!!.baseValue=1000.0;m.health=1000f;m.setPos(at.add(distance+m.bbWidth/2,0.0,0.0));h.level.addFreshEntity(m)}
+  val mother=ModEntities.ORBITAL_AIRBURST_SHELL.get().create(h.level)!!;mother.setPos(at);mother.tickCount=1;h.level.addFreshEntity(mother)
+  val targets=listOf(0.0,.2,.35,.5).map(::victim)
+  mother.onHitEntity(ExtendedEntityRayTraceResult(EntityResult(targets[0],at,false,false)))
+  targets.zip(listOf(110f,60f,29.5f,0f)).forEachIndexed{i,(m,d)->h.assertTrue(abs(1000-m.health-d)<.03,"Mother damage $i expected $d got ${1000-m.health}")}
+  val box=mother.boundingBox.inflate(3.0)
+  val before=h.level.getEntitiesOfClass(OrbitalAirburstBombletEntity::class.java,box)
+  h.assertTrue(before.size==12,"Mother did not emit twelve fragments")
+  mother.causeExplode(at);h.assertTrue(h.level.getEntitiesOfClass(OrbitalAirburstBombletEntity::class.java,box).size==12,"Duplicate split")
+  before.forEach{it.discard()};targets.forEach{it.discard()}
+  val child=ModEntities.ORBITAL_AIRBURST_BOMBLET.get().create(h.level)!!;child.setPos(at);child.tickCount=1;h.level.addFreshEntity(child)
+  val childTargets=listOf(0.0,3.0,4.5,6.0,6.1).map(::victim)
+  child.onHitEntity(ExtendedEntityRayTraceResult(EntityResult(childTargets[0],at,false,false)))
+  childTargets.zip(listOf(110f,60f,29.5f,0f,0f)).forEachIndexed{i,(m,d)->h.assertTrue(abs(1000-m.health-d)<.03,"Child damage $i expected $d got ${1000-m.health}")}
+  val n=CompoundTag();child.saveWithoutId(n);val restored=ModEntities.ORBITAL_AIRBURST_BOMBLET.get().create(h.level)!!;restored.load(n)
+  h.assertTrue(restored.getDamage()==50f&&restored.getExplosionDamage()==60f&&restored.getExplosionRadius()==6f,"Saved bomblet lost settings")
+  childTargets.forEach{it.discard()};restored.discard();h.succeed()
+ }
+ @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",batch="airburst_full",timeoutTicks=365)
+ fun airburstFourSalvosExactFuseAndReload(h:GameTestHelper){
+  val p=pilot(h);val world=h.level;val now=StratagemCooldowns.now(p.server)
+  SuperDestroyers.move(p,Stratagems.UP);SuperDestroyers.state(p).advance(now+60)
+  val at=Vec3.atBottomCenterOf(h.absolutePos(BlockPos(15,163,15)))
+  val loaded=mutableListOf<Pair<Int,Int>>();val chunk=net.minecraft.world.level.ChunkPos(BlockPos.containing(at))
+  for(cx in chunk.x-6..chunk.x+6)for(cz in chunk.z-6..chunk.z+6)if(world.setChunkForced(cx,cz,true))loaded.add(cx to cz)
+  for(x in -110..110)for(z in -110..110)world.setBlock(BlockPos.containing(at.add(x.toDouble(),-1.0,z.toDouble())),net.minecraft.world.level.block.Blocks.BEDROCK.defaultBlockState(),3)
+  var marker=ModEntities.STRATAGEM_MARKER.get().create(world)!!;marker.setPos(at);marker.configure(Stratagems.get("orbital_airburst_strike")!!.dropId,10,p.uuid);world.addFreshEntity(marker)
+  val carriers=mutableMapOf<UUID,Long>();val children=mutableMapOf<UUID,Pair<Long,Vec3>>();val diagnostics=mutableListOf<String>()
+  val observer=object {
+   @net.minecraftforge.eventbus.api.SubscribeEvent fun joinAirburst(e:net.minecraftforge.event.entity.EntityJoinLevelEvent){
+    val entity=e.entity
+    if(entity.level()!==world||entity.position().distanceToSqr(at)>200*200)return
+    if(entity is OrbitalAirburstShellEntity){carriers[entity.uuid]=world.gameTime;val n=CompoundTag();entity.saveWithoutId(n);diagnostics.add("atY=${at.y}, markerY=${marker.y}, parent=${entity.position()}, velocity=${entity.deltaMovement}, fuse=${n.getDouble("BurstY")}")}
+    if(entity is OrbitalAirburstBombletEntity)children[entity.uuid]=world.gameTime to entity.position()
+   }
+  }
+  net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(observer)
+  h.runAfterDelay(100){
+   h.assertTrue(carriers.size==1&&children.size==12&&!marker.isRemoved,"First salvo missing or beacon ended early: ${carriers.size}/${children.size}")
+   val n=CompoundTag();marker.saveWithoutId(n);marker.discard();marker=ModEntities.STRATAGEM_MARKER.get().create(world)!!;marker.load(n);world.addFreshEntity(marker)
+   h.assertTrue(marker.airburstSettings==com.example.sbwhelldiver.config.AirburstSettings.load(n.getCompound("AirburstSettings")),"Settings changed across save")
+  }
+  h.runAfterDelay(350){
+   net.minecraftforge.common.MinecraftForge.EVENT_BUS.unregister(observer)
+   h.assertTrue(carriers.size==4&&children.size==48&&marker.isRemoved,"Four salvos incomplete: ${carriers.size}/${children.size}, removed=${marker.isRemoved}")
+   h.assertTrue(carriers.values.sorted().zipWithNext().all{(a,b)->b-a==80L},"Salvos not four seconds apart")
+   h.assertTrue(children.values.all{abs(it.second.y-at.y-20)<1e-5},"High-speed fuse overshot airburst height: ${children.values.map{it.second.y-at.y}.distinct()} $diagnostics")
+   h.assertTrue(children.values.map{it.first}.toSet().size==4,"Children not split into four bursts")
+   h.assertTrue(world.getEntitiesOfClass(OrbitalAirburstBombletEntity::class.java,marker.boundingBox.inflate(180.0)).isEmpty(),"Fragments did not collide and expire")
+   loaded.forEach{(x,z)->world.setChunkForced(x,z,false)};p.discard();h.succeed()
+  }
+ }
+
 }

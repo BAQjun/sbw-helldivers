@@ -49,6 +49,13 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     private var activationPlayed = false
     val isOrbital get()=(dropTypeId?.path ?: entityData.get(STRATAGEM)).startsWith("orbital_")
     val isOrbitalGatling get()=(dropTypeId?.path ?: entityData.get(STRATAGEM))=="orbital_gatling_barrage"
+    val isOrbitalAirburst get()=(dropTypeId?.path ?: entityData.get(STRATAGEM))=="orbital_airburst_strike"
+    val airburstSettings get()=com.example.sbwhelldiver.config.AirburstSettings.load(entityData.get(AIRBURST_SETTINGS))
+    private var airburstNextShot=0
+    private var airburstReports=0
+    private val airburstActive=mutableListOf<UUID>()
+    fun trackAirburst(entity:Entity){airburstActive.add(entity.uuid)}
+    fun airburstPoint():Vec3=com.example.sbwhelldiver.stratagem.OrbitalAirburstPattern.burstPoint(orbitalOrigin?:position().add(0.0,900.0,0.0),position(),airburstSettings.height)
     val gatlingSettings get()=com.example.sbwhelldiver.config.GatlingSettings.load(entityData.get(GATLING_SETTINGS))
     private var gatlingNextShot=0
     private val gatlingActive=mutableListOf<UUID>()
@@ -71,15 +78,16 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         entityData.set(GRACE, if(isEagle || isOrbital) 0 else LANDING_GRACE_TICKS)
         surfaceY = groundY
         descentTicks = if(isOrbital) orbitalTerminalTicks() else if(isEagle) eagleCallTicks else AbstractHellpodEntity.FALL_TICKS
-        entityData.set(DURATION, if(isOrbitalGatling) com.example.sbwhelldiver.config.OrbitalGatlingConfig.callTicks() else if(isOrbital) com.example.sbwhelldiver.config.OrbitalConfig.callTicks() else if(isEagle) eagleCallTicks else delayTicks.coerceAtLeast(maxOf(20, descentTicks - landingGraceTicks)))
+        entityData.set(DURATION, if(isOrbitalAirburst) com.example.sbwhelldiver.config.OrbitalAirburstConfig.callTicks() else if(isOrbitalGatling) com.example.sbwhelldiver.config.OrbitalGatlingConfig.callTicks() else if(isOrbital) com.example.sbwhelldiver.config.OrbitalConfig.callTicks() else if(isEagle) eagleCallTicks else delayTicks.coerceAtLeast(maxOf(20, descentTicks - landingGraceTicks)))
         entityData.set(LEFT, duration)
         entityData.set(AGE, 0)
         entityData.set(FACE, normal.get3DDataValue())
         entityData.set(COLOR, beamColor)
         entityData.set(STRATAGEM, dropType.path)
         if(isOrbital){
+            if(isOrbitalAirburst)entityData.set(AIRBURST_SETTINGS,com.example.sbwhelldiver.config.OrbitalAirburstConfig.snapshot().save())
             if(isOrbitalGatling)entityData.set(GATLING_SETTINGS,com.example.sbwhelldiver.config.OrbitalGatlingConfig.snapshot().save())
-            entityData.set(ORBITAL_FLIGHT_TICKS,if(isOrbitalGatling)gatlingSettings.flightTicks else com.example.sbwhelldiver.config.OrbitalConfig.flightTicks())
+            entityData.set(ORBITAL_FLIGHT_TICKS,if(isOrbitalAirburst)airburstSettings.flightTicks else if(isOrbitalGatling)gatlingSettings.flightTicks else com.example.sbwhelldiver.config.OrbitalConfig.flightTicks())
             entityData.set(ORBITAL_FIRED_AT,-1L)
             val server=level().server
             val origin=server?.let{com.example.sbwhelldiver.stratagem.SuperDestroyers.origin(it,owner,level().dimension().location().toString(),position())}
@@ -132,10 +140,11 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         if(orbitalFiredAt<0 && elapsedTicks>=duration) {
             if(orbitalOrigin==null){updateCooldown(true);discard();return}
             entityData.set(ORBITAL_FIRED_AT,server.gameTime)
-            if(!isOrbitalGatling)com.example.sbwhelldiver.stratagem.SuperDestroyers.fire(server,orbitalOrigin!!,position())
+            if(!isOrbitalGatling&&!isOrbitalAirburst)com.example.sbwhelldiver.stratagem.SuperDestroyers.fire(server,orbitalOrigin!!,position())
             updateCooldown()
         }
         if(orbitalFiredAt<0)return
+        if(isOrbitalAirburst){tickAirburst(server);return}
         if(isOrbitalGatling){tickGatling(server);return}
         if(!podSpawned && server.gameTime>=orbitalImpactAt-orbitalTerminalTicks()) {
             if(!spawnOrbitalShell()){discard();return}
@@ -143,6 +152,31 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         }
         // Keep the beam until the real terminal shell hits terrain or a creature.
         if(podSpawned && (podUUID?.let(server::getEntity)==null || server.gameTime>orbitalImpactAt+40))discard()
+    }
+    private fun tickAirburst(server:ServerLevel) {
+        val settings=airburstSettings
+        val origin=orbitalOrigin?:run{discard();return}
+        val age=server.gameTime-orbitalFiredAt
+        while(airburstReports<settings.rounds&&age>=settings.shotTime(airburstReports)){
+            com.example.sbwhelldiver.stratagem.SuperDestroyers.fire(server,origin,position());airburstReports++
+        }
+        val target=airburstPoint();val direction=target.subtract(origin).normalize()
+        val speed=origin.distanceTo(target)/settings.flightTicks
+        val terminal=minOf(3,(128.0/speed.coerceAtLeast(.01)).toInt().coerceAtLeast(1))
+        while(airburstNextShot<settings.rounds&&age>=settings.shotTime(airburstNextShot)+settings.flightTicks-terminal){
+            val shell=com.example.sbwhelldiver.init.ModEntities.ORBITAL_AIRBURST_SHELL.get().create(server)?:return
+            val launch=target.subtract(direction.scale(speed*terminal))
+            shell.configure(settings,uuid,target.y,direction);shell.setPos(launch)
+            ownerUuid?.let(server::getEntity)?.let{shell.owner=it}
+            shell.shoot(direction.x,direction.y,direction.z,speed.toFloat(),0f)
+            if(!server.addFreshEntity(shell))return
+            trackAirburst(shell);airburstNextShot++
+        }
+        airburstActive.removeAll{server.getEntity(it)==null}
+        // Keep the beam through the last child's real collision, not just the fourth carrier's fuse.
+        if(airburstNextShot==settings.rounds&&(airburstActive.isEmpty()||age>settings.shotTime(settings.rounds-1)+settings.flightTicks+200)){
+            airburstActive.forEach{server.getEntity(it)?.discard()};discard()
+        }
     }
     private fun tickGatling(server:ServerLevel) {
         val settings=gatlingSettings
@@ -226,6 +260,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
 
     override fun defineSynchedData() {
+        entityData.define(AIRBURST_SETTINGS,com.example.sbwhelldiver.config.AirburstSettings().save())
         entityData.define(GATLING_SETTINGS,com.example.sbwhelldiver.config.GatlingSettings().save())
         entityData.define(ORIGIN,CompoundTag())
         entityData.define(ORBITAL_FIRED_AT,-1L)
@@ -240,6 +275,10 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         entityData.define(STRATAGEM, "")
     }
     override fun readAdditionalSaveData(tag: CompoundTag) {
+        if(tag.contains("AirburstSettings"))entityData.set(AIRBURST_SETTINGS,tag.getCompound("AirburstSettings"))
+        airburstNextShot=tag.getInt("AirburstNextShot").coerceIn(0,airburstSettings.rounds)
+        airburstReports=tag.getInt("AirburstReports").coerceIn(0,airburstSettings.rounds)
+        airburstActive.clear();tag.getList("AirburstActive",net.minecraft.nbt.Tag.TAG_COMPOUND.toInt()).forEach{val t=it as CompoundTag;if(t.hasUUID("Id"))airburstActive.add(t.getUUID("Id"))}
         if(tag.contains("GatlingSettings"))entityData.set(GATLING_SETTINGS,tag.getCompound("GatlingSettings"))
         gatlingNextShot=tag.getInt("GatlingNextShot").coerceIn(0,gatlingSettings.total)
         gatlingActive.clear();tag.getList("GatlingActive",net.minecraft.nbt.Tag.TAG_COMPOUND.toInt()).forEach{val t=it as CompoundTag;if(t.hasUUID("Id"))gatlingActive.add(t.getUUID("Id"))}
@@ -271,6 +310,8 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         noPhysics = true
     }
     override fun addAdditionalSaveData(tag: CompoundTag) {
+        tag.put("AirburstSettings",entityData.get(AIRBURST_SETTINGS));tag.putInt("AirburstNextShot",airburstNextShot);tag.putInt("AirburstReports",airburstReports)
+        tag.put("AirburstActive",net.minecraft.nbt.ListTag().also{list->airburstActive.forEach{id->list.add(CompoundTag().also{it.putUUID("Id",id)})}})
         tag.put("GatlingSettings",entityData.get(GATLING_SETTINGS));tag.putInt("GatlingNextShot",gatlingNextShot)
         tag.put("GatlingActive",net.minecraft.nbt.ListTag().also{list->gatlingActive.forEach{id->list.add(CompoundTag().also{it.putUUID("Id",id)})}})
         tag.put("OrbitalOrigin",entityData.get(ORIGIN))
@@ -293,6 +334,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
     companion object {
         const val LANDING_GRACE_TICKS = 20
+        private val AIRBURST_SETTINGS=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.COMPOUND_TAG)
         private val GATLING_SETTINGS=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.COMPOUND_TAG)
         private val ORBITAL_FIRED_AT=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.LONG)
         private val ORBITAL_FLIGHT_TICKS=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.INT)
