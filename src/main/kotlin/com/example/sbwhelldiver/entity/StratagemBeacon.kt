@@ -144,7 +144,7 @@ class StratagemBeacon(type: EntityType<StratagemBeacon>, level: Level) :
         if (!level().isClientSide && !com.example.sbwhelldiver.stratagem.Stratagems.dimensionAllowed(level().dimension().location().toString())) {
             failDeployment(); return
         }
-        if (!level().isClientSide && flatTop && hasOpenDeploymentColumns(result)) {
+        if (!level().isClientSide && flatTop && (BeaconData.selected(item)?.category == com.example.sbwhelldiver.stratagem.StratagemCategory.RED || hasOpenDeploymentColumns(result))) {
             val selected = BeaconData.selected(item)
             if (selected != null) {
                 if(com.example.sbwhelldiver.stratagem.Stratagems.isOrbital(selected.id)){

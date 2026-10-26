@@ -58,7 +58,7 @@ object DestroyerClient:ResourceManagerReloadListener {
  private val corners=intArrayOf(0,1,2,2)
  private val buffers=MultiBufferSource.immediate(BufferBuilder(1048576))
  private fun drawWarpTrail(e:RenderLevelStageEvent,flight:DestroyerWarp.Pose,camera:Vec3,factor:Double){
-  val forward=DestroyerWarp.forward(flight.anchor.direction)
+  val forward=flight.motion
   val head=flight.position.subtract(forward.scale(110.0))
   val tail=head.subtract(forward.scale(flight.trailLength))
   var right=forward.cross(head.subtract(camera)).normalize()
@@ -89,7 +89,7 @@ object DestroyerClient:ResourceManagerReloadListener {
      val delta=flight.position.subtract(camera);val distance=delta.length();if(distance>16384||distance<1)continue
      val factor=minOf(1.0,96.0/distance);val p=e.poseStack;p.pushPose()
      try{
-      p.translate(delta.x*factor,delta.y*factor,delta.z*factor);p.scale(factor.toFloat(),factor.toFloat(),factor.toFloat());p.mulPose(Axis.YP.rotationDegrees(180f-a.direction*90f))
+      p.translate(delta.x*factor,delta.y*factor,delta.z*factor);p.scale(factor.toFloat(),factor.toFloat(),factor.toFloat());p.mulPose(Axis.YP.rotationDegrees(flight.yaw))
       val pose=p.last();val vc=buffers.getBuffer(DestroyerRenderTypes.HULL)
       for(t in mesh){
        val shade=if(t.emissive)1f else .72f
@@ -105,6 +105,7 @@ object DestroyerClient:ResourceManagerReloadListener {
   if(e.stage==RenderLevelStageEvent.Stage.AFTER_PARTICLES){
    val camera=e.camera.position;val p=e.poseStack
    for(marker in level.entitiesForRendering().filterIsInstance<StratagemMarker>()){
+    if(marker.isOrbitalGatling)continue
     val origin=marker.orbitalOrigin?:continue
     val target=marker.position();val t=marker.orbitalProgress(e.partialTick)
     if(t !in 0.0..1.0)continue

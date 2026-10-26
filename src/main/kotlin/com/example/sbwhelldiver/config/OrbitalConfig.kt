@@ -22,7 +22,9 @@ object OrbitalConfig {
   blast=b.defineInRange("explosionDamage",240.0,0.0,100000.0)
   inner=b.defineInRange("innerRadius",4.0,0.0,128.0)
   outer=b.defineInRange("outerRadius",12.0,.1,256.0)
-  b.pop(2)
+  b.pop()
+  OrbitalGatlingConfig.register(b)
+  b.pop()
  }
  fun callTicks()=(callSeconds.get()*20).toInt().coerceAtLeast(10)
  fun flightTicks()=(flightSeconds.get()*20).toInt().coerceAtLeast(10)

@@ -1,7 +1,7 @@
 """Stage the current native orbital/mission icon masks; run with Blender Python."""
 import bpy,numpy as np,json,hashlib,struct,zlib
 from pathlib import Path
-R=Path(__file__).resolve().parents[1];A=R/'src/main/resources/assets/sbw_helldiver';evidence=[]
+R=Path(__file__).resolve().parents[1];A=R/'src/main/resources/assets/sbw_helldiver';evidence=[x for x in json.loads((R/'art/icons/orbital/sources.json').read_text()) if x['id'] not in ['orbital_precision_strike','call_super_destroyer']]
 def png(p,a):
  h,w=a.shape[:2]
  def c(t,d):return struct.pack('>I',len(d))+t+d+struct.pack('>I',zlib.crc32(t+d)&0xffffffff)

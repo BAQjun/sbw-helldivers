@@ -5206,5 +5206,14 @@
         "attenuation_distance": 128
       }
     ]
+  },
+  "sfx_orbital_gatling": {
+    "subtitle": "subtitles.sbw_helldiver.sfx_orbital_gatling",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/orbital_gatling/incoming_loop",
+        "attenuation_distance": 128
+      }
+    ]
   }
 }

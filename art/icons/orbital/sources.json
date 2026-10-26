@@ -10,5 +10,13 @@
     "nativeHash": "0x356f12d60ab2ecc5",
     "sourceSha256": "66cc31b3303f3c471e9e11544750f4a190932a6cd4f97c00b0b214d8c1b4b098",
     "nativeStratagemType": "StratagemType_CallInSuperDestroyer"
+  },
+  {
+    "id": "orbital_gatling_barrage",
+    "nativeSource": "content/ui/shared/resources/generated_icons/stratagem_icons.xaml",
+    "template": "DataTemplate.Icon.StratagemType.OrbitalGatlingBarrage",
+    "nativeStratagemType": "StratagemType_OrbitalGatlingBarrage",
+    "format": "Native vector paths, existing red/cream card palette and border",
+    "sourceSha256": "c9eb4d2eac7406db4da0eb5942b474765ab8c22b96626eea3d9eead2f197f155"
   }
 ]

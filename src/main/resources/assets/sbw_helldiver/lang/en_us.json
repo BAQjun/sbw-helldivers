@@ -198,5 +198,8 @@
   "config.sbw_helldiver.hint": "Click Save to apply. Automatic retraction applies to the current world.",
   "subtitles.sbw_helldiver.sfx_orbital_incoming": "Orbital shell whistles",
   "hud.sbw_helldiver.dimension_unavailable": "Unavailable in the Nether",
-  "subtitles.sbw_helldiver.sfx_orbital_fire": "Super Destroyer fires"
+  "subtitles.sbw_helldiver.sfx_orbital_fire": "Super Destroyer fires",
+  "item.sbw_helldiver.orbital_gatling_barrage_stratagem": "Orbital Gatling Barrage",
+  "subtitles.sbw_helldiver.sfx_orbital_gatling": "Orbital Gatling Barrage fires",
+  "entity.sbw_helldiver.orbital_gatling_round": "Orbital Gatling Barrage"
 }

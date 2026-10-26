@@ -48,6 +48,12 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     private var podSpawned = false
     private var activationPlayed = false
     val isOrbital get()=(dropTypeId?.path ?: entityData.get(STRATAGEM)).startsWith("orbital_")
+    val isOrbitalGatling get()=(dropTypeId?.path ?: entityData.get(STRATAGEM))=="orbital_gatling_barrage"
+    val gatlingSettings get()=com.example.sbwhelldiver.config.GatlingSettings.load(entityData.get(GATLING_SETTINGS))
+    private var gatlingNextShot=0
+    private val gatlingActive=mutableListOf<UUID>()
+    private var gatlingPath:List<Vec3>?=null
+    fun gatlingTargets():List<Vec3> = gatlingPath ?: com.example.sbwhelldiver.stratagem.OrbitalGatlingPattern.offsets(uuid.mostSignificantBits xor uuid.leastSignificantBits,gatlingSettings).map{position().add(it)}.also{gatlingPath=it}
     val orbitalOrigin:Vec3? get()=entityData.get(ORIGIN).takeIf{it.contains("X")}?.let{Vec3(it.getDouble("X"),it.getDouble("Y"),it.getDouble("Z"))}
     val orbitalFiredAt get()=entityData.get(ORBITAL_FIRED_AT)
     val orbitalFlightTicks get()=entityData.get(ORBITAL_FLIGHT_TICKS)
@@ -65,14 +71,15 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         entityData.set(GRACE, if(isEagle || isOrbital) 0 else LANDING_GRACE_TICKS)
         surfaceY = groundY
         descentTicks = if(isOrbital) orbitalTerminalTicks() else if(isEagle) eagleCallTicks else AbstractHellpodEntity.FALL_TICKS
-        entityData.set(DURATION, if(isOrbital) com.example.sbwhelldiver.config.OrbitalConfig.callTicks() else if(isEagle) eagleCallTicks else delayTicks.coerceAtLeast(maxOf(20, descentTicks - landingGraceTicks)))
+        entityData.set(DURATION, if(isOrbitalGatling) com.example.sbwhelldiver.config.OrbitalGatlingConfig.callTicks() else if(isOrbital) com.example.sbwhelldiver.config.OrbitalConfig.callTicks() else if(isEagle) eagleCallTicks else delayTicks.coerceAtLeast(maxOf(20, descentTicks - landingGraceTicks)))
         entityData.set(LEFT, duration)
         entityData.set(AGE, 0)
         entityData.set(FACE, normal.get3DDataValue())
         entityData.set(COLOR, beamColor)
         entityData.set(STRATAGEM, dropType.path)
         if(isOrbital){
-            entityData.set(ORBITAL_FLIGHT_TICKS,com.example.sbwhelldiver.config.OrbitalConfig.flightTicks())
+            if(isOrbitalGatling)entityData.set(GATLING_SETTINGS,com.example.sbwhelldiver.config.OrbitalGatlingConfig.snapshot().save())
+            entityData.set(ORBITAL_FLIGHT_TICKS,if(isOrbitalGatling)gatlingSettings.flightTicks else com.example.sbwhelldiver.config.OrbitalConfig.flightTicks())
             entityData.set(ORBITAL_FIRED_AT,-1L)
             val server=level().server
             val origin=server?.let{com.example.sbwhelldiver.stratagem.SuperDestroyers.origin(it,owner,level().dimension().location().toString(),position())}
@@ -125,16 +132,42 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         if(orbitalFiredAt<0 && elapsedTicks>=duration) {
             if(orbitalOrigin==null){updateCooldown(true);discard();return}
             entityData.set(ORBITAL_FIRED_AT,server.gameTime)
-            com.example.sbwhelldiver.stratagem.SuperDestroyers.fire(server,orbitalOrigin!!,position())
+            if(!isOrbitalGatling)com.example.sbwhelldiver.stratagem.SuperDestroyers.fire(server,orbitalOrigin!!,position())
             updateCooldown()
         }
         if(orbitalFiredAt<0)return
+        if(isOrbitalGatling){tickGatling(server);return}
         if(!podSpawned && server.gameTime>=orbitalImpactAt-orbitalTerminalTicks()) {
             if(!spawnOrbitalShell()){discard();return}
             podSpawned=true
         }
         // Keep the beam until the real terminal shell hits terrain or a creature.
         if(podSpawned && (podUUID?.let(server::getEntity)==null || server.gameTime>orbitalImpactAt+40))discard()
+    }
+    private fun tickGatling(server:ServerLevel) {
+        val settings=gatlingSettings
+        val origin=orbitalOrigin?:run{discard();return}
+        val age=(server.gameTime-orbitalFiredAt).toDouble()
+        val terminal=orbitalTerminalTicks()
+        val due=com.example.sbwhelldiver.stratagem.OrbitalGatlingPattern.due(age-settings.flightTicks+terminal,settings)
+        // At most eight catch-up shells per tick after unloading; ordinary cadence is one or two.
+        repeat(minOf(8,(due-gatlingNextShot).coerceAtLeast(0))){
+            val index=gatlingNextShot
+            val target=gatlingTargets()[index].add(0.0,.005,0.0)
+            val direction=target.subtract(origin).normalize()
+            val speed=origin.distanceTo(target)/settings.flightTicks
+            val launch=target.subtract(direction.scale(speed*terminal))
+            val shell=com.example.sbwhelldiver.init.ModEntities.ORBITAL_GATLING_ROUND.get().create(server)?:return
+            shell.configure(settings,com.example.sbwhelldiver.stratagem.OrbitalGatlingPattern.highExplosive(index))
+            shell.setPos(launch);ownerUuid?.let(server::getEntity)?.let{shell.owner=it}
+            shell.shoot(direction.x,direction.y,direction.z,speed.toFloat(),0f)
+            if(!server.addFreshEntity(shell))return
+            gatlingActive.add(shell.uuid);gatlingNextShot++
+        }
+        gatlingActive.removeAll{server.getEntity(it)==null}
+        if(gatlingNextShot>=settings.total && (gatlingActive.isEmpty() || age>settings.lastShotTime+settings.flightTicks+40)) {
+            gatlingActive.forEach{server.getEntity(it)?.discard()};discard()
+        }
     }
     private fun orbitalTerminalTicks():Int {
         val speed=(orbitalOrigin?.distanceTo(Vec3(x,surfaceY+.02,z))?:1.0)/orbitalFlightTicks
@@ -193,6 +226,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
 
     override fun defineSynchedData() {
+        entityData.define(GATLING_SETTINGS,com.example.sbwhelldiver.config.GatlingSettings().save())
         entityData.define(ORIGIN,CompoundTag())
         entityData.define(ORBITAL_FIRED_AT,-1L)
         entityData.define(ORBITAL_FLIGHT_TICKS,30)
@@ -206,6 +240,10 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         entityData.define(STRATAGEM, "")
     }
     override fun readAdditionalSaveData(tag: CompoundTag) {
+        if(tag.contains("GatlingSettings"))entityData.set(GATLING_SETTINGS,tag.getCompound("GatlingSettings"))
+        gatlingNextShot=tag.getInt("GatlingNextShot").coerceIn(0,gatlingSettings.total)
+        gatlingActive.clear();tag.getList("GatlingActive",net.minecraft.nbt.Tag.TAG_COMPOUND.toInt()).forEach{val t=it as CompoundTag;if(t.hasUUID("Id"))gatlingActive.add(t.getUUID("Id"))}
+        gatlingPath=null
         entityData.set(ORIGIN,tag.getCompound("OrbitalOrigin"))
         entityData.set(ORBITAL_FIRED_AT,if(tag.contains("OrbitalFiredAt"))tag.getLong("OrbitalFiredAt") else -1L)
         entityData.set(ORBITAL_FLIGHT_TICKS,if(tag.contains("OrbitalFlightTicks"))tag.getInt("OrbitalFlightTicks").coerceAtLeast(10) else com.example.sbwhelldiver.config.OrbitalConfig.flightTicks())
@@ -233,6 +271,8 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         noPhysics = true
     }
     override fun addAdditionalSaveData(tag: CompoundTag) {
+        tag.put("GatlingSettings",entityData.get(GATLING_SETTINGS));tag.putInt("GatlingNextShot",gatlingNextShot)
+        tag.put("GatlingActive",net.minecraft.nbt.ListTag().also{list->gatlingActive.forEach{id->list.add(CompoundTag().also{it.putUUID("Id",id)})}})
         tag.put("OrbitalOrigin",entityData.get(ORIGIN))
         tag.putLong("OrbitalFiredAt",orbitalFiredAt)
         tag.putInt("OrbitalFlightTicks",orbitalFlightTicks)
@@ -253,6 +293,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
     companion object {
         const val LANDING_GRACE_TICKS = 20
+        private val GATLING_SETTINGS=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.COMPOUND_TAG)
         private val ORBITAL_FIRED_AT=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.LONG)
         private val ORBITAL_FLIGHT_TICKS=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.INT)
         private val ORIGIN=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.COMPOUND_TAG)

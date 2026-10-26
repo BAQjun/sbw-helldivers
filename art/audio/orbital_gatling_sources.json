@@ -1,0 +1,24 @@
+{
+  "source": "Helldivers 2",
+  "bank": "stratagems_orbital_gatling_barrage",
+  "bank_sha256": "04d54df6a36e81185513fefc12d8d078028dff5de6b3a2a7d553d466af0209ed",
+  "native_event": 3686284256,
+  "actions": [
+    179184919,
+    956343072
+  ],
+  "containers": [
+    965678979,
+    1052759329
+  ],
+  "sound_nodes": [
+    135546231,
+    649999137
+  ],
+  "media": [
+    938813072,
+    535907359
+  ],
+  "playback": "Native incoming/impact loops mixed 0.4/0.6, mono, 4-second repeating clip. Starts during final approach and ends after last impact; native RTPC/reverb not reproduced. No precision-strike cannon substitution.",
+  "output_sha256": "601ab0a6208e6a7c894456a785611a8a55d1597ee474e6b41645ed21af9ad361"
+}

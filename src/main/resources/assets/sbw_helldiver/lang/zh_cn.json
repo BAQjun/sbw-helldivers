@@ -198,5 +198,8 @@
   "config.sbw_helldiver.hint": "更改后点击保存。自动收回设置仅针对当前世界。",
   "subtitles.sbw_helldiver.sfx_orbital_incoming": "轨道炮弹呼啸",
   "hud.sbw_helldiver.dimension_unavailable": "下界无法使用战备",
-  "subtitles.sbw_helldiver.sfx_orbital_fire": "超级驱逐舰开炮"
+  "subtitles.sbw_helldiver.sfx_orbital_fire": "超级驱逐舰开炮",
+  "item.sbw_helldiver.orbital_gatling_barrage_stratagem": "轨道加特林火力网",
+  "subtitles.sbw_helldiver.sfx_orbital_gatling": "轨道加特林持续扫射",
+  "entity.sbw_helldiver.orbital_gatling_round": "轨道加特林火力网"
 }
