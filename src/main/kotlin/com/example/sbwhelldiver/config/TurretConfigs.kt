@@ -21,7 +21,7 @@ class TurretConfig(private val builder: ForgeConfigSpec.Builder, val id: String,
     val maxHealth = real("maxHealth", vehicle["MaxHealth"].asDouble, 1.0, comment = "本体最大生命值。已部署炮台不会因提高上限而自动回血。 / Maximum hull health; raising it does not heal existing turrets.")
     val explosionResistance = real("explosionResistance", .5, max = 1.0, comment = "爆炸减伤比例；0 为不减伤，1 为免疫爆炸。 / Explosion resistance: 0 = none, 1 = immune.")
     val lifetimeTicks = integer("lifetimeTicks", if (manual) 0 else -1, -1, 240000,
-        "工作时限，20 tick = 1 秒；-1 使用全局 sentryLifetimeTicks，0 不按时间回收。 / Lifetime: -1 = global, 0 = unlimited.")
+        "工作时限，20 tick = 1 秒；-1 使用全局 sentryLifetimeTicks，0 不按时间回收；人员操作型炮位忽略此项。 / Lifetime: -1 = global, 0 = unlimited; ignored by manned emplacements.")
     val damage = real("damage", when (id) {
         "hmg_emplacement" -> 15.0; "anti_tank_emplacement" -> 200.0; "grenadier_battlement" -> 5.0
         "laser_sentry" -> 7.5; "tesla_tower" -> 80.0; else -> number("Damage")

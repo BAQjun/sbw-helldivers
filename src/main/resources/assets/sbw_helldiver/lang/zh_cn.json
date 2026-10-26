@@ -195,7 +195,7 @@
   "config.sbw_helldiver.auto_retract.tooltip": "关闭后，战备不会因弹药耗尽或工作时限到达而缩回。不会补充弹药；摧毁效果和玩家出仓回收不受影响。更改对当前世界立即生效。",
   "config.sbw_helldiver.auto_retract.enter_world": "进入世界后可修改该世界的自动收回设置。",
   "config.sbw_helldiver.auto_retract.permission": "该设置由服务器控制，仅服务器管理员或单人世界主人可以修改。",
-  "config.sbw_helldiver.hint": "更改后点击保存。自动收回设置仅针对当前世界。",
+  "config.sbw_helldiver.hint": "更改后点击保存。弹药与收回设置仅针对当前世界。",
   "subtitles.sbw_helldiver.sfx_orbital_incoming": "轨道炮弹呼啸",
   "hud.sbw_helldiver.dimension_unavailable": "下界无法使用战备",
   "subtitles.sbw_helldiver.sfx_orbital_fire": "超级驱逐舰开炮",
@@ -209,5 +209,9 @@
   "item.sbw_helldiver.orbital_380mm_he_barrage_stratagem": "轨道380mm高爆弹火力网",
   "item.sbw_helldiver.orbital_walking_barrage_stratagem": "轨道游走火力网",
   "entity.sbw_helldiver.orbital_120mm_shell": "轨道120mm高爆炮弹",
-  "hud.sbw_helldiver.in_progress": "正在进行：%s"
+  "hud.sbw_helldiver.in_progress": "正在进行：%s",
+  "config.sbw_helldiver.infinite_turret_ammo": "炮台无限弹药",
+  "config.sbw_helldiver.infinite_turret_ammo.value": "炮台无限弹药：%s",
+  "config.sbw_helldiver.infinite_turret_ammo.tooltip": "炮台和手动炮位不消耗弹药或燃料。火箭仍需装填，激光过热与自动炮台工作时限不变。对当前世界立即生效。",
+  "config.sbw_helldiver.infinite_turret_ammo.enter_world": "进入世界后可修改该世界的无限弹药设置。"
 }

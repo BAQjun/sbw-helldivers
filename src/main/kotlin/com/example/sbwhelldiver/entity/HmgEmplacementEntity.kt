@@ -1,5 +1,6 @@
 package com.example.sbwhelldiver.entity
 
+import com.example.sbwhelldiver.config.HelldiversConfig
 import com.example.sbwhelldiver.init.ModEntities
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.syncher.EntityDataSerializers
@@ -150,6 +151,8 @@ open class HmgEmplacementEntity(type: EntityType<*>, level: Level): AbstractHell
         turretAimPitch=HmgErgonomics.step(weaponPitch,requestedPitch,false,mechanicalErgonomics,aimSpeedMultiplier,minimumClosingSpeed).coerceIn(-65f,75f)
     }
     override fun tickActive() {
+        if (HelldiversConfig.infiniteTurretAmmo.get() && ammoRemaining == 0)
+            entityData.set(AMMO, ammunitionCapacity)
         val player=operator
         if(player==null || !player.isAlive || player.isSpectator || isWreck) {
             if(movesWithoutOperator)updateWeaponAim()
@@ -166,7 +169,8 @@ open class HmgEmplacementEntity(type: EntityType<*>, level: Level): AbstractHell
         val server=level() as? ServerLevel ?: return
         if(!fireRound(server,player))return
         addAimRecoil()
-        entityData.set(AMMO,ammoRemaining-1);entityData.set(LAST_SHOT,server.gameTime);markFired();nextShot=server.gameTime+nextShotDelayTicks()
+        if (!HelldiversConfig.infiniteTurretAmmo.get()) entityData.set(AMMO,ammoRemaining-1)
+        entityData.set(LAST_SHOT,server.gameTime);markFired();nextShot=server.gameTime+nextShotDelayTicks()
         if(ammoRemaining==0) { trigger=false;if(automaticRetractionEnabled() && shouldRetract())enterPhase(Phase.RETRACTING) }
     }
     protected open fun nextShotDelayTicks(): Int {
@@ -238,7 +242,9 @@ open class HmgEmplacementEntity(type: EntityType<*>, level: Level): AbstractHell
         val delta=effectiveAimTarget(barrel,partial).subtract(muzzlePosition(barrel,partial))
         return if(delta.lengthSqr()<1e-8)limitedFiringDirection(barrel,partial) else delta.normalize()
     }
-    override fun shouldRetract() = lifetimeExpired() || (ammoRemaining<=0 && (!waitForManualDismount || passengers.isEmpty()))
+    override fun shouldRetract() = ammoRemaining <= 0 &&
+        !(HelldiversConfig.infiniteTurretAmmo.get() && ammunitionCapacity > 0) &&
+        (!waitForManualDismount || passengers.isEmpty())
     override fun onRetracting() { trigger=false;operatorId=-1;ejectPassengers() }
     open fun interpolatedYaw(partial: Float) = previousWeaponYaw+Mth.wrapDegrees(weaponYaw-previousWeaponYaw)*partial
     open fun interpolatedPitch(partial: Float) = Mth.lerp(partial,previousWeaponPitch,weaponPitch)

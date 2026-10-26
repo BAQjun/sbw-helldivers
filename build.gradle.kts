@@ -17,6 +17,11 @@ java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
+// Mod-search aliases contain Chinese characters; Windows' default code page is not UTF-8.
+tasks.withType<JavaCompile>().configureEach {
+    options.encoding = "UTF-8"
+}
+
 // Integration tests use the installed TACZ runtime without shipping test classes.
 val taczTest = sourceSets.create("taczTest") {
     compileClasspath += sourceSets.main.get().output + sourceSets.main.get().compileClasspath

@@ -81,6 +81,18 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
     private var initializedAmmo = false
     private var appliedConfigRevision = -1
     private val configuredAmmo get() = turretConfig?.ammunition?.get() ?: profile.totalAmmo
+    private val unlimitedAmmo get() = HelldiversConfig.infiniteTurretAmmo.get() && configuredAmmo > 0
+
+    /** Restore an empty active weapon when unlimited ammunition is enabled at runtime. */
+    private fun prepareUnlimitedAmmo() {
+        if (!unlimitedAmmo || profile.isLaser || profile.isTesla || profile.isRocket || reloading) return
+        val minimum = 1
+        if ((getGunData(WEAPON_NAME)?.ammo?.get() ?: minimum) >= minimum) return
+        modifyGunData(WEAPON_NAME) { gun ->
+            gun.ammo.set(minOf(gun.get(GunProp.MAGAZINE), configuredAmmo))
+            entityData.set(DATA_CLIP, gun.ammo.get())
+        }
+    }
     private fun burstInterval() = turretConfig?.burstInterval(profile.burstInterval) ?: profile.burstInterval
     private fun burstPause() = turretConfig?.burstInterval(profile.burstPause) ?: profile.burstPause
     private fun applyTurretConfig() {
@@ -279,6 +291,7 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
 
     override fun tickActive() {
         if (isWreck) return
+        prepareUnlimitedAmmo()
         if (profile.isTesla) { tickTesla(); return }
         if (profile.isLaser) { tickLaser(); return }
         if (profile.isMortar) { tickMortar(); return }
@@ -297,7 +310,7 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
             resetFireClock()
             entityData.set(DATA_SPINNING, false)
             spinTicks = 0
-            if (profile.isRocket && reserve > 0) startReload()
+            if (profile.isRocket && (reserve > 0 || unlimitedAmmo)) startReload()
             return
         }
         updateTarget(activeTicks % 10 == 0)
@@ -348,6 +361,7 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
                         if (profile.isGatling) null else enemy.uuid,
                         if (profile.isGatling) null else enemy.boundingBox.center))
                     fired = data.ammo.get() < before
+                    if (fired && unlimitedAmmo && !profile.isRocket) data.ammo.set(before)
                     entityData.set(DATA_CLIP, data.ammo.get())
                 }
             }
@@ -424,11 +438,12 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
         val origin = enemy?.let { firingOrigin(it,muzzle,direction) } ?: muzzle
         val aligned = enemy != null && aimPoint != null &&
             SentryAim.aligned(origin,direction,enemy.boundingBox) && clearSight(origin,aimPoint)
-        val fire = flameClock.advance(server.gameTime,enemy != null,aligned,gun.ammo.get())
+        val fuel = if (unlimitedAmmo) maxOf(gun.ammo.get(), FlameClock.AMMO_PER_JET) else gun.ammo.get()
+        val fire = flameClock.advance(server.gameTime,enemy != null,aligned,fuel)
         entityData.set(DATA_FLAME_STATE,flameClock.state.ordinal)
         if(!fire) return
         modifyGunData(WEAPON_NAME) { data ->
-            data.ammo.set((data.ammo.get()-FlameClock.AMMO_PER_JET).coerceAtLeast(0))
+            if (!unlimitedAmmo) data.ammo.set((data.ammo.get()-FlameClock.AMMO_PER_JET).coerceAtLeast(0))
             entityData.set(DATA_CLIP,data.ammo.get())
         }
         FlameJet.spray(server,this,origin,direction)
@@ -487,6 +502,7 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
                 val before = data.ammo.get()
                 data.shoot(ShootParameters(ammoSupplier,this,server,muzzle,shot.velocity.normalize(),data,0.0,false,null,null))
                 fired = data.ammo.get() < before
+                if (fired && unlimitedAmmo) data.ammo.set(before)
                 entityData.set(DATA_CLIP,data.ammo.get())
             }
         }
@@ -643,8 +659,8 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
     }
     private fun finishReload() {
         modifyGunData(WEAPON_NAME) { gun ->
-            val count = min(gun.get(GunProp.MAGAZINE), reserve)
-            reserve -= count
+            val count = min(gun.get(GunProp.MAGAZINE), if (unlimitedAmmo) configuredAmmo else reserve)
+            if (!unlimitedAmmo) reserve -= count
             gun.ammo.set(count)
             gun.virtualAmmo.set(0)
             gun.reload.setState(ReloadState.NOT_RELOADING)
@@ -654,7 +670,7 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
         entityData.set(DATA_RELOADING, false)
     }
     override fun shouldRetract(): Boolean = if (profile.isTesla) super.shouldRetract() else if (profile.isLaser) laserClock.state != LaserClock.State.OVERLOADED && super.shouldRetract() else super.shouldRetract() ||
-        (initializedAmmo && !firingRecently && !reloading && reserve <= 0 && (getGunData(WEAPON_NAME)?.ammo?.get() ?: 1) <= 0)
+        (initializedAmmo && !unlimitedAmmo && !firingRecently && !reloading && reserve <= 0 && (getGunData(WEAPON_NAME)?.ammo?.get() ?: 1) <= 0)
     override fun onRetracting() {
         laserClock.stop();syncLaser()
         teslaClock.reset();syncTesla()

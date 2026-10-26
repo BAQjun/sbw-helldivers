@@ -30,7 +30,7 @@
 | --- | --- |
 | `maxHealth` | 本体最大生命值，1～100000。 |
 | `explosionResistance` | 爆炸减伤比例，0～1；默认 `0.5`，即减伤 50%。不影响直击伤害。 |
-| `lifetimeTicks` | 工作时限，20 tick = 1 秒；`-1` 使用全局 `sentryLifetimeTicks`，`0` 不因时间回收。自动炮台默认 `-1`，手动炮台默认 `0`。不改变空投和展开动画时长。 |
+| `lifetimeTicks` | 工作时限，20 tick = 1 秒；`-1` 使用全局 `sentryLifetimeTicks`，`0` 不因时间回收。自动炮台默认 `-1`；人员操作型炮位忽略该字段，只在弹药耗尽且玩家离开后自动收回。不改变空投和展开动画时长。 |
 | `damage` | 每发直击伤害。火焰为每次射流伤害，激光为每次伤害结算，特斯拉塔为每次放电对每个目标的伤害。爆炸、附带燃烧、地火和毒气持续伤害另行计算。 |
 | `rpm` | 每分钟射击／射流／伤害结算／放电次数。连发武器会同比缩放组内间隔和组间停顿；预热、换弹和重新瞄准仍会影响实际输出。 |
 | `ammunition` | 非能量炮台的总弹药或燃料，0～100000。火焰每次射流仍消耗 2 单位燃料。激光与特斯拉塔不使用此字段。 |
@@ -95,3 +95,24 @@ lifetimeTicks = 0
 In a world, open Mods → SBW Helldivers → Config → Automatic retraction. Enabled by default. Disabling it keeps deployed stratagems extended after ammunition or operating time runs out. Re-enabling resumes automatic retraction. It does not refill ammunition or prevent destruction, and player delivery cleanup is unaffected.
 
 This is the server-owned `autoRetract` world setting in `serverconfig/sbw_helldiver-server.toml`. Changes apply immediately. Multiplayer changes require operator permission level 2; other players can view the setting.
+
+
+## 无限弹药 / Unlimited ammunition
+
+进入世界后打开“模组 → SBW Helldivers → 配置 → 炮台无限弹药”，默认关闭。该世界的 `infiniteTurretAmmo` 设置仅允许管理员或单人世界主人修改，保存后立即生效。
+
+覆盖机枪、加特林、自动机炮、火箭、三种迫击炮、火焰哨戒炮，以及重机枪支架、反坦克炮台和掷弹兵榴弹墙。开启后不消耗弹药或燃料，已耗尽但仍展开的武器可恢复使用；关闭后恢复正常消耗。火箭仍会打空当前弹仓并完成装填，激光的过热机制和自动炮台的工作时限保持不变。若还需要取消自动炮台的时限回收，可同时关闭“战备自动收回”。弹药容量设为 0 的武器仍不会开火。
+
+人员操作型炮位不再按工作时限自动收回。启用自动收回时，弹药耗尽且操作者离开后才开始收回；关闭自动收回时仍会保持展开。
+
+In a world, open Mods → SBW Helldivers → Config → Unlimited turret ammunition. The world setting `infiniteTurretAmmo` defaults to false, applies immediately after saving, and can only be changed by an operator or the singleplayer owner.
+
+Covers ballistic sentries, all three mortar sentries, flame fuel, and the HMG, Anti-Tank and Grenadier manned emplacements. Enabling it preserves ammunition/fuel and reactivates empty weapons that are still deployed. Disabling it resumes normal consumption. Rocket magazines still empty and reload; laser heat and autonomous sentry lifetimes remain unchanged. Disable Automatic retraction as well if autonomous sentries should remain deployed beyond their lifetime. Weapons configured with zero capacity remain unable to fire.
+
+Manned emplacements ignore operating lifetimes. With automatic retraction enabled, they retract only after running out of ammunition and the operator dismounts. Disabling automatic retraction keeps them deployed.
+
+## 模组列表搜索 / Mod list search
+
+Forge 模组列表支持搜索 `SBW`、`Helldivers`、`sbw_helldiver`、`绝地潜兵` 或 `地狱潜兵`，不区分英文大小写，也兼容名称中的空格、下划线与连字符。
+
+The Forge mod list accepts `SBW`, `Helldivers`, `sbw_helldiver`, `绝地潜兵` and `地狱潜兵`, ignoring case, spaces, underscores and hyphens.

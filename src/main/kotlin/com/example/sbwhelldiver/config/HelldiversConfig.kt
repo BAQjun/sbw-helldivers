@@ -27,6 +27,11 @@ object HelldiversConfig {
         "Automatically retract deployed stratagems when ammunition or operating time runs out.")
         .translation("config.sbw_helldiver.auto_retract")
         .define("autoRetract", true)
+    val infiniteTurretAmmo = builder.comment(
+        "炮台与人员操作型炮位不消耗弹药或燃料；火箭仍需装填，激光过热与工作时限不受影响。",
+        "Unlimited turret ammunition/fuel. Rocket reloads, laser heat and autonomous sentry lifetimes still apply.")
+        .translation("config.sbw_helldiver.infinite_turret_ammo")
+        .define("infiniteTurretAmmo", false)
     val sentryLifetimeTicks = builder.comment("工作时限（tick），默认 150 秒；0 表示只按弹药耗尽回收。")
         .defineInRange("sentryLifetimeTicks", 3000, 0, 240000)
     val capLifetimeTicks = builder.comment("弹出的独立盖板落地后保留多久（tick），默认 600 = 30 秒。")

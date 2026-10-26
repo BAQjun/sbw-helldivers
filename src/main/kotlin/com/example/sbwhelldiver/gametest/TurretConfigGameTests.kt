@@ -26,6 +26,7 @@ import kotlin.math.abs
 object TurretConfigGameTests {
     @JvmStatic @GameTest(template = "sentry_test", timeoutTicks = 20)
     fun configuredWeaponsPersistenceRangesAndSpecialClocks(h: GameTestHelper) {
+        val snapshot = ConfigTestSnapshot()
         val restore = mutableListOf<() -> Unit>()
         val actors = mutableListOf<Entity>()
         fun <T> change(value: ForgeConfigSpec.ConfigValue<T>, replacement: T) {
@@ -126,9 +127,7 @@ object TurretConfigGameTests {
             val wall = ModEntities.GRENADIER_BATTLEMENT.get().create(h.level)!!.also {actors.add(it);it.setPos(origin)}
             val emptyWall = CompoundTag(); wall.saveWithoutId(emptyWall); emptyWall.putInt("HmgAmmo",0)
             emptyWall.putInt("HellpodPhase",AbstractHellpodEntity.Phase.ACTIVE.ordinal); wall.load(emptyWall); wall.tick()
-            check(wall.phase == AbstractHellpodEntity.Phase.ACTIVE, "Empty grenade wall retracted")
-            change(gl.lifetimeTicks, 1); wall.tick()
-            check(wall.phase == AbstractHellpodEntity.Phase.RETRACTING, "Per-turret lifetime ignored")
+            check(wall.phase == AbstractHellpodEntity.Phase.RETRACTING, "Empty unoccupied grenade wall did not retract")
 
             val flame = TurretConfigs.get("flame_sentry")
             change(flame.rpm, 480); change(flame.damage, 6.0); change(flame.range!!, 18.0)
@@ -163,6 +162,7 @@ object TurretConfigGameTests {
             MinecraftForge.EVENT_BUS.unregister(listener)
             actors.forEach { it.discard() }
             restore.asReversed().forEach { it() }
+            snapshot.close()
             TurretConfigs.changed()
         }
         h.succeed()

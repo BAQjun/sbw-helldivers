@@ -18,7 +18,8 @@
     "HellpodMeshRenderMixin",
     "tacz.TaczInputMixin",
     "tacz.TaczCameraMixin",
-    "tacz.TaczCrosshairMixin"
+    "tacz.TaczCrosshairMixin",
+    "ModListSearchMixin"
   ],
   "injectors": {
     "defaultRequire": 1

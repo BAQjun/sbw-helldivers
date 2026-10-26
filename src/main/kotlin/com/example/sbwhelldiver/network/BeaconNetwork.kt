@@ -60,8 +60,10 @@ data class BeaconFailurePacket(val stratagemId: String, val loadoutIds: List<Str
 }
 
 object BeaconNetwork {
-    val CHANNEL = NetworkRegistry.newSimpleChannel(ResourceLocation(MOD_ID, "beacon"), { "12" }, { it == "12" }, { it == "12" })
+    val CHANNEL = NetworkRegistry.newSimpleChannel(ResourceLocation(MOD_ID, "beacon"), { "13" }, { it == "13" }, { it == "13" })
     fun register() {
+        CHANNEL.registerMessage(19,InfiniteAmmoRequestPacket::class.java,{p,b->p.encode(b)},InfiniteAmmoRequestPacket::decode,InfiniteAmmoRequestPacket::handle,Optional.of(NetworkDirection.PLAY_TO_SERVER))
+        CHANNEL.registerMessage(20,InfiniteAmmoStatePacket::class.java,{p,b->p.encode(b)},InfiniteAmmoStatePacket::decode,InfiniteAmmoStatePacket::handle,Optional.of(NetworkDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(18,DestroyerFirePacket::class.java,{p,b->p.encode(b)},DestroyerFirePacket::decode,DestroyerFirePacket::handle,Optional.of(NetworkDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(17,DestroyerWarpPacket::class.java,{p,b->p.encode(b)},DestroyerWarpPacket::decode,DestroyerWarpPacket::handle,Optional.of(NetworkDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(15,AutoRetractRequestPacket::class.java,{p,b->p.encode(b)},AutoRetractRequestPacket::decode,AutoRetractRequestPacket::handle,Optional.of(NetworkDirection.PLAY_TO_SERVER))

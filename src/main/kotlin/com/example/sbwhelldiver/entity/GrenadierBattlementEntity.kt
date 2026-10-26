@@ -11,7 +11,7 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
 import kotlin.math.*
 
-/** The cover stays fixed; only the launcher traverses. Empty cover is never reclaimed. */
+/** The cover stays fixed; only the launcher traverses. Retraction waits for the operator to dismount. */
 class GrenadierBattlementEntity(type: EntityType<*>,level: Level): HmgEmplacementEntity(type,level) {
     companion object {
         private val DEPLOYMENT_HEADING=net.minecraft.network.syncher.SynchedEntityData.defineId(GrenadierBattlementEntity::class.java,net.minecraft.network.syncher.EntityDataSerializers.FLOAT)
@@ -113,7 +113,6 @@ class GrenadierBattlementEntity(type: EntityType<*>,level: Level): HmgEmplacemen
         if(!throughSight())return super.getCameraRotation(partial,player,zoom,isFirstPerson)
         return net.minecraft.world.phys.Vec2(interpolatedYaw(partial),interpolatedPitch(partial))
     }
-    override fun shouldRetract() = lifetimeExpired()
     private val panels = mutableListOf<GrenadierWallPanelEntity>()
     override fun remove(reason:net.minecraft.world.entity.Entity.RemovalReason){
         panels.forEach{it.discard()};panels.clear();super.remove(reason)

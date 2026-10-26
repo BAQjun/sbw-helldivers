@@ -195,7 +195,7 @@
   "config.sbw_helldiver.auto_retract.tooltip": "When disabled, deployed stratagems remain extended after ammunition or operating time runs out. Does not refill ammunition or prevent destruction. Player delivery cleanup is unaffected. Applies immediately to this world.",
   "config.sbw_helldiver.auto_retract.enter_world": "Enter a world to change its automatic retraction setting.",
   "config.sbw_helldiver.auto_retract.permission": "This server setting can only be changed by an operator or the singleplayer owner.",
-  "config.sbw_helldiver.hint": "Click Save to apply. Automatic retraction applies to the current world.",
+  "config.sbw_helldiver.hint": "Click Save to apply. Ammo and retraction settings apply to this world.",
   "subtitles.sbw_helldiver.sfx_orbital_incoming": "Orbital shell whistles",
   "hud.sbw_helldiver.dimension_unavailable": "Unavailable in the Nether",
   "subtitles.sbw_helldiver.sfx_orbital_fire": "Super Destroyer fires",
@@ -209,5 +209,9 @@
   "item.sbw_helldiver.orbital_380mm_he_barrage_stratagem": "Orbital 380mm HE Barrage",
   "item.sbw_helldiver.orbital_walking_barrage_stratagem": "Orbital Walking Barrage",
   "entity.sbw_helldiver.orbital_120mm_shell": "Orbital 120mm HE Shell",
-  "hud.sbw_helldiver.in_progress": "In progress: %s"
+  "hud.sbw_helldiver.in_progress": "In progress: %s",
+  "config.sbw_helldiver.infinite_turret_ammo": "Unlimited turret ammunition",
+  "config.sbw_helldiver.infinite_turret_ammo.value": "Unlimited turret ammunition: %s",
+  "config.sbw_helldiver.infinite_turret_ammo.tooltip": "Turrets and manned emplacements use no ammunition or fuel. Rocket reloads, laser heat and autonomous sentry lifetimes still apply. Applies immediately to this world.",
+  "config.sbw_helldiver.infinite_turret_ammo.enter_world": "Enter a world to change its unlimited ammunition setting."
 }

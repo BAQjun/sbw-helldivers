@@ -20,6 +20,7 @@ import java.util.UUID
 object AutoRetractionGameTests {
     @JvmStatic @GameTest(templateNamespace="sbw_helldiver_config",template="sentry_test",timeoutTicks=10)
     fun disabledRetractionKeepsSentriesAndManualEmplacementsDeployed(h:GameTestHelper) {
+        val snapshot=ConfigTestSnapshot()
         val previous=HelldiversConfig.autoRetract.get()
         val actors=mutableListOf<Entity>()
         val types=listOf(ModEntities.MACHINE_GUN_SENTRY.get(),ModEntities.GATLING_SENTRY.get(),ModEntities.FLAME_SENTRY.get(),ModEntities.LASER_SENTRY.get(),ModEntities.TESLA_TOWER.get(),ModEntities.SHIELD_GENERATOR.get(),ModEntities.MORTAR_SENTRY.get(),ModEntities.GAS_MORTAR_SENTRY.get(),ModEntities.EMS_MORTAR_SENTRY.get(),ModEntities.ROCKET_SENTRY.get(),ModEntities.AUTOCANNON_SENTRY.get(),ModEntities.HMG_EMPLACEMENT.get(),ModEntities.ANTI_TANK_EMPLACEMENT.get(),ModEntities.GRENADIER_BATTLEMENT.get())
@@ -46,7 +47,7 @@ object AutoRetractionGameTests {
             val n=CompoundTag();transport.saveWithoutId(n);n.putInt("HellpodPhase",AbstractHellpodEntity.Phase.ACTIVE.ordinal);n.putInt("HellpodActiveTicks",80);n.putDouble("HellpodRestY",at.y);n.putBoolean("DropReleased",true)
             transport.load(n);h.level.addFreshEntity(transport);transport.tick()
             h.assertTrue(transport.phase==AbstractHellpodEntity.Phase.RETRACTING,"Stratagem option prevented player transport cleanup")
-        } finally {actors.forEach{it.discard()};limits.forEach{it.first.set(it.second)};HelldiversConfig.autoRetract.set(previous)}
+        } finally {actors.forEach{it.discard()};limits.forEach{it.first.set(it.second)};HelldiversConfig.autoRetract.set(previous);snapshot.close()}
         h.succeed()
     }
     @JvmStatic @GameTest(templateNamespace="sbw_helldiver_config",template="sentry_test",timeoutTicks=5,batch="retraction_permission")

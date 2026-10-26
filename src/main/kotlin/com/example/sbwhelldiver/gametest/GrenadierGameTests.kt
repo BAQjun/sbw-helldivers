@@ -36,7 +36,7 @@ object GrenadierGameTests {
         }
     }
     @JvmStatic @GameTest(template="sentry_test",batch="grenadier_rate",timeoutTicks=510)
-    fun fullMagazineAt160RpmLeavesOccupiedAndEmptyCover(h:GameTestHelper) {
+    fun fullMagazineAt160RpmWaitsForDismountBeforeRetraction(h:GameTestHelper) {
         val d=setup(h);val p=FakePlayerFactory.get(h.level,GameProfile(UUID.randomUUID(),"GrenadierRate"))
         p.setPos(d.position());h.level.addFreshEntity(p);p.startRiding(d,true)
         h.assertTrue(d.ammoRemaining==60&&abs(d.health-500f)<.01,"Magazine or health disagrees with requested values")
@@ -50,14 +50,14 @@ object GrenadierGameTests {
                     h.assertTrue(times.size==60&&times.zipWithNext().all {it.second-it.first in 7L..8L},"160 RPM cadence has a gap or extra shot")
                     h.assertTrue(times.last()-times.first()==443L,"Average firing interval is not 7.5 ticks")
                 }
-                h.assertTrue(d.phase==AbstractHellpodEntity.Phase.ACTIVE&&!d.isWreck,"Empty wall folded or was destroyed")
+                h.assertTrue(!d.isWreck && (d.phase==AbstractHellpodEntity.Phase.ACTIVE || dismounted),"Occupied empty wall folded or was destroyed")
                 if(!dismounted)h.assertTrue(p.vehicle===d,"Last grenade forced the player off")
                 if(h.level.gameTime-emptyAt>=8&&!dismounted) {
                     p.stopRiding();dismounted=true
                     val tag=CompoundTag();d.saveWithoutId(tag);d.load(tag)
                     h.assertTrue(d.ammoRemaining==0,"Saving refilled the launcher")
                 }
-                if(h.level.gameTime-emptyAt>=18) {p.discard();d.discard();h.succeed()}
+                if(h.level.gameTime-emptyAt>=18) {h.assertTrue(d.phase==AbstractHellpodEntity.Phase.RETRACTING,"Empty wall did not retract after dismount");p.discard();d.discard();h.succeed()}
             }
         }
     }
