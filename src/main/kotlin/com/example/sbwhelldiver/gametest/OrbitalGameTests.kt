@@ -166,4 +166,33 @@ object OrbitalGameTests {
   BeaconInput.logout(p.uuid);StratagemCooldowns.setEnabled(p,true);p.discard();h.succeed()
  }
 
+ @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",timeoutTicks=5)
+ fun warpFlightStopsAtAnchorAndNeverDuplicatesRelocation(h:GameTestHelper){
+  val dim="minecraft:overworld";val center=Vec3(12.0,64.0,30.0)
+  for(direction in 0..3){
+   val a=DestroyerAnchor.at(dim,center,direction,700.0,900.0);val f=DestroyerWarp.forward(direction)
+   h.assertTrue(f.dot(center.subtract(a.position))>0,"Warp flew backward relative to the mesh")
+   val state=DestroyerState();state.schedule(a,0)
+   h.assertTrue(DestroyerWarp.poses(state,dim,56.99).isEmpty(),"Arrival appeared before the flight window")
+   val start=DestroyerWarp.poses(state,dim,57.0).single().position
+   val mid=DestroyerWarp.poses(state,dim,58.5).single().position
+   val fractional=DestroyerWarp.poses(state,dim,58.575).single().position
+   h.assertTrue(start==a.position.subtract(f.scale(8000.0))&&mid==a.position.subtract(f.scale(4000.0)),"Incorrect arrival path")
+   h.assertTrue(abs(fractional.distanceTo(mid)-200.0)<1e-6,"Warp ignored partial-frame timing")
+   h.assertTrue(DestroyerWarp.poses(DestroyerState.load(state.save()),dim,58.575)==DestroyerWarp.poses(state,dim,58.575),"Pending warp changed on reload")
+   h.assertTrue(DestroyerWarp.poses(state,dim,60.0).single().position==a.position&&DestroyerWarp.poses(state,dim,65.0).single().position==a.position,"Delayed snapshot caused drift after arrival")
+   state.advance(60);h.assertTrue(DestroyerWarp.poses(state,dim,100.0).single().position==a.position,"Stable ship restarted its warp")
+   val next=DestroyerAnchor.at(dim,center.add(200.0,0.0,100.0),(direction+1)%4,700.0,900.0)
+   state.schedule(next,100)
+   for(t in listOf(154.0,155.0,156.5,156.99,157.0,158.5,159.99,160.0,165.0))
+    h.assertTrue(DestroyerWarp.poses(state,dim,t).size==1,"Relocation duplicated the ship or introduced a snapshot gap at $t")
+   h.assertTrue(DestroyerWarp.poses(state,dim,156.0).single().position==a.position.add(f.scale(1000.0)),"Departure did not accelerate along the bow")
+   state.advance(160);state.schedule(null,200)
+   h.assertTrue(DestroyerWarp.poses(state,dim,258.0).single().position==next.position,"Ship left before departure window")
+   h.assertTrue(DestroyerWarp.poses(state,dim,260.0).isEmpty()&&DestroyerWarp.poses(state,dim,265.0).isEmpty(),"Departed ship reappeared while waiting for snapshot")
+   h.assertTrue(DestroyerWarp.poses(state,"minecraft:the_end",255.0).isEmpty()&&DestroyerWarp.poses(state,"minecraft:the_nether",255.0).isEmpty(),"Warp leaked across dimensions")
+  }
+  h.succeed()
+ }
+
 }

@@ -85,7 +85,7 @@ object SuperDestroyers {
  fun sync(p:ServerPlayer){
   if(p is net.minecraftforge.common.util.FakePlayer)return
   val f=fleet(p.server);val list=ListTag();val dimension=p.level().dimension().location().toString()
-  f.ships.forEach{(id,s)->if(s.anchor?.dimension==dimension)list.add(s.save().also{it.putUUID("Owner",id)})}
+  f.ships.forEach{(id,s)->if(s.anchor?.dimension==dimension||s.destination?.dimension==dimension)list.add(s.save().also{it.putUUID("Owner",id)})}
   val data=CompoundTag();data.put("Ships",list);data.put("Own",state(p).save());data.putDouble("Range",OrbitalConfig.range.get());data.putBoolean("Equipped",hasOrbital(p))
   BeaconNetwork.CHANNEL.send(PacketDistributor.PLAYER.with{p},DestroyerSnapshotPacket(StratagemCooldowns.now(p.server),data))
  }
@@ -107,7 +107,13 @@ object SuperDestroyers {
   if(e.phase!=TickEvent.Phase.END)return
   val server=net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer()?:return
   val now=StratagemCooldowns.now(server);val f=fleet(server);var changed=false
-  for(s in f.ships.values){val old=s.anchor;if(s.advance(now)){cue(server,old,"super_destroyer_warp_out");cue(server,s.anchor,"super_destroyer_warp_in");changed=true}}
+  for(s in f.ships.values){
+   if(s.transitionEnd>0){
+    if(now==DestroyerWarp.departureStart(s))cue(server,s.anchor,"super_destroyer_warp_out")
+    if(now==DestroyerWarp.arrivalStart(s))cue(server,s.destination,"super_destroyer_warp_in")
+   }
+   if(s.advance(now))changed=true
+  }
   if(changed)f.setDirty()
   if(changed||now%20L==0L)syncAll(server)
  }

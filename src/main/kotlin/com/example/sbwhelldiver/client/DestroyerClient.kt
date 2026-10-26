@@ -3,6 +3,7 @@ import com.example.sbwhelldiver.MOD_ID
 import com.example.sbwhelldiver.network.DestroyerSnapshotPacket
 import com.example.sbwhelldiver.stratagem.DestroyerAnchor
 import com.example.sbwhelldiver.stratagem.DestroyerState
+import com.example.sbwhelldiver.stratagem.DestroyerWarp
 import com.example.sbwhelldiver.entity.StratagemMarker
 import com.google.gson.JsonParser
 import com.mojang.blaze3d.vertex.BufferBuilder
@@ -56,6 +57,23 @@ object DestroyerClient:ResourceManagerReloadListener {
  }
  private val corners=intArrayOf(0,1,2,2)
  private val buffers=MultiBufferSource.immediate(BufferBuilder(1048576))
+ private fun drawWarpTrail(e:RenderLevelStageEvent,flight:DestroyerWarp.Pose,camera:Vec3,factor:Double){
+  val forward=DestroyerWarp.forward(flight.anchor.direction)
+  val head=flight.position.subtract(forward.scale(110.0))
+  val tail=head.subtract(forward.scale(flight.trailLength))
+  var right=forward.cross(head.subtract(camera)).normalize()
+  if(right.lengthSqr()<1e-6)right=Vec3(1.0,0.0,0.0)
+  val pose=e.poseStack.last();val vc=buffers.getBuffer(DestroyerRenderTypes.GLOW)
+  fun ribbon(width:Double,r:Float,g:Float,b:Float,alpha:Float){
+   val edge=right.scale(width)
+   for(v in listOf(head.add(edge),tail.add(edge.scale(.12)),tail.subtract(edge.scale(.12)),head.subtract(edge))){
+    val q=v.subtract(camera).scale(factor)
+    vc.vertex(pose.pose(),q.x.toFloat(),q.y.toFloat(),q.z.toFloat()).color(r,g,b,alpha).uv(0f,0f).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).normal(pose.normal(),0f,1f,0f).endVertex()
+   }
+  }
+  ribbon(4.5,.25f,.55f,1f,.4f);ribbon(1.4,.8f,.93f,1f,.95f)
+  buffers.endBatch()
+ }
  @SubscribeEvent fun render(e:RenderLevelStageEvent){
   if(ShaderPackCompat.shadowPass())return
   if(Minecraft.getInstance().level?.dimension()==net.minecraft.world.level.Level.NETHER)return
@@ -66,9 +84,9 @@ object DestroyerClient:ResourceManagerReloadListener {
    try{
     var drewShip=false
     val dimension=level.dimension().location().toString();val camera=e.camera.position
-    for(state in ships){
-     val a=state.anchor?:continue;if(a.dimension!=dimension)continue
-     val delta=a.position.subtract(camera);val distance=delta.length();if(distance>16384||distance<1)continue
+    for(flight in ships.flatMap{DestroyerWarp.poses(it,dimension,now(e.partialTick))}){
+     val a=flight.anchor
+     val delta=flight.position.subtract(camera);val distance=delta.length();if(distance>16384||distance<1)continue
      val factor=minOf(1.0,96.0/distance);val p=e.poseStack;p.pushPose()
      try{
       p.translate(delta.x*factor,delta.y*factor,delta.z*factor);p.scale(factor.toFloat(),factor.toFloat(),factor.toFloat());p.mulPose(Axis.YP.rotationDegrees(180f-a.direction*90f))
@@ -79,6 +97,7 @@ object DestroyerClient:ResourceManagerReloadListener {
       }
       buffers.endBatch();drewShip=true
      }finally{p.popPose()}
+     if(flight.trailLength>0)drawWarpTrail(e,flight,camera,factor)
     }
     if(drewShip){RenderSystem.depthMask(true);RenderSystem.clear(256,Minecraft.ON_OSX)}
    }finally{RenderSystem.setShaderFogStart(fogStart);RenderSystem.setShaderFogEnd(fogEnd)}
