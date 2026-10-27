@@ -33,6 +33,7 @@ object Stratagems {
         StratagemDefinition("orbital_walking_barrage",listOf(RIGHT,DOWN,RIGHT,DOWN,RIGHT,DOWN),StratagemCategory.RED),
         StratagemDefinition("orbital_airburst_strike",listOf(RIGHT,RIGHT,RIGHT),StratagemCategory.RED),
         StratagemDefinition("orbital_gatling_barrage",listOf(RIGHT,DOWN,LEFT,UP,UP),StratagemCategory.RED),
+        StratagemDefinition("orbital_railcannon_strike",listOf(RIGHT,UP,DOWN,DOWN,RIGHT),StratagemCategory.RED),
         StratagemDefinition("orbital_precision_strike",listOf(RIGHT,RIGHT,UP),StratagemCategory.RED),
         StratagemDefinition("eagle_smoke_strike",listOf(0,1,0,2),StratagemCategory.RED),
         StratagemDefinition("eagle_gas_strike",listOf(0,1,3,1),StratagemCategory.RED),

@@ -142,3 +142,18 @@ Flight originates at the fixed ship position, using glowing distant traces and r
 加特林、空爆、120mm、380mm与游走火力网在开炮前显示抵达倒计时，开炮后切换为“正在进行：分:秒”，覆盖所有轮次、轮间停顿和最后一轮飞行。空爆还包含子弹药下落。最后的实际炮弹结束后才显示“已抵达”：信标保留1秒，左上角提示保留3秒，然后恢复冷却状态显示。冷却仍从第一发开炮时开始，持续状态不会重启冷却。进行中与完成状态可随存档恢复。
 
 Gatling, Airburst, 120mm, 380mm and Walking Barrages show an arrival countdown before firing, then “In progress: mm:ss” across all salvos, pauses and the final flight. Airburst also includes bomblet descent. Completion is confirmed by the final real projectile; “Arrived” remains on the beacon for one second and in the upper-left list for three seconds before the normal cooldown display resumes. Cooldown still starts with the first shot and is never restarted by this display. Activity state persists across saves.
+
+
+## 轨道炮攻击 / Orbital Railcannon Strike
+
+指令 → ↑ ↓ ↓ →。需要己方超级驱逐舰处于支援范围内。默认先等待1秒，随后从信标周围30米内选择最大生命值最高的可攻击敌人，红色指示光束跟随该目标；同生命值时优先最近目标。玩家、驯服的动物与盟友不会被选择，中立生物沿用既有炮台攻击中立生物配置。没有目标或锁定目标已死亡时，改为瞄准信标落点。
+
+红光启动1.7秒后开炮，默认再飞行0.5秒命中；飞行时间为MC适配值。锁定光束原版持续2秒。炮弹160直击与160爆炸伤害独立结算，内外半径均为2.5米，因此该球形范围内无衰减，范围外不造成爆炸伤害。炮弹仍会被沿途地形/生物拦截。默认满升级冷却179.55秒，从开炮时开始。锁定目标、瞄准点、时序与配置快照支持存档恢复，已经发射的调用不会重复开炮。
+
+The code is → ↑ ↓ ↓ →. An owned Super Destroyer must be in support range. After a 1-second call delay, the strike selects the attackable enemy with the highest maximum health within 30 m of the beacon, breaking ties by distance. The red beam tracks the selected enemy. Players, tamed animals and allies are excluded; neutral mobs follow the existing sentry setting. An empty search or a dead lock target falls back to the beacon's landing point.
+
+The ship fires 1.7 seconds after beam activation, followed by a default 0.5-second shell flight adapted for Minecraft. The native pointer lasts 2 seconds. The shell deals 160 direct plus 160 explosive damage, with identical 2.5 m inner and outer radii: full damage inside, none outside. Terrain and creatures can intercept the real terminal projectile. The fully upgraded cooldown defaults to 179.55 seconds from firing. Target identity, aim point, timing and per-call settings persist across reloads without firing twice.
+
+配置 / Configuration: `orbital.railcannonStrike` (`callDelaySeconds`, `lockSeconds`, `beamSeconds`, `flightSeconds`, `searchRadius`, `directDamage`, `explosionDamage`, `innerRadius`, `outerRadius`); `stratagems.orbital_railcannon_strike.cooldownSeconds`.
+
+解包来源 / Decoded source: `StratagemType_OrbitalRailcannon`, `OrbitalAbilityComponentData` payload `12399142748360190921`: search radius 30, projectile spawn delay 1.70000005, pointer duration 2, native call delay 1, base cooldown 210. Original sampled lock-event layers preserve the 1500 ms delayed confirmation action; Wwise procedural synthesis and RTPC/reverb processing are not reproduced. Provenance: `art/audio/orbital_railcannon_sources.json`.

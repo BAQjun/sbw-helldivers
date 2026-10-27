@@ -213,5 +213,8 @@
   "config.sbw_helldiver.infinite_turret_ammo": "炮台无限弹药",
   "config.sbw_helldiver.infinite_turret_ammo.value": "炮台无限弹药：%s",
   "config.sbw_helldiver.infinite_turret_ammo.tooltip": "炮台和手动炮位不消耗弹药或燃料。火箭仍需装填，激光过热与自动炮台工作时限不变。对当前世界立即生效。",
-  "config.sbw_helldiver.infinite_turret_ammo.enter_world": "进入世界后可修改该世界的无限弹药设置。"
+  "config.sbw_helldiver.infinite_turret_ammo.enter_world": "进入世界后可修改该世界的无限弹药设置。",
+  "item.sbw_helldiver.orbital_railcannon_strike_stratagem": "轨道炮攻击",
+  "entity.sbw_helldiver.orbital_railcannon_shell": "轨道炮攻击",
+  "subtitles.sbw_helldiver.sfx_orbital_railcannon_lock": "轨道炮锁定"
 }

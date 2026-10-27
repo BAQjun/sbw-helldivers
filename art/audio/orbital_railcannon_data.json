@@ -1,0 +1,375 @@
+{
+  "stratagem": [
+    {
+      "type": "StratagemType_OrbitalRailcannon",
+      "id": 2744472229,
+      "video_id": 3428463213,
+      "debug_name": "ORBITAL. RAILCANNON",
+      "name_upper": 826884584,
+      "name_cased": 3194889632,
+      "description": 3169729221,
+      "fluff": 3147661622,
+      "loading_loc": 1914518290,
+      "category": "StratagemCategoryType_OrbitalFireSupport",
+      "button_combination": [
+        "StratagemButtonDirection_Right",
+        "StratagemButtonDirection_Up",
+        "StratagemButtonDirection_Down",
+        "StratagemButtonDirection_Down",
+        "StratagemButtonDirection_Right"
+      ],
+      "uses": 4294967295,
+      "spawn_time": 1,
+      "spawn_radius": 0,
+      "beacon_linger_time": 0,
+      "extra_travel_time": 0,
+      "cooldown_duration_success": 210,
+      "cooldown_duration_fail": 0,
+      "origin_type": "StratagemOriginType_ShipSpecific",
+      "call_in_type": "StratagemCallInType_Throw",
+      "call_in_logic_flags": {
+        "use_objective_position": 0,
+        "objective_owner": 0,
+        "host_confirmation": 0,
+        "host_confirm_unique_instance": 0,
+        "host_confirm_objective_stratagem_usage": 0,
+        "blocked_by_stratagem_blocker": 1,
+        "available_after_mission_end": 0
+      },
+      "objective_drop_requirement": "StratagemObjectiveDropRequirement_None",
+      "mission_specific": 1,
+      "selectable": 1,
+      "triggers_war": 1,
+      "cooldown_type": "StratagemCooldownType_Individual",
+      "widget_info_type": "StratagemInfoType_Danger",
+      "payload": [
+        12399142748360190921
+      ],
+      "package": 17644016342205739046,
+      "icon": 9348347876488850416,
+      "store_icon": 0,
+      "hud_type": "StratagemHUDType_Offensive",
+      "cost": 1,
+      "enabled": 1,
+      "depends_on": "StratagemType_None",
+      "additional_stratagem": "StratagemType_None",
+      "max_in_loadout": 0,
+      "beacon_color": "StratagemBeaconColor_Red",
+      "ship_laser_pointer": 0,
+      "ready_vo": 0,
+      "denied_vo": 648592619,
+      "confirmation_vo_owner": 2032574890,
+      "callout_vo": 292711573,
+      "off_cooldown_vo": 0,
+      "synced_audio_events": [],
+      "damage_dealer": 0,
+      "matching_support_weapon": 0,
+      "dlc_pack_id": 0,
+      "is_clan_stratagem": 0,
+      "info_flags": {
+        "support_weapon": 0,
+        "hellpod": 0,
+        "explosive": 0,
+        "backpack": 0,
+        "orbital": 1,
+        "vehicle": 0,
+        "fire": 0,
+        "aerial": 0,
+        "turret": 0,
+        "straight_beacon": 0,
+        "gas": 0,
+        "light_antitank": 0,
+        "antitank": 1,
+        "lightantipersonnel": 0,
+        "antipersonnel": 0,
+        "stationaryreload": 0,
+        "expendable": 0,
+        "heat": 0,
+        "beam": 0,
+        "charge": 0
+      },
+      "spottable_vo_line": 162237989,
+      "shared_stratagem_upgrades_type": "StratagemType_None",
+      "shared_stratagem_upgrades_categories": {
+        "extra_uses": 0,
+        "cooldown_reduction": 0,
+        "cooldown_reduction_alternate": 0,
+        "spawn_time_reduction": 0,
+        "entity_delta": 0,
+        "entity_swap": 0,
+        "multi_hellpod": 0
+      },
+      "use_alternate_cooldown": 0,
+      "extra_hellpods": 0,
+      "hellpod_target_offset": [],
+      "hellpod_additional_rotation_in_tau": [],
+      "equipment_tags": [
+        1832780853,
+        2901461855,
+        3591930318,
+        658390125
+      ],
+      "customizations": [],
+      "allow_for_button_overlap": 0,
+      "deploy_on_navmesh_only": 0,
+      "payload_unit_customization": "UnitCustomizationCollectionType_Count"
+    }
+  ],
+  "componentHash": "12399142748360190921",
+  "ability": {
+    "pattern_segments": 0,
+    "smooth_segments": 1,
+    "pattern_control_points": [
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
+      }
+    ],
+    "segment_pause": 0,
+    "duration": 2,
+    "remove_time": 1,
+    "movement_speed": 90,
+    "search_radius": 30,
+    "damage_dealer_zone": {
+      "damage_info_type": "DamageInfoType_None",
+      "interval": 0.100000001,
+      "shape": "DamageDealerZoneShape_Capsule",
+      "size": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "gib_corpses": 0
+    },
+    "surface_impact": "SurfaceImpactType_None",
+    "noise_hit_template": "NoiseTemplate_None",
+    "ship_effect": 13692821650076082374,
+    "ship_effect_is_laser_pointer": 1,
+    "audio_event_start": 3732618020,
+    "audio_event_stop": 1843908931,
+    "projectile_type": "ProjectileType_Orbital_Railcannon",
+    "projectile_spawn_height": 3000,
+    "projectile_spawn_delay": 1.70000005,
+    "target_list_update_time": 0
+  }
+}

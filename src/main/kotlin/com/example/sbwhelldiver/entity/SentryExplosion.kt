@@ -15,7 +15,7 @@ import kotlin.math.sqrt
 /** The inner sphere is full damage; immediately outside it starts at full damage minus one. */
 object SentryExplosion {
     fun damageAt(distance: Double, damage: Float, inner: Double, outer: Double): Float {
-        require(inner >= 0 && outer > inner)
+        require(inner >= 0 && outer >= inner && outer > 0)
         if (distance > outer || damage <= 0) return 0f
         // Body coordinates can put an exact boundary a few ULPs outside the sphere.
         if (distance <= inner + 1e-7) return damage
@@ -35,7 +35,7 @@ object SentryExplosion {
         if (projectile.exploded) return
         projectile.exploded = true
         val outer = projectile.getExplosionRadius().toDouble()
-        val fullDamageRadius = inner.coerceIn(0.0, (outer - 1e-6).coerceAtLeast(0.0))
+        val fullDamageRadius = inner.coerceIn(0.0, outer.coerceAtLeast(0.0))
         val damage = projectile.getExplosionDamage()
         val source = ModDamageTypes.causeProjectileExplosionDamage(level.registryAccess(), projectile, projectile.owner)
         if (outer > 0 && damage > 0) {

@@ -48,6 +48,47 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     private var podSpawned = false
     private var activationPlayed = false
     val isOrbital get()=(dropTypeId?.path ?: entityData.get(STRATAGEM)).startsWith("orbital_")
+    val isOrbitalRailcannon get()=(dropTypeId?.path ?: entityData.get(STRATAGEM))=="orbital_railcannon_strike"
+    val railcannonSettings get()=com.example.sbwhelldiver.config.RailcannonSettings.load(entityData.get(RAIL_SETTINGS))
+    val railLockStartedAt get()=entityData.get(RAIL_LOCK_START)
+    private var railTargetUUID:UUID?=null
+    val railTargetId get()=entityData.get(RAIL_TARGET)
+    fun orbitalTarget(partial:Float=0f):Vec3 {
+        if(!isOrbitalRailcannon)return if(level().isClientSide)position() else Vec3(x,surfaceY+.02,z)
+        if(orbitalFiredAt<0 && level().isClientSide) {
+            val target=level().getEntity(railTargetId) as? net.minecraft.world.entity.LivingEntity
+            if(target?.isAlive==true)return target.getPosition(partial).add(0.0,target.bbHeight*.5,0.0)
+        }
+        val at=entityData.get(RAIL_AIM)
+        return if(at.contains("X"))Vec3(at.getDouble("X"),at.getDouble("Y"),at.getDouble("Z")) else position()
+    }
+    fun railBeamActive(partial:Float=0f)=isOrbitalRailcannon && railLockStartedAt>=0 &&
+        level().gameTime-railLockStartedAt+partial < railcannonSettings.beamTicks
+    private fun setRailAim(at:Vec3){entityData.set(RAIL_AIM,CompoundTag().also{it.putDouble("X",at.x);it.putDouble("Y",at.y);it.putDouble("Z",at.z)})}
+    /** Match Eagle rocket targeting; neutral mobs retain the existing user-configured policy. */
+    fun selectRailTarget():net.minecraft.world.entity.LivingEntity? {
+        val owner=ownerUuid?.let{(level() as? ServerLevel)?.getEntity(it)}
+        val range=railcannonSettings.range
+        return level().getEntitiesOfClass(net.minecraft.world.entity.LivingEntity::class.java,net.minecraft.world.phys.AABB(position(),position()).inflate(range)) {
+            it.isAlive && !it.isRemoved && !it.isInvulnerable && it !is net.minecraft.world.entity.player.Player && it!=owner &&
+            !(it is net.minecraft.world.entity.TamableAnimal && it.isTame) && !it.isAlliedTo(this) && (owner==null || !it.isAlliedTo(owner)) &&
+            (it is net.minecraft.world.entity.monster.Enemy || it is net.minecraft.world.entity.Mob && com.example.sbwhelldiver.config.HelldiversConfig.attackNeutralMobs.get()) && it.distanceToSqr(position())<=range*range
+        }.minWithOrNull(compareByDescending<net.minecraft.world.entity.LivingEntity>{it.maxHealth}.thenBy{it.distanceToSqr(position())}.thenBy{it.id})
+    }
+    private fun tickRailLock(server:ServerLevel) {
+        if(orbitalFiredAt>=0 || elapsedTicks<railcannonSettings.callTicks)return
+        if(railLockStartedAt<0){
+            if(orbitalOrigin==null){updateCooldown(true);discard();return}
+            val target=selectRailTarget();railTargetUUID=target?.uuid
+            entityData.set(RAIL_TARGET,target?.id?:-1);entityData.set(RAIL_LOCK_START,server.gameTime)
+            // A call restored after an unloaded interval still gets the complete audible lock phase.
+            entityData.set(DURATION,elapsedTicks+railcannonSettings.lockTicks)
+            updateCooldown()
+        }
+        val target=railTargetUUID?.let(server::getEntity) as? net.minecraft.world.entity.LivingEntity
+        if(target?.isAlive==true){entityData.set(RAIL_TARGET,target.id);setRailAim(target.boundingBox.center)}
+        else {entityData.set(RAIL_TARGET,-1);setRailAim(Vec3(x,surfaceY+.02,z))}
+    }
     val isOrbitalGatling get()=(dropTypeId?.path ?: entityData.get(STRATAGEM))=="orbital_gatling_barrage"
     val isOrbitalBarrage get()=(dropTypeId?.path ?: entityData.get(STRATAGEM)) in com.example.sbwhelldiver.config.BarrageSettings.ids
     val barrageSettings get()=com.example.sbwhelldiver.config.BarrageSettings.load(entityData.get(BARRAGE_SETTINGS))
@@ -123,7 +164,8 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         surfaceY = groundY
         descentTicks = if(isOrbital) orbitalTerminalTicks() else if(isEagle) eagleCallTicks else AbstractHellpodEntity.FALL_TICKS
         if(isOrbitalBarrage)prepareBarrage()
-        entityData.set(DURATION, if(isOrbitalBarrage)barrageSettings.callTicks else if(isOrbitalAirburst) com.example.sbwhelldiver.config.OrbitalAirburstConfig.callTicks() else if(isOrbitalGatling) com.example.sbwhelldiver.config.OrbitalGatlingConfig.callTicks() else if(isOrbital) com.example.sbwhelldiver.config.OrbitalConfig.callTicks() else if(isEagle) eagleCallTicks else delayTicks.coerceAtLeast(maxOf(20, descentTicks - landingGraceTicks)))
+        if(isOrbitalRailcannon)entityData.set(RAIL_SETTINGS,com.example.sbwhelldiver.config.OrbitalRailcannonConfig.snapshot().save())
+        entityData.set(DURATION, if(isOrbitalRailcannon)railcannonSettings.callTicks+railcannonSettings.lockTicks else if(isOrbitalBarrage)barrageSettings.callTicks else if(isOrbitalAirburst) com.example.sbwhelldiver.config.OrbitalAirburstConfig.callTicks() else if(isOrbitalGatling) com.example.sbwhelldiver.config.OrbitalGatlingConfig.callTicks() else if(isOrbital) com.example.sbwhelldiver.config.OrbitalConfig.callTicks() else if(isEagle) eagleCallTicks else delayTicks.coerceAtLeast(maxOf(20, descentTicks - landingGraceTicks)))
         entityData.set(LEFT, duration)
         entityData.set(AGE, 0)
         entityData.set(FACE, normal.get3DDataValue())
@@ -132,7 +174,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         if(isOrbital){
             if(isOrbitalAirburst)entityData.set(AIRBURST_SETTINGS,com.example.sbwhelldiver.config.OrbitalAirburstConfig.snapshot().save())
             if(isOrbitalGatling)entityData.set(GATLING_SETTINGS,com.example.sbwhelldiver.config.OrbitalGatlingConfig.snapshot().save())
-            entityData.set(ORBITAL_FLIGHT_TICKS,if(isOrbitalBarrage)barrageSettings.flightTicks else if(isOrbitalAirburst)airburstSettings.flightTicks else if(isOrbitalGatling)gatlingSettings.flightTicks else com.example.sbwhelldiver.config.OrbitalConfig.flightTicks())
+            entityData.set(ORBITAL_FLIGHT_TICKS,if(isOrbitalRailcannon)railcannonSettings.flightTicks else if(isOrbitalBarrage)barrageSettings.flightTicks else if(isOrbitalAirburst)airburstSettings.flightTicks else if(isOrbitalGatling)gatlingSettings.flightTicks else com.example.sbwhelldiver.config.OrbitalConfig.flightTicks())
             entityData.set(ORBITAL_FIRED_AT,-1L)
             val server=level().server
             val origin=server?.let{com.example.sbwhelldiver.stratagem.SuperDestroyers.origin(it,owner,level().dimension().location().toString(),position())}
@@ -186,10 +228,11 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
             if(server.gameTime-orbitalFinishedAt>=20)discard()
             return
         }
+        if(isOrbitalRailcannon){tickRailLock(server);if(isRemoved)return}
         if(orbitalFiredAt<0 && elapsedTicks>=duration) {
             if(orbitalOrigin==null){updateCooldown(true);discard();return}
             entityData.set(ORBITAL_FIRED_AT,server.gameTime)
-            if(!isOrbitalGatling&&!isOrbitalAirburst&&!isOrbitalBarrage)com.example.sbwhelldiver.stratagem.SuperDestroyers.fire(server,orbitalOrigin!!,position())
+            if(!isOrbitalGatling&&!isOrbitalAirburst&&!isOrbitalBarrage)com.example.sbwhelldiver.stratagem.SuperDestroyers.fire(server,orbitalOrigin!!,orbitalTarget())
             updateCooldown()
             if(isSustainedOrbital)beginOrbitalActivity(server)
         }
@@ -202,7 +245,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
             podSpawned=true
         }
         // Keep the beam until the real terminal shell hits terrain or a creature.
-        if(podSpawned && (podUUID?.let(server::getEntity)==null || server.gameTime>orbitalImpactAt+40))discard()
+        if(podSpawned && (podUUID?.let(server::getEntity)==null || server.gameTime>orbitalImpactAt+40) && (!isOrbitalRailcannon || !railBeamActive()))discard()
     }
     private fun tickBarrage(server:ServerLevel){
         val s=barrageSettings;val targets=barrageTargets();val origin=orbitalOrigin?:run{discard();return}
@@ -280,19 +323,20 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         }
     }
     private fun orbitalTerminalTicks():Int {
-        val speed=(orbitalOrigin?.distanceTo(Vec3(x,surfaceY+.02,z))?:1.0)/orbitalFlightTicks
+        val speed=(orbitalOrigin?.distanceTo(orbitalTarget())?:1.0)/orbitalFlightTicks
         return minOf(3,(128.0/speed.coerceAtLeast(.01)).toInt().coerceAtLeast(1))
     }
     private fun spawnOrbitalShell():Boolean {
         val server=level() as? ServerLevel?:return false
         val origin=orbitalOrigin?:return false
-        val target=Vec3(x,surfaceY+.02,z)
+        val target=orbitalTarget()
         val inward=target.subtract(origin).normalize()
         // Match the distant visual trajectory exactly, enabling collision only near the target.
         val terminal=orbitalTerminalTicks()
         val speed=origin.distanceTo(target)/orbitalFlightTicks
         val launch=target.subtract(inward.scale(speed*terminal))
-        val shell=com.example.sbwhelldiver.init.ModEntities.ORBITAL_SHELL.get().create(server)?:return false
+        val shell=(if(isOrbitalRailcannon)com.example.sbwhelldiver.init.ModEntities.ORBITAL_RAILCANNON_SHELL.get() else com.example.sbwhelldiver.init.ModEntities.ORBITAL_SHELL.get()).create(server)?:return false
+        if(isOrbitalRailcannon){val s=railcannonSettings;shell.configure(s.direct,s.blast,s.inner,s.outer)}
         shell.moveTo(launch.x,launch.y,launch.z,0f,0f)
         ownerUuid?.let{server.getEntity(it)}?.let{shell.owner=it}
         shell.shoot(inward.x,inward.y,inward.z,speed.toFloat(),0f)
@@ -336,6 +380,8 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
 
     override fun defineSynchedData() {
+        entityData.define(RAIL_SETTINGS,com.example.sbwhelldiver.config.RailcannonSettings().save())
+        entityData.define(RAIL_LOCK_START,-1L);entityData.define(RAIL_TARGET,-1);entityData.define(RAIL_AIM,CompoundTag())
         entityData.define(BARRAGE_SETTINGS,com.example.sbwhelldiver.config.BarrageSettings().save())
         entityData.define(BARRAGE_TARGETS,CompoundTag())
         entityData.define(AIRBURST_SETTINGS,com.example.sbwhelldiver.config.AirburstSettings().save())
@@ -354,6 +400,10 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         entityData.define(STRATAGEM, "")
     }
     override fun readAdditionalSaveData(tag: CompoundTag) {
+        if(tag.contains("RailSettings"))entityData.set(RAIL_SETTINGS,tag.getCompound("RailSettings"))
+        entityData.set(RAIL_LOCK_START,if(tag.contains("RailLockStart"))tag.getLong("RailLockStart") else -1L)
+        entityData.set(RAIL_TARGET,-1);entityData.set(RAIL_AIM,tag.getCompound("RailAim"))
+        railTargetUUID=if(tag.hasUUID("RailTarget"))tag.getUUID("RailTarget") else null
         entityData.set(ORBITAL_FINISHED_AT,if(tag.contains("OrbitalFinishedAt"))tag.getLong("OrbitalFinishedAt") else -1L)
         if(tag.contains("BarrageSettings"))entityData.set(BARRAGE_SETTINGS,tag.getCompound("BarrageSettings"))
         if(tag.contains("BarrageTargets"))entityData.set(BARRAGE_TARGETS,tag.getCompound("BarrageTargets"))
@@ -394,6 +444,8 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         noPhysics = true
     }
     override fun addAdditionalSaveData(tag: CompoundTag) {
+        tag.put("RailSettings",entityData.get(RAIL_SETTINGS));tag.putLong("RailLockStart",railLockStartedAt)
+        tag.put("RailAim",entityData.get(RAIL_AIM));railTargetUUID?.let{tag.putUUID("RailTarget",it)}
         tag.put("BarrageSettings",entityData.get(BARRAGE_SETTINGS));tag.put("BarrageTargets",entityData.get(BARRAGE_TARGETS));tag.putInt("BarrageNextShot",barrageNextShot);tag.putInt("BarrageReports",barrageReports)
         tag.put("BarrageActive",net.minecraft.nbt.ListTag().also{list->barrageActive.forEach{id->list.add(CompoundTag().also{it.putUUID("Id",id)})}})
         tag.put("AirburstSettings",entityData.get(AIRBURST_SETTINGS));tag.putInt("AirburstNextShot",airburstNextShot);tag.putInt("AirburstReports",airburstReports)
@@ -420,6 +472,10 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
     companion object {
         const val LANDING_GRACE_TICKS = 20
+        private val RAIL_SETTINGS=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.COMPOUND_TAG)
+        private val RAIL_LOCK_START=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.LONG)
+        private val RAIL_TARGET=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.INT)
+        private val RAIL_AIM=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.COMPOUND_TAG)
         private val BARRAGE_SETTINGS=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.COMPOUND_TAG)
         private val BARRAGE_TARGETS=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.COMPOUND_TAG)
         private val AIRBURST_SETTINGS=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.COMPOUND_TAG)

@@ -30,6 +30,7 @@ object ModCreativeTabs {
                 output.accept(ModItems.ORBITAL_WALKING_BARRAGE.get())
                 output.accept(ModItems.ORBITAL_GATLING_BARRAGE.get())
                 output.accept(ModItems.ORBITAL_AIRBURST_STRIKE.get())
+                output.accept(ModItems.ORBITAL_RAILCANNON_STRIKE.get())
                 output.accept(ModItems.ORBITAL_PRECISION_STRIKE.get())
                 output.accept(ModItems.EAGLE_CLUSTER_BOMB.get())
                 output.accept(ModItems.EAGLE_110MM_ROCKET_PODS.get())

@@ -50,5 +50,13 @@
     "nativeStratagemType": "StratagemType_OrbitalWalkingBarrage",
     "format": "Native vector paths with a shared two-pixel red frame",
     "sourceSha256": "f6e7dfe861a93235294325330e2ecff6d500850d328a6ccb5ae8617af76704e6"
+  },
+  {
+    "id": "orbital_railcannon_strike",
+    "nativeSource": "content/ui/shared/resources/generated_icons/stratagem_icons.xaml",
+    "template": "DataTemplate.Icon.StratagemType.OrbitalRailcannon",
+    "nativeStratagemType": "StratagemType_OrbitalRailcannon",
+    "format": "Native vector paths with a shared two-pixel red frame",
+    "sourceSha256": "3f2c02830b75f3053b65c0734620968bf0c583436abb017e0ed994f412496927"
   }
 ]

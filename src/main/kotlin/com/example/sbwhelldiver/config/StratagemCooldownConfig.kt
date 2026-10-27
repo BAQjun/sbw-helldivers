@@ -10,6 +10,7 @@ object StratagemCooldownConfig {
         "orbital_airburst_strike" to 100.0,
         "orbital_gatling_barrage" to 70.0,
         "orbital_precision_strike" to 80.0,
+        "orbital_railcannon_strike" to 210.0,
         "machine_gun_sentry" to 90.0, "gatling_sentry" to 150.0,
         "rocket_sentry" to 150.0, "autocannon_sentry" to 150.0,
         "mortar_sentry" to 180.0, "gas_mortar_sentry" to 180.0, "ems_mortar_sentry" to 180.0,

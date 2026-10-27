@@ -5215,5 +5215,26 @@
         "attenuation_distance": 128
       }
     ]
+  },
+  "sfx_orbital_railcannon_lock": {
+    "subtitle": "subtitles.sbw_helldiver.sfx_orbital_railcannon_lock",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/orbital_railcannon/lock_1",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_railcannon/lock_2",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_railcannon/lock_3",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_railcannon/lock_4",
+        "attenuation_distance": 128
+      }
+    ]
   }
 }

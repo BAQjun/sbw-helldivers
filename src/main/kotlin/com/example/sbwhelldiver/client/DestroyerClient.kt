@@ -107,7 +107,7 @@ object DestroyerClient:ResourceManagerReloadListener {
    for(marker in level.entitiesForRendering().filterIsInstance<StratagemMarker>()){
     if(marker.isOrbitalGatling||marker.isOrbitalBarrage || marker.isOrbitalAirburst)continue
     val origin=marker.orbitalOrigin?:continue
-    val target=marker.position();val t=marker.orbitalProgress(e.partialTick)
+    val target=marker.orbitalTarget(e.partialTick);val t=marker.orbitalProgress(e.partialTick)
     if(t !in 0.0..1.0)continue
     val head=origin.lerp(target,t);val tail=origin.lerp(target,(t-.018).coerceAtLeast(0.0))
     val direction=head.subtract(tail).normalize();var right=direction.cross(head.subtract(camera)).normalize().scale(.24)

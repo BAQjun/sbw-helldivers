@@ -87,6 +87,7 @@ object ClientSetup {
         event.registerEntityRenderer(ModEntities.ORBITAL_AIRBURST_SHELL.get(),{net.minecraft.client.renderer.entity.NoopRenderer(it)})
         event.registerEntityRenderer(ModEntities.ORBITAL_AIRBURST_BOMBLET.get()){EagleBombRenderer<com.example.sbwhelldiver.entity.OrbitalAirburstBombletEntity>(it,.06,.3)}
         event.registerEntityRenderer(ModEntities.ORBITAL_GATLING_ROUND.get(),{net.minecraft.client.renderer.entity.NoopRenderer(it)})
+        event.registerEntityRenderer(ModEntities.ORBITAL_RAILCANNON_SHELL.get(),{net.minecraft.client.renderer.entity.NoopRenderer(it)})
         event.registerEntityRenderer(ModEntities.ORBITAL_SHELL.get(),{net.minecraft.client.renderer.entity.NoopRenderer(it)})
         event.registerEntityRenderer(ModEntities.EAGLE_NAPALM_BOMB.get()){EagleBombRenderer<com.example.sbwhelldiver.entity.EagleNapalmBombEntity>(it)}
         event.registerEntityRenderer(ModEntities.EAGLE_GAS_BOMB.get()){EagleBombRenderer<com.example.sbwhelldiver.entity.EagleGasBombEntity>(it)}

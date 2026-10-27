@@ -1,0 +1,50 @@
+{
+  "source": "Helldivers 2",
+  "bank": "stratagems_orbital_rail_cannon",
+  "bank_sha256": "b5ff9f06979b10c3cbca17375bffb35c7bf1b003d1c3ec94ea7e3cdedb1a1567",
+  "event_start": 3732618020,
+  "event_stop": 1843908931,
+  "actions": [
+    998159615,
+    486208565,
+    849927453
+  ],
+  "containers": [
+    431639149,
+    895377770,
+    558375196
+  ],
+  "media_variants": [
+    [
+      41097998,
+      469874330,
+      54167074,
+      257044353
+    ],
+    [
+      137841846,
+      574266530,
+      319543298,
+      951346456
+    ],
+    [
+      250002700,
+      399690168,
+      510120743,
+      985029167
+    ]
+  ],
+  "third_layer_delay_ms": 1500,
+  "stop_actions": [
+    850087469,
+    685528578,
+    233968123
+  ],
+  "playback": "Three confirmed native sampled layers, four variants; first two layers use native +4dB makeup gain, third starts 1500ms later. Sound stops on firing or cancelled lock. Wwise procedural synthesizer layers, distance RTPCs and reverb are not reproduced.",
+  "outputs": {
+    "lock_1.ogg": "b66654a4b70b7af78200e21daba092b4beaef657bae470b068bf66e7fc597019",
+    "lock_2.ogg": "c55e8e383cc0dbe4bee4ae7d672026f32977ef7997994f42123b3c414cd76376",
+    "lock_3.ogg": "ca656194fe4e38b79d029b52c1487e0139223b44c50261d223f0a9906b265a03",
+    "lock_4.ogg": "bb5f174f319db3ed925de4d5732bfd6677ab32432f77ee1ecb5a7ebae60edb9e"
+  }
+}
