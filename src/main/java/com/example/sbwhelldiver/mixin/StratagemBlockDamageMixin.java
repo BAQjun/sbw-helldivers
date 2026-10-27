@@ -13,7 +13,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(value = CustomExplosion.class, remap = false)
 public abstract class StratagemBlockDamageMixin {
     /** SBW's global switch is only consulted for explosions that are not ours. */
-    @Redirect(method = "explode", at = @At(value = "INVOKE",
+    // SBW overrides Minecraft's Explosion.explode(): its name is SRG in a
+    // shipped game, even though CustomExplosion itself is not remapped.
+    @Redirect(method = {"explode", "m_46061_"}, at = @At(value = "INVOKE",
         target = "Lnet/minecraftforge/common/ForgeConfigSpec$BooleanValue;get()Ljava/lang/Object;", ordinal = 0), remap = false)
     private Object helldivers$independentTerrainSwitch(ForgeConfigSpec.BooleanValue setting) {
         CustomExplosion explosion = (CustomExplosion) (Object) this;
@@ -25,7 +27,9 @@ public abstract class StratagemBlockDamageMixin {
             && BuiltInRegistries.ENTITY_TYPE.getKey(source.getType()).getNamespace().equals("sbw_helldiver");
     }
 
-    @Redirect(method = "explode$lambda$2", at = @At(value = "FIELD",
+    // SBW 0.8.9.2 split terrain processing out of explode(), renaming this
+    // Kotlin helper. Select both supported layouts without disabling checks.
+    @Redirect(method = {"explode$lambda$2", "explodeBlocks$lambda$2"}, at = @At(value = "FIELD",
         target = "Lcom/atsuishio/superbwarfare/tools/CustomExplosion;damage:F"), remap = false)
     private static float helldivers$terrainPower(CustomExplosion explosion) {
         float damage = explosion.getDamage();

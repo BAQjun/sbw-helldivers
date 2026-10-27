@@ -478,11 +478,11 @@ object OrbitalGameTests {
    loaded.forEach{(x,z)->world.setChunkForced(x,z,false)};p.discard();h.succeed()
   }
  }
- @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",batch="barrage_full",timeoutTicks=780)
+ @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",batch="barrage_full_120",timeoutTicks=780)
  fun full120Barrage(h:GameTestHelper)=fullBarrage(h,"orbital_120mm_he_barrage")
- @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",batch="barrage_full",timeoutTicks=780)
+ @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",batch="barrage_full_380",timeoutTicks=780)
  fun full380Barrage(h:GameTestHelper)=fullBarrage(h,"orbital_380mm_he_barrage")
- @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",batch="barrage_full",timeoutTicks=780)
+ @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",batch="barrage_full_walking",timeoutTicks=780)
  fun fullWalkingBarrage(h:GameTestHelper)=fullBarrage(h,"orbital_walking_barrage")
 
 }

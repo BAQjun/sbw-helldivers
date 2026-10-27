@@ -1,5 +1,18 @@
 # 版本记录
 
+## 0.5.18
+
+## 中文
+
+- 修复轨道 380mm 弹幕等战备命中时，爆炸兼容代码可能导致炮弹异常、被防崩溃模组挂起或使游戏崩溃的问题。
+- 修正正式游戏环境中的爆炸方法匹配，并兼容卓越前线 0.8.9.2 的爆炸处理结构；保留独立的战备破坏方块开关。
+
+## English
+
+- Fixed an explosion compatibility issue that could crash the game or suspend projectiles such as Orbital 380mm HE Barrage shells when a crash-prevention mod is installed.
+- Corrected explosion method targeting in production and added compatibility with Superb Warfare 0.8.9.2's explosion layout, while preserving the independent stratagem block-damage setting.
+
+
 ## 0.5.17
 
 ## 中文
