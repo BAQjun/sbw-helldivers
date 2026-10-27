@@ -225,5 +225,7 @@
   "config.sbw_helldiver.explosion_block_damage": "Stratagem explosion block damage",
   "config.sbw_helldiver.explosion_block_damage.value": "Stratagem explosion block damage: %s",
   "config.sbw_helldiver.explosion_block_damage.tooltip": "Independent of SBW’s global explosion setting. Disable to protect blocks while retaining entity damage, knockback, sounds and particles. Only the host or operators can change this.",
-  "config.sbw_helldiver.explosion_block_damage.enter_world": "Enter a world to change its stratagem explosion block damage setting."
+  "config.sbw_helldiver.explosion_block_damage.enter_world": "Enter a world to change its stratagem explosion block damage setting.",
+  "item.sbw_helldiver.orbital_napalm_barrage_stratagem": "Orbital Napalm Barrage",
+  "entity.sbw_helldiver.orbital_napalm_shell": "Orbital Napalm Shell"
 }

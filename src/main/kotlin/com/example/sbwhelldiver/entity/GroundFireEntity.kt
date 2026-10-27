@@ -34,7 +34,7 @@ class GroundFireEntity(type: EntityType<out GroundFireEntity>,level: Level) : En
     override fun readAdditionalSaveData(tag: CompoundTag) {
         heavyBurning=tag.getBoolean("HeavyBurning")
         terrainCells.clear();tag.getLongArray("TerrainCells").forEach { terrainCells.add(net.minecraft.core.BlockPos.of(it)) }
-        entityData.set(REMAINING,tag.getInt("Remaining").coerceIn(0,if(heavyBurning) NAPALM_LIFETIME else LIFETIME))
+        entityData.set(REMAINING,tag.getInt("Remaining").coerceIn(0,72000))
         entityData.set(AREA_RADIUS,if(tag.contains("Radius"))tag.getDouble("Radius").coerceIn(.1,16.0).toFloat() else RADIUS.toFloat())
         sourceUuid = if(tag.hasUUID("Source")) tag.getUUID("Source") else null
     }
@@ -100,13 +100,14 @@ class GroundFireEntity(type: EntityType<out GroundFireEntity>,level: Level) : En
         const val RADIUS = .75
         private val AREA_RADIUS=SynchedEntityData.defineId(GroundFireEntity::class.java,EntityDataSerializers.FLOAT)
         private val REMAINING=SynchedEntityData.defineId(GroundFireEntity::class.java,EntityDataSerializers.INT)
-        fun create(level: ServerLevel,at: Vec3,source: Entity? = null,radius: Double=RADIUS,heavyBurning: Boolean=false): GroundFireEntity {
+        fun create(level: ServerLevel,at: Vec3,source: Entity? = null,radius: Double=RADIUS,heavyBurning: Boolean=false,lifetimeTicks:Int=if(heavyBurning) NAPALM_LIFETIME else LIFETIME): GroundFireEntity {
+            val lifetime=lifetimeTicks.coerceIn(1,72000)
             val nearby=level.getEntitiesOfClass(GroundFireEntity::class.java,AABB(at,at).inflate(.6)) {
                 it.heavyBurning==heavyBurning && kotlin.math.abs(it.radius-radius)<.001 && kotlin.math.abs(it.y-at.y)<.25 && it.position().distanceToSqr(at)<.36
             }.firstOrNull()
-            if(nearby!=null) { nearby.entityData.set(REMAINING,if(heavyBurning) NAPALM_LIFETIME else LIFETIME);nearby.sourceUuid=source?.uuid;nearby.placeFlames();return nearby }
+            if(nearby!=null) { nearby.entityData.set(REMAINING,lifetime);nearby.sourceUuid=source?.uuid;nearby.placeFlames();return nearby }
             return GroundFireEntity(ModEntities.GROUND_FIRE.get(),level).also {
-                it.heavyBurning=heavyBurning;it.entityData.set(REMAINING,if(heavyBurning) NAPALM_LIFETIME else LIFETIME);it.entityData.set(AREA_RADIUS,radius.coerceIn(.1,16.0).toFloat());it.setPos(at.add(0.0,.015,0.0));it.sourceUuid=source?.uuid;level.addFreshEntity(it);it.placeFlames()
+                it.heavyBurning=heavyBurning;it.entityData.set(REMAINING,lifetime);it.entityData.set(AREA_RADIUS,radius.coerceIn(.1,16.0).toFloat());it.setPos(at.add(0.0,.015,0.0));it.sourceUuid=source?.uuid;level.addFreshEntity(it);it.placeFlames()
             }
         }
     }

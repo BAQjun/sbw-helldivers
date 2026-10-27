@@ -66,5 +66,13 @@
     "nativeStratagemType": "StratagemType_OrbitalLaser",
     "format": "Native vector paths with a shared two-pixel red frame",
     "sourceSha256": "8ac24c9a344a642035e478409b471ae72ef1d8598818ca1daf066fdd624ca76c"
+  },
+  {
+    "id": "orbital_napalm_barrage",
+    "nativeSource": "content/ui/shared/resources/generated_icons/stratagem_icons.xaml",
+    "template": "DataTemplate.Icon.StratagemType.OrbitalNapalmBarrage",
+    "nativeStratagemType": "StratagemType_OrbitalNapalmBarrage",
+    "format": "Native vector paths with a shared two-pixel red frame",
+    "sourceSha256": "ff8211e1dd25570e50d71a0bb3c69d24649058da5c7d8480d3d8a767179b8ef6"
   }
 ]

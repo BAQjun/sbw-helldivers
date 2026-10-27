@@ -114,7 +114,7 @@ They do not directly specify a fixed burst altitude. Minecraft defaults to 20 bl
 
 120mm造成560直击、200爆炸伤害，内半径3.3m、外半径10m。380mm与游走直接使用轨道精准打击炮弹，共享其伤害配置；默认640直击、240爆炸、内半径4m、外半径12m。
 
-游走方向为投掷位置指向信标落点的水平连线，在信标展开时固定。解包的 `BombardmentComponentData` 中，游走火力网 `speed=3`、`area_size=25`，MC据此采用每秒推进3格、半径25格的移动散布区域，默认末发圆心前移81格。每发在当时的圆形区域内独立、均匀取样；这是MC中的散布实现，组件数据不能证明原版内部使用相同的随机算法。
+游走方向为投掷位置指向信标落点的水平连线，在信标展开时固定。解包的 `BombardmentComponentData` 中，游走火力网 `speed=3`、`area_size=25`，MC据此采用每秒推进3格、半径25格的移动散布区域，默认末发圆心前移81格。同轮弹幕保留中心附近的随机落点，其余炮弹分散，默认配置下爆炸范围互不重叠；这是MC中的散布实现，组件数据不能证明原版内部使用相同的随机算法。
 
 炮弹从本次呼叫确定的驱逐舰位置射来。远距离飞行以发光航迹表示，末段生成真实碰撞炮弹；可被沿途地形或生物截住，无需加载远方舰位区块。落点按当地地表高度确定。
 
@@ -124,7 +124,7 @@ The round pause runs from a salvo's last shot to the next salvo's first. The fir
 
 120mm deals 560 direct and 200 blast damage with 3.3/10 m inner/outer radii. 380mm and Walking use the actual Precision Strike projectile and share its damage settings, defaulting to 640 direct, 240 blast and 4/12 m radii.
 
-Walking advances along the horizontal throw-origin-to-beacon line, fixed when the beacon deploys. Native component values `speed=3` and `area_size=25` are adapted to 3 blocks/s and a 25-block radius; the last shot's center is 81 blocks forward by default. Each impact independently samples a uniform-area disk around the current center. The original internal sampling algorithm is not available from these component records.
+Walking advances along the horizontal throw-origin-to-beacon line, fixed when the beacon deploys. Native component values `speed=3` and `area_size=25` are adapted to 3 blocks/s and a 25-block radius; the last shot's center is 81 blocks forward by default. Each salvo retains a randomized inner hit, with separated companion impacts; blast footprints do not overlap within a default salvo. The original internal sampling algorithm is not available from these component records.
 
 Flight originates at the fixed ship position, using glowing distant traces and real terminal collision projectiles. Terrain and creatures can intercept incoming shells without loading distant ship chunks. Targets use the local surface height.
 
@@ -139,9 +139,9 @@ Flight originates at the fixed ship position, using glowing distant traces and r
 
 ## 持续型轨道战备状态 / Sustained orbital status
 
-加特林、空爆、120mm、380mm与游走火力网在开炮前显示抵达倒计时，开炮后切换为“正在进行：分:秒”，覆盖所有轮次、轮间停顿和最后一轮飞行。空爆还包含子弹药下落。最后的实际炮弹结束后才显示“已抵达”：信标保留1秒，左上角提示保留3秒，然后恢复冷却状态显示。冷却仍从第一发开炮时开始，持续状态不会重启冷却。进行中与完成状态可随存档恢复。
+加特林、空爆、120mm、380mm、游走与凝固汽油弹火力网在开炮前显示抵达倒计时，开炮后切换为“正在进行：分:秒”，覆盖所有轮次、轮间停顿和最后一轮飞行。空爆还包含子弹药下落。最后的实际炮弹结束后才显示“已抵达”：信标保留1秒，左上角提示保留3秒，然后恢复冷却状态显示。冷却仍从第一发开炮时开始，持续状态不会重启冷却。进行中与完成状态可随存档恢复。
 
-Gatling, Airburst, 120mm, 380mm and Walking Barrages show an arrival countdown before firing, then “In progress: mm:ss” across all salvos, pauses and the final flight. Airburst also includes bomblet descent. Completion is confirmed by the final real projectile; “Arrived” remains on the beacon for one second and in the upper-left list for three seconds before the normal cooldown display resumes. Cooldown still starts with the first shot and is never restarted by this display. Activity state persists across saves.
+Gatling, Airburst, 120mm, 380mm, Walking and Napalm Barrages show an arrival countdown before firing, then “In progress: mm:ss” across all salvos, pauses and the final flight. Airburst also includes bomblet descent. Completion is confirmed by the final real projectile; “Arrived” remains on the beacon for one second and in the upper-left list for three seconds before the normal cooldown display resumes. Cooldown still starts with the first shot and is never restarted by this display. Activity state persists across saves.
 
 
 ## 轨道炮攻击 / Orbital Railcannon Strike
@@ -178,3 +178,20 @@ Decoded native components confirm a 25 s duration, 50 m search radius, 10 m/s mo
 The thick beam and impact glow use additive emissive rendering with terrain depth testing. Rapid, sharp white-hot jets and ballistic molten sparks follow the nearest terrain or creature contact along the incoming ray, without smoke or dust; effects transfer to a creature surface when it intercepts the beam. Start, sustain and stop sounds come from the native `stratagems_orbital_laser` events; the sustain follows the impact with a 128-block sound range. Sampled layers are preserved; Wwise procedural synthesis, RTPCs and reverb are not reproduced. Provenance is recorded in `art/audio/orbital_laser_data.json` and `art/audio/orbital_laser_sources.json`.
 
 配置 / Configuration: `orbital.laser` (`callDelaySeconds`, `durationSeconds`, `searchRadius`, `movementSpeed`, `targetRefreshTicks`, `damageRadius`, `damagePerPulse`, `damageIntervalTicks`); `stratagems.orbital_laser.cooldownSeconds`, `stratagems.orbital_laser.uses`.
+
+
+## 轨道凝固汽油弹火力网 / Orbital Napalm Barrage
+
+指令 → → ↓ ← → ↑。需要己方超级驱逐舰支援，信标展开5秒后开炮。按要求发射6轮、每轮5发，共30发；同轮间隔0.5秒，上一轮末发到下一轮首发间隔2秒，首发至末发22秒。每枚炮弹默认飞行1.5秒，满升级冷却205.2秒，从首发开炮开始。
+
+每发80直击、60爆炸伤害，内半径3.3米、外半径10米，外圈线性衰减；每次真实命中产生与飞鹰凝固汽油弹相同的贴地火焰，默认半径10米、持续21秒，并持续刷新3秒普通燃烧与1秒重型燃烧。沿用已有燃烧伤害：每0.5秒分别造成10与20点，可叠加。默认25米轰炸半径，沿用保留中心覆盖、同轮爆炸互不重叠的散布方式。更紧的5发齐射通过非等角伴随落点保留中心弹，而不扩大配置的轰炸范围。
+
+解包组件确认 `area_size=25`、每轮5发、弹间隔0.5秒、轮间隔2秒；基础记录为5轮，此处按要求采用6轮。凝固汽油弹爆炸模板明确关联 `FireTemplate_Large（21秒）`，内外爆炸半径为3.3/10米。未独立确认原版铺火半径；10米地火范围沿用本模组飞鹰凝固汽油弹与原版爆炸外半径的适配。来源见 `art/audio/orbital_napalm_data.json`。
+
+Code: Right, Right, Down, Left, Right, Up. Requires an owned Super Destroyer in range. Fires after five seconds, with six five-shell salvos (30 shells), 0.5 s between shells and 2 s from each salvo's last shell to the next salvo's first. The first-to-last-shot span is 22 s. Default shell flight: 1.5 s; fully upgraded cooldown: 205.2 s, starting with the first shot.
+
+Each shell deals 80 direct plus 60 blast damage with 3.3/10 m inner/outer radii and linear outer falloff. Real impacts create Eagle-style terrain-following napalm, defaulting to a 10 m radius for 21 seconds, refreshing three seconds of ordinary burning and one second of heavy burning. Existing burn damage remains 10 and 20 every 0.5 s, stacking together. The 25 m strike disk uses the existing center-covering, same-salvo non-overlap planner; an irregular companion arc accommodates five shells without losing the inner hit or expanding the configured area.
+
+Decoded components confirm the 25 m area parameter, five shells per salvo, 0.5 s shell spacing and 2 s salvo pause. The native base record has five salvos; six are used as requested. The napalm explosion references `FireTemplate_Large (21 seconds)` and 3.3/10 m blast radii. A separate native ground-fire footprint radius was not resolved: the 10 m fire radius follows this mod's Eagle adaptation and the native outer blast radius. See `art/audio/orbital_napalm_data.json`.
+
+配置 / Configuration: `orbital.napalmBarrage` (`rounds`, `shotsPerRound`, `shotIntervalSeconds`, `roundPauseSeconds`, `spreadRadius`, `firingDelaySeconds`, `flightSeconds`, `directDamage`, `explosionDamage`, `innerRadius`, `outerRadius`, `groundFireRadius`, `groundFireSeconds`); cooldown: `stratagems.orbital_napalm_barrage.cooldownSeconds`.

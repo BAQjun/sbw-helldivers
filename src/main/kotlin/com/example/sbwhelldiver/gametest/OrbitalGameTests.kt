@@ -380,20 +380,20 @@ object OrbitalGameTests {
   val pattern=OrbitalBarragePattern
   for((i,id) in cfg.ids.withIndex()){
    val s=com.example.sbwhelldiver.config.OrbitalBarrageConfig.snapshot(id)
-   h.assertTrue(s==cfg.defaults(id)&&s.total==15,"Native/default settings wrong $id: $s")
-   h.assertTrue(s.lastShotTime==if(i==0)310 else 540,"Wrong salvo gaps $id")
+   h.assertTrue(s==cfg.defaults(id)&&s.total==if(s.napalm)30 else 15,"Native/default settings wrong $id: $s")
+   h.assertTrue(s.lastShotTime==if(s.napalm)440 else if(i==0)310 else 540,"Wrong salvo gaps $id")
    for(n in 0 until s.total){
     h.assertTrue(pattern.due(s.shotTime(n)-.001,s)==n&&pattern.due(s.shotTime(n).toDouble(),s)==n+1,"Lost shell at cadence boundary")
-    if(n>0)h.assertTrue(s.shotTime(n)-s.shotTime(n-1)==if(n%3==0)s.roundPause else s.shotGap,"Round/shot pause confused")
+    if(n>0)h.assertTrue(s.shotTime(n)-s.shotTime(n-1)==if(n%s.shots==0)s.roundPause else s.shotGap,"Round/shot pause confused")
    }
    for(yaw in listOf(0f,90f,180f,-90f))for(seed in 0L..40L){
     val targets=pattern.offsets(seed,s,yaw)
-    h.assertTrue(targets==pattern.offsets(seed,s,yaw)&&targets.toSet().size==15,"Unstable barrage samples")
+    h.assertTrue(targets==pattern.offsets(seed,s,yaw)&&targets.toSet().size==s.total,"Unstable barrage samples")
     targets.forEachIndexed{j,v->h.assertTrue(v.subtract(pattern.center(j,s,yaw)).length()<=s.radius+1e-7,"Impact outside spread disk")}
     targets.chunked(s.shots).forEach{salvo->
      for(a in salvo.indices)for(b in 0 until a)h.assertTrue(salvo[a].distanceTo(salvo[b])>=2.0*s.outer+.5-1e-7,"Same-salvo blast footprints overlap: $id seed=$seed")
     }
-    val center=pattern.center(14,s,yaw)
+    val center=pattern.center(s.total-1,s,yaw)
     h.assertTrue(abs(center.length()-if(s.walking)81.0 else 0.0)<1e-6,"Wrong walking speed or direction")
     if(s.walking)h.assertTrue(center.normalize().dot(pattern.direction(yaw))>.99999,"Walking barrage advanced backward")
    }
@@ -401,6 +401,7 @@ object OrbitalGameTests {
    h.assertTrue(StratagemCooldownConfig.ticks(id)==if(i==0)3078 else 4104,"Full-upgrade cooldown wrong")
   }
   h.assertTrue(Stratagems.get(cfg.ids[0])!!.code==listOf(1,1,2,3,1,2)&&Stratagems.get(cfg.ids[1])!!.code==listOf(1,2,0,0,3,2,2)&&Stratagems.get(cfg.ids[2])!!.code==listOf(1,2,1,2,1,2),"Native codes incorrect")
+  h.assertTrue(Stratagems.get("orbital_napalm_barrage")!!.code==listOf(1,1,2,3,1,0),"Native napalm code incorrect")
   val ball=StratagemBeacon(ModEntities.STRATAGEM_BEACON.get(),20.0,75.0,30.0,h.level)
   ball.shoot(1.0,-.1,0.0,1f,0f)
   val tag=CompoundTag();ball.saveWithoutId(tag)
@@ -462,7 +463,7 @@ object OrbitalGameTests {
   targets.zip(listOf(760f,200f,99.5f,0f,0f)).forEachIndexed{i,(m,d)->h.assertTrue(abs(1000-m.health-d)<.03,"120mm damage $i expected $d got ${1000-m.health}")}
   val health=targets.map{it.health};shell.causeExplode(at);h.assertTrue(health==targets.map{it.health},"120mm duplicate explosion")
   targets.forEach{it.discard()}
-  for(id in com.example.sbwhelldiver.config.BarrageSettings.ids.drop(1)){
+  for(id in com.example.sbwhelldiver.config.BarrageSettings.ids.drop(1).take(2)){
    val settings=com.example.sbwhelldiver.config.OrbitalBarrageConfig.snapshot(id)
    val a=ModEntities.ORBITAL_SHELL.get().create(h.level)!!;a.configure(settings.direct,settings.blast,settings.inner,settings.outer)
    val t=CompoundTag();a.saveWithoutId(t);val b=ModEntities.ORBITAL_SHELL.get().create(h.level)!!;b.load(t)
@@ -482,7 +483,7 @@ object OrbitalGameTests {
   val token=UUID.randomUUID();marker.managedRequest=token
   val ledger=StratagemCooldowns.state(p);ledger.reserve(id,token,now);ledger.beginArrival(id,token,now,now+marker.duration)
   val settings=marker.barrageSettings;val targets=marker.barrageTargets()
-  h.assertTrue(targets.size==15&&targets.all{it.y>=at.y},"Impact targets were below the supporting bedrock floor: $targets floor=$at")
+  h.assertTrue(targets.size==settings.total&&targets.all{it.y>=at.y},"Impact targets were below the supporting bedrock floor: $targets floor=$at")
   val seen=mutableMapOf<Int,Long>();var duplicates=0;var maxActive=0
   val observer=object{
    @net.minecraftforge.eventbus.api.SubscribeEvent fun shell(e:net.minecraftforge.event.entity.EntityJoinLevelEvent){
@@ -493,6 +494,7 @@ object OrbitalGameTests {
     if(seen.put(n,world.gameTime)!=null)duplicates++
     h.assertTrue(shell.getDamage()==settings.direct&&shell.getExplosionDamage()==settings.blast,"Wrong active ammunition $id")
     h.assertTrue((shell.type===ModEntities.ORBITAL_120_SHELL.get())==(id=="orbital_120mm_he_barrage"),"Wrong projectile registry type")
+    h.assertTrue((shell is OrbitalNapalmShellEntity)==settings.napalm,"Wrong napalm projectile type")
    }
   }
   net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(observer)
@@ -500,7 +502,7 @@ object OrbitalGameTests {
   h.onEachTick{maxActive=maxOf(maxActive,world.getEntitiesOfClass(OrbitalPrecisionShellEntity::class.java,marker.boundingBox.inflate(130.0)).size)}
   h.runAfterDelay(225){
    h.assertTrue(!marker.hasArrived && marker.orbitalActivityLeft>0 && ledger.entry(id).activity(StratagemCooldowns.now(p.server).toDouble())==CallPhase.ACTIVE,"Ongoing barrage already displayed arrived")
-   h.assertTrue(!marker.isRemoved&&seen.size in 1..14,"Barrage finished before all rounds $id: ${seen.size}")
+   h.assertTrue(!marker.isRemoved&&seen.size in 1 until settings.total,"Barrage finished before all rounds $id: ${seen.size}")
    val t=CompoundTag();marker.saveWithoutId(t);marker.discard();marker=ModEntities.STRATAGEM_MARKER.get().create(world)!!;marker.load(t);world.addFreshEntity(marker)
    marker.yRot=90f;p.setPos(at.add(-20.0,0.0,-20.0))
    h.assertTrue(marker.barrageSettings==settings&&marker.barrageTargets()==targets,"Reload or player turning changed planned impacts")
@@ -513,9 +515,10 @@ object OrbitalGameTests {
    h.assertTrue(marker.hasArrived && marker.orbitalFinishedAt>=0 && ledger.entry(id).activity(StratagemCooldowns.now(p.server).toDouble())==CallPhase.ARRIVED,"Completed barrage did not display arrived")
    val saved=CompoundTag();marker.saveWithoutId(saved);val restored=ModEntities.STRATAGEM_MARKER.get().create(world)!!;restored.load(saved)
    h.assertTrue(restored.hasArrived && restored.orbitalFinishedAt==marker.orbitalFinishedAt,"Finished state lost on reload");restored.discard()
-   h.assertTrue(seen.size==15&&duplicates==0&&marker.isRemoved,"Incomplete/duplicate barrage $id: ${seen.size}, duplicates=$duplicates removed=${marker.isRemoved}")
-   for(i in 1..14)h.assertTrue(seen.getValue(i)-seen.getValue(i-1)==(settings.shotTime(i)-settings.shotTime(i-1)).toLong(),"Actual shell cadence incorrect $id #$i: $seen")
+   h.assertTrue(seen.size==settings.total&&duplicates==0&&marker.isRemoved,"Incomplete/duplicate barrage $id: ${seen.size}, duplicates=$duplicates removed=${marker.isRemoved}")
+   for(i in 1 until settings.total)h.assertTrue(seen.getValue(i)-seen.getValue(i-1)==(settings.shotTime(i)-settings.shotTime(i-1)).toLong(),"Actual shell cadence incorrect $id #$i: $seen")
    h.assertTrue(maxActive in 1..6,"Barrage accumulated too many shell entities: $maxActive")
+   if(settings.napalm)world.getEntitiesOfClass(GroundFireEntity::class.java,marker.boundingBox.inflate(80.0)).forEach{it.discard()}
    loaded.forEach{(x,z)->world.setChunkForced(x,z,false)};p.discard();h.succeed()
   }
  }
@@ -525,5 +528,7 @@ object OrbitalGameTests {
  fun full380Barrage(h:GameTestHelper)=fullBarrage(h,"orbital_380mm_he_barrage")
  @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",batch="barrage_full_walking",timeoutTicks=780)
  fun fullWalkingBarrage(h:GameTestHelper)=fullBarrage(h,"orbital_walking_barrage")
+ @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",batch="barrage_full_napalm",timeoutTicks=780)
+ fun fullNapalmBarrage(h:GameTestHelper)=fullBarrage(h,"orbital_napalm_barrage")
 
 }

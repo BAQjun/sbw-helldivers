@@ -18,6 +18,7 @@ object ModItems {
 
     val ITEMS: DeferredRegister<Item> = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID)
 
+    val ORBITAL_NAPALM_BARRAGE=ITEMS.register("orbital_napalm_barrage_stratagem"){StratagemItem(Item.Properties().stacksTo(16),dropId("orbital_napalm_barrage"))}
     val ORBITAL_LASER=ITEMS.register("orbital_laser_stratagem"){StratagemItem(Item.Properties().stacksTo(16),dropId("orbital_laser"))}
     val ORBITAL_120MM_BARRAGE=ITEMS.register("orbital_120mm_he_barrage_stratagem"){StratagemItem(Item.Properties().stacksTo(16),dropId("orbital_120mm_he_barrage"))}
     val ORBITAL_380MM_BARRAGE=ITEMS.register("orbital_380mm_he_barrage_stratagem"){StratagemItem(Item.Properties().stacksTo(16),dropId("orbital_380mm_he_barrage"))}

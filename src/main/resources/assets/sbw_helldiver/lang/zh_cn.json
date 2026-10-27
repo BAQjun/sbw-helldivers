@@ -225,5 +225,7 @@
   "config.sbw_helldiver.explosion_block_damage": "战备爆炸破坏方块",
   "config.sbw_helldiver.explosion_block_damage.value": "战备爆炸破坏方块：%s",
   "config.sbw_helldiver.explosion_block_damage.tooltip": "独立于 SBW 的爆炸总开关。关闭后保护方块，保留生物伤害、击退、音效和粒子。仅房主或管理员可修改。",
-  "config.sbw_helldiver.explosion_block_damage.enter_world": "进入世界后可修改该世界的战备爆炸破坏设置。"
+  "config.sbw_helldiver.explosion_block_damage.enter_world": "进入世界后可修改该世界的战备爆炸破坏设置。",
+  "item.sbw_helldiver.orbital_napalm_barrage_stratagem": "轨道凝固汽油弹火力网",
+  "entity.sbw_helldiver.orbital_napalm_shell": "轨道凝固汽油炮弹"
 }

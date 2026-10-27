@@ -83,6 +83,7 @@ object ClientSetup {
     fun registerRenderers(event: EntityRenderersEvent.RegisterRenderers) {
         event.registerEntityRenderer<AutoAimableEntity>(ModEntities.PLAYER_HELLPOD.get(),::HellpodRenderer)
         event.registerEntityRenderer(ModEntities.EAGLE.get(),::EagleRenderer)
+        event.registerEntityRenderer(ModEntities.ORBITAL_NAPALM_SHELL.get(),{net.minecraft.client.renderer.entity.NoopRenderer(it)})
         event.registerEntityRenderer(ModEntities.ORBITAL_120_SHELL.get(),{net.minecraft.client.renderer.entity.NoopRenderer(it)})
         event.registerEntityRenderer(ModEntities.ORBITAL_AIRBURST_SHELL.get(),{net.minecraft.client.renderer.entity.NoopRenderer(it)})
         event.registerEntityRenderer(ModEntities.ORBITAL_AIRBURST_BOMBLET.get()){EagleBombRenderer<com.example.sbwhelldiver.entity.OrbitalAirburstBombletEntity>(it,.06,.3)}

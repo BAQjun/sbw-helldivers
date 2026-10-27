@@ -63,6 +63,27 @@ object OrbitalBarragePattern{
      if(distance>=requiredSquared)break
     }
    }
+   if(bestSpacing<requiredSquared && !s.walking && innerShot>=0 && s.shots>3 && s.radius>0.0){
+    // Five-shell salvos need an irregular companion arc: a regular square may
+    // clip the retained inner hit. Fit the arc outside its exclusion circle.
+    val r=innerPoint.length();val companions=s.shots-1
+    val minAngle=2*asin((separation/(2*s.radius)).coerceIn(0.0,1.0))+1e-6
+    val exclusion=if(r<1e-9)0.0 else (acos(((s.radius*s.radius+r*r-requiredSquared)/(2*s.radius*r)).coerceIn(-1.0,1.0))+1e-6).coerceAtMost(PI)
+    val available=2*PI-2*exclusion
+    val span=minOf(available,2*PI-minAngle-1e-6)
+    if(span>=(companions-1)*minAngle && (r>1e-9 || s.radius>=separation)){
+     val phase=atan2(innerPoint.z,innerPoint.x)+exclusion+(available-span)*random.nextDouble()
+     val points=List(s.shots){shot->
+      if(shot==innerShot)innerPoint else {
+       val companion=if(shot<innerShot)shot else shot-1
+       val angle=phase+companion*span/(companions-1)
+       Vec3(cos(angle)*s.radius,0.0,sin(angle)*s.radius)
+      }
+     }
+     val distance=spacing(points)
+     if(distance>bestSpacing){best=points;bestSpacing=distance}
+    }
+   }
    if(bestSpacing<requiredSquared){
     // Extremely tight custom settings may not permit an inner hit and separated blasts.
     // Impossible custom radius/shot-count combinations retain their configured footprint
