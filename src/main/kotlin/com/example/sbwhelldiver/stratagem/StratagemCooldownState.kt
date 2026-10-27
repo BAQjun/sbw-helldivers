@@ -86,6 +86,13 @@ class StratagemCooldownState {
     fun beginArrival(id: String, token: UUID, now: Long, arrival: Long): Boolean {
         val e = entries[id] ?: return !enabled
         if (e.request != token || e.phase !in listOf(CallPhase.THROWN, CallPhase.ARRIVING)) return !enabled
+        // Railcannon has no inbound/arrived stage: its beacon starts cooldown on landing.
+        // Repeated marker timing updates must never restart an already-running cooldown.
+        if (id == "orbital_railcannon_strike") {
+            e.phase = if (enabled) CallPhase.COOLDOWN else CallPhase.READY
+            e.start = now; e.end = now + if (enabled) StratagemCooldownConfig.ticks(id) else 0
+            changed(); return true
+        }
         if (e.phase == CallPhase.THROWN) {
             if (id.startsWith("eagle_") && enabled) e.remaining = (e.remaining - 1).coerceAtLeast(0)
             e.phase = CallPhase.ARRIVING; e.start = now; e.end = arrival; changed()

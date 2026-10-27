@@ -148,11 +148,11 @@ Gatling, Airburst, 120mm, 380mm and Walking Barrages show an arrival countdown b
 
 指令 → ↑ ↓ ↓ →。需要己方超级驱逐舰处于支援范围内。默认先等待1秒，随后从信标周围30米内选择最大生命值最高的可攻击敌人，红色指示光束跟随该目标；同生命值时优先最近目标。玩家、驯服的动物与盟友不会被选择，中立生物沿用既有炮台攻击中立生物配置。没有目标或锁定目标已死亡时，改为瞄准信标落点。
 
-红光启动1.7秒后开炮，默认再飞行0.5秒命中；飞行时间为MC适配值。锁定光束原版持续2秒。炮弹160直击与160爆炸伤害独立结算，内外半径均为2.5米，因此该球形范围内无衰减，范围外不造成爆炸伤害。炮弹仍会被沿途地形/生物拦截。默认满升级冷却179.55秒，从开炮时开始。锁定目标、瞄准点、时序与配置快照支持存档恢复，已经发射的调用不会重复开炮。
+红光启动1.7秒后开炮，默认再飞行0.5秒命中；飞行时间为MC适配值。锁定光束原版持续2秒。炮弹160直击与160爆炸伤害独立结算，内外半径均为2.5米，因此该球形范围内无衰减，范围外不造成爆炸伤害。炮弹仍会被沿途地形/生物拦截。默认满升级冷却179.55秒，从信标落地时开始。只显示索敌红光，不显示信标光柱、抵达倒计时或“已抵达”提示。锁定目标、瞄准点、时序与配置快照支持存档恢复，已经发射的调用不会重复开炮。
 
 The code is → ↑ ↓ ↓ →. An owned Super Destroyer must be in support range. After a 1-second call delay, the strike selects the attackable enemy with the highest maximum health within 30 m of the beacon, breaking ties by distance. The red beam tracks the selected enemy. Players, tamed animals and allies are excluded; neutral mobs follow the existing sentry setting. An empty search or a dead lock target falls back to the beacon's landing point.
 
-The ship fires 1.7 seconds after beam activation, followed by a default 0.5-second shell flight adapted for Minecraft. The native pointer lasts 2 seconds. The shell deals 160 direct plus 160 explosive damage, with identical 2.5 m inner and outer radii: full damage inside, none outside. Terrain and creatures can intercept the real terminal projectile. The fully upgraded cooldown defaults to 179.55 seconds from firing. Target identity, aim point, timing and per-call settings persist across reloads without firing twice.
+The ship fires 1.7 seconds after beam activation, followed by a default 0.5-second shell flight adapted for Minecraft. The native pointer lasts 2 seconds. The shell deals 160 direct plus 160 explosive damage, with identical 2.5 m inner and outer radii: full damage inside, none outside. Terrain and creatures can intercept the real terminal projectile. The fully upgraded cooldown defaults to 179.55 seconds from beacon landing. Only the targeting beam is shown: there is no vertical beacon beam, arrival countdown or “Arrived” label. Target identity, aim point, timing and per-call settings persist across reloads without firing twice.
 
 配置 / Configuration: `orbital.railcannonStrike` (`callDelaySeconds`, `lockSeconds`, `beamSeconds`, `flightSeconds`, `searchRadius`, `directDamage`, `explosionDamage`, `innerRadius`, `outerRadius`); `stratagems.orbital_railcannon_strike.cooldownSeconds`.
 

@@ -48,6 +48,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     private var podSpawned = false
     private var activationPlayed = false
     val isOrbital get()=(dropTypeId?.path ?: entityData.get(STRATAGEM)).startsWith("orbital_")
+    val hasBeaconBeam get() = !isOrbitalRailcannon
     val isOrbitalRailcannon get()=(dropTypeId?.path ?: entityData.get(STRATAGEM))=="orbital_railcannon_strike"
     val railcannonSettings get()=com.example.sbwhelldiver.config.RailcannonSettings.load(entityData.get(RAIL_SETTINGS))
     val railLockStartedAt get()=entityData.get(RAIL_LOCK_START)

@@ -48,7 +48,7 @@ class BeaconMarkerRenderer(context: EntityRendererProvider.Context) : EntityRend
         super.render(entity, yaw, partial, pose, buffers, light)
     }
     private fun beam(entity: StratagemMarker, pose: PoseStack, buffers: MultiBufferSource, strength: Float) {
-        if (strength <= 0) return
+        if (!entity.hasBeaconBeam || strength <= 0) return
         val vertex = buffers.getBuffer(RenderType.lightning())
         val transform = pose.last().pose()
         val r = ((entity.color shr 16) and 255) / 255f

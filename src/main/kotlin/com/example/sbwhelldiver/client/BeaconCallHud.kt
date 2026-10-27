@@ -78,7 +78,7 @@ object BeaconCallHud : ResourceManagerReloadListener {
         val beamHeight = AbstractHellpodEntity.descentSpawnHeight().toFloat()
         var closest = Double.POSITIVE_INFINITY
         level.entitiesForRendering().filterIsInstance<StratagemMarker>().forEach { marker ->
-            if (marker.isRemoved || marker.stratagem == null || marker.elapsedTicks == 0) return@forEach
+            if (!marker.hasBeaconBeam || marker.isRemoved || marker.stratagem == null || marker.elapsedTicks == 0) return@forEach
             val x = (marker.x - camera.x).toFloat()
             val z = (marker.z - camera.z).toFloat()
             val bottom = matrix.transform(Vector4f(x, (marker.y + .2 - camera.y).toFloat(), z, 1f))
@@ -104,7 +104,7 @@ object BeaconCallHud : ResourceManagerReloadListener {
     fun draw(gui: GuiGraphics, partial: Float) {
         val mc = Minecraft.getInstance()
         val current = label ?: return
-        if (mc.options.hideGui || mc.screen != null || current.marker.isRemoved) return
+        if (mc.options.hideGui || mc.screen != null || current.marker.isRemoved || !current.marker.hasBeaconBeam) return
         val def = current.marker.stratagem ?: return
         val icon = whiteIcons[def.id] ?: return
         val x = current.x + 10

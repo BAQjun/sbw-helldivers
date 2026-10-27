@@ -61,6 +61,25 @@ object RailcannonGameTests {
   val health=hit.health;shell.causeExplode(at);h.assertTrue(hit.health==health,"Duplicate impact damage")
   listOf(hit,inner,outer,shell).forEach{it.discard()};h.succeed()
  }
+ @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",batch="rail_cooldown",timeoutTicks=10)
+ fun landingStartsCooldownWithoutArrivalOrRestart(h:GameTestHelper){
+  val state=StratagemCooldownState();val token=UUID.randomUUID();val now=100L
+  h.assertTrue(state.reserve(id,token,now),"Cannot reserve railcannon")
+  h.assertTrue(state.beginArrival(id,token,now+20,now+74),"Landing rejected")
+  val e=state.entry(id);val end=now+20+StratagemCooldownConfig.ticks(id)
+  h.assertTrue(e.phase==CallPhase.COOLDOWN&&e.start==now+20&&e.end==end,"Railcannon did not cool immediately on landing")
+  h.assertTrue(e.activity((now+20).toDouble())==null,"Unexpected activity/arrived overlay")
+  h.assertTrue(!state.beginArrival(id,token,now+40,now+94)&&e.end==end,"Lock update restarted cooldown")
+  state.cancel(id,token);h.assertTrue(e.phase==CallPhase.COOLDOWN,"Completed landing was refunded")
+  val restored=StratagemCooldownState.load(state.save());restored.advance(now+74)
+  h.assertTrue(restored.entry(id).phase==CallPhase.COOLDOWN&&restored.entry(id).end==end,"Firing/reload reset cooldown")
+  restored.advance(end);h.assertTrue(restored.available(id,end),"Cooldown never completed")
+  val regular=UUID.randomUUID();state.reserve("orbital_precision_strike",regular,now)
+  state.beginArrival("orbital_precision_strike",regular,now+20,now+80)
+  h.assertTrue(state.entry("orbital_precision_strike").phase==CallPhase.ARRIVING,"Other stratagem arrival changed")
+  val m=marker(h,at(h));h.assertTrue(!m.hasBeaconBeam,"Railcannon still has beacon presentation");m.discard()
+  h.succeed()
+ }
  private fun loadCorridor(h:GameTestHelper,at:Vec3):List<Pair<Int,Int>> {
   val c=net.minecraft.world.level.ChunkPos(BlockPos.containing(at));val loaded=mutableListOf<Pair<Int,Int>>()
   for(x in c.x-6..c.x+6)for(z in c.z-6..c.z+6)if(h.level.setChunkForced(x,z,true))loaded.add(x to z)
