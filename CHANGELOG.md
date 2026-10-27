@@ -1,5 +1,18 @@
 # 版本记录
 
+## 0.5.17
+
+## 中文
+
+- 重做轨道激光的白热命中喷发，加入快速、尖锐且方向各异的放射状焰束。
+- 改善光柱与白焰的衔接，消除命中点附近生硬的暖色截面。
+
+## English
+
+- Reworked the Orbital Laser impact with fast, sharp, irregular white-hot jets.
+- Smoothed the beam-to-impact transition and removed the abrupt warm-colored cutoff near the contact point.
+
+
 ## 0.5.16
 
 ## 中文

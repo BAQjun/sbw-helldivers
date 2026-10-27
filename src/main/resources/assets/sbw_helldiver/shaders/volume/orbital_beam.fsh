@@ -46,12 +46,18 @@ void main(){
     }
     float closest=A<1e-7?nearT:clamp(-B/A,nearT,farT);
     vec3 point=ray*closest-Contact;
-    float radial=length(point-axis*dot(point,axis));
+    float along=max(0.0,dot(point,axis));
+    float radial=length(point-axis*along);
+    // The warm sheath resolves into the white impact core over the last two
+    // metres, rather than ending as a broad, flat orange sleeve.
+    float merge=smoothstep(.10,2.1,along);
+    float sheathRadius=mix(.40,1.1,merge);
     float aa=max(.001,fwidth(radial));
-    float halo=1.0-smoothstep(1.1-aa,1.1+aa,radial);
-    float mid=1.0-smoothstep(.65-aa,.65+aa,radial);
-    float core=1.0-smoothstep(.34-aa,.34+aa,radial);
-    if(halo<.001)discard;
-    vec3 light=vec3(.09,.025,.001)*halo+vec3(.35,.15,.01)*mid+vec3(1.0,.85,.42)*core;
+    float halo=(1.0-smoothstep(sheathRadius*.24,sheathRadius+aa,radial))*merge;
+    float mid=(1.0-smoothstep(.23,mix(.36,.65,merge)+aa,radial))*mix(.18,1.0,merge);
+    float core=1.0-smoothstep(.24,.34+aa,radial);
+    if(max(halo,max(mid,core))<.001)discard;
+    vec3 hot=mix(vec3(1.15,1.12,.97),vec3(1.0,.85,.42),merge);
+    vec3 light=vec3(.09,.025,.001)*halo+vec3(.35,.15,.01)*mid+hot*core;
     fragColor=vec4(light*Strength,0.0);
 }

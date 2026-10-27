@@ -19,8 +19,16 @@ void main(){
     vec3 dir=normalize(InverseViewRotation*normalize(projected.xyz/projected.w));
     vec3 eye=local(-flameCenter),ray=local(dir);
     float a=dot(ray,ray),b=dot(eye,ray),c=dot(eye,eye)-1.;
-    float disc=b*b-a*c;if(disc<=0.)discard;
-    float near=max(.035,(-b-sqrt(disc))/a),far=(-b+sqrt(disc))/a;
+    float disc=b*b-a*c;if(disc<=0.&&flameStyle.x<3.5)discard;
+    float near=max(.035,(-b-sqrt(max(0.,disc)))/a),far=(-b+sqrt(max(0.,disc)))/a;
+    if(flameStyle.x>3.5){
+        // A needle has a full base and a pointed tip. An ellipsoid bound clips
+        // away that base, leaving detached rounded fragments at the contact.
+        vec3 safeRay=mix(vec3(1e-7),ray,greaterThan(abs(ray),vec3(1e-7)));
+        vec3 t0=(-vec3(1.)-eye)/safeRay,t1=(vec3(1.)-eye)/safeRay;
+        vec3 lo=min(t0,t1),hi=max(t0,t1);
+        near=max(.035,max(lo.x,max(lo.y,lo.z)));far=min(hi.x,min(hi.y,hi.z));
+    }
     float depth=texture(SceneDepth,uv).r;
     if(depth<.999999){vec4 scene=InverseProjection*vec4(uv*2.-1.,depth*2.-1.,1.);far=min(far,length(scene.xyz/scene.w));}
     if(far<=near)discard;
@@ -37,20 +45,21 @@ void main(){
         // Shared turbulence survives overlap: tongues retain structure instead
         // of becoming a smooth tube as the fuel stream grows denser.
         vec3 flow=(w-flameAxis*Time*2.8-vec3(0.,Time*.8,0.))*vec3(2.2,3.5,2.2);
-        float n=fbm(flow),fine=noise(flow*2.9+7.);
+        float n=0.,fine=0.;
+        if(kind<3.5){n=fbm(flow);fine=noise(flow*2.9+7.);}
         float envelope=1.-smoothstep(.32,1.,length(p));
         float rho=envelope*smoothstep(.24,.67,n+(fine-.5)*.23);
         vec3 color;float extinction;
         if(kind>3.5){
             // Supersonic contact spray: hard conical needles, no soft fuel billows.
             float height=clamp((p.z+1.)*.5,0.,1.);
-            float radial=length(p.xy)/max(.012,1.-height*.985);
+            float radial=length(p.xy)/max(.008,pow(1.-height,.72));
             float edge=1.-smoothstep(.86,1.,radial);
             float striation=noise(vec3(p.xy*13.,height*35.-Time*85.+seed*23.));
-            rho=edge*(.82+.18*striation);
+            rho=edge*(.78+.22*striation);
             rho*=smoothstep(0.,.018,height)*(1.-smoothstep(.97,1.,height));
             float heat=1.-smoothstep(.50,1.,radial);
-            color=mix(vec3(5.2,2.0,.20),vec3(8.,7.7,6.5),heat);
+            color=mix(vec3(3.8,1.45,.12),vec3(7.,6.8,5.9),heat);
             extinction=14.;
         }
         else if(kind<.5){rho=envelope*(.82+.18*n);color=mix(vec3(.83,.91,1.),vec3(1.,.98,.77),smoothstep(.04,.3,age))*2.2;extinction=8.;}
