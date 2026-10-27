@@ -22,24 +22,49 @@ object OrbitalBarragePattern{
   val requiredSquared=separation*separation
   for(round in 0 until s.rounds){
    val first=round*s.shots
+   // Keep one independently sampled inner hit instead of rejecting whole salvos
+   // until every shell has migrated toward the rim. Randomize its firing order.
+   val innerShot=if(s.shots>1)random.nextInt(s.shots)else -1
+   val innerAngle=random.nextDouble()*2*PI
+   val innerRadius=sqrt(random.nextDouble())*s.radius*.5
+   val innerPoint=if(innerShot>=0)center(first+innerShot,s,0f).add(cos(innerAngle)*innerRadius,0.0,sin(innerAngle)*innerRadius)else Vec3.ZERO
    var best=emptyList<Vec3>();var bestSpacing=-1.0
    fun spacing(points:List<Vec3>):Double{
     var closest=Double.POSITIVE_INFINITY
     for(i in points.indices)for(j in 0 until i)closest=minOf(closest,points[i].distanceToSqr(points[j]))
     return closest
    }
-   // Retry complete salvos rather than accepting an early point that traps later shots.
+   // Keep the inner sample fixed while finding separated companion impacts.
    for(attempt in 0 until 128){
     val points=List(s.shots){shot->
-     val angle=random.nextDouble()*2*PI;val radius=sqrt(random.nextDouble())*s.radius
-     center(first+shot,s,0f).add(cos(angle)*radius,0.0,sin(angle)*radius)
+     if(shot==innerShot)innerPoint else {
+      val angle=random.nextDouble()*2*PI;val radius=sqrt(random.nextDouble())*s.radius
+      center(first+shot,s,0f).add(cos(angle)*radius,0.0,sin(angle)*radius)
+     }
     }
     val distance=spacing(points)
     if(distance>bestSpacing){best=points;bestSpacing=distance}
     if(distance>=requiredSquared)break
    }
+   if(bestSpacing<requiredSquared && innerShot>=0){
+    // Sweep companion-ring orientations without discarding the inner hit.
+    // This also handles the tighter Walking Barrage footprint.
+    val phase=random.nextDouble()*2*PI
+    for(attempt in 0 until 64){
+     val points=List(s.shots){shot->
+      if(shot==innerShot)innerPoint else {
+       val companion=if(shot<innerShot)shot else shot-1
+       val angle=phase+attempt*2*PI/64+companion*2*PI/(s.shots-1)
+       center(first+shot,s,0f).add(cos(angle)*s.radius,0.0,sin(angle)*s.radius)
+      }
+     }
+     val distance=spacing(points)
+     if(distance>bestSpacing){best=points;bestSpacing=distance}
+     if(distance>=requiredSquared)break
+    }
+   }
    if(bestSpacing<requiredSquared){
-    // A regular perimeter layout guarantees separation for all three default salvos.
+    // Extremely tight custom settings may not permit an inner hit and separated blasts.
     // Impossible custom radius/shot-count combinations retain their configured footprint
     // and use the most separated bounded candidate instead of looping or widening it.
     for(attempt in 0 until 64){

@@ -433,6 +433,24 @@ object OrbitalGameTests {
   h.assertTrue(pattern.offsets(1,single,0f).size==single.total,"Single-shell custom rounds lost shots")
   h.succeed()
  }
+ @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",timeoutTicks=10)
+ fun barrageKeepsInnerCoverageWithoutOverlappingSalvos(h:GameTestHelper){
+  for(id in com.example.sbwhelldiver.config.BarrageSettings.ids){
+   val s=com.example.sbwhelldiver.config.BarrageSettings.defaults(id)
+   val innerOrder=mutableSetOf<Int>()
+   for(seed in 0L..511L){
+    val targets=OrbitalBarragePattern.offsets(seed,s,37f)
+    targets.chunked(s.shots).forEachIndexed{round,salvo->
+     val inner=salvo.indices.filter{shot->salvo[shot].distanceTo(OrbitalBarragePattern.center(round*s.shots+shot,s,37f))<=s.radius*.5+1e-7}
+     h.assertTrue(inner.isNotEmpty(),"Salvo left the inner half-radius empty: $id seed=$seed round=$round")
+     innerOrder.addAll(inner)
+     for(a in salvo.indices)for(b in 0 until a)h.assertTrue(salvo[a].distanceTo(salvo[b])>=2.0*s.outer+.5-1e-7,"Inner coverage sacrificed same-salvo blast separation: $id seed=$seed")
+    }
+   }
+   h.assertTrue(innerOrder.size==s.shots,"Inner hit was always assigned to the same firing position: $id")
+  }
+  h.succeed()
+ }
  @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",timeoutTicks=5)
  fun barrage120DirectFalloffAndPrecisionAmmoReuse(h:GameTestHelper){
   val at=Vec3.atCenterOf(h.absolutePos(BlockPos(15,25,15)))
