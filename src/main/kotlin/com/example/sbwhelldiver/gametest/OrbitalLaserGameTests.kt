@@ -135,4 +135,42 @@ object OrbitalLaserGameTests {
    beams.forEach{it.discard()};p.discard();h.succeed()
   }
  }
+ @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",batch="laser_fire_trail",timeoutTicks=350)
+ fun sweepLeavesPersistentSupportedFireWithoutDuplicateTrackers(h:GameTestHelper){
+  val at=at(h);val base=BlockPos.containing(at)
+  for(x in 0..12)for(z in -1..1)h.level.setBlock(base.offset(x,-1,z),Blocks.STONE.defaultBlockState(),3)
+  val victim=mob(h,at.add(18.0,0.0,0.0));val l=laser(h,at)
+  h.runAfterDelay(22){
+   l.discard();victim.discard()
+   for(x in 0..10)h.assertTrue(h.level.getBlockState(base.offset(x,0,0)).`is`(ModBlocks.SENTRY_FIRE.get()),"Missing trail cell $x")
+   val trackers=h.level.getEntitiesOfClass(GroundFireEntity::class.java,net.minecraft.world.phys.AABB(base).inflate(12.0))
+   h.assertTrue(trackers.size<=12,"Repeated contact spawned duplicate ground-fire trackers: ${trackers.size}")
+   val walker=mob(h,at.add(2.0,0.0,0.0));trackers.forEach{it.igniteInside(walker)}
+   h.assertTrue(walker.getEffect(ModEffects.BURNING.get())?.duration==60,"Residual fire did not ignite a creature")
+   walker.discard()
+  }
+  h.runAfterDelay(60){h.assertTrue(h.level.getBlockState(base.offset(2,0,0)).`is`(ModBlocks.SENTRY_FIRE.get()),"Trail vanished when the beam ended")}
+  h.runAfterDelay(345){
+   for(x in 0..10)h.assertTrue(h.level.getBlockState(base.offset(x,0,0)).isAir,"Trail did not expire at cell $x")
+   for(x in 0..12)for(z in -1..1)h.level.removeBlock(base.offset(x,-1,z),false)
+   h.succeed()
+  }
+ }
+ @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",batch="laser_fire_limits",timeoutTicks=35)
+ fun elevatedAndUnderwaterContactsDoNotCreateFloatingFire(h:GameTestHelper){
+  val at=at(h);val base=BlockPos.containing(at)
+  h.level.setBlock(base.below(),Blocks.STONE.defaultBlockState(),3)
+  val elevated=laser(h,at.add(0.0,3.0,0.0))
+  h.runAfterDelay(6){
+   h.assertTrue(h.level.getEntitiesOfClass(GroundFireEntity::class.java,elevated.boundingBox.inflate(5.0)).isEmpty(),"Air contact created floating or projected fire")
+   elevated.discard();h.level.setBlock(base,Blocks.WATER.defaultBlockState(),3)
+   laser(h,at,OrbitalLaserSettings(durationTicks=15))
+  }
+  h.runAfterDelay(25){
+   h.assertTrue(h.level.getBlockState(base).`is`(Blocks.WATER),"Laser replaced water with ground fire")
+   h.assertTrue(h.level.getEntitiesOfClass(GroundFireEntity::class.java,net.minecraft.world.phys.AABB(base).inflate(5.0)).isEmpty(),"Water contact spawned ground fire")
+   h.level.removeBlock(base,false);h.level.removeBlock(base.below(),false);h.succeed()
+  }
+ }
+
 }

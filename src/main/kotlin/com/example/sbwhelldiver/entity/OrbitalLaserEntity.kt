@@ -38,12 +38,14 @@ class OrbitalLaserEntity(type:EntityType<*>,level:Level):Entity(type,level) {
  private val candidates=mutableListOf<UUID>()
  private var nextRefresh=0L
  private var nextPulse=0L
+ private var previousFireContact:Vec3?=null
+ private val fireRefresh=hashMapOf<net.minecraft.core.BlockPos,Long>()
  private var lerpSteps=0
  private var lerpGoal=Vec3.ZERO
  val targetId get()=entityData.get(TARGET)
  init {noPhysics=true;isNoGravity=true}
  fun configure(at:Vec3,ship:Vec3,owner:UUID?,s:OrbitalLaserSettings){
-  center=at;cursor=at;setPos(at);sourceUuid=owner;entityData.set(ORIGIN,tag(ship));entityData.set(SETTINGS,s.save())
+  center=at;cursor=at;setPos(at);previousFireContact=at;fireRefresh.clear();sourceUuid=owner;entityData.set(ORIGIN,tag(ship));entityData.set(SETTINGS,s.save())
   entityData.set(START,level().gameTime);nextPulse=level().gameTime+s.interval;nextRefresh=0
  }
  override fun defineSynchedData(){entityData.define(SETTINGS,OrbitalLaserSettings().save());entityData.define(ORIGIN,CompoundTag());entityData.define(START,-1L);entityData.define(TARGET,-1)}
@@ -94,6 +96,7 @@ class OrbitalLaserEntity(type:EntityType<*>,level:Level):Entity(type,level) {
    cursor=stepToward(cursor,aim,settings.speed/20.0)
   }
   updateContact(server)
+  leaveGroundFire(server)
 
   val pulse=server.gameTime>=nextPulse
   if(pulse)nextPulse=server.gameTime+settings.interval
@@ -111,6 +114,29 @@ class OrbitalLaserEntity(type:EntityType<*>,level:Level):Entity(type,level) {
    if(d<distance){distance=d;contact=hit}
   }
   setPos(contact)
+ }
+ /** Paint supported cells along the real contact path; cache refreshes instead of spawning every tick. */
+ private fun leaveGroundFire(server:ServerLevel){
+  val contact=position();val previous=previousFireContact;previousFireContact=contact
+  val from=previous?.takeIf{it.distanceToSqr(contact)<=36.0 && kotlin.math.abs(it.y-contact.y)<=1.25}?:contact
+  val steps=kotlin.math.ceil(from.distanceTo(contact)/.5).toInt().coerceIn(1,16)
+  val source=sourceUuid?.let(server::getEntity)?:this
+  for(i in 0..steps){
+   val at=from.lerp(contact,i.toDouble()/steps)
+   val end=at.add(0.0,-.65,0.0)
+   if(!server.hasChunkAt(net.minecraft.core.BlockPos.containing(at)) || !server.hasChunkAt(net.minecraft.core.BlockPos.containing(end)))continue
+   val hit=server.clip(ClipContext(at.add(0.0,.03,0.0),end,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,this))
+   if(hit.type!=net.minecraft.world.phys.HitResult.Type.BLOCK || hit.direction!=net.minecraft.core.Direction.UP)continue
+   val cell=net.minecraft.core.BlockPos.containing(hit.location.add(0.0,.02,0.0))
+   if(!server.getFluidState(cell).isEmpty)continue
+   val fire=com.example.sbwhelldiver.init.ModBlocks.SENTRY_FIRE.get()
+   if(server.gameTime<(fireRefresh[cell]?:Long.MIN_VALUE) && server.getBlockState(cell).`is`(fire))continue
+   if(!server.getBlockState(cell).isAir && !server.getBlockState(cell).`is`(fire))continue
+   if(!fire.defaultBlockState().canSurvive(server,cell))continue
+   GroundFireEntity.create(server,Vec3.atBottomCenterOf(cell),source)
+   fireRefresh[cell]=server.gameTime+GroundFireEntity.LIFETIME-20
+  }
+  if(server.gameTime%100L==0L)fireRefresh.entries.removeIf{it.value<=server.gameTime}
  }
  /** The sphere is centered on the rendered impact, so creatures crossed during a sweep can burn too. */
  fun affect(pulse:Boolean){

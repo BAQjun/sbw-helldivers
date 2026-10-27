@@ -15,25 +15,43 @@ void main(){
     float len=length(segment);
     if(len<.001)discard;
     vec3 axis=segment/len;
-    // Closest points on a forward camera ray and a finite beam segment.
+    // Intersect a cylinder clipped by the contact/ship planes. Clamping the
+    // closest segment point instead would round the tip into a visible capsule.
     float d=dot(ray,axis),a=dot(ray,Contact),b=dot(axis,Contact);
-    float along=clamp((d*a-b)/max(1.0-d*d,1e-7),0.0,len);
-    vec3 point=Contact+axis*along;
-    float distance=max(0.0,dot(ray,point));
-    float radial=length(point-ray*distance);
-    float aa=max(.001,fwidth(radial));
-    float halo=1.0-smoothstep(1.1-aa,1.1+aa,radial);
-    float mid=1.0-smoothstep(.65-aa,.65+aa,radial);
-    float core=1.0-smoothstep(.34-aa,.34+aa,radial);
-    if(halo<.001||dot(ray,point)<0.0)discard;
+    float qa=-b, A=max(0.0,1.0-d*d), B=-a+b*d;
+    float C=dot(Contact,Contact)-b*b-1.21;
+    float nearT=0.0,farT=1e20;
+    if(A<1e-7){
+        if(C>0.0)discard;
+    }else{
+        float discriminant=B*B-A*C;
+        if(discriminant<0.0)discard;
+        float root=sqrt(discriminant);
+        nearT=max(nearT,(-B-root)/A);farT=min(farT,(-B+root)/A);
+    }
+    if(abs(d)<1e-7){
+        if(qa<0.0||qa>len)discard;
+    }else{
+        float cap0=-qa/d,cap1=(len-qa)/d;
+        nearT=max(nearT,min(cap0,cap1));farT=min(farT,max(cap0,cap1));
+    }
+    if(farT<=nearT)discard;
     float scene=texture(SceneDepth,uv).r;
     if(scene<.9999999){
         vec4 surface=InverseProjection*vec4(uv*2.0-1.0,scene*2.0-1.0,1.0);
         float sceneDistance=length(surface.xyz/surface.w);
-        // Compare in real world units, never in projected/compressed sky depth.
-        float front=distance-sqrt(max(0.0,1.21-radial*radial))/sqrt(max(1e-7,1.0-d*d));
-        if(front>sceneDistance+.06)discard;
+        // Keep the previously fixed real-world depth, including foreground walls.
+        if(nearT>sceneDistance+.06)discard;
+        farT=min(farT,sceneDistance+.06);
     }
+    float closest=A<1e-7?nearT:clamp(-B/A,nearT,farT);
+    vec3 point=ray*closest-Contact;
+    float radial=length(point-axis*dot(point,axis));
+    float aa=max(.001,fwidth(radial));
+    float halo=1.0-smoothstep(1.1-aa,1.1+aa,radial);
+    float mid=1.0-smoothstep(.65-aa,.65+aa,radial);
+    float core=1.0-smoothstep(.34-aa,.34+aa,radial);
+    if(halo<.001)discard;
     vec3 light=vec3(.09,.025,.001)*halo+vec3(.35,.15,.01)*mid+vec3(1.0,.85,.42)*core;
     fragColor=vec4(light*Strength,0.0);
 }

@@ -9,18 +9,15 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.culling.Frustum
 import net.minecraft.client.renderer.entity.EntityRenderer
 import net.minecraft.client.renderer.entity.EntityRendererProvider
-import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance
 import net.minecraft.sounds.SoundSource
 import net.minecraft.util.RandomSource
-import net.minecraft.world.phys.Vec3
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.event.TickEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import java.lang.ref.WeakReference
 import java.util.WeakHashMap
-import kotlin.math.*
 
 /** Local contact effects; the long shaft is depth-composited by OrbitalBeamGeometry. */
 class OrbitalLaserRenderer(context:EntityRendererProvider.Context):EntityRenderer<OrbitalLaserEntity>(context) {
@@ -28,21 +25,7 @@ class OrbitalLaserRenderer(context:EntityRendererProvider.Context):EntityRendere
  override fun shouldRender(e:OrbitalLaserEntity,f:Frustum,x:Double,y:Double,z:Double):Boolean = e.active && e.shouldRenderAtSqrDistance(e.distanceToSqr(x,y,z))
  override fun render(e:OrbitalLaserEntity,yaw:Float,partial:Float,p:PoseStack,b:MultiBufferSource,light:Int){
   if(!e.active)return
-  val pose=p.last();val vc=b.getBuffer(DestroyerRenderTypes.GLOW)
-  val strength=minOf(1.0,(e.level().gameTime-e.startedAt+partial)/3.0,(e.endsAt-e.level().gameTime-partial)/5.0).coerceIn(0.0,1.0).toFloat()
-  fun vertex(v:Vec3,r:Float,g:Float,blue:Float){vc.vertex(pose.pose(),v.x.toFloat(),v.y.toFloat(),v.z.toFloat()).color(r*strength,g*strength,blue*strength,1f).uv(0f,0f).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).normal(pose.normal(),0f,1f,0f).endVertex()}
   OrbitalLaserImpact.render(e,partial,p,b)
-  // Continuous radial falloff avoids a hard rectangular impact sprite under shader packs.
-  val camera=Minecraft.getInstance().gameRenderer.mainCamera
-  val rotation=camera.rotation();val cr=org.joml.Vector3f(1f,0f,0f).rotate(rotation);val cu=org.joml.Vector3f(0f,1f,0f).rotate(rotation)
-  val a=Vec3(cr.x.toDouble(),cr.y.toDouble(),cr.z.toDouble());val c=Vec3(cu.x.toDouble(),cu.y.toDouble(),cu.z.toDouble())
-  for(j in 0 until 6){val inner=j*.5;val outer=(j+1)*.5;val gain=(1.0-j/6.0).pow(3).toFloat()*.8f;val outerGain=(1.0-(j+1)/6.0).pow(3).toFloat()*.8f
-   for(i in 0 until 24){val x=i*PI/12;val y=(i+1)*PI/12
-    fun q(t:Double,r:Double)=a.scale(cos(t)*r).add(c.scale(sin(t)*r)).add(0.0,.18,0.0)
-    vertex(q(x,inner),gain,gain*.5f,gain*.08f);vertex(q(y,inner),gain,gain*.5f,gain*.08f)
-    vertex(q(y,outer),outerGain,outerGain*.5f,outerGain*.08f);vertex(q(x,outer),outerGain,outerGain*.5f,outerGain*.08f)
-   }
-  }
  }
 }
 
