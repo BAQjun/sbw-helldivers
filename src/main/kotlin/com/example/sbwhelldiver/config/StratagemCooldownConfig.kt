@@ -11,6 +11,7 @@ object StratagemCooldownConfig {
         "orbital_gatling_barrage" to 70.0,
         "orbital_precision_strike" to 80.0,
         "orbital_railcannon_strike" to 210.0,
+        "orbital_laser" to 300.0,
         "machine_gun_sentry" to 90.0, "gatling_sentry" to 150.0,
         "rocket_sentry" to 150.0, "autocannon_sentry" to 150.0,
         "mortar_sentry" to 180.0, "gas_mortar_sentry" to 180.0, "ems_mortar_sentry" to 180.0,
@@ -35,6 +36,7 @@ object StratagemCooldownConfig {
                 .defineInRange("cooldownSeconds", upgradedSeconds(id, base), 0.0, 86400.0)
             if (id.startsWith("eagle_")) uses[id] = builder.comment("独立使用次数；一次重新武装补满所有飞鹰。Uses per rearm, independent for each Eagle stratagem.")
                 .defineInRange("uses", com.example.sbwhelldiver.entity.EagleAttack.fromId(id).defaultUses, 1, 1000)
+            if(id=="orbital_laser") uses[id]=builder.comment("每位玩家的持久使用次数；关闭冷却可恢复次数。Persistent uses per player; disabling cooldown restores uses.").defineInRange("uses",3,1,1000)
             builder.pop()
         }
         builder.push("eagle_rearm")

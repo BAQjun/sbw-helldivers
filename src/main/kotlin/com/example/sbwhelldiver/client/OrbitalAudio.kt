@@ -44,7 +44,7 @@ object OrbitalAudio {
         val level = mc.level ?: return
         val listener = mc.gameRenderer.mainCamera.position
         for (marker in level.entitiesForRendering().filterIsInstance<StratagemMarker>()) {
-            if (marker.isOrbitalRailcannon || marker.isOrbitalGatling || marker.isOrbitalBarrage || marker.isOrbitalAirburst || marker.orbitalOrigin == null || marker.orbitalFiredAt < 0 || heard.containsKey(marker)) continue
+            if (marker.isOrbitalLaser || marker.isOrbitalRailcannon || marker.isOrbitalGatling || marker.isOrbitalBarrage || marker.isOrbitalAirburst || marker.orbitalOrigin == null || marker.orbitalFiredAt < 0 || heard.containsKey(marker)) continue
             val progress = marker.orbitalProgress()
             if (progress in 0.0.. .95 && (1.0 - progress) * marker.orbitalFlightTicks <= 30 &&
                 marker.position().distanceToSqr(listener) <= 128.0 * 128.0) {

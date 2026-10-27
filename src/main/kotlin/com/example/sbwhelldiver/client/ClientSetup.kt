@@ -158,6 +158,8 @@ object ClientSetup {
             ::BeaconProjectileRenderer,
         )
 
+        event.registerEntityRenderer(ModEntities.ORBITAL_LASER.get(), ::OrbitalLaserRenderer)
+
         // 落点同时绘制信标展开、颜色光束和抵达倒计时。
         event.registerEntityRenderer(
             ModEntities.STRATAGEM_MARKER.get(),

@@ -27,6 +27,7 @@ object OrbitalConfig {
   OrbitalAirburstConfig.register(b)
   OrbitalBarrageConfig.register(b)
   OrbitalRailcannonConfig.register(b)
+  OrbitalLaserConfig.register(b)
   b.pop()
  }
  fun callTicks()=(callSeconds.get()*20).toInt().coerceAtLeast(10)

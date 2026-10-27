@@ -41,7 +41,19 @@ void main(){
         float envelope=1.-smoothstep(.32,1.,length(p));
         float rho=envelope*smoothstep(.24,.67,n+(fine-.5)*.23);
         vec3 color;float extinction;
-        if(kind<.5){rho=envelope*(.82+.18*n);color=mix(vec3(.83,.91,1.),vec3(1.,.98,.77),smoothstep(.04,.3,age))*2.2;extinction=8.;}
+        if(kind>3.5){
+            // Supersonic contact spray: hard conical needles, no soft fuel billows.
+            float height=clamp((p.z+1.)*.5,0.,1.);
+            float radial=length(p.xy)/max(.012,1.-height*.985);
+            float edge=1.-smoothstep(.86,1.,radial);
+            float striation=noise(vec3(p.xy*13.,height*35.-Time*85.+seed*23.));
+            rho=edge*(.82+.18*striation);
+            rho*=smoothstep(0.,.018,height)*(1.-smoothstep(.97,1.,height));
+            float heat=1.-smoothstep(.50,1.,radial);
+            color=mix(vec3(5.2,2.0,.20),vec3(8.,7.7,6.5),heat);
+            extinction=14.;
+        }
+        else if(kind<.5){rho=envelope*(.82+.18*n);color=mix(vec3(.83,.91,1.),vec3(1.,.98,.77),smoothstep(.04,.3,age))*2.2;extinction=8.;}
         else if(kind>2.5){
             // Smoke rises out of spent fuel. Coherent world-space billows avoid
             // the featureless wall produced by averaging independent clouds.

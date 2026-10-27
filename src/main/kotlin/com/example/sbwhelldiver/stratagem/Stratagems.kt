@@ -28,6 +28,7 @@ object Stratagems {
     const val DOWN = 2
     const val LEFT = 3
     val definitions = listOf(
+        StratagemDefinition("orbital_laser",listOf(RIGHT,DOWN,UP,RIGHT,DOWN),StratagemCategory.RED),
         StratagemDefinition("orbital_120mm_he_barrage",listOf(RIGHT,RIGHT,DOWN,LEFT,RIGHT,DOWN),StratagemCategory.RED),
         StratagemDefinition("orbital_380mm_he_barrage",listOf(RIGHT,DOWN,UP,UP,LEFT,DOWN,DOWN),StratagemCategory.RED),
         StratagemDefinition("orbital_walking_barrage",listOf(RIGHT,DOWN,RIGHT,DOWN,RIGHT,DOWN),StratagemCategory.RED),

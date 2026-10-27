@@ -73,7 +73,7 @@ class StratagemCooldownState {
         if (!enabled) return true
         val e = entry(id)
         if (e.phase != CallPhase.READY) return false
-        if (!id.startsWith("eagle_")) return true
+        if (!id.startsWith("eagle_")) return e.remaining != 0
         return !rearming(now) && turnaroundEnd <= now && e.remaining > 0 &&
             entries.values.none { it.id.startsWith("eagle_") && it.phase in listOf(CallPhase.THROWN, CallPhase.ARRIVING) }
     }
@@ -94,7 +94,7 @@ class StratagemCooldownState {
             changed(); return true
         }
         if (e.phase == CallPhase.THROWN) {
-            if (id.startsWith("eagle_") && enabled) e.remaining = (e.remaining - 1).coerceAtLeast(0)
+            if ((id.startsWith("eagle_") || id=="orbital_laser") && enabled) e.remaining = (e.remaining - 1).coerceAtLeast(0)
             e.phase = CallPhase.ARRIVING; e.start = now; e.end = arrival; changed()
         } else if (e.end != arrival) { e.end = arrival; changed() }
         return true
@@ -116,7 +116,7 @@ class StratagemCooldownState {
             e.activityStart = -1; e.activityEnd = -1; e.activityFinished = -1; e.activityToken = null; changed()
         }
         if (e.request != token || e.phase !in listOf(CallPhase.THROWN, CallPhase.ARRIVING)) return
-        if (e.phase == CallPhase.ARRIVING && id.startsWith("eagle_")) e.remaining = (e.remaining + 1).coerceAtMost(StratagemCooldownConfig.maxUses(id))
+        if (e.phase == CallPhase.ARRIVING && (id.startsWith("eagle_") || id=="orbital_laser")) e.remaining = (e.remaining + 1).coerceAtMost(StratagemCooldownConfig.maxUses(id))
         e.phase = CallPhase.READY; e.request = null; changed()
     }
     private fun startRearm(now: Long, hasOrdnance: Boolean) {
@@ -134,6 +134,15 @@ class StratagemCooldownState {
         advance(now)
         if (!enabled || equippedEagles.isEmpty() || rearming(now)) return false
         startRearm(now, equippedEagles.any { entry(it).remaining > 0 }); advance(now); return true
+    }
+    /** A completed ship resupply restores charges only, without restarting calls or cooldowns. */
+    fun restoreAllUses() {
+        var restored = false
+        for (e in entries.values) {
+            val maximum = StratagemCooldownConfig.maxUses(e.id)
+            if (maximum > 0 && e.remaining != maximum) { e.remaining = maximum; restored = true }
+        }
+        if (restored) changed()
     }
     fun setEnabled(value: Boolean, now: Long) {
         if (value == enabled) return

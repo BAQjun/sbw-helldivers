@@ -62,6 +62,12 @@ object FlameJetVisual {
         emitter.position=muzzle;emitter.direction=direction
         if(parcels.size>1600)parcels.subList(0,parcels.size-1600).clear()
     }
+    /** A tiny white-hot contact core supplies surface lighting, without smoke or flame puffs. */
+    fun orbitalContactLight(level:Level,at:Vec3) {
+        world(level)
+        parcels.add(Parcel(at,at,Vec3(0.0,.01,0.0),0.0,2.0,CORE,0.0,1.0))
+        if(parcels.size>1600)parcels.subList(0,parcels.size-1600).clear()
+    }
     // Emissions are drawn independently of the turret's model and its culling box.
     fun bounds(s:SentryHellpodEntity):AABB?=null
     @SubscribeEvent fun advance(event:TickEvent.ClientTickEvent) {

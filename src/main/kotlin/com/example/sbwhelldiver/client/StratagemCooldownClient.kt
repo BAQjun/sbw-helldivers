@@ -77,7 +77,7 @@ object StratagemCooldownClient : ResourceManagerReloadListener {
             n.getString("Id").startsWith("eagle_") && (n.getInt("Phase") == CallPhase.THROWN.ordinal ||
                 n.getInt("Phase") == CallPhase.ARRIVING.ordinal && n.getLong("End") > time)
         }
-        return Visual(remaining = remaining, blocked = eagle && (remaining == 0 || otherEagleInFlight))
+        return Visual(remaining = remaining, blocked = remaining == 0 || otherEagleInFlight)
     }
     fun automaticNotice(id: String, partial: Float = 0f): Boolean {
         val v = visual(id, partial)

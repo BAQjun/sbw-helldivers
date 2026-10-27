@@ -48,7 +48,8 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     private var podSpawned = false
     private var activationPlayed = false
     val isOrbital get()=(dropTypeId?.path ?: entityData.get(STRATAGEM)).startsWith("orbital_")
-    val hasBeaconBeam get() = !isOrbitalRailcannon
+    val isOrbitalLaser get()=(dropTypeId?.path ?: entityData.get(STRATAGEM))=="orbital_laser"
+    val hasBeaconBeam get() = !isOrbitalRailcannon && (!isOrbitalLaser || elapsedTicks<duration)
     val isOrbitalRailcannon get()=(dropTypeId?.path ?: entityData.get(STRATAGEM))=="orbital_railcannon_strike"
     val railcannonSettings get()=com.example.sbwhelldiver.config.RailcannonSettings.load(entityData.get(RAIL_SETTINGS))
     val railLockStartedAt get()=entityData.get(RAIL_LOCK_START)
@@ -164,9 +165,10 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         entityData.set(GRACE, if(isEagle || isOrbital) 0 else LANDING_GRACE_TICKS)
         surfaceY = groundY
         descentTicks = if(isOrbital) orbitalTerminalTicks() else if(isEagle) eagleCallTicks else AbstractHellpodEntity.FALL_TICKS
+        if(isOrbitalLaser)entityData.set(LASER_SETTINGS,com.example.sbwhelldiver.config.OrbitalLaserConfig.snapshot().save())
         if(isOrbitalBarrage)prepareBarrage()
         if(isOrbitalRailcannon)entityData.set(RAIL_SETTINGS,com.example.sbwhelldiver.config.OrbitalRailcannonConfig.snapshot().save())
-        entityData.set(DURATION, if(isOrbitalRailcannon)railcannonSettings.callTicks+railcannonSettings.lockTicks else if(isOrbitalBarrage)barrageSettings.callTicks else if(isOrbitalAirburst) com.example.sbwhelldiver.config.OrbitalAirburstConfig.callTicks() else if(isOrbitalGatling) com.example.sbwhelldiver.config.OrbitalGatlingConfig.callTicks() else if(isOrbital) com.example.sbwhelldiver.config.OrbitalConfig.callTicks() else if(isEagle) eagleCallTicks else delayTicks.coerceAtLeast(maxOf(20, descentTicks - landingGraceTicks)))
+        entityData.set(DURATION, if(isOrbitalLaser)com.example.sbwhelldiver.config.OrbitalLaserSettings.load(entityData.get(LASER_SETTINGS)).callTicks else if(isOrbitalRailcannon)railcannonSettings.callTicks+railcannonSettings.lockTicks else if(isOrbitalBarrage)barrageSettings.callTicks else if(isOrbitalAirburst) com.example.sbwhelldiver.config.OrbitalAirburstConfig.callTicks() else if(isOrbitalGatling) com.example.sbwhelldiver.config.OrbitalGatlingConfig.callTicks() else if(isOrbital) com.example.sbwhelldiver.config.OrbitalConfig.callTicks() else if(isEagle) eagleCallTicks else delayTicks.coerceAtLeast(maxOf(20, descentTicks - landingGraceTicks)))
         entityData.set(LEFT, duration)
         entityData.set(AGE, 0)
         entityData.set(FACE, normal.get3DDataValue())
@@ -228,6 +230,15 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         if(isSustainedOrbital && orbitalFinishedAt>=0){
             if(server.gameTime-orbitalFinishedAt>=20)discard()
             return
+        }
+        if(isOrbitalLaser){
+            if(elapsedTicks<duration)return
+            val ship=orbitalOrigin?:run{updateCooldown(true);discard();return}
+            val laser=com.example.sbwhelldiver.init.ModEntities.ORBITAL_LASER.get().create(server)?:run{updateCooldown(true);discard();return}
+            laser.configure(Vec3(x,surfaceY+.1,z),ship,ownerUuid,com.example.sbwhelldiver.config.OrbitalLaserSettings.load(entityData.get(LASER_SETTINGS)))
+            if(!server.addFreshEntity(laser)){updateCooldown(true);discard();return}
+            // Arrival is the start of continuous irradiation, not the end of its lifetime.
+            entityData.set(ORBITAL_FIRED_AT,server.gameTime);updateCooldown();discard();return
         }
         if(isOrbitalRailcannon){tickRailLock(server);if(isRemoved)return}
         if(orbitalFiredAt<0 && elapsedTicks>=duration) {
@@ -381,6 +392,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
 
     override fun defineSynchedData() {
+        entityData.define(LASER_SETTINGS,com.example.sbwhelldiver.config.OrbitalLaserSettings().save())
         entityData.define(RAIL_SETTINGS,com.example.sbwhelldiver.config.RailcannonSettings().save())
         entityData.define(RAIL_LOCK_START,-1L);entityData.define(RAIL_TARGET,-1);entityData.define(RAIL_AIM,CompoundTag())
         entityData.define(BARRAGE_SETTINGS,com.example.sbwhelldiver.config.BarrageSettings().save())
@@ -401,6 +413,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         entityData.define(STRATAGEM, "")
     }
     override fun readAdditionalSaveData(tag: CompoundTag) {
+        if(tag.contains("LaserSettings"))entityData.set(LASER_SETTINGS,tag.getCompound("LaserSettings"))
         if(tag.contains("RailSettings"))entityData.set(RAIL_SETTINGS,tag.getCompound("RailSettings"))
         entityData.set(RAIL_LOCK_START,if(tag.contains("RailLockStart"))tag.getLong("RailLockStart") else -1L)
         entityData.set(RAIL_TARGET,-1);entityData.set(RAIL_AIM,tag.getCompound("RailAim"))
@@ -445,6 +458,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         noPhysics = true
     }
     override fun addAdditionalSaveData(tag: CompoundTag) {
+        tag.put("LaserSettings",entityData.get(LASER_SETTINGS))
         tag.put("RailSettings",entityData.get(RAIL_SETTINGS));tag.putLong("RailLockStart",railLockStartedAt)
         tag.put("RailAim",entityData.get(RAIL_AIM));railTargetUUID?.let{tag.putUUID("RailTarget",it)}
         tag.put("BarrageSettings",entityData.get(BARRAGE_SETTINGS));tag.put("BarrageTargets",entityData.get(BARRAGE_TARGETS));tag.putInt("BarrageNextShot",barrageNextShot);tag.putInt("BarrageReports",barrageReports)
@@ -473,6 +487,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
     companion object {
         const val LANDING_GRACE_TICKS = 20
+        private val LASER_SETTINGS=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.COMPOUND_TAG)
         private val RAIL_SETTINGS=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.COMPOUND_TAG)
         private val RAIL_LOCK_START=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.LONG)
         private val RAIL_TARGET=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.INT)

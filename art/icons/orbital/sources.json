@@ -58,5 +58,13 @@
     "nativeStratagemType": "StratagemType_OrbitalRailcannon",
     "format": "Native vector paths with a shared two-pixel red frame",
     "sourceSha256": "3f2c02830b75f3053b65c0734620968bf0c583436abb017e0ed994f412496927"
+  },
+  {
+    "id": "orbital_laser",
+    "nativeSource": "content/ui/shared/resources/generated_icons/stratagem_icons.xaml",
+    "template": "DataTemplate.Icon.StratagemType.OrbitalLaser",
+    "nativeStratagemType": "StratagemType_OrbitalLaser",
+    "format": "Native vector paths with a shared two-pixel red frame",
+    "sourceSha256": "8ac24c9a344a642035e478409b471ae72ef1d8598818ca1daf066fdd624ca76c"
   }
 ]

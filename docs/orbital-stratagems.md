@@ -157,3 +157,24 @@ The ship fires 1.7 seconds after beam activation, followed by a default 0.5-seco
 配置 / Configuration: `orbital.railcannonStrike` (`callDelaySeconds`, `lockSeconds`, `beamSeconds`, `flightSeconds`, `searchRadius`, `directDamage`, `explosionDamage`, `innerRadius`, `outerRadius`); `stratagems.orbital_railcannon_strike.cooldownSeconds`.
 
 解包来源 / Decoded source: `StratagemType_OrbitalRailcannon`, `OrbitalAbilityComponentData` payload `12399142748360190921`: search radius 30, projectile spawn delay 1.70000005, pointer duration 2, native call delay 1, base cooldown 210. Original sampled lock-event layers preserve the 1500 ms delayed confirmation action; Wwise procedural synthesis and RTPC/reverb processing are not reproduced. Provenance: `art/audio/orbital_railcannon_sources.json`.
+
+
+## 轨道激光 / Orbital Laser
+
+指令 → ↓ ↑ → ↓。需要己方超级驱逐舰处于支援范围内。默认等待2秒后开始持续25秒的照射，信标光柱和抵达提示随照射开始消失，立即进入冷却，不显示“正在进行”或“已抵达”。默认满升级冷却256.5秒，每位玩家有3次使用机会；剩余次数与冷却独立保存，不受飞鹰重新武装影响。关闭玩家战备冷却时会恢复次数并允许连续调用。超级驱逐舰完成撤离后，重新呼叫并等其进场即可补满该玩家全部有限次数战备（包括飞鹰）的次数；首次呼叫和调整方位不补充，冷却与重新武装计时保持不变。撤离/返航补充状态支持存档恢复。
+
+激光以信标为中心搜索50米，每秒刷新候选目标，以每秒10格的速度连续移动光斑，切换目标时不会瞬移。保持当前有效目标，失效后优先最大生命值最高的敌人，同值时选择离光斑最近的敌人。玩家、驯服动物、盟友及被地形遮蔽的目标不参与自动选择；中立生物沿用炮台配置。空场时停留原处继续搜索。伤害在实际光斑的1米球形范围内结算，经过的其他生物也可能受伤；每5刻造成25点伤害，并持续刷新3秒燃烧效果。光束从本次调用固定的驱逐舰位置射来，不加载远处舰位区块。
+
+原版组件确认 `duration=25`、`search_radius=50`、`movement_speed=10`、`target_list_update_time=1`、球形伤害区尺寸1。原版伤害组件的0.1秒间隔按本模组需求改为5刻。**解包组件未公开敌人优先级评分和完整寻路算法；保持目标、最大生命值排序、以固定信标为搜索圆心与局部地形遮挡是MC适配规则，不代表已还原原版内部算法。**
+
+粗光束和落点辉光使用发光加法渲染并保留地形深度遮挡。接触点连续迸发短促、尖锐的白热喷流与抛物线飞溅的熔融火星，不生成烟尘；地面和生物按同一条入射射线确定最近接触点，命中生物时特效转移到身体表面并随之移动。开始、持续和结束音效来自原版 `stratagems_orbital_laser` 音频事件，持续声跟随光斑，传播距离128格；保留采样层级，未复现Wwise程序合成、RTPC和混响。出处见 `art/audio/orbital_laser_data.json` 和 `art/audio/orbital_laser_sources.json`。
+
+The code is → ↓ ↑ → ↓. An owned Super Destroyer must be in support range. Irradiation starts after a default 2-second call delay and lasts 25 seconds. The beacon beam and arrival label disappear when irradiation starts, and cooldown begins immediately, without an “In progress” or “Arrived” overlay. The fully upgraded cooldown defaults to 256.5 seconds. Each player has three persistent uses, independent of Eagle rearming. After a completed withdrawal, recalling the Super Destroyer replenishes all of its owner's limited stratagem charges on arrival, including Eagle charges, without clearing cooldowns or rearm timers. Initial deployment and repositioning do not replenish charges. Disabling the player's stratagem cooldown restores charges and allows repeated calls.
+
+The laser searches within 50 m of the fixed beacon, refreshes candidates every second and moves the actual impact point continuously at 10 blocks/s. It retains a valid target, then selects the enemy with the highest maximum health, breaking ties by distance to the impact point. Players, tamed animals, allies and terrain-obscured targets are excluded from automatic selection; neutral mobs follow the sentry setting. In an empty area, the beam stays in place and keeps searching. Damage follows the rendered impact in a 1 m sphere, so other creatures crossed by the beam can also be hit. It deals 25 damage every five ticks and continuously refreshes three seconds of burning. The beam originates from the ship position fixed at call-in, without loading distant ship chunks.
+
+Decoded native components confirm a 25 s duration, 50 m search radius, 10 m/s movement, 1 s target-list refresh and a size-1 spherical damage zone. The native 0.1 s damage interval is replaced by the requested five-tick cadence. **The component does not expose target-priority scoring or the full navigation algorithm. Target retention, maximum-health sorting, the fixed search center and local terrain occlusion are Minecraft adaptations, not a verified recreation of the original internal algorithm.**
+
+The thick beam and impact glow use additive emissive rendering with terrain depth testing. Rapid, sharp white-hot jets and ballistic molten sparks follow the nearest terrain or creature contact along the incoming ray, without smoke or dust; effects transfer to a creature surface when it intercepts the beam. Start, sustain and stop sounds come from the native `stratagems_orbital_laser` events; the sustain follows the impact with a 128-block sound range. Sampled layers are preserved; Wwise procedural synthesis, RTPCs and reverb are not reproduced. Provenance is recorded in `art/audio/orbital_laser_data.json` and `art/audio/orbital_laser_sources.json`.
+
+配置 / Configuration: `orbital.laser` (`callDelaySeconds`, `durationSeconds`, `searchRadius`, `movementSpeed`, `targetRefreshTicks`, `damageRadius`, `damagePerPulse`, `damageIntervalTicks`); `stratagems.orbital_laser.cooldownSeconds`, `stratagems.orbital_laser.uses`.

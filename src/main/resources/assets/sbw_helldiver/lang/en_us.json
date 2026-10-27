@@ -216,5 +216,10 @@
   "config.sbw_helldiver.infinite_turret_ammo.enter_world": "Enter a world to change its unlimited ammunition setting.",
   "item.sbw_helldiver.orbital_railcannon_strike_stratagem": "Orbital Railcannon Strike",
   "entity.sbw_helldiver.orbital_railcannon_shell": "Orbital Railcannon Strike",
-  "subtitles.sbw_helldiver.sfx_orbital_railcannon_lock": "Orbital railcannon locks on"
+  "subtitles.sbw_helldiver.sfx_orbital_railcannon_lock": "Orbital railcannon locks on",
+  "item.sbw_helldiver.orbital_laser_stratagem": "Orbital Laser",
+  "entity.sbw_helldiver.orbital_laser": "Orbital Laser",
+  "subtitles.sbw_helldiver.sfx_orbital_laser_start": "Orbital laser activates",
+  "subtitles.sbw_helldiver.sfx_orbital_laser_loop": "Orbital laser firing",
+  "subtitles.sbw_helldiver.sfx_orbital_laser_stop": "Orbital laser stops"
 }

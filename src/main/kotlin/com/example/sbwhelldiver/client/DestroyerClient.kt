@@ -105,7 +105,7 @@ object DestroyerClient:ResourceManagerReloadListener {
   if(e.stage==RenderLevelStageEvent.Stage.AFTER_PARTICLES){
    val camera=e.camera.position;val p=e.poseStack
    for(marker in level.entitiesForRendering().filterIsInstance<StratagemMarker>()){
-    if(marker.isOrbitalGatling||marker.isOrbitalBarrage || marker.isOrbitalAirburst)continue
+    if(marker.isOrbitalLaser||marker.isOrbitalGatling||marker.isOrbitalBarrage || marker.isOrbitalAirburst)continue
     val origin=marker.orbitalOrigin?:continue
     val target=marker.orbitalTarget(e.partialTick);val t=marker.orbitalProgress(e.partialTick)
     if(t !in 0.0..1.0)continue

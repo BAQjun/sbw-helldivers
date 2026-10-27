@@ -1,0 +1,92 @@
+{
+  "bank": "stratagems_orbital_laser",
+  "bank_sha256": "927d8849ff7ef5c45f1762a42edb2aa7f60c0eb37a8d3aaed2392662233fa2d6",
+  "start_event": 1135102613,
+  "stop_event": 3597066355,
+  "start_play_actions": [
+    316847160,
+    848251475
+  ],
+  "stop_play_action": 530981131,
+  "stop_loop_action": 123560205,
+  "loop_stop_fade_ms": 500,
+  "start_media": [
+    546925581,
+    661188938,
+    111862153,
+    564891737
+  ],
+  "loop_media": [
+    [
+      1053723891,
+      728624279,
+      689606855,
+      618097940
+    ],
+    [
+      973292401,
+      583425464,
+      868510403,
+      484225949
+    ],
+    [
+      78701517,
+      467007046,
+      304448782,
+      1044950687
+    ],
+    [
+      677086146,
+      1035082150,
+      986934256,
+      685205549
+    ]
+  ],
+  "loop_gain_db": [
+    7,
+    3,
+    10,
+    1
+  ],
+  "loop_layer_4_pitch_cents": -80,
+  "stop_media": [
+    [
+      443843312,
+      563292917,
+      596462435,
+      238360141
+    ],
+    [
+      712634132,
+      620711868,
+      336676068,
+      492473266
+    ],
+    [
+      822623686,
+      335880384,
+      1014510570,
+      162874737
+    ]
+  ],
+  "stop_gain_db": [
+    6,
+    10,
+    10
+  ],
+  "playback": "Confirmed native sampled start, four-layer sustained beam, and three-layer stop; four variants. Spatial attenuation follows the moving footprint. Wwise RTPCs, procedural synthesizer stop layer, reverb and environmental mixes are not reproduced.",
+  "outputs": {
+    "loop_1.ogg": "6e1a9d896bb145983e1d45ff7ba3522194960fb0db9e0d11343e99f309768fbb",
+    "loop_2.ogg": "784b25be5ff692492c69234056eac0fa4d742af9d2c3a82b5ce8e7e83e116018",
+    "loop_3.ogg": "3c3da71d7d3247c38b0e4206c4171955b6294e55496ddf72ca57c363002fce8a",
+    "loop_4.ogg": "870b33ab637c8fd82f539ff8cb1c4002c35a63a880bb7b765a799b128541a437",
+    "start_1.ogg": "a9ba8a0487f12792ea657d3d4065af6be179abf0284e660b914233013785bcc2",
+    "start_2.ogg": "d088fea01b864b51865809822371c9318b18bc74292070f5838be9418a416ca0",
+    "start_3.ogg": "71ee13887ae71f351e5ef141ed15752e45e62dbbaf9e9e9df157d7900344e6ee",
+    "start_4.ogg": "0e566337cfbf201c2968bf61ccc59aaf42acf222337f03f30e4f4d373abdf4d3",
+    "stop_1.ogg": "8b017b26992c9102975f6272c39dacaa4209009b8cefb5fe9febc7579fbe52ec",
+    "stop_2.ogg": "23a4ee5acf072a473db0c7f9f7fdb736a702d4cca6298db0c63828f6279e88d9",
+    "stop_3.ogg": "eae3036246fd7c01893a77975b42895c536a2ad80bf2a4980c917b9473168036",
+    "stop_4.ogg": "298c73f6b5b4255f39c7fb6cd4fa45f032dad844261a3b2f9037eaa6befe5e35"
+  }
+}

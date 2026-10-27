@@ -216,5 +216,10 @@
   "config.sbw_helldiver.infinite_turret_ammo.enter_world": "进入世界后可修改该世界的无限弹药设置。",
   "item.sbw_helldiver.orbital_railcannon_strike_stratagem": "轨道炮攻击",
   "entity.sbw_helldiver.orbital_railcannon_shell": "轨道炮攻击",
-  "subtitles.sbw_helldiver.sfx_orbital_railcannon_lock": "轨道炮锁定"
+  "subtitles.sbw_helldiver.sfx_orbital_railcannon_lock": "轨道炮锁定",
+  "item.sbw_helldiver.orbital_laser_stratagem": "轨道激光",
+  "entity.sbw_helldiver.orbital_laser": "轨道激光",
+  "subtitles.sbw_helldiver.sfx_orbital_laser_start": "轨道激光启动",
+  "subtitles.sbw_helldiver.sfx_orbital_laser_loop": "轨道激光照射",
+  "subtitles.sbw_helldiver.sfx_orbital_laser_stop": "轨道激光停止"
 }

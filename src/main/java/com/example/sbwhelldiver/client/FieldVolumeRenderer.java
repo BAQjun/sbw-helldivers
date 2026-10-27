@@ -129,7 +129,10 @@ public final class FieldVolumeRenderer {
             if(entity instanceof com.example.sbwhelldiver.entity.ShieldGeneratorEntity ||
                 ShaderPackCompat.INSTANCE.active()&&entity instanceof com.example.sbwhelldiver.entity.SentryHellpodEntity s&&s.getProfile().isTesla())energy.add(entity);
         }
-        float[] flames=FlameJetVisual.INSTANCE.volumeInstances(event.getPartialTick(),camera,event.getFrustum());
+        float[] fuelFlames=FlameJetVisual.INSTANCE.volumeInstances(event.getPartialTick(),camera,event.getFrustum());
+        float[] impacts=OrbitalLaserImpact.INSTANCE.volumeInstances(event.getPartialTick(),camera,event.getFrustum());
+        final float[] flames;
+        if(impacts.length>0){int previous=fuelFlames.length;flames=java.util.Arrays.copyOf(fuelFlames,previous+impacts.length);System.arraycopy(impacts,0,flames,previous,impacts.length);}else flames=fuelFlames;
         float[] lasers=LaserPostVisual.INSTANCE.collect(event.getPartialTick(),camera,event.getFrustum());
         if((fields.isEmpty()&&flames.length==0&&lasers.length==0&&energy.isEmpty()&&MineGlowGeometry.vertexCount()==0)||(failed&&!reload))return;
         fields.sort(Comparator.comparingDouble((MortarFieldEntity f)->f.distanceToSqr(camera)).reversed());

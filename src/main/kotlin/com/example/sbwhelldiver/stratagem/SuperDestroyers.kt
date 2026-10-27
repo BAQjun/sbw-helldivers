@@ -39,21 +39,26 @@ class DestroyerState {
  var destination:DestroyerAnchor?=null;private set
  var transitionEnd=0L;private set
  var appearedAt=0L;private set
+ private var resupplyPending=false
  fun transitioning(now:Long)=transitionEnd>now
  fun schedule(destination:DestroyerAnchor?,now:Long):Boolean {
   if(transitioning(now)||destination==null&&anchor==null)return false
   this.destination=destination;transitionEnd=now+60;return true
  }
- fun advance(now:Long):Boolean {
+ fun advance(now:Long,onResupply:()->Unit={}):Boolean {
   if(transitionEnd==0L||now<transitionEnd)return false
-  anchor=destination;destination=null;appearedAt=transitionEnd;transitionEnd=0;return true
+  val returning=anchor==null && destination!=null && resupplyPending
+  if(anchor!=null && destination==null)resupplyPending=true
+  anchor=destination;destination=null;appearedAt=transitionEnd;transitionEnd=0
+  if(returning){resupplyPending=false;onResupply()}
+  return true
  }
  fun available(dimension:String,point:Vec3,radius:Double,now:Long)=Stratagems.dimensionAllowed(dimension)&&!transitioning(now)&&anchor?.covers(dimension,point,radius)==true
- fun save()=CompoundTag().also{t->anchor?.let{t.put("Anchor",it.save())};destination?.let{t.put("Destination",it.save())};t.putLong("TransitionEnd",transitionEnd);t.putLong("AppearedAt",appearedAt)}
+ fun save()=CompoundTag().also{t->anchor?.let{t.put("Anchor",it.save())};destination?.let{t.put("Destination",it.save())};t.putLong("TransitionEnd",transitionEnd);t.putLong("AppearedAt",appearedAt);t.putBoolean("ResupplyPending",resupplyPending)}
  companion object{fun load(t:CompoundTag)=DestroyerState().apply{
   anchor=if(t.contains("Anchor"))DestroyerAnchor.load(t.getCompound("Anchor")) else null
   destination=if(t.contains("Destination"))DestroyerAnchor.load(t.getCompound("Destination")) else null
-  transitionEnd=t.getLong("TransitionEnd");appearedAt=t.getLong("AppearedAt")
+  transitionEnd=t.getLong("TransitionEnd");appearedAt=t.getLong("AppearedAt");resupplyPending=t.getBoolean("ResupplyPending")
  }}
 }
 @Mod.EventBusSubscriber(modid=MOD_ID)
@@ -107,12 +112,12 @@ object SuperDestroyers {
   if(e.phase!=TickEvent.Phase.END)return
   val server=net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer()?:return
   val now=StratagemCooldowns.now(server);val f=fleet(server);var changed=false
-  for(s in f.ships.values){
+  for((owner,s) in f.ships){
    if(s.transitionEnd>0){
     if(now==DestroyerWarp.departureStart(s))cue(server,s.anchor,"super_destroyer_warp_out")
     if(now==DestroyerWarp.arrivalStart(s))cue(server,s.destination,"super_destroyer_warp_in")
    }
-   if(s.advance(now))changed=true
+   if(s.advance(now){StratagemCooldowns.change(server,owner){ledger,_->ledger.restoreAllUses()}})changed=true
   }
   if(changed)f.setDirty()
   if(changed||now%20L==0L)syncAll(server)

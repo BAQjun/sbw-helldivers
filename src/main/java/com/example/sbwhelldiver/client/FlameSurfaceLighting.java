@@ -55,7 +55,7 @@ public final class FlameSurfaceLighting {
         // hundreds of duplicate light sources or tying illumination to the gun.
         var cells=new HashMap<Cell,Light>();
         for(int i=0;i<flames.length;i+=12){
-            if(flames[i+10]>1.5f||flames[i+9]<.07f)continue;
+            if((flames[i+10]>1.5f&&flames[i+10]<3.5f)||flames[i+9]<.07f)continue;
             var key=new Cell((int)Math.floor((flames[i]+camera.x)/3.),(int)Math.floor((flames[i+1]+camera.y)/3.),(int)Math.floor((flames[i+2]+camera.z)/3.));
             cells.computeIfAbsent(key,k->new Light()).add(flames,i);
         }

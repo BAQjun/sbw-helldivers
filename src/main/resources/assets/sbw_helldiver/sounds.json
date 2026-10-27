@@ -5236,5 +5236,68 @@
         "attenuation_distance": 128
       }
     ]
+  },
+  "sfx_orbital_laser_start": {
+    "subtitle": "subtitles.sbw_helldiver.sfx_orbital_laser_start",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/orbital_laser/start_1",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_laser/start_2",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_laser/start_3",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_laser/start_4",
+        "attenuation_distance": 128
+      }
+    ]
+  },
+  "sfx_orbital_laser_loop": {
+    "subtitle": "subtitles.sbw_helldiver.sfx_orbital_laser_loop",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/orbital_laser/loop_1",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_laser/loop_2",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_laser/loop_3",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_laser/loop_4",
+        "attenuation_distance": 128
+      }
+    ]
+  },
+  "sfx_orbital_laser_stop": {
+    "subtitle": "subtitles.sbw_helldiver.sfx_orbital_laser_stop",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/orbital_laser/stop_1",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_laser/stop_2",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_laser/stop_3",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_laser/stop_4",
+        "attenuation_distance": 128
+      }
+    ]
   }
 }
