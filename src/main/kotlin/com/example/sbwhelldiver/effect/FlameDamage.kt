@@ -39,6 +39,6 @@ object FlameDamage {
         if (target.fireImmune() || target.hasEffect(net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE)) return
         val server = target.level() as? net.minecraft.server.level.ServerLevel ?: return
         val attacker = if(target.persistentData.hasUUID(OWNER)) server.getEntity(target.persistentData.getUUID(OWNER)) else null
-        target.hurt(source(target,if(heavy) "heavy_burning" else "sentry_burning",attacker),if(heavy) 32f else 16f)
+        target.hurt(source(target,if(heavy) "heavy_burning" else "sentry_burning",attacker),if(heavy) 20f else 10f)
     }
 }

@@ -24,10 +24,15 @@ import kotlin.math.abs
 object OrbitalLaserGameTests {
  private val id="orbital_laser"
  private fun at(h:GameTestHelper)=Vec3.atBottomCenterOf(h.absolutePos(BlockPos(15,8,15))).add(0.0,200.0,0.0).also{at->
+  // These scenarios extend beyond the template; keep acquisition and sweeps ticking.
+  val base=BlockPos.containing(at)
+  for(cx in ((base.x-24) shr 4)..((base.x+24) shr 4))for(cz in ((base.z-24) shr 4)..((base.z+24) shr 4)) {
+   h.level.setChunkForced(cx,cz,true);h.level.getChunk(cx,cz)
+  }
   h.level.getEntities(null,net.minecraft.world.phys.AABB(at,at).inflate(100.0,5.0,100.0)).filter{it is OrbitalLaserEntity||it is net.minecraft.world.entity.monster.Ravager}.forEach{it.discard()}
  }
  private fun mob(h:GameTestHelper,at:Vec3,hp:Double=1000.0)=EntityType.RAVAGER.create(h.level)!!.also{
-  it.isNoAi=true;it.isNoGravity=true;it.getAttribute(Attributes.MAX_HEALTH)!!.baseValue=hp;it.health=hp.toFloat()
+  it.isNoAi=true;it.isNoGravity=true;it.setPersistenceRequired();it.getAttribute(Attributes.MAX_HEALTH)!!.baseValue=hp;it.health=hp.toFloat()
   it.getAttribute(Attributes.ARMOR)!!.baseValue=0.0;it.setPos(at);h.level.addFreshEntity(it)
  }
  private fun laser(h:GameTestHelper,at:Vec3,s:OrbitalLaserSettings=OrbitalLaserSettings())=ModEntities.ORBITAL_LASER.get().create(h.level)!!.also{
@@ -142,7 +147,7 @@ object OrbitalLaserGameTests {
   val victim=mob(h,at.add(18.0,0.0,0.0));val l=laser(h,at)
   h.runAfterDelay(22){
    l.discard();victim.discard()
-   for(x in 0..10)h.assertTrue(h.level.getBlockState(base.offset(x,0,0)).`is`(ModBlocks.SENTRY_FIRE.get()),"Missing trail cell $x")
+   for(x in 0..10)h.assertTrue(h.level.getBlockState(base.offset(x,0,0)).`is`(ModBlocks.SENTRY_FIRE.get()),"Missing trail cell $x; laserTicks=${l.tickCount}, contact=${l.position()}, origin=$at")
    val trackers=h.level.getEntitiesOfClass(GroundFireEntity::class.java,net.minecraft.world.phys.AABB(base).inflate(12.0))
    h.assertTrue(trackers.size<=12,"Repeated contact spawned duplicate ground-fire trackers: ${trackers.size}")
    val walker=mob(h,at.add(2.0,0.0,0.0));trackers.forEach{it.igniteInside(walker)}

@@ -105,9 +105,15 @@ object EagleFieldGameTests {
         val at=origin(h);floor(h,at);val field=GroundFireEntity.create(h.level,at,null,10.0,true);val victim=cow(h,at)
         field.igniteInside(victim)
         h.assertTrue(victim.getEffect(ModEffects.BURNING.get())?.duration==60 && victim.getEffect(ModEffects.HEAVY_BURNING.get())?.duration==20,"Burn durations")
-        victim.tickCount=20
+        victim.tickCount=10
         ModEffects.BURNING.get().applyEffectTick(victim,0);ModEffects.HEAVY_BURNING.get().applyEffectTick(victim,0)
-        h.assertTrue(abs(victim.health-952f)<.01,"Normal and double heavy burn must stack to 48; got ${1000-victim.health}")
+        h.assertTrue(abs(victim.health-970f)<.01,"Normal and double heavy burn must stack to 30 per half-second; got ${1000-victim.health}")
+        for(t in 11..19) {
+            victim.tickCount=t;ModEffects.BURNING.get().applyEffectTick(victim,0);ModEffects.HEAVY_BURNING.get().applyEffectTick(victim,0)
+        }
+        h.assertTrue(abs(victim.health-970f)<.01,"Burn effects pulsed between half-second boundaries")
+        victim.tickCount=20;ModEffects.BURNING.get().applyEffectTick(victim,0);ModEffects.HEAVY_BURNING.get().applyEffectTick(victim,0)
+        h.assertTrue(abs(victim.health-940f)<.01,"Stacked burns must deal sixty HP per second")
         victim.removeEffect(ModEffects.HEAVY_BURNING.get());h.assertTrue(victim.hasEffect(ModEffects.BURNING.get()),"Heavy expiry removed normal burn")
         cleanup(h,at);h.succeed()
     }

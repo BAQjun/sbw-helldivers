@@ -31,7 +31,7 @@ object ElementalMineGameTests {
         m.detonate();h.assertTrue(m.isRemoved&&abs(inner.health-450f)<.01&&edge.health in 450.1f..499.9f&&outside.health==500f,"Incendiary blast must peak at 50 with falloff and stop at 4 m")
         val field=h.level.getEntitiesOfClass(GroundFireEntity::class.java,AABB(p,p).inflate(5.0)).single();h.assertTrue(field.radius==4.0&&field.remainingTicks==300,"Wrong incendiary field dimensions/lifetime")
         field.tick();h.assertTrue(inner.hasEffect(ModEffects.BURNING.get())&&edge.hasEffect(ModEffects.BURNING.get())&&!outside.hasEffect(ModEffects.BURNING.get())&&!inner.hasEffect(ModEffects.PANIC.get()),"Ground fire must refresh 3-s burn inside 4 m without panic")
-        val before=inner.health;inner.invulnerableTime=0;FlameDamage.burn(inner);h.assertTrue(abs(inner.health-(before-16))<.01&&inner.getEffect(ModEffects.BURNING.get())!!.duration==60,"Custom burning must deal 16, not vanilla damage")
+        val before=inner.health;inner.invulnerableTime=0;FlameDamage.burn(inner);h.assertTrue(abs(inner.health-(before-10))<.01&&inner.getEffect(ModEffects.BURNING.get())!!.duration==60,"Custom burning must deal 10 per half-second, not vanilla damage")
         cleanup(h,p);h.succeed()
     }
     @JvmStatic @GameTest(template="sentry_test",batch="elemental_gas",timeoutTicks=10)

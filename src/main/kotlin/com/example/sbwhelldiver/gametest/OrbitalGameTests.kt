@@ -390,6 +390,9 @@ object OrbitalGameTests {
     val targets=pattern.offsets(seed,s,yaw)
     h.assertTrue(targets==pattern.offsets(seed,s,yaw)&&targets.toSet().size==15,"Unstable barrage samples")
     targets.forEachIndexed{j,v->h.assertTrue(v.subtract(pattern.center(j,s,yaw)).length()<=s.radius+1e-7,"Impact outside spread disk")}
+    targets.chunked(s.shots).forEach{salvo->
+     for(a in salvo.indices)for(b in 0 until a)h.assertTrue(salvo[a].distanceTo(salvo[b])>=2.0*s.outer+.5-1e-7,"Same-salvo blast footprints overlap: $id seed=$seed")
+    }
     val center=pattern.center(14,s,yaw)
     h.assertTrue(abs(center.length()-if(s.walking)81.0 else 0.0)<1e-6,"Wrong walking speed or direction")
     if(s.walking)h.assertTrue(center.normalize().dot(pattern.direction(yaw))>.99999,"Walking barrage advanced backward")
@@ -408,6 +411,26 @@ object OrbitalGameTests {
    h.assertTrue(b.wallDeploymentYaw(Vec3(20.0,64.0,30.0)).isFinite(),"Vertical throw did not retain a finite direction")
    b.discard()
   }
+  h.succeed()
+ }
+ @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",timeoutTicks=5)
+ fun barrageScatterRespectsCustomFootprintsAndRotation(h:GameTestHelper){
+  val pattern=OrbitalBarragePattern
+  val custom=com.example.sbwhelldiver.config.BarrageSettings.defaults("orbital_walking_barrage").copy(rounds=2,shots=4,radius=50.0,outer=15f)
+  for(seed in 0L..100L){
+   val targets=pattern.offsets(seed,custom,0f)
+   val rotated=pattern.offsets(seed,custom,90f)
+   targets.forEachIndexed{i,p->h.assertTrue(rotated[i].distanceTo(Vec3(-p.z,0.0,p.x))<1e-6,"Yaw changed seeded scatter instead of rotating the strike")}
+   targets.chunked(custom.shots).forEach{salvo->
+    for(i in salvo.indices)for(j in 0 until i)h.assertTrue(salvo[i].distanceTo(salvo[j])>=30.5-1e-7,"Configured blast radius was ignored")
+   }
+  }
+  // An impossible user configuration must stay bounded and cannot hang the server.
+  val narrow=custom.copy(radius=0.0,advanceSpeed=0.0,shots=20)
+  val points=pattern.offsets(0,narrow,0f)
+  h.assertTrue(points.size==narrow.total&&points.all{it.lengthSqr()<1e-12},"Impossible custom spacing silently expanded the footprint")
+  val single=custom.copy(shots=1)
+  h.assertTrue(pattern.offsets(1,single,0f).size==single.total,"Single-shell custom rounds lost shots")
   h.succeed()
  }
  @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",timeoutTicks=5)

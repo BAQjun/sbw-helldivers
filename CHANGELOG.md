@@ -1,5 +1,19 @@
 # 版本记录
 
+## 0.5.19
+
+### 中文
+
+- 调整轨道 120mm、380mm 和徐进弹幕的同轮散布，使默认配置下同轮炮弹的爆炸范围不再重叠；保留随机落点、轰炸范围及徐进方向。
+- 普通燃烧改为每 0.5 秒造成 10 点伤害，重型燃烧改为每 0.5 秒造成 20 点伤害，两者仍可叠加。
+- 火焰哨戒炮默认射流直击伤害提升至原来的 2.5 倍：每次 6.25 点，默认直击 DPS 为 25，燃料消耗不变。已有配置保留原值；采用新版默认平衡时，将 `turrets.flame_sentry.damage` 改为 `6.25`。
+
+### English
+
+- Adjusted same-salvo scatter for Orbital 120mm HE, 380mm HE, and Walking Barrages to prevent overlapping blast footprints with default settings, while retaining randomized impacts, spread radii, and walking direction.
+- Standard burning now deals 10 damage every 0.5 seconds; heavy burning deals 20 damage every 0.5 seconds. Both effects still stack.
+- Increased the Flame Sentry's default direct jet damage by 2.5× to 6.25 per pulse (25 direct DPS at the default fire rate), with unchanged fuel consumption. Existing configuration values are preserved; set `turrets.flame_sentry.damage` to `6.25` to adopt the new default balance.
+
 ## 0.5.18
 
 ## 中文

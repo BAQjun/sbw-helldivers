@@ -32,7 +32,7 @@ class PanicEffect : MobEffect(MobEffectCategory.HARMFUL,0xE59A42) {
 class SentryBurningEffect : MobEffect(MobEffectCategory.HARMFUL,0xF46C25) {
     override fun isDurationEffectTick(duration: Int,amplifier: Int) = true
     override fun applyEffectTick(entity: LivingEntity,amplifier: Int) {
-        if (!entity.level().isClientSide && entity.tickCount % 20 == 0) FlameDamage.burn(entity)
+        if (!entity.level().isClientSide && entity.tickCount % 10 == 0) FlameDamage.burn(entity)
     }
     override fun removeAttributeModifiers(entity: LivingEntity,attributes: AttributeMap,amplifier: Int) {
         super.removeAttributeModifiers(entity,attributes,amplifier)
@@ -45,7 +45,7 @@ class SentryBurningEffect : MobEffect(MobEffectCategory.HARMFUL,0xF46C25) {
 class HeavyBurningEffect : MobEffect(MobEffectCategory.HARMFUL,0xFFD245) {
     override fun isDurationEffectTick(duration: Int,amplifier: Int) = true
     override fun applyEffectTick(entity: LivingEntity,amplifier: Int) {
-        if (!entity.level().isClientSide && entity.tickCount % 20 == 0) FlameDamage.burn(entity,true)
+        if (!entity.level().isClientSide && entity.tickCount % 10 == 0) FlameDamage.burn(entity,true)
     }
     override fun removeAttributeModifiers(entity: LivingEntity,attributes: AttributeMap,amplifier: Int) {
         super.removeAttributeModifiers(entity,attributes,amplifier)
