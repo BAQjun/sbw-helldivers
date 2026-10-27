@@ -32,6 +32,11 @@ object HelldiversConfig {
         "Unlimited turret ammunition/fuel. Rocket reloads, laser heat and autonomous sentry lifetimes still apply.")
         .translation("config.sbw_helldiver.infinite_turret_ammo")
         .define("infiniteTurretAmmo", false)
+    val stratagemExplosionBlockDamage = builder.comment(
+        "独立控制战备爆炸是否破坏方块，不受 SBW 爆炸总开关影响；关闭后保留生物伤害、击退、音效与粒子。不改变本来不破坏地形的战备。",
+        "Independently allow terrain-damaging stratagem explosions to destroy blocks, regardless of the SBW global setting. Disabling this preserves entity damage, knockback, sounds and particles.")
+        .translation("config.sbw_helldiver.explosion_block_damage")
+        .define("stratagemExplosionBlockDamage", false)
     val sentryLifetimeTicks = builder.comment("工作时限（tick），默认 150 秒；0 表示只按弹药耗尽回收。")
         .defineInRange("sentryLifetimeTicks", 3000, 0, 240000)
     val capLifetimeTicks = builder.comment("弹出的独立盖板落地后保留多久（tick），默认 600 = 30 秒。")

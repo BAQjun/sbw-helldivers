@@ -22,25 +22,15 @@ import java.lang.ref.WeakReference
 import java.util.WeakHashMap
 import kotlin.math.*
 
-/** Thick additive emissive shaft and a soft radial impact glow; the depth test remains enabled. */
+/** Local contact effects; the long shaft is depth-composited by OrbitalBeamGeometry. */
 class OrbitalLaserRenderer(context:EntityRendererProvider.Context):EntityRenderer<OrbitalLaserEntity>(context) {
  override fun getTextureLocation(e:OrbitalLaserEntity)=net.minecraft.resources.ResourceLocation(MOD_ID,"textures/mesh/white.png")
  override fun shouldRender(e:OrbitalLaserEntity,f:Frustum,x:Double,y:Double,z:Double):Boolean = e.active && e.shouldRenderAtSqrDistance(e.distanceToSqr(x,y,z))
  override fun render(e:OrbitalLaserEntity,yaw:Float,partial:Float,p:PoseStack,b:MultiBufferSource,light:Int){
   if(!e.active)return
-  val direction=e.origin.subtract(e.getPosition(partial)).normalize()
-  val end=e.origin.subtract(e.getPosition(partial))
-  var right=direction.cross(Vec3(0.0,1.0,0.0)).normalize();if(right.lengthSqr()<1e-8)right=Vec3(1.0,0.0,0.0)
-  val up=direction.cross(right).normalize();val pose=p.last();val vc=b.getBuffer(DestroyerRenderTypes.GLOW)
+  val pose=p.last();val vc=b.getBuffer(DestroyerRenderTypes.GLOW)
   val strength=minOf(1.0,(e.level().gameTime-e.startedAt+partial)/3.0,(e.endsAt-e.level().gameTime-partial)/5.0).coerceIn(0.0,1.0).toFloat()
   fun vertex(v:Vec3,r:Float,g:Float,blue:Float){vc.vertex(pose.pose(),v.x.toFloat(),v.y.toFloat(),v.z.toFloat()).color(r*strength,g*strength,blue*strength,1f).uv(0f,0f).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).normal(pose.normal(),0f,1f,0f).endVertex()}
-  for((radius,color) in listOf(1.1 to floatArrayOf(.09f,.025f,.001f),.65 to floatArrayOf(.35f,.15f,.01f),.34 to floatArrayOf(1f,.85f,.42f))){
-   for(i in 0 until 12){
-    fun ring(n:Int):Vec3 {val a=n*PI/6;return right.scale(cos(a)*radius).add(up.scale(sin(a)*radius))}
-    val a=ring(i);val c=ring(i+1)
-    for(v in listOf(a,end.add(a),end.add(c),c))vertex(v,color[0],color[1],color[2])
-   }
-  }
   OrbitalLaserImpact.render(e,partial,p,b)
   // Continuous radial falloff avoids a hard rectangular impact sprite under shader packs.
   val camera=Minecraft.getInstance().gameRenderer.mainCamera

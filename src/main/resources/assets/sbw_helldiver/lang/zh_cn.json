@@ -195,7 +195,7 @@
   "config.sbw_helldiver.auto_retract.tooltip": "关闭后，战备不会因弹药耗尽或工作时限到达而缩回。不会补充弹药；摧毁效果和玩家出仓回收不受影响。更改对当前世界立即生效。",
   "config.sbw_helldiver.auto_retract.enter_world": "进入世界后可修改该世界的自动收回设置。",
   "config.sbw_helldiver.auto_retract.permission": "该设置由服务器控制，仅服务器管理员或单人世界主人可以修改。",
-  "config.sbw_helldiver.hint": "更改后点击保存。弹药与收回设置仅针对当前世界。",
+  "config.sbw_helldiver.hint": "更改后点击保存。战备设置仅针对当前世界。",
   "subtitles.sbw_helldiver.sfx_orbital_incoming": "轨道炮弹呼啸",
   "hud.sbw_helldiver.dimension_unavailable": "下界无法使用战备",
   "subtitles.sbw_helldiver.sfx_orbital_fire": "超级驱逐舰开炮",
@@ -221,5 +221,9 @@
   "entity.sbw_helldiver.orbital_laser": "轨道激光",
   "subtitles.sbw_helldiver.sfx_orbital_laser_start": "轨道激光启动",
   "subtitles.sbw_helldiver.sfx_orbital_laser_loop": "轨道激光照射",
-  "subtitles.sbw_helldiver.sfx_orbital_laser_stop": "轨道激光停止"
+  "subtitles.sbw_helldiver.sfx_orbital_laser_stop": "轨道激光停止",
+  "config.sbw_helldiver.explosion_block_damage": "战备爆炸破坏方块",
+  "config.sbw_helldiver.explosion_block_damage.value": "战备爆炸破坏方块：%s",
+  "config.sbw_helldiver.explosion_block_damage.tooltip": "独立于 SBW 的爆炸总开关。关闭后保护方块，保留生物伤害、击退、音效和粒子。仅房主或管理员可修改。",
+  "config.sbw_helldiver.explosion_block_damage.enter_world": "进入世界后可修改该世界的战备爆炸破坏设置。"
 }

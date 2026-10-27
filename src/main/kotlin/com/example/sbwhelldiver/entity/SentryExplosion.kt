@@ -4,6 +4,7 @@ import com.atsuishio.superbwarfare.entity.projectile.FastThrowableProjectile
 import com.atsuishio.superbwarfare.init.ModDamageTypes
 import com.atsuishio.superbwarfare.tools.CustomExplosion
 import com.atsuishio.superbwarfare.tools.forceHurt
+import com.example.sbwhelldiver.config.HelldiversConfig
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.world.entity.LivingEntity
@@ -63,9 +64,10 @@ object SentryExplosion {
             level.sendParticles(ParticleTypes.EXPLOSION, origin.x, origin.y, origin.z, 1, 0.0, 0.0, 0.0, 0.0)
             return
         }
-        // SBW supplies the original explosion particles, sound and block effects, with no second damage pass.
+        // SBW supplies particles, sound and terrain effects; StratagemBlockDamageMixin gives only
+        // its terrain pass blast power, keeping the entity damage calculated above from repeating.
         val effects = CustomExplosion.Builder(projectile).attacker(projectile.owner).damage(0f)
-            .radius(projectile.getExplosionRadius()).position(origin).destroyBlock(destroyBlocks)
+            .radius(projectile.getExplosionRadius()).position(origin).destroyBlock(destroyBlocks && HelldiversConfig.stratagemExplosionBlockDamage.get())
         particleType?.let { effects.withParticleType(it) }
         effects.explode()
     }

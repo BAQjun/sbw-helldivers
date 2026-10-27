@@ -60,8 +60,10 @@ data class BeaconFailurePacket(val stratagemId: String, val loadoutIds: List<Str
 }
 
 object BeaconNetwork {
-    val CHANNEL = NetworkRegistry.newSimpleChannel(ResourceLocation(MOD_ID, "beacon"), { "13" }, { it == "13" }, { it == "13" })
+    val CHANNEL = NetworkRegistry.newSimpleChannel(ResourceLocation(MOD_ID, "beacon"), { "14" }, { it == "14" }, { it == "14" })
     fun register() {
+        CHANNEL.registerMessage(21,ExplosionBlockDamageRequestPacket::class.java,{p,b->p.encode(b)},ExplosionBlockDamageRequestPacket::decode,ExplosionBlockDamageRequestPacket::handle,Optional.of(NetworkDirection.PLAY_TO_SERVER))
+        CHANNEL.registerMessage(22,ExplosionBlockDamageStatePacket::class.java,{p,b->p.encode(b)},ExplosionBlockDamageStatePacket::decode,ExplosionBlockDamageStatePacket::handle,Optional.of(NetworkDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(19,InfiniteAmmoRequestPacket::class.java,{p,b->p.encode(b)},InfiniteAmmoRequestPacket::decode,InfiniteAmmoRequestPacket::handle,Optional.of(NetworkDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(20,InfiniteAmmoStatePacket::class.java,{p,b->p.encode(b)},InfiniteAmmoStatePacket::decode,InfiniteAmmoStatePacket::handle,Optional.of(NetworkDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(18,DestroyerFirePacket::class.java,{p,b->p.encode(b)},DestroyerFirePacket::decode,DestroyerFirePacket::handle,Optional.of(NetworkDirection.PLAY_TO_CLIENT))

@@ -195,7 +195,7 @@
   "config.sbw_helldiver.auto_retract.tooltip": "When disabled, deployed stratagems remain extended after ammunition or operating time runs out. Does not refill ammunition or prevent destruction. Player delivery cleanup is unaffected. Applies immediately to this world.",
   "config.sbw_helldiver.auto_retract.enter_world": "Enter a world to change its automatic retraction setting.",
   "config.sbw_helldiver.auto_retract.permission": "This server setting can only be changed by an operator or the singleplayer owner.",
-  "config.sbw_helldiver.hint": "Click Save to apply. Ammo and retraction settings apply to this world.",
+  "config.sbw_helldiver.hint": "Save to apply changes. Stratagem settings apply to the current world.",
   "subtitles.sbw_helldiver.sfx_orbital_incoming": "Orbital shell whistles",
   "hud.sbw_helldiver.dimension_unavailable": "Unavailable in the Nether",
   "subtitles.sbw_helldiver.sfx_orbital_fire": "Super Destroyer fires",
@@ -221,5 +221,9 @@
   "entity.sbw_helldiver.orbital_laser": "Orbital Laser",
   "subtitles.sbw_helldiver.sfx_orbital_laser_start": "Orbital laser activates",
   "subtitles.sbw_helldiver.sfx_orbital_laser_loop": "Orbital laser firing",
-  "subtitles.sbw_helldiver.sfx_orbital_laser_stop": "Orbital laser stops"
+  "subtitles.sbw_helldiver.sfx_orbital_laser_stop": "Orbital laser stops",
+  "config.sbw_helldiver.explosion_block_damage": "Stratagem explosion block damage",
+  "config.sbw_helldiver.explosion_block_damage.value": "Stratagem explosion block damage: %s",
+  "config.sbw_helldiver.explosion_block_damage.tooltip": "Independent of SBW’s global explosion setting. Disable to protect blocks while retaining entity damage, knockback, sounds and particles. Only the host or operators can change this.",
+  "config.sbw_helldiver.explosion_block_damage.enter_world": "Enter a world to change its stratagem explosion block damage setting."
 }

@@ -42,7 +42,7 @@ public final class FieldVolumeRenderer {
     public static boolean isReady(){return program!=0&&!failed;}
     public static long renderedFrames(){return frames;}
     private static void release(){
-        FieldFogLayer.release();FieldTerrainMask.clear();uniforms.clear();MineGlowGeometry.release();EnergyEffectGeometry.release();FieldArcGeometry.release();FlameVolumeGeometry.release();FlameGlow.release();FlameSurfaceLighting.release();LaserEffectGeometry.release();
+        FieldFogLayer.release();FieldTerrainMask.clear();uniforms.clear();MineGlowGeometry.release();EnergyEffectGeometry.release();FieldArcGeometry.release();FlameVolumeGeometry.release();FlameGlow.release();FlameSurfaceLighting.release();LaserEffectGeometry.release();OrbitalBeamGeometry.release();
         if(program!=0)glDeleteProgram(program);if(vao!=0)glDeleteVertexArrays(vao);
         if(terrain!=0)glDeleteTextures(terrain);if(noise!=0)glDeleteTextures(noise);if(depth!=0)glDeleteTextures(depth);if(depthFbo!=0)glDeleteFramebuffers(depthFbo);
         program=vao=noise=depth=depthFbo=width=height=depthFormat=terrain=0;failed=false;reload=false;
@@ -133,8 +133,9 @@ public final class FieldVolumeRenderer {
         float[] impacts=OrbitalLaserImpact.INSTANCE.volumeInstances(event.getPartialTick(),camera,event.getFrustum());
         final float[] flames;
         if(impacts.length>0){int previous=fuelFlames.length;flames=java.util.Arrays.copyOf(fuelFlames,previous+impacts.length);System.arraycopy(impacts,0,flames,previous,impacts.length);}else flames=fuelFlames;
+        var orbitalBeams=OrbitalBeamGeometry.collect(event.getPartialTick(),camera);
         float[] lasers=LaserPostVisual.INSTANCE.collect(event.getPartialTick(),camera,event.getFrustum());
-        if((fields.isEmpty()&&flames.length==0&&lasers.length==0&&energy.isEmpty()&&MineGlowGeometry.vertexCount()==0)||(failed&&!reload))return;
+        if((fields.isEmpty()&&flames.length==0&&lasers.length==0&&orbitalBeams.isEmpty()&&energy.isEmpty()&&MineGlowGeometry.vertexCount()==0)||(failed&&!reload))return;
         fields.sort(Comparator.comparingDouble((MortarFieldEntity f)->f.distanceToSqr(camera)).reversed());
         try(var stack=MemoryStack.stackPush()) {
             // Raw GL calls are paired with exact restoration, leaving Mojang's
@@ -226,6 +227,8 @@ public final class FieldVolumeRenderer {
                     FlameSurfaceLighting.draw(flames,camera,event.getProjectionMatrix(),new Matrix3f(RenderSystem.getInverseViewRotationMatrix()),w,h);
                     FlameGlow.render(w,h,()->FlameVolumeGeometry.draw(flames,event.getProjectionMatrix(),new Matrix3f(RenderSystem.getInverseViewRotationMatrix()),camera,w,h,(mc.level.getGameTime()+event.getPartialTick())/20f));
                 }
+                if(!orbitalBeams.isEmpty())FlameGlow.renderAdditive(w,h,.18f,()->OrbitalBeamGeometry.draw(orbitalBeams,event.getProjectionMatrix(),new Matrix3f(RenderSystem.getInverseViewRotationMatrix()),w,h));
+                glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,depth);
                 if(lasers.length>0)FlameGlow.render(w,h,.18f,()->LaserEffectGeometry.draw(lasers,event.getProjectionMatrix(),new Matrix3f(RenderSystem.getInverseViewRotationMatrix()),w,h));
                 glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,depth);
                 EnergyEffectGeometry.draw(energy,event.getPartialTick(),camera,event.getProjectionMatrix(),new Matrix3f(RenderSystem.getInverseViewRotationMatrix()),w,h);

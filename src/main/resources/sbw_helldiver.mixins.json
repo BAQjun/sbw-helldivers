@@ -11,7 +11,9 @@
     "SmokeNavigationAccess",
     "SmokeNavigationMixin",
     "SmokeTargetConditionsMixin",
-    "ExplosionShakeMixin"
+    "ExplosionShakeMixin",
+    "StratagemBlockDamageMixin",
+    "StratagemExplosionBuilderMixin"
   ],
   "client": [
     "EagleProjectileRenderMixin",

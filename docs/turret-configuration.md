@@ -116,3 +116,13 @@ Manned emplacements ignore operating lifetimes. With automatic retraction enable
 Forge 模组列表支持搜索 `SBW`、`Helldivers`、`sbw_helldiver`、`绝地潜兵` 或 `地狱潜兵`，不区分英文大小写，也兼容名称中的空格、下划线与连字符。
 
 The Forge mod list accepts `SBW`, `Helldivers`, `sbw_helldiver`, `绝地潜兵` and `地狱潜兵`, ignoring case, spaces, underscores and hyphens.
+
+## 爆炸破坏方块 / Explosion block damage
+
+进入世界后打开“模组 → SBW Helldivers → 配置 → 战备爆炸破坏方块”。世界设置 `stratagemExplosionBlockDamage` **默认关闭**，保存后立即生效，只有房主或权限等级 2 的管理员可以修改。
+
+关闭时，战备爆炸保留生物伤害、击退、音效和粒子，但不破坏方块。开启后允许对应弹药破坏地形，不受卓越前线爆炸总开关影响，也不会改变卓越前线武器自身的设置；本来不破坏地形的地雷、区域效果等不会因此获得破坏能力。该选项不控制空投落地、地火或直接命中的独立机制。
+
+In a world, open Mods → SBW Helldivers → Config → Stratagem explosion block damage. The server-owned `stratagemExplosionBlockDamage` setting **defaults to false**, applies immediately after saving, and can only be changed by the host or an operator with permission level 2.
+
+When disabled, stratagem explosions retain entity damage, knockback, sounds and particles without destroying blocks. Enabling allows the relevant payloads to damage terrain independently of Superb Warfare's global explosion setting, without changing SBW weapons' own settings. Inherently non-destructive mines and area effects remain non-destructive. This setting does not control independent hellpod landing, ground-fire or direct-hit mechanics.
