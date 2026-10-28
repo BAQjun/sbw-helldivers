@@ -6,7 +6,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.world.phys.Vec3
 import kotlin.math.*
-/** An airy volume of suspended blue-white charge, fine short discharges and a brief impact burst. */
+/** An airy volume of suspended blue-white charge, fine short discharges above a brief vanilla impact explosion. */
 object EmsFieldVisual {
     private fun quad(pose:PoseStack,vc:VertexConsumer,c:Vec3,w:Double,h:Double,color:FloatArray) {
         val cam=Minecraft.getInstance().entityRenderDispatcher.cameraOrientation();val right=org.joml.Vector3f(1f,0f,0f).rotate(cam);val up=org.joml.Vector3f(0f,1f,0f).rotate(cam)
@@ -52,14 +52,14 @@ object EmsFieldVisual {
         val age=e.lifetimeTicks-e.remainingTicks+partial.toDouble()
         val fade=min(age/5.0,(e.remainingTicks-partial)/14.0).coerceIn(0.0,1.0)
         val seed=e.id*317
-        val height=min(5.8,e.radius*.55)
+        val height=e.fieldHeight
         val motes=(e.radius*9).roundToInt().coerceIn(36,120)
         for(i in 0 until motes) {
             val key=seed+i*199
             val angle=noise(key)*PI*2
             val radius=sqrt(noise(key+1))*e.radius*.94
             val phase=noise(key+2)*PI*2
-            val y=.18+noise(key+3)*height+.10*sin(age*.045+phase)
+            val y=.18+noise(key+3)*(height-.35)+.10*sin(age*.045+phase)
             val at=Vec3(cos(angle)*radius+.10*sin(age*.024+phase),y,sin(angle)*radius+.10*cos(age*.029+phase))
             val shimmer=(.5+.5*sin(age*(.13+noise(key+4)*.19)+phase)).pow(3)
             sink.flash(at,.13+noise(key+5)*.10,fade*(.16+shimmer*.84))
@@ -77,7 +77,7 @@ object EmsFieldVisual {
             val angle=noise(k+2)*PI*2
             val radius=sqrt(noise(k+3))*e.radius*.90
             val at=Vec3(cos(angle)*radius,.12+noise(k+4)*height*.83,sin(angle)*radius)
-            val end=at.add((noise(k+5)-.5)*1.2,.28+noise(k+6)*.7,(noise(k+7)-.5)*1.2)
+            val end=at.add((noise(k+5)-.5)*1.2,min(.28+noise(k+6)*.7,height-.06-at.y),(noise(k+7)-.5)*1.2)
             val alpha=fade*sin(t/3.0*PI).coerceAtLeast(0.0)*(.4+noise(k+8)*.35)
             var last=at
             for(j in 1..7) {
@@ -89,17 +89,7 @@ object EmsFieldVisual {
             }
             sink.flash(end,.14,alpha*.65)
         }
-        // One short opening pulse; no persistent sphere or ground disc remains afterwards.
-        if(age in 0.0..10.0) {
-            val burst=(1-age/10).pow(1.5)
-            sink.flash(Vec3(0.0,.45,0.0),2.2+age*.10,burst)
-            for(i in 0 until 20) {
-                val angle=i*PI*.1+noise(seed+i)*.25
-                val r=.3+age*.40
-                val base=Vec3(cos(angle)*r,.08,sin(angle)*r)
-                sink.segment(base,base.add(cos(angle)*.2,.6+noise(seed+i+81)*1.7,sin(angle)*.2),.075,burst*.95)
-            }
-        }
+
     }
 
 }

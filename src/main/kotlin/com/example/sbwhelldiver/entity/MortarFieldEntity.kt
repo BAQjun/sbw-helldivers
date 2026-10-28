@@ -34,7 +34,7 @@ class MortarFieldEntity(type: EntityType<out MortarFieldEntity>,level: Level) : 
     // Small gas footprints need a low canopy rather than the Eagle's tall cloud.
     // A smooth radius curve preserves the 10-block Eagle/smoke height at 12m+.
     val fieldHeight get() = when(kind) {
-        Kind.EMS -> 3.0
+        Kind.EMS -> 5.0
         Kind.GAS -> (radius * radius / 14.0).coerceIn(4.0,10.0)
         Kind.SMOKE -> 10.0
     }
@@ -96,6 +96,8 @@ class MortarFieldEntity(type: EntityType<out MortarFieldEntity>,level: Level) : 
             field.entityData.set(LIFETIME,lifetimeTicks.coerceIn(1,72000))
             field.entityData.set(REMAINING,field.lifetimeTicks)
             level.addFreshEntity(field)
+            // One short vanilla puff; visual only, with no extra blast damage or sound.
+            if(kind==Kind.EMS)level.sendParticles(ParticleTypes.EXPLOSION,at.x,at.y+.6,at.z,1,0.0,0.0,0.0,0.0)
             if(kind==Kind.SMOKE)com.example.sbwhelldiver.effect.SmokeOcclusion.register(field)
             return field
         }
