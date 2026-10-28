@@ -766,7 +766,7 @@
             "locator": "pitch_axis"
           },
           {
-            "time": 0.6,
+            "time": 0.0,
             "effect": "sfx_native_autocannon_sentry_deploy_633699812_0",
             "locator": "pitch_axis"
           }
@@ -808,7 +808,9 @@
             "locator": "pitch_axis"
           }
         ]
-      }
+      },
+      "deploy_anchor": 0.75,
+      "deploymentTimingOverride": "Remove the native 0.6-second Play delay for the adapted unfold animation: the audible mechanism starts with the raised weapon, and finishes before deployment completes."
     },
     "rocket_sentry": {
       "model": "rocket_hellpod_v1",

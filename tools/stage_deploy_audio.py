@@ -14,7 +14,7 @@ def apply(only=None):
    for name,clip in a['models'][model_key].items():
     role='deploy' if name.endswith('.deploy') or name.endswith('.retro_landing_preview') else 'retract' if name.endswith('.retract') else None
     if role is None:continue
-    base=6.45 if name.endswith('.retro_landing_preview') else (1.05 if model_key==p['model'] else .55) if role=='deploy' else 0.
+    base=6.45 if name.endswith('.retro_landing_preview') else (p.get('deploy_anchor',1.05) if model_key==p['model'] else .55) if role=='deploy' else 0.
     clip['events']=[e for e in clip['events'] if e['effect'].startswith(('sfx_hellpod_','sfx_original_stop_'))]
     clip['events'] += [dict(e,time=round(base+e['time'],6)) for e in p['cues'][role]]
     clip['events'].sort(key=lambda e:e['time']);changed.append([ident,model_key,name])

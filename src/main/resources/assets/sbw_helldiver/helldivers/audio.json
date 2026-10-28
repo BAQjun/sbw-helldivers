@@ -3212,7 +3212,7 @@
             "locator": "pitch_axis"
           },
           {
-            "time": 1.35,
+            "time": 0.75,
             "effect": "sfx_native_autocannon_sentry_deploy_633699812_0",
             "locator": "pitch_axis"
           }
@@ -3452,7 +3452,7 @@
             "locator": "pitch_axis"
           },
           {
-            "time": 7.05,
+            "time": 6.45,
             "effect": "sfx_native_autocannon_sentry_deploy_633699812_0",
             "locator": "pitch_axis"
           }
@@ -3846,7 +3846,7 @@
             "locator": "pitch_axis"
           },
           {
-            "time": 1.15,
+            "time": 0.55,
             "effect": "sfx_native_autocannon_sentry_deploy_633699812_0",
             "locator": "pitch_axis"
           }
