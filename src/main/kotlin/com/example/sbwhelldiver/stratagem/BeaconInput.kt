@@ -16,9 +16,9 @@ object BeaconInput {
     private data class HeldState(val slot: Int, val main: ItemStack, val off: ItemStack)
     private val heldStates = mutableMapOf<UUID, HeldState>()
     private fun menu(player:ServerPlayer,stage:Int){
-        if(player !is net.minecraftforge.common.util.FakePlayer) com.example.sbwhelldiver.network.BeaconNetwork.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with{player},com.example.sbwhelldiver.network.DestroyerMenuPacket(stage))
+        if(player !is net.neoforged.neoforge.common.util.FakePlayer) com.example.sbwhelldiver.network.BeaconNetwork.CHANNEL.send(com.example.sbwhelldiver.network.PacketTargets.PLAYER.with{player},com.example.sbwhelldiver.network.DestroyerMenuPacket(stage))
     }
-    fun reset(player: UUID) { val old=sessions.remove(player);if(old?.stage!=null&&old.stage!=0) net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer()?.playerList?.getPlayer(player)?.let{menu(it,0)} }
+    fun reset(player: UUID) { val old=sessions.remove(player);if(old?.stage!=null&&old.stage!=0) net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer()?.playerList?.getPlayer(player)?.let{menu(it,0)} }
     fun menuStage(player:UUID)=sessions[player]?.stage?:0
     fun logout(player: UUID) { reset(player); heldStates.remove(player) }
     /** Also run before packets: a hand switch must invalidate stale activation on the server. */
@@ -31,7 +31,7 @@ object BeaconInput {
             var changed = false
             for (i in 0 until player.inventory.containerSize) {
                 val stack = player.inventory.getItem(i)
-                if (stack.item is BeaconItem && stack.tag?.contains(BeaconData.SELECTED) == true) {
+                if (stack.item is BeaconItem && BeaconData.hasSelection(stack)) {
                     BeaconData.clear(stack); changed = true
                 }
             }

@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.properties.Property;
 public final class IrisFireMaterials {
     private IrisFireMaterials(){}
     public static void extend(Object2IntMap<BlockState> ids){
-        if(ids==null||!ModBlocks.INSTANCE.getSENTRY_FIRE().isPresent())return;
+        if(ids==null||!ModBlocks.INSTANCE.getSENTRY_FIRE().isBound())return;
         var fallback=Blocks.FIRE.defaultBlockState();
         for(var state:ModBlocks.INSTANCE.getSENTRY_FIRE().get().getStateDefinition().getPossibleStates()){
             var vanilla=fallback;

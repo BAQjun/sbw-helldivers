@@ -20,13 +20,13 @@ import net.minecraft.world.level.levelgen.Heightmap
 import com.example.sbwhelldiver.network.BeaconFailurePacket
 import com.example.sbwhelldiver.network.BeaconNetwork
 import net.minecraft.server.level.ServerPlayer
-import net.minecraftforge.common.util.FakePlayer
-import net.minecraftforge.network.PacketDistributor
+import net.neoforged.neoforge.common.util.FakePlayer
+import com.example.sbwhelldiver.network.PacketTargets
 import org.joml.Quaternionf
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.HitResult
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.event.ForgeEventFactory
+import net.neoforged.neoforge.event.EventHooks
 import kotlin.math.floor
 import kotlin.math.min
 
@@ -67,9 +67,9 @@ class StratagemBeacon(type: EntityType<StratagemBeacon>, level: Level) :
     val ballRadius get() = bbWidth.toDouble() / 2
     val ballCenter get() = position().add(0.0, ballRadius, 0.0)
 
-    override fun defineSynchedData() {
-        super.defineSynchedData()
-        entityData.define(FAILED, false)
+    override fun defineSynchedData(builder: SynchedEntityData.Builder) {
+        super.defineSynchedData(builder)
+        builder.define(FAILED, false)
     }
 
     override fun getDefaultItem(): Item = Items.ENDER_PEARL
@@ -110,7 +110,7 @@ class StratagemBeacon(type: EntityType<StratagemBeacon>, level: Level) :
             val normal = contact.normal
             val face = Direction.getNearest(normal.x, normal.y, normal.z)
             val hit = BlockHitResult(contact.point, face, BlockPos.containing(contact.point.subtract(normal.scale(0.001))), false)
-            if (ForgeEventFactory.onProjectileImpact(this, hit)) {
+            if (EventHooks.onProjectileImpact(this, hit)) {
                 setPos(end.x, end.y, end.z)
                 break
             }
@@ -224,7 +224,7 @@ class StratagemBeacon(type: EntityType<StratagemBeacon>, level: Level) :
             com.example.sbwhelldiver.stratagem.StratagemCooldowns.cancel(server, id, selected.id, token)
         } }
         if (player is ServerPlayer && player !is FakePlayer && selected != null) {
-            BeaconNetwork.CHANNEL.send(PacketDistributor.PLAYER.with { player },
+            BeaconNetwork.CHANNEL.send(PacketTargets.PLAYER.with { player },
                 BeaconFailurePacket(selected.id, BeaconData.loadout(item).map { it?.id ?: "" }))
         }
     }

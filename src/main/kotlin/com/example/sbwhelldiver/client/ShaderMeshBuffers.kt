@@ -57,29 +57,32 @@ private class TriangleQuads(private val out:VertexConsumer,private val occlusion
  private var nx=0f;private var ny=1f;private var nz=0f;private var count=0
  private val vertices=Array(3){FloatArray(14)}
  private val packed=Array(3){IntArray(3)}
- override fun vertex(x:Double,y:Double,z:Double):VertexConsumer{this.x=x;this.y=y;this.z=z;return this}
- override fun color(r:Int,g:Int,b:Int,a:Int):VertexConsumer{this.r=r;this.g=g;this.b=b;this.a=a;return this}
- override fun uv(u:Float,v:Float):VertexConsumer{this.u=u;this.v=v;return this}
- override fun overlayCoords(u:Int,v:Int):VertexConsumer{ou=u;ov=v;return this}
- override fun uv2(u:Int,v:Int):VertexConsumer{lu=u;lv=v;return this}
- override fun normal(x:Float,y:Float,z:Float):VertexConsumer{nx=x;ny=y;nz=z;return this}
+ private var pendingVertex=false
+ override fun addVertex(x:Float,y:Float,z:Float):VertexConsumer{if(pendingVertex)finishVertex();this.x=x.toDouble();this.y=y.toDouble();this.z=z.toDouble();pendingVertex=true;return this}
+ override fun setColor(r:Int,g:Int,b:Int,a:Int):VertexConsumer{this.r=r;this.g=g;this.b=b;this.a=a;return this}
+ override fun setUv(u:Float,v:Float):VertexConsumer{this.u=u;this.v=v;return this}
+ override fun setUv1(u:Int,v:Int):VertexConsumer{ou=u;ov=v;return this}
+ override fun setUv2(u:Int,v:Int):VertexConsumer{lu=u;lv=v;return this}
+ override fun setNormal(x:Float,y:Float,z:Float):VertexConsumer{nx=x;ny=y;nz=z;return this}
  private fun emit(i:Int){val v=vertices[i];val p=packed[i]
   if(bulk==null)out.vertex(v[0],v[1],v[2],v[3],v[4],v[5],v[6],v[7],v[8],p[0],p[1],v[11],v[12],v[13])
   else bulk.vertex(v[0],v[1],v[2],p[2],v[7],v[8],p[0],p[1],v[11],v[12],v[13])
  }
- override fun flush(){check(count%3==0){"Incomplete Bedrock mesh triangle"};bulk?.flush()}
- override fun endVertex(){
+ override fun flush(){if(pendingVertex)finishVertex();check(count%3==0){"Incomplete Bedrock mesh triangle"};bulk?.flush()}
+ private fun finishVertex(){
+  pendingVertex=false
   val i=count%3;val v=vertices[i];v[0]=x.toFloat();v[1]=y.toFloat();v[2]=z.toFloat();v[3]=r/255f;v[4]=g/255f;v[5]=b/255f;v[6]=a/255f;v[7]=u;v[8]=this.v;v[11]=nx;v[12]=ny;v[13]=nz
   packed[i][0]=ou or (ov shl 16);packed[i][1]=lu or (lv shl 16);packed[i][2]=(r and 255) or ((g and 255) shl 8) or ((b and 255) shl 16) or ((a and 255) shl 24)
   completeVertex(i)
  }
  // The Bedrock bulk renderer supplies complete vertices. Avoid routing each
  // one through the default thirteen virtual attribute calls and color casts.
- override fun vertex(x:Float,y:Float,z:Float,r:Float,g:Float,b:Float,a:Float,u:Float,v:Float,overlay:Int,light:Int,nx:Float,ny:Float,nz:Float){
+ override fun addVertex(x:Float,y:Float,z:Float,color:Int,u:Float,v:Float,overlay:Int,light:Int,nx:Float,ny:Float,nz:Float){
+  if(pendingVertex)finishVertex()
   val i=count%3;val row=vertices[i]
-  row[0]=x;row[1]=y;row[2]=z;row[3]=r;row[4]=g;row[5]=b;row[6]=a;row[7]=u;row[8]=v;row[11]=nx;row[12]=ny;row[13]=nz
+  row[0]=x;row[1]=y;row[2]=z;row[3]=((color shr 16)and 255)/255f;row[4]=((color shr 8)and 255)/255f;row[5]=(color and 255)/255f;row[6]=((color ushr 24)and 255)/255f;row[7]=u;row[8]=v;row[11]=nx;row[12]=ny;row[13]=nz
   packed[i][0]=overlay;packed[i][1]=light
-  packed[i][2]=((r*255).toInt() and 255) or (((g*255).toInt() and 255) shl 8) or (((b*255).toInt() and 255) shl 16) or (((a*255).toInt() and 255) shl 24)
+  packed[i][2]=(color and 0xff00ff00.toInt()) or ((color and 0xff) shl 16) or ((color shr 16)and 0xff)
   completeVertex(i)
  }
  private fun completeVertex(i:Int){
@@ -91,6 +94,4 @@ private class TriangleQuads(private val out:VertexConsumer,private val occlusion
   if(cx*cx+cy*cy+cz*cz<=1e-16f)return
   emit(0);emit(1);emit(2);emit(2)
  }
- override fun defaultColor(r:Int,g:Int,b:Int,a:Int){color(r,g,b,a)}
- override fun unsetDefaultColor(){}
 }

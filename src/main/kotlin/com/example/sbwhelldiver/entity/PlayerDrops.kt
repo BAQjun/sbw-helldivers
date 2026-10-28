@@ -8,15 +8,15 @@ import net.minecraft.server.level.ServerPlayer
 import net.minecraft.server.level.TicketType
 import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.event.TickEvent
-import net.minecraftforge.event.server.ServerStoppedEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
-import net.minecraftforge.network.PacketDistributor
+import net.neoforged.neoforge.event.server.ServerStoppedEvent
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.fml.common.Mod
+import com.example.sbwhelldiver.network.PacketTargets
 import java.util.UUID
 
 /** Wait for the target client to receive surrounding chunks before starting the descent clock. */
-@Mod.EventBusSubscriber(modid=MOD_ID)
+@EventBusSubscriber(modid=MOD_ID)
 object PlayerDrops {
  data class Pending(val token:UUID,val player:UUID,val level:ServerLevel,val point:Vec3,val started:Long)
  private val pending=mutableMapOf<UUID,Pending>()
@@ -31,7 +31,7 @@ object PlayerDrops {
   val center=ChunkPos(net.minecraft.core.BlockPos.containing(at))
   l.chunkSource.addRegionTicket(ticket,center,2,order.token,true)
   for(x in -2..2)for(z in -2..2)l.getChunk(center.x+x,center.z+z)
-  BeaconNetwork.CHANNEL.send(PacketDistributor.PLAYER.with{p},DropPreparePacket(order.token,l.dimension().location(),at))
+  BeaconNetwork.CHANNEL.send(PacketTargets.PLAYER.with{p},DropPreparePacket(order.token,l.dimension().location(),at))
   return true
  }
  fun ready(p:ServerPlayer,token:UUID){
@@ -40,16 +40,15 @@ object PlayerDrops {
   if(!p.isAlive||p.isSpectator||!PlayerHellpodEntity.safeLanding(o.level,p,o.point)){cancel(p);return}
   pending.remove(p.uuid)
   val pod=ModEntities.PLAYER_HELLPOD.get().create(o.level)!!
-  if(!pod.launch(p,o.point)){pod.discard();BeaconNetwork.CHANNEL.send(PacketDistributor.PLAYER.with{p},DropCancelPacket(token))}
+  if(!pod.launch(p,o.point)){pod.discard();BeaconNetwork.CHANNEL.send(PacketTargets.PLAYER.with{p},DropCancelPacket(token))}
   o.level.chunkSource.removeRegionTicket(ticket,ChunkPos(net.minecraft.core.BlockPos.containing(o.point)),2,o.token,true)
  }
  fun cancel(p:ServerPlayer){
   val o=pending.remove(p.uuid)?:return
   o.level.chunkSource.removeRegionTicket(ticket,ChunkPos(net.minecraft.core.BlockPos.containing(o.point)),2,o.token,true)
-  BeaconNetwork.CHANNEL.send(PacketDistributor.PLAYER.with{p},DropCancelPacket(o.token))
+  BeaconNetwork.CHANNEL.send(PacketTargets.PLAYER.with{p},DropCancelPacket(o.token))
  }
- @SubscribeEvent fun tick(e:TickEvent.ServerTickEvent){if(e.phase!=TickEvent.Phase.END)return
-  for(o in pending.values.toList()){
+ @SubscribeEvent fun tick(e:net.neoforged.neoforge.event.tick.ServerTickEvent.Post){for(o in pending.values.toList()){
    val p=e.server.playerList.getPlayer(o.player)
    if(p==null){if(o.level.gameTime-o.started>220){pending.remove(o.player);o.level.chunkSource.removeRegionTicket(ticket,ChunkPos(net.minecraft.core.BlockPos.containing(o.point)),2,o.token,true)};continue}
    if(!p.isAlive||p.isSpectator||p.level()!==o.level||o.level.gameTime-o.started>220){cancel(p);continue}

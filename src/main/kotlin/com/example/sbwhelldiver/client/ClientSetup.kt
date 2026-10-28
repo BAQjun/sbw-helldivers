@@ -6,11 +6,11 @@ import com.atsuishio.superbwarfare.entity.vehicle.base.AutoAimableEntity
 import com.example.sbwhelldiver.MOD_ID
 import com.example.sbwhelldiver.init.ModEntities
 import com.example.sbwhelldiver.init.ModParticles
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.client.event.EntityRenderersEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber
+import net.neoforged.api.distmarker.Dist
+import net.neoforged.neoforge.client.event.EntityRenderersEvent
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.Mod
+import net.neoforged.fml.common.EventBusSubscriber
 
 /**
  * 客户端渲染注册。
@@ -20,35 +20,40 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber
  * `turret` / `barrel` / `base` 这几个骨骼的旋转。我们的模型骨骼名字正好和它对得上，
  * 所以一行模型代码都不用自己写。
  */
-@EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
+@EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
 object ClientSetup {
 
     @SubscribeEvent
-    fun shaders(event: net.minecraftforge.client.event.RegisterShadersEvent) {
+    fun shaders(event: net.neoforged.neoforge.client.event.RegisterShadersEvent) {
         TeslaRenderTypes.registerShaders(event)
         ShieldRenderTypes.registerShaders(event)
         AreaEffectRenderTypes.registerShaders(event)
     }
 
     @SubscribeEvent
-    fun setup(event: net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent) {
-        net.minecraftforge.fml.ModLoadingContext.get().registerExtensionPoint(
-            net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory::class.java
-        ) { net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory { _, parent -> HelldiversConfigScreen(parent) } }
+    fun setup(event: net.neoforged.fml.event.lifecycle.FMLClientSetupEvent) {
+        net.neoforged.fml.ModLoadingContext.get().registerExtensionPoint(
+            net.neoforged.neoforge.client.gui.IConfigScreenFactory::class.java
+        ) { net.neoforged.neoforge.client.gui.IConfigScreenFactory { _, parent -> HelldiversConfigScreen(parent) } }
         event.enqueueWork {
             net.minecraft.client.renderer.ItemBlockRenderTypes.setRenderLayer(com.example.sbwhelldiver.init.ModBlocks.SENTRY_FIRE.get(),net.minecraft.client.renderer.RenderType.cutout())
             net.minecraft.client.Minecraft.getInstance().mainRenderTarget.enableStencil()
-            net.minecraft.client.gui.screens.MenuScreens.register(com.example.sbwhelldiver.init.ModMenus.BEACON_LOADOUT.get(), ::BeaconLoadoutScreen)
+
         }
     }
 
     @SubscribeEvent
-    fun modelQualityPack(event: net.minecraftforge.event.AddPackFindersEvent) {
+    fun menus(event:net.neoforged.neoforge.client.event.RegisterMenuScreensEvent) {
+        event.register(com.example.sbwhelldiver.init.ModMenus.BEACON_LOADOUT.get(), ::BeaconLoadoutScreen)
+    }
+
+    @SubscribeEvent
+    fun modelQualityPack(event: net.neoforged.neoforge.event.AddPackFindersEvent) {
         ModelQualityResources.addPack(event)
     }
 
     @SubscribeEvent
-    fun reloadListeners(event: net.minecraftforge.client.event.RegisterClientReloadListenersEvent) {
+    fun reloadListeners(event: net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent) {
         event.registerReloadListener(ModelQualityResources)
         event.registerReloadListener(StratagemCooldownClient)
         event.registerReloadListener(net.minecraft.server.packs.resources.ResourceManagerReloadListener { FieldVolumeRenderer.requestReload() })
@@ -67,7 +72,7 @@ object ClientSetup {
     }
 
     @SubscribeEvent
-    fun particles(event: net.minecraftforge.client.event.RegisterParticleProvidersEvent) {
+    fun particles(event: net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent) {
         event.registerSpriteSet(ModParticles.MACHINE_GUN_CASING.get()) { CasingParticle.Provider(it, CasingParticle.Kind.MACHINE_GUN) }
         event.registerSpriteSet(ModParticles.GATLING_CASING.get()) { CasingParticle.Provider(it, CasingParticle.Kind.GATLING) }
         event.registerSpriteSet(ModParticles.CANNON_CASING.get()) { CasingParticle.Provider(it, CasingParticle.Kind.CANNON) }

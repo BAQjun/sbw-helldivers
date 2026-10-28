@@ -11,11 +11,12 @@ import net.minecraft.commands.arguments.coordinates.Vec3Argument
 import net.minecraft.network.chat.Component
 import net.minecraft.world.level.levelgen.Heightmap
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.event.RegisterCommandsEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
+import net.neoforged.neoforge.event.RegisterCommandsEvent
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.fml.common.Mod
 
-@Mod.EventBusSubscriber(modid=MOD_ID)
+@EventBusSubscriber(modid=MOD_ID)
 object HelldiversCommands {
  @SubscribeEvent fun register(e:RegisterCommandsEvent){
   e.dispatcher.register(Commands.literal("helldivers").requires{it.hasPermission(2)}

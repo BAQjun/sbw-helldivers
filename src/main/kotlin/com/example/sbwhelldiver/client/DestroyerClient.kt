@@ -6,7 +6,7 @@ import com.example.sbwhelldiver.stratagem.DestroyerState
 import com.example.sbwhelldiver.stratagem.DestroyerWarp
 import com.example.sbwhelldiver.entity.StratagemMarker
 import com.google.gson.JsonParser
-import com.mojang.blaze3d.vertex.BufferBuilder
+import com.mojang.blaze3d.vertex.ByteBufferBuilder
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.math.Axis
 import net.minecraft.client.Minecraft
@@ -17,14 +17,15 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent
-import net.minecraftforge.client.event.RenderLevelStageEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
+import net.neoforged.api.distmarker.Dist
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.fml.common.Mod
 import org.joml.Vector3f
 
-@Mod.EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
+@EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
 object DestroyerClient:ResourceManagerReloadListener {
  data class Tri(val points:Array<Vector3f>,val uv:Array<FloatArray>,val normal:Vector3f,val emissive:Boolean)
  private var mesh=emptyList<Tri>()
@@ -47,7 +48,7 @@ object DestroyerClient:ResourceManagerReloadListener {
  @SubscribeEvent fun logout(e:ClientPlayerNetworkEvent.LoggingOut){ships=emptyList();own=DestroyerState();equipped=false;serverTime=0;localTime=0}
  override fun onResourceManagerReload(r:ResourceManager){
   val out=mutableListOf<Tri>()
-  r.openAsReader(ResourceLocation(MOD_ID,"models/mesh/super_destroyer.mesh.json")).use{reader->
+  r.openAsReader(ResourceLocation.fromNamespaceAndPath(MOD_ID,"models/mesh/super_destroyer.mesh.json")).use{reader->
    JsonParser.parseReader(reader).asJsonObject.getAsJsonArray("triangles").forEach{raw->
     val a=raw.asJsonArray;val vv=a[1].asJsonArray.map{it.asJsonArray};val pp=vv.map{Vector3f(it[0].asFloat,it[1].asFloat,it[2].asFloat)}.toTypedArray()
     val n=Vector3f(pp[1]).sub(pp[0]).cross(Vector3f(pp[2]).sub(pp[0]))
@@ -56,7 +57,7 @@ object DestroyerClient:ResourceManagerReloadListener {
   };mesh=out
  }
  private val corners=intArrayOf(0,1,2,2)
- private val buffers=MultiBufferSource.immediate(BufferBuilder(1048576))
+ private val buffers=MultiBufferSource.immediate(ByteBufferBuilder(1048576))
  private fun drawWarpTrail(e:RenderLevelStageEvent,flight:DestroyerWarp.Pose,camera:Vec3,factor:Double){
   val forward=flight.motion
   val head=flight.position.subtract(forward.scale(110.0))
@@ -84,7 +85,7 @@ object DestroyerClient:ResourceManagerReloadListener {
    try{
     var drewShip=false
     val dimension=level.dimension().location().toString();val camera=e.camera.position
-    for(flight in ships.flatMap{DestroyerWarp.poses(it,dimension,now(e.partialTick))}){
+    for(flight in ships.flatMap{DestroyerWarp.poses(it,dimension,now(e.partialTick.getGameTimeDeltaPartialTick(false)))}){
      val a=flight.anchor
      val delta=flight.position.subtract(camera);val distance=delta.length();if(distance>16384||distance<1)continue
      val factor=minOf(1.0,96.0/distance);val p=e.poseStack;p.pushPose()
@@ -107,7 +108,7 @@ object DestroyerClient:ResourceManagerReloadListener {
    for(marker in level.entitiesForRendering().filterIsInstance<StratagemMarker>()){
     if(marker.isOrbitalLaser||marker.isOrbitalGatling||marker.isOrbitalBarrage || marker.isOrbitalAirburst)continue
     val origin=marker.orbitalOrigin?:continue
-    val target=marker.orbitalTarget(e.partialTick);val t=marker.orbitalProgress(e.partialTick)
+    val target=marker.orbitalTarget(e.partialTick.getGameTimeDeltaPartialTick(false));val t=marker.orbitalProgress(e.partialTick.getGameTimeDeltaPartialTick(false))
     if(t !in 0.0..1.0)continue
     val head=origin.lerp(target,t);val tail=origin.lerp(target,(t-.018).coerceAtLeast(0.0))
     val direction=head.subtract(tail).normalize();var right=direction.cross(head.subtract(camera)).normalize().scale(.24)

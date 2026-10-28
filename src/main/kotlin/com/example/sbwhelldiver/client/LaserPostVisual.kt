@@ -10,17 +10,17 @@ import net.minecraft.client.Minecraft
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.packs.resources.*
 import net.minecraft.world.phys.*
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.event.TickEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
+import net.neoforged.api.distmarker.Dist
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.fml.common.Mod
 import org.joml.Vector3f
 import java.util.WeakHashMap
 import kotlin.math.*
 
 /** World-space laser effects, composed after shader-pack tonemapping. Display
  * points use the same evaluated bone and camera matrices as the native model. */
-@Mod.EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
+@EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
 object LaserPostVisual:ResourceManagerReloadListener {
     private data class Mesh(val segment:Int,val points:List<Vector3f>,val faces:List<List<IntArray>>,val uvs:List<FloatArray>)
     private data class Display(val time:Long,val data:FloatArray)
@@ -32,7 +32,7 @@ object LaserPostVisual:ResourceManagerReloadListener {
     var emittedSparks=0L;private set
     private fun world(){val next=Minecraft.getInstance().level;if(next!==world){world=next;sparks.clear();displays.clear()}}
     override fun onResourceManagerReload(resources:ResourceManager){
-        val json=resources.openAsReader(ResourceLocation(MOD_ID,"helldivers/laser_displays.json")).use{JsonParser.parseReader(it).asJsonObject}
+        val json=resources.openAsReader(ResourceLocation.fromNamespaceAndPath(MOD_ID,"helldivers/laser_displays.json")).use{JsonParser.parseReader(it).asJsonObject}
         meshes=json["meshes"].asJsonArray.map{raw->
             val m=raw.asJsonObject;val index=m["segment"].asInt
             Mesh(index,m["positions"].asJsonArray.map{val p=it.asJsonArray;Vector3f(-p[0].asFloat/16,p[1].asFloat/16,p[2].asFloat/16)},
@@ -45,12 +45,12 @@ object LaserPostVisual:ResourceManagerReloadListener {
         if(ShaderPackCompat.shadowPass()||s.isWreck||s.phase==AbstractHellpodEntity.Phase.SPENT)return
         world();val index=instance.getIndex("barrel");if(index<0)return
         val bone=instance.getGlobalTransform(index);val model=pose.last().pose()
-        val inverse=RenderSystem.getInverseViewRotationMatrix();val camera=Minecraft.getInstance().gameRenderer.mainCamera.position
+        val camera=Minecraft.getInstance().gameRenderer.mainCamera.position
         val count=if(s.phase==AbstractHellpodEntity.Phase.ACTIVE)ceil(s.laserHeat/250.0*20).toInt().coerceIn(0,20)else 0
         val data=ArrayList<Float>()
         for(mesh in meshes){
             if(mesh.segment>=count)continue
-            val points=mesh.points.map{raw->val p=Vector3f(raw);bone.transformPosition(p);model.transformPosition(p);inverse.transform(p);Vec3(p.x.toDouble(),p.y.toDouble(),p.z.toDouble()).add(camera)}
+            val points=mesh.points.map{raw->val p=Vector3f(raw);bone.transformPosition(p);model.transformPosition(p);Vec3(p.x.toDouble(),p.y.toDouble(),p.z.toDouble()).add(camera)}
             val color=if(mesh.segment<0)floatArrayOf(.017f,.024f,.028f)else floatArrayOf(1f,1f,1f)
             for(face in mesh.faces){
                 val a=points[face[0][0]];val b=points[face[1][0]];val c=points[face[2][0]]
@@ -75,8 +75,7 @@ object LaserPostVisual:ResourceManagerReloadListener {
         }
         if(sparks.size>600)sparks.subList(0,sparks.size-600).clear()
     }
-    @SubscribeEvent fun advance(e:TickEvent.ClientTickEvent){
-        if(e.phase!=TickEvent.Phase.END)return
+    @SubscribeEvent fun advance(e:net.neoforged.neoforge.client.event.ClientTickEvent.Post){
         world();if(Minecraft.getInstance().isPaused)return
         val it=sparks.iterator();while(it.hasNext()){
             val s=it.next();if(++s.age>=s.life){it.remove();continue}
@@ -90,7 +89,7 @@ object LaserPostVisual:ResourceManagerReloadListener {
             vertex(a,0f,0f,mode,r,g,blue,alpha);vertex(b,0f,1f,mode,r,g,blue,alpha);vertex(c,1f,1f,mode,r,g,blue,alpha)
             vertex(a,0f,0f,mode,r,g,blue,alpha);vertex(c,1f,1f,mode,r,g,blue,alpha);vertex(d,1f,0f,mode,r,g,blue,alpha)
         }
-        val rotation=RenderSystem.getInverseViewRotationMatrix();val rr=Vector3f(1f,0f,0f).mul(rotation);val uu=Vector3f(0f,1f,0f).mul(rotation)
+        val rotation=org.joml.Matrix3f().rotation(net.minecraft.client.Minecraft.getInstance().gameRenderer.mainCamera.rotation());val rr=Vector3f(1f,0f,0f).mul(rotation);val uu=Vector3f(0f,1f,0f).mul(rotation)
         val right=Vec3(rr.x.toDouble(),rr.y.toDouble(),rr.z.toDouble());val up=Vec3(uu.x.toDouble(),uu.y.toDouble(),uu.z.toDouble())
         val now=System.nanoTime()
         for((entity,display)in displays){

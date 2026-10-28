@@ -17,7 +17,6 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.ClipContext
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.network.NetworkHooks
 import java.util.UUID
 
 /** One moving impact controller, not one entity per beam segment. Never loads ship chunks. */
@@ -48,8 +47,7 @@ class OrbitalLaserEntity(type:EntityType<*>,level:Level):Entity(type,level) {
   center=at;cursor=at;setPos(at);previousFireContact=at;fireRefresh.clear();sourceUuid=owner;entityData.set(ORIGIN,tag(ship));entityData.set(SETTINGS,s.save())
   entityData.set(START,level().gameTime);nextPulse=level().gameTime+s.interval;nextRefresh=0
  }
- override fun defineSynchedData(){entityData.define(SETTINGS,OrbitalLaserSettings().save());entityData.define(ORIGIN,CompoundTag());entityData.define(START,-1L);entityData.define(TARGET,-1)}
- override fun getAddEntityPacket()=NetworkHooks.getEntitySpawningPacket(this)
+ override fun defineSynchedData(builder: SynchedEntityData.Builder){builder.define(SETTINGS,OrbitalLaserSettings().save());builder.define(ORIGIN,CompoundTag());builder.define(START,-1L);builder.define(TARGET,-1)}
  private fun valid(m:LivingEntity):Boolean {
   val owner=sourceUuid?.let{(level() as? ServerLevel)?.getEntity(it)}
   return m.isAlive && !m.isRemoved && !m.isInvulnerable && !m.isSpectator && m !is Player &&
@@ -76,9 +74,9 @@ class OrbitalLaserEntity(type:EntityType<*>,level:Level):Entity(type,level) {
   candidates.clear();candidates.addAll(server.getEntitiesOfClass(LivingEntity::class.java,AABB(center,center).inflate(settings.range)){valid(it)&&exposed(it)}.map{it.uuid})
   nextRefresh=server.gameTime+settings.refreshTicks
  }
- override fun lerpTo(x:Double,y:Double,z:Double,yaw:Float,pitch:Float,steps:Int,teleport:Boolean){
+ override fun lerpTo(x:Double,y:Double,z:Double,yaw:Float,pitch:Float,steps:Int){
   lerpGoal=Vec3(x,y,z)
-  if(teleport || position().distanceToSqr(lerpGoal)>4096.0){setPos(lerpGoal);lerpSteps=0}else lerpSteps=2
+  if(position().distanceToSqr(lerpGoal)>4096.0){setPos(lerpGoal);lerpSteps=0}else lerpSteps=2
  }
  override fun tick(){
   super.tick();if(level().isClientSide){

@@ -8,23 +8,24 @@ import com.mojang.math.Axis
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.resources.ResourceLocation
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.client.event.RenderLevelStageEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
+import net.neoforged.api.distmarker.Dist
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.fml.common.Mod
 import software.bernie.geckolib.cache.`object`.GeoBone
 
 /** Adapter to SBW's gun red-dot renderer; no second HUD crosshair or scope texture. */
-@Mod.EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
+@EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
 object GrenadierOpticClient {
     // Forge resolves this SRG name in both production and the development runtime.
     private val setCameraPosition by lazy {
-        net.minecraftforge.fml.util.ObfuscationReflectionHelper.findMethod(net.minecraft.client.Camera::class.java,"m_90581_",net.minecraft.world.phys.Vec3::class.java)
+        net.neoforged.fml.util.ObfuscationReflectionHelper.findMethod(net.minecraft.client.Camera::class.java,"setPosition",net.minecraft.world.phys.Vec3::class.java)
     }
     private val cross=GeoBone(null,"cross",false,0.0,false,false)
     internal var nativeSightFrames=0;private set
-    @SubscribeEvent(priority=net.minecraftforge.eventbus.api.EventPriority.LOWEST)
-    fun camera(e:net.minecraftforge.client.event.ViewportEvent.ComputeCameraAngles) {
+    @SubscribeEvent(priority=net.neoforged.bus.api.EventPriority.LOWEST)
+    fun camera(e:net.neoforged.neoforge.client.event.ViewportEvent.ComputeCameraAngles) {
         val d=HmgClient.mounted() as? GrenadierBattlementEntity ?: return
         val mc=Minecraft.getInstance();val p=mc.player ?: return
         if(d.throughSight()) {
@@ -43,16 +44,16 @@ object GrenadierOpticClient {
         val d=HmgClient.mounted() as? GrenadierBattlementEntity ?: return
         if(!d.throughSight())return
         val mc=Minecraft.getInstance();val player=mc.player ?: return
-        val eye=d.opticalCameraPosition(e.partialTick)
+        val eye=d.opticalCameraPosition(e.partialTick.getGameTimeDeltaPartialTick(false))
         val delta=eye.subtract(e.camera.position);val pose=e.poseStack
         val buffers=mc.renderBuffers().bufferSource()
-        val type=RenderType.entityCutoutNoCull(ResourceLocation("superbwarfare","textures/crosshair/dot.png"))
+        val type=RenderType.entityCutoutNoCull(ResourceLocation.fromNamespaceAndPath("superbwarfare","textures/crosshair/dot.png"))
         val oldPos=ClientEventHandler.zoomPos;val oldTime=ClientEventHandler.zoomTime
         pose.pushPose()
         try {
             pose.translate(delta.x,delta.y,delta.z)
-            pose.mulPose(Axis.YP.rotationDegrees(180f-d.interpolatedYaw(e.partialTick)))
-            pose.mulPose(Axis.XP.rotationDegrees(-d.interpolatedPitch(e.partialTick)))
+            pose.mulPose(Axis.YP.rotationDegrees(180f-d.interpolatedYaw(e.partialTick.getGameTimeDeltaPartialTick(false))))
+            pose.mulPose(Axis.XP.rotationDegrees(-d.interpolatedPitch(e.partialTick.getGameTimeDeltaPartialTick(false))))
             // The native gun helper expects gun ADS state. Scope it to this pass
             // rather than changing the player's held gun or vehicle controls.
             ClientEventHandler.zoomPos=1.0;ClientEventHandler.zoomTime=1.0

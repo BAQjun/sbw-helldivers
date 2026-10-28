@@ -10,20 +10,21 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.entity.projectile.Projectile
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.event.entity.EntityJoinLevelEvent
-import net.minecraftforge.event.entity.EntityLeaveLevelEvent
-import net.minecraftforge.event.entity.living.LivingChangeTargetEvent
-import net.minecraftforge.event.entity.living.LivingEvent
-import net.minecraftforge.event.entity.living.LivingHurtEvent
-import net.minecraftforge.event.level.LevelEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent
+import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent
+import net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent
+import net.neoforged.neoforge.event.entity.living.LivingEvent
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent
+import net.neoforged.neoforge.event.level.LevelEvent
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.fml.common.Mod
 import java.util.UUID
 import java.util.WeakHashMap
 import kotlin.math.*
 
 /** A visibility constraint on vanilla sensing/target conditions/navigation, not an AI replacement. */
-@Mod.EventBusSubscriber(modid=MOD_ID)
+@EventBusSubscriber(modid=MOD_ID)
 object SmokeOcclusion {
     const val CLOSE_SIGHT = 4.0
     private const val SHOT_ORIGIN = "HelldiverSmokeShotOrigin"
@@ -91,11 +92,11 @@ object SmokeOcclusion {
     @SubscribeEvent fun unload(event: LevelEvent.Unload) { fields.remove(event.level) }
     @SubscribeEvent fun target(event: LivingChangeTargetEvent) {
         val mob=event.entity as? Mob ?: return
-        val target=event.newTarget ?: return
+        val target=event.newAboutToBeSetTarget ?: return
         if(preventsAcquisition(mob,target))event.isCanceled=true
         else if(target is Player && !blocks(mob,target) && mob.hasLineOfSight(target))memories[mob]=Memory(target.uuid,target.position())
     }
-    @SubscribeEvent fun attacked(event: LivingHurtEvent) {
+    @SubscribeEvent fun attacked(event: LivingIncomingDamageEvent) {
         if(event.isCanceled || event.amount<=0)return
         val mob=event.entity as? Mob ?: return
         val player=event.source.entity as? Player ?: return
@@ -113,7 +114,7 @@ object SmokeOcclusion {
         val speed=(nav as com.example.sbwhelldiver.mixin.SmokeNavigationAccess).smokeSpeedModifier
         nav.moveTo(nav.createPath(net.minecraft.core.BlockPos.containing(at),0),speed)
     }
-    @SubscribeEvent fun tick(event: LivingEvent.LivingTickEvent) {
+    @SubscribeEvent fun tick(event: net.neoforged.neoforge.event.tick.EntityTickEvent.Post) {
         val mob=event.entity as? Mob ?: return
         if(mob.level().isClientSide)return
         val target=mob.target as? Player

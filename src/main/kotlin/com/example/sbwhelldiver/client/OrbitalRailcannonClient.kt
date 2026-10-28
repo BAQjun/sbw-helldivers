@@ -9,22 +9,21 @@ import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.sounds.SoundSource
 import net.minecraft.util.RandomSource
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.client.event.RenderLevelStageEvent
-import net.minecraftforge.event.TickEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
+import net.neoforged.api.distmarker.Dist
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.fml.common.Mod
 import java.lang.ref.WeakReference
 import java.util.WeakHashMap
 
 /** One camera-facing, additive beam; no textured transparency or geometry proportional to ship distance. */
-@Mod.EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
+@EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
 object OrbitalRailcannonClient {
  private val heard=WeakHashMap<StratagemMarker,Boolean>()
  private val active=mutableListOf<LockSound>()
  private var currentLevel:net.minecraft.client.multiplayer.ClientLevel?=null
- @SubscribeEvent fun tick(e:TickEvent.ClientTickEvent) {
-  if(e.phase!=TickEvent.Phase.END)return
+ @SubscribeEvent fun tick(e:net.neoforged.neoforge.client.event.ClientTickEvent.Post) {
   val mc=Minecraft.getInstance()
   if(currentLevel!==mc.level){active.forEach{it.finish();mc.soundManager.stop(it)};active.clear();heard.clear();currentLevel=mc.level}
   val level=mc.level?:return
@@ -53,9 +52,9 @@ object OrbitalRailcannonClient {
   val camera=e.camera.position;val pose=e.poseStack.last();val buffers=mc.renderBuffers().bufferSource()
   var drew=false
   for(m in level.entitiesForRendering().filterIsInstance<StratagemMarker>()) {
-   if(!m.railBeamActive(e.partialTick))continue
+   if(!m.railBeamActive(e.partialTick.getGameTimeDeltaPartialTick(false)))continue
    val origin=m.orbitalOrigin?:continue
-   val target=m.orbitalTarget(e.partialTick)
+   val target=m.orbitalTarget(e.partialTick.getGameTimeDeltaPartialTick(false))
    // Keep real depth near the target; do not project a large distant quad through the foreground.
    val end=target.add(origin.subtract(target).normalize().scale(minOf(384.0,origin.distanceTo(target))))
    val direction=end.subtract(target).normalize()

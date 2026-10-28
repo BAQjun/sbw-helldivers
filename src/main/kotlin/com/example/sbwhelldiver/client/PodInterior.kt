@@ -98,7 +98,7 @@ object PodInterior {
         }
     }
 
-    private val apertureTexture = net.minecraft.resources.ResourceLocation("sbw_helldiver", "textures/mesh/white.png")
+    private val apertureTexture = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("sbw_helldiver", "textures/mesh/white.png")
     private fun aperture(pose: PoseStack, openness: Float,
         buffers: net.minecraft.client.renderer.MultiBufferSource, light: Int) {
         val out = buffers.getBuffer(net.minecraft.client.renderer.RenderType.entityCutoutNoCull(apertureTexture))
@@ -122,15 +122,14 @@ object PodInterior {
     }
 
     private fun disk(pose: PoseStack, radius: Float, height: Float, r: Int, g: Int, b: Int) {
-        val builder = Tesselator.getInstance().builder
+        val builder = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR)
         val matrix = pose.last().pose()
-        builder.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR)
         builder.vertex(matrix, 0f, height, 0f).color(r, g, b, 255).endVertex()
         for (i in 0..32) {
             val angle = i * Math.PI * 2 / 32
             builder.vertex(matrix, (sin(angle) * radius).toFloat(), height, (cos(angle) * radius).toFloat())
                 .color(r, g, b, 255).endVertex()
         }
-        BufferUploader.drawWithShader(builder.end())
+        BufferUploader.drawWithShader(builder.buildOrThrow())
     }
 }

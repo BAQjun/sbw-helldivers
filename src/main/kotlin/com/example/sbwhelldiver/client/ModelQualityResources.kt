@@ -17,8 +17,8 @@ import net.minecraft.server.packs.repository.Pack
 import net.minecraft.server.packs.repository.PackSource
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener
-import net.minecraftforge.event.AddPackFindersEvent
-import net.minecraftforge.fml.ModList
+import net.neoforged.neoforge.event.AddPackFindersEvent
+import net.neoforged.fml.ModList
 import java.util.Collections
 import java.util.WeakHashMap
 
@@ -31,22 +31,23 @@ object ModelQualityResources : ResourceManagerReloadListener {
         if (event.packType != PackType.CLIENT_RESOURCES) return
         val root = ModList.get().getModFileById(MOD_ID).file.findResource("resourcepacks/low_quality_models")
         event.addRepositorySource { consumer ->
-            Pack.readMetaAndCreate(PACK_ID, Component.translatable("pack.sbw_helldiver.low_quality_models"),
-                true, { id ->
-                    // Snapshot the setting when opening a pack. The live resource manager
-                    // keeps its old geometry until the replacement reload has completed.
-                    val reduced = ClientModelConfig.SPEC.isLoaded && ClientModelConfig.lowQualityModels.get()
-                    object : PathPackResources(id, root, true) {
-                        override fun isHidden() = true
-                        override fun getNamespaces(type: PackType): Set<String> =
-                            if (reduced) super.getNamespaces(type) else emptySet()
-                        override fun getResource(type: PackType, location: ResourceLocation) =
-                            if (reduced) super.getResource(type, location) else null
-                        override fun listResources(type: PackType, namespace: String, path: String, output: PackResources.ResourceOutput) {
-                            if (reduced) super.listResources(type, namespace, path, output)
+            val location=net.minecraft.server.packs.PackLocationInfo(PACK_ID,Component.translatable("pack.sbw_helldiver.low_quality_models"),PackSource.BUILT_IN,java.util.Optional.empty())
+            val supplier=object:Pack.ResourcesSupplier {
+                override fun openPrimary(info:net.minecraft.server.packs.PackLocationInfo):PackResources = open(info)
+                override fun openFull(info:net.minecraft.server.packs.PackLocationInfo,metadata:Pack.Metadata):PackResources = open(info)
+                private fun open(info:net.minecraft.server.packs.PackLocationInfo):PackResources {
+                    val reduced=ClientModelConfig.SPEC.isLoaded && ClientModelConfig.lowQualityModels.get()
+                    return object:PathPackResources(info,root) {
+                        override fun isHidden()=true
+                        override fun getNamespaces(type:PackType):Set<String> = if(reduced)super.getNamespaces(type) else emptySet()
+                        override fun getResource(type:PackType,location:ResourceLocation)=if(reduced)super.getResource(type,location) else null
+                        override fun listResources(type:PackType,namespace:String,path:String,output:PackResources.ResourceOutput) {
+                            if(reduced)super.listResources(type,namespace,path,output)
                         }
                     }
-                }, PackType.CLIENT_RESOURCES, Pack.Position.TOP, PackSource.BUILT_IN)?.let(consumer::accept)
+                }
+            }
+            Pack.readMetaAndCreate(location,supplier,PackType.CLIENT_RESOURCES,net.minecraft.server.packs.PackSelectionConfig(true,Pack.Position.TOP,true))?.let(consumer::accept)
         }
     }
 

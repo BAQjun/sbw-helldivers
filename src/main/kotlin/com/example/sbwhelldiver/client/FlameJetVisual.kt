@@ -6,15 +6,15 @@ import net.minecraft.client.Minecraft
 import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.*
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.event.TickEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
+import net.neoforged.api.distmarker.Dist
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.fml.common.Mod
 import java.util.WeakHashMap
 import kotlin.math.*
 
 /** World-space combustion parcels. Once emitted, no parcel depends on the gun's transform. */
-@Mod.EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
+@EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
 object FlameJetVisual {
     private const val CORE=0
     private const val BODY=1
@@ -70,8 +70,7 @@ object FlameJetVisual {
     }
     // Emissions are drawn independently of the turret's model and its culling box.
     fun bounds(s:SentryHellpodEntity):AABB?=null
-    @SubscribeEvent fun advance(event:TickEvent.ClientTickEvent) {
-        if(event.phase!=TickEvent.Phase.END)return
+    @SubscribeEvent fun advance(event:net.neoforged.neoforge.client.event.ClientTickEvent.Post) {
         val mc=Minecraft.getInstance();world(mc.level)
         val level=world?:return;if(mc.isPaused)return
         val born=ArrayList<Parcel>();val it=parcels.iterator()
@@ -88,7 +87,7 @@ object FlameJetVisual {
                 p.velocity=p.velocity.scale(if(p.kind==SOOT).973 else .994).add(sin(frequency+phase)*side,buoyancy,cos(frequency*.81+phase)*side)
             }
             val next=p.p.add(p.velocity.scale(dt))
-            val hit=level.clip(ClipContext(p.p,next,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,null))
+            val hit=level.clip(ClipContext(p.p,next,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,net.minecraft.world.phys.shapes.CollisionContext.empty()))
             if(hit.type==HitResult.Type.MISS)p.p=next else {
                 p.p=hit.location.add(Vec3.atLowerCornerOf(hit.direction.normal).scale(.035))
                 val surfaceNormal=Vec3.atLowerCornerOf(hit.direction.normal)

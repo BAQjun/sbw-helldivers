@@ -78,8 +78,8 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
                     pose.scale(renderScale(),renderScale(),renderScale())
                     if(pod.profile.id == "hmg_emplacement")
                         HmgFeedRenderer.render(entry.instance,pose,buffers,light,pod.isWreck)
-                    HmgClientScene.rendered(pod,entry.instance,partial,yaw)
-                    GrenadierClientScene.rendered(pod,entry.instance,partial,yaw)
+
+
                 } finally {pose.popPose()}
             }
         }
@@ -133,7 +133,6 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
         instance.getBone("pod_eject_cap")?.visible = !pod.capReleased
         if(pod is com.example.sbwhelldiver.entity.GrenadierBattlementEntity) {
             val lens=instance.getBone("optic_lens")
-            if(GrenadierClientScene.enabled)check(lens!=null){"Runtime model has no separate optic lens"}
             lens?.let {
                 val open=pod.throughSight()
                 it.visible=!open
@@ -179,7 +178,7 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
             for(i in 0 until pod.mineCount) instance.getBone(loadedMineBones[i])?.let{
                 it.visible=false;it.xScale=0f;it.yScale=0f;it.zScale=0f
             }
-            MinefieldClientScene.checkLinkage(pod,instance)
+
         }
         if (pod is SentryHellpodEntity && pod.profile.isLaser) {
             // Progress is drawn once in an isolated emissive pass. Poly-mesh

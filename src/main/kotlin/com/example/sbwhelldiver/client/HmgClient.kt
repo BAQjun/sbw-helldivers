@@ -11,20 +11,20 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.client.event.InputEvent
-import net.minecraftforge.client.event.RenderGuiOverlayEvent
-import net.minecraftforge.client.event.RenderHandEvent
-import net.minecraftforge.client.event.ViewportEvent
-import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay
-import net.minecraftforge.event.TickEvent
-import net.minecraftforge.eventbus.api.EventPriority
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
+import net.neoforged.api.distmarker.Dist
+import net.neoforged.neoforge.client.event.InputEvent
+import net.neoforged.neoforge.client.event.RenderGuiLayerEvent
+import net.neoforged.neoforge.client.event.RenderHandEvent
+import net.neoforged.neoforge.client.event.ViewportEvent
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers
+import net.neoforged.bus.api.EventPriority
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.fml.common.Mod
 import org.joml.Quaternionf
 import org.joml.Matrix4f
 import org.joml.Vector4f
-import net.minecraftforge.client.event.RenderLevelStageEvent
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import net.minecraft.world.level.ClipContext
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
@@ -32,7 +32,7 @@ import org.lwjgl.glfw.GLFW
 import java.util.WeakHashMap
 import kotlin.math.*
 
-@Mod.EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
+@EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
 object HmgClient {
     private class Effects { var serial=0;var feeding=false;var caseSerial=-1;var mountPose=0 }
     private val states=WeakHashMap<HmgEmplacementEntity,Effects>()
@@ -43,25 +43,22 @@ object HmgClient {
     fun mounted()=Minecraft.getInstance().player?.vehicle as? HmgEmplacementEntity
     fun aiming(): Boolean {
         val mc=Minecraft.getInstance()
-        return mounted()!=null && mc.screen==null && (GrenadierClientScene.aimOverride() ?: HmgClientScene.aimOverride() ?: (GLFW.glfwGetMouseButton(mc.window.window,GLFW.GLFW_MOUSE_BUTTON_RIGHT)==GLFW.GLFW_PRESS))
+        return mounted()!=null && mc.screen==null && ((GLFW.glfwGetMouseButton(mc.window.window,GLFW.GLFW_MOUSE_BUTTON_RIGHT)==GLFW.GLFW_PRESS))
     }
     @SubscribeEvent(priority=EventPriority.HIGHEST)
     fun interaction(event: InputEvent.InteractionKeyMappingTriggered) {
-        if(mounted()==null && !HmgClientScene.enabled)return
+        if(mounted()==null)return
         event.isCanceled=true;event.setSwingHand(false)
     }
     @SubscribeEvent fun hand(event: RenderHandEvent) { if(mounted()!=null)event.isCanceled=true }
     @SubscribeEvent fun fov(event: ViewportEvent.ComputeFov) {
         if(aiming())event.fov=Math.toDegrees(2.0*atan(tan(Math.toRadians(event.fov)*.5)/(mounted()?.aimZoom ?: 1.5)))
     }
-    @SubscribeEvent fun tick(event: TickEvent.ClientTickEvent) {
-        if(event.phase!=TickEvent.Phase.END)return
+    @SubscribeEvent fun tick(event: net.neoforged.neoforge.client.event.ClientTickEvent.Post) {
         val mc=Minecraft.getInstance();val pod=mounted()
-        if(HmgClientScene.enabled && mc.level!=null && mc.level!!.gameTime%20L==0L)
-            com.example.sbwhelldiver.LOGGER.info("HMG_INPUT_DIAG vehicle={} screen={} fireOverride={}",mc.player?.vehicle?.javaClass?.simpleName,mc.screen?.javaClass?.simpleName,HmgClientScene.fireOverride())
         if(pod!=null) {
             val player=mc.player ?: return
-            val fire=mc.screen==null && (GrenadierClientScene.fireOverride() ?: HmgClientScene.fireOverride() ?: (mc.mouseHandler.isMouseGrabbed && GLFW.glfwGetMouseButton(mc.window.window,GLFW.GLFW_MOUSE_BUTTON_LEFT)==GLFW.GLFW_PRESS))
+            val fire=mc.screen==null && ((mc.mouseHandler.isMouseGrabbed && GLFW.glfwGetMouseButton(mc.window.window,GLFW.GLFW_MOUSE_BUTTON_LEFT)==GLFW.GLFW_PRESS))
             val camera=pod.getCameraPosition(1f,player,false,mc.options.cameraType.isFirstPerson)
             // The optical camera follows the actual sight. Mouse input remains an
             // independent desired direction so mechanical lag cannot lock turning.
@@ -79,12 +76,12 @@ object HmgClient {
         previous=pod
     }
     @SubscribeEvent(priority=EventPriority.HIGHEST)
-    fun overlay(event: RenderGuiOverlayEvent.Pre) {
+    fun overlay(event: RenderGuiLayerEvent.Pre) {
         if(mounted()==null)return
-        val id=event.overlay.id
-        if(id==VanillaGuiOverlay.CROSSHAIR.id() || id.namespace=="superbwarfare" || id.namespace=="tacz")event.isCanceled=true
+        val id=event.name
+        if(id==VanillaGuiLayers.CROSSHAIR || id.namespace=="superbwarfare" || id.namespace=="tacz")event.isCanceled=true
     }
-    @SubscribeEvent fun hud(event: net.minecraftforge.client.event.RenderGuiEvent.Post) {
+    @SubscribeEvent fun hud(event: net.neoforged.neoforge.client.event.RenderGuiEvent.Post) {
         val pod=mounted() ?: return
         val mc=Minecraft.getInstance();if(mc.options.hideGui)return
         val g=event.guiGraphics;val w=mc.window.guiScaledWidth;val h=mc.window.guiScaledHeight
@@ -97,7 +94,7 @@ object HmgClient {
         projectedId=-1
         val pod=mounted() ?: return
         if(!aiming())return
-        val partial=event.partialTick
+        val partial=event.partialTick.getGameTimeDeltaPartialTick(false)
         val point=pod.effectiveAimTarget(pod.nextBarrel,partial)
         val delta=point.subtract(event.camera.position)
         // Camera.rotation uses +Z forward; OpenGL projection uses -Z forward.
@@ -113,7 +110,7 @@ object HmgClient {
             else {projectedX=projectedX/length*1e6;projectedY=projectedY/length*1e6}
         }
         projectedId=pod.id
-        HmgClientScene.projected(event,delta,clip,projectedX,projectedY)
+
     }
     private fun traceAim(pod:HmgEmplacementEntity,start:Vec3,direction:Vec3):Vec3 =
         com.example.sbwhelldiver.entity.EmplacementAimTrace.trace(pod,start,direction)

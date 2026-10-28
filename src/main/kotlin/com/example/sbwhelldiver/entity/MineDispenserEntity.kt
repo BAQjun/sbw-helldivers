@@ -23,8 +23,8 @@ class MineDispenserEntity(type: EntityType<*>,level: Level): AbstractHellpodEnti
     val releasedWaves get()=entityData.get(WAVES)
     val spreadAge get()=entityData.get(AGE)
     val spinning get()=phase==Phase.ACTIVE && spreadAge>0 && spreadAge<MinefieldClock.THROW_TICKS+MinefieldClock.SPINDOWN_TICKS
-    override fun defineSynchedData() {
-        super.defineSynchedData();entityData.define(WAVES,0);entityData.define(AGE,-1)
+    override fun defineSynchedData(builder: SynchedEntityData.Builder) {
+        super.defineSynchedData(builder);builder.define(WAVES,0);builder.define(AGE,-1)
     }
     override fun shouldRetract()=false // Native payload life_time=0: empty launcher stays standing.
     override fun onActivated() { if(spreadAge<0) entityData.set(AGE,0) }

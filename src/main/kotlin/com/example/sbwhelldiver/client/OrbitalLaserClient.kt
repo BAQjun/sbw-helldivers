@@ -12,16 +12,16 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance
 import net.minecraft.sounds.SoundSource
 import net.minecraft.util.RandomSource
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.event.TickEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
+import net.neoforged.api.distmarker.Dist
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.fml.common.Mod
 import java.lang.ref.WeakReference
 import java.util.WeakHashMap
 
 /** Local contact effects; the long shaft is depth-composited by OrbitalBeamGeometry. */
 class OrbitalLaserRenderer(context:EntityRendererProvider.Context):EntityRenderer<OrbitalLaserEntity>(context) {
- override fun getTextureLocation(e:OrbitalLaserEntity)=net.minecraft.resources.ResourceLocation(MOD_ID,"textures/mesh/white.png")
+ override fun getTextureLocation(e:OrbitalLaserEntity)=net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(MOD_ID,"textures/mesh/white.png")
  override fun shouldRender(e:OrbitalLaserEntity,f:Frustum,x:Double,y:Double,z:Double):Boolean = e.active && e.shouldRenderAtSqrDistance(e.distanceToSqr(x,y,z))
  override fun render(e:OrbitalLaserEntity,yaw:Float,partial:Float,p:PoseStack,b:MultiBufferSource,light:Int){
   if(!e.active)return
@@ -29,12 +29,11 @@ class OrbitalLaserRenderer(context:EntityRendererProvider.Context):EntityRendere
  }
 }
 
-@Mod.EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
+@EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
 object OrbitalLaserClient {
  private val active=WeakHashMap<OrbitalLaserEntity,LaserSound>()
  private var level:net.minecraft.client.multiplayer.ClientLevel?=null
- @SubscribeEvent fun tick(event:TickEvent.ClientTickEvent){
-  if(event.phase!=TickEvent.Phase.END)return
+ @SubscribeEvent fun tick(event:net.neoforged.neoforge.client.event.ClientTickEvent.Post){
   val mc=Minecraft.getInstance();val world=mc.level
   if(world!==level){active.values.forEach{it.finish();mc.soundManager.stop(it)};active.clear();level=world}
   if(world==null)return

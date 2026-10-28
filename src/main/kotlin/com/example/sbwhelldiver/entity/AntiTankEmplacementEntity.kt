@@ -1,5 +1,6 @@
 package com.example.sbwhelldiver.entity
 
+import net.minecraft.network.syncher.SynchedEntityData
 import com.example.sbwhelldiver.init.ModEntities
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.EntityType
@@ -17,9 +18,9 @@ class AntiTankEmplacementEntity(type: EntityType<*>,level: Level): HmgEmplacemen
     }
     private var previousOpticProgress = 0
     val opticLowerTicks get() = entityData.get(OPTIC_PROGRESS)
-    override fun defineSynchedData() {
-        super.defineSynchedData()
-        entityData.define(OPTIC_PROGRESS, 0)
+    override fun defineSynchedData(builder: SynchedEntityData.Builder) {
+        super.defineSynchedData(builder)
+        builder.define(OPTIC_PROGRESS, 0)
     }
     override fun tick() {
         previousOpticProgress = opticLowerTicks

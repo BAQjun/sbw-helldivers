@@ -68,10 +68,10 @@ open class HmgEmplacementEntity(type: EntityType<*>, level: Level): AbstractHell
     var lastBarrel = -1; private set
     val operator get() = firstPassenger as? Player
 
-    override fun defineSynchedData() { super.defineSynchedData();entityData.define(AMMO,ammunitionCapacity);entityData.define(LAST_SHOT,-100L)
-        entityData.define(HANDLING_YAW,0f);entityData.define(HANDLING_PITCH,0f)
-        entityData.define(RECOIL_YAW,0f);entityData.define(RECOIL_PITCH,0f);entityData.define(AIM_DISTANCE,200f)
-        entityData.define(FIRST_MOUNT_START,Long.MIN_VALUE)
+    override fun defineSynchedData(builder: SynchedEntityData.Builder) { super.defineSynchedData(builder);builder.define(AMMO,ammunitionCapacity);builder.define(LAST_SHOT,-100L)
+        builder.define(HANDLING_YAW,0f);builder.define(HANDLING_PITCH,0f)
+        builder.define(RECOIL_YAW,0f);builder.define(RECOIL_PITCH,0f);builder.define(AIM_DISTANCE,200f)
+        builder.define(FIRST_MOUNT_START,Long.MIN_VALUE)
     }
     override fun getSensitivity(original: Double, zoom: Boolean, seatIndex: Int, onGround: Boolean): Double {
         val base = super.getSensitivity(original, zoom, seatIndex, onGround)

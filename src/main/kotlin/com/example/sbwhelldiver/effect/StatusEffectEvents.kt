@@ -10,44 +10,45 @@ import net.minecraft.world.entity.monster.RangedAttackMob
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.entity.projectile.Projectile
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.event.entity.EntityJoinLevelEvent
-import net.minecraftforge.event.entity.living.LivingAttackEvent
-import net.minecraftforge.event.entity.living.LivingChangeTargetEvent
-import net.minecraftforge.event.entity.living.LivingEvent
-import net.minecraftforge.event.entity.living.MobEffectEvent
-import net.minecraftforge.eventbus.api.Event
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent
+import net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent
+import net.neoforged.neoforge.event.entity.living.LivingEvent
+import net.neoforged.neoforge.event.entity.living.MobEffectEvent
+import net.neoforged.bus.api.Event
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.fml.common.Mod
 import java.util.EnumSet
 import java.util.WeakHashMap
 
-@Mod.EventBusSubscriber(modid=MOD_ID)
+@EventBusSubscriber(modid=MOD_ID)
 object StatusEffectEvents {
     private val confusedGoals = WeakHashMap<Mob,Goal>()
     private val wildAttacker = ThreadLocal<LivingEntity?>()
     private const val WILD_PROJECTILE = "HelldiverConfusedAttack"
-    private fun disoriented(entity: LivingEntity) = entity.hasEffect(ModEffects.CONFUSION.get()) || entity.hasEffect(ModEffects.PANIC.get())
+    private fun disoriented(entity: LivingEntity) = entity.hasEffect(ModEffects.CONFUSION) || entity.hasEffect(ModEffects.PANIC)
 
-    @SubscribeEvent fun leave(event: net.minecraftforge.event.entity.EntityLeaveLevelEvent) {
+    @SubscribeEvent fun leave(event: net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent) {
         (event.entity as? Mob)?.let { mob -> confusedGoals.remove(mob)?.let { mob.goalSelector.removeGoal(it) } }
     }
     @SubscribeEvent fun applicable(event: MobEffectEvent.Applicable) {
-        if (event.entity is Player && (event.effectInstance.effect === ModEffects.CONFUSION.get() || event.effectInstance.effect === ModEffects.PANIC.get())) event.result = Event.Result.DENY
+        if (event.entity is Player && (event.effectInstance?.effect?.`is`(ModEffects.CONFUSION.key!!) == true || event.effectInstance?.effect?.`is`(ModEffects.PANIC.key!!) == true)) event.result = MobEffectEvent.Applicable.Result.DO_NOT_APPLY
     }
     @SubscribeEvent fun target(event: LivingChangeTargetEvent) {
-        if (disoriented(event.entity) || event.entity.hasEffect(ModEffects.STUN.get())) {
-            if (event.newTarget != null) event.isCanceled = true
+        if (disoriented(event.entity) || event.entity.hasEffect(ModEffects.STUN)) {
+            if (event.newAboutToBeSetTarget != null) event.isCanceled = true
         }
     }
-    @SubscribeEvent fun attack(event: LivingAttackEvent) {
-        if ((event.entity.hasEffect(ModEffects.BURNING.get()) || event.entity.hasEffect(ModEffects.HEAVY_BURNING.get())) &&
+    @SubscribeEvent fun attack(event: LivingIncomingDamageEvent) {
+        if ((event.entity.hasEffect(ModEffects.BURNING) || event.entity.hasEffect(ModEffects.HEAVY_BURNING)) &&
             (event.source.`is`(net.minecraft.world.damagesource.DamageTypes.ON_FIRE) || event.source.`is`(net.minecraft.world.damagesource.DamageTypes.IN_FIRE))) {
             event.isCanceled = true
             return
         }
         val attacker = event.source.entity as? LivingEntity ?: return
         if (attacker is Player) return
-        if (attacker.hasEffect(ModEffects.STUN.get()) && event.source.directEntity === attacker) event.isCanceled = true
+        if (attacker.hasEffect(ModEffects.STUN) && event.source.directEntity === attacker) event.isCanceled = true
         if (disoriented(attacker) && wildAttacker.get() !== attacker &&
             event.source.directEntity?.persistentData?.getBoolean(WILD_PROJECTILE) != true) event.isCanceled = true
     }
@@ -55,19 +56,22 @@ object StatusEffectEvents {
         if (event.level.isClientSide) return
         val projectile = event.entity as? Projectile ?: return
         val owner = projectile.owner as? LivingEntity ?: return
-        if (owner !is Player && owner.hasEffect(ModEffects.STUN.get())) { event.isCanceled = true; return }
+        if (owner !is Player && owner.hasEffect(ModEffects.STUN)) { event.isCanceled = true; return }
         if (wildAttacker.get() === owner) projectile.persistentData.putBoolean(WILD_PROJECTILE,true)
         else if (owner !is Player && disoriented(owner)) event.isCanceled = true
     }
-    @SubscribeEvent fun tick(event: LivingEvent.LivingTickEvent) {
-        val entity = event.entity
+    @SubscribeEvent fun tick(event: net.neoforged.neoforge.event.tick.EntityTickEvent.Post) {
+        val entity = event.entity as? net.minecraft.world.entity.LivingEntity ?: return
         if (entity.level().isClientSide) return
-        if (entity !is Player && entity.hasEffect(ModEffects.STUN.get())) {
+        if (entity !is Player && entity.hasEffect(ModEffects.STUN)) {
             StunEffect.disable(entity)
             val v = entity.deltaMovement
             entity.deltaMovement = Vec3(0.0,v.y.coerceAtMost(0.0),0.0)
             entity.xxa = 0f; entity.zza = 0f; entity.setJumping(false)
         } else StunEffect.restore(entity)
+        if (entity.persistentData.contains("HelldiverFlameOwner") && !entity.hasEffect(ModEffects.BURNING) && !entity.hasEffect(ModEffects.HEAVY_BURNING)) {
+            entity.clearFire(); entity.persistentData.remove("HelldiverFlameOwner")
+        }
         val mob = entity as? Mob ?: return
         if (disoriented(mob)) {
             mob.target = null
@@ -80,7 +84,7 @@ object StatusEffectEvents {
     }
     private class ConfusedGoal(private val mob: Mob) : Goal() {
         init { flags = EnumSet.of(Flag.MOVE,Flag.LOOK,Flag.TARGET,Flag.JUMP) }
-        override fun canUse() = disoriented(mob) && !mob.hasEffect(ModEffects.STUN.get())
+        override fun canUse() = disoriented(mob) && !mob.hasEffect(ModEffects.STUN)
         override fun requiresUpdateEveryTick() = true
         override fun stop() { mob.navigation.stop() }
         override fun tick() {

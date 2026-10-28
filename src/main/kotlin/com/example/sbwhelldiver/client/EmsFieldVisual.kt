@@ -94,8 +94,8 @@ object EmsFieldVisual {
 
 }
 
-@net.minecraftforge.fml.common.Mod.EventBusSubscriber(modid="sbw_helldiver",value=[net.minecraftforge.api.distmarker.Dist.CLIENT])
+@net.neoforged.fml.common.EventBusSubscriber(modid="sbw_helldiver",value=[net.neoforged.api.distmarker.Dist.CLIENT])
 object FieldVolumePass {
-    @net.minecraftforge.eventbus.api.SubscribeEvent
-    fun render(event:net.minecraftforge.client.event.RenderLevelStageEvent) { FieldVolumeRenderer.render(event) }
+    @net.neoforged.bus.api.SubscribeEvent
+    fun render(event:net.neoforged.neoforge.client.event.RenderLevelStageEvent) { FieldVolumeRenderer.render(event) }
 }

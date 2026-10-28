@@ -8,7 +8,7 @@ import com.example.sbwhelldiver.config.HelldiversConfig
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.item.enchantment.ProtectionEnchantment
+import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import kotlin.math.sqrt
@@ -40,7 +40,8 @@ object SentryExplosion {
         val damage = projectile.getExplosionDamage()
         val source = ModDamageTypes.causeProjectileExplosionDamage(level.registryAccess(), projectile, projectile.owner)
         if (outer > 0 && damage > 0) {
-            level.getEntities(projectile, AABB(origin, origin).inflate(outer)) { !it.isRemoved && !it.ignoreExplosion() }
+            val blast=net.minecraft.world.level.Explosion(level,projectile,origin.x,origin.y,origin.z,outer.toFloat(),false,net.minecraft.world.level.Explosion.BlockInteraction.KEEP)
+            level.getEntities(projectile, AABB(origin, origin).inflate(outer)) { !it.isRemoved && !it.ignoreExplosion(blast) }
                 .forEach { target ->
                     val amount = damageAt(distanceToBody(origin, target.boundingBox), damage, fullDamageRadius, outer)
                     if (amount <= 0f) return@forEach
@@ -53,7 +54,7 @@ object SentryExplosion {
                         target.invulnerableTime = cooldown
                     }
                     if (damaged && target is LivingEntity) {
-                        val force = ProtectionEnchantment.getExplosionKnockbackAfterDampener(target, (amount * .015).toDouble())
+                        val force = (amount * .015) * (1.0-target.getAttributeValue(Attributes.EXPLOSION_KNOCKBACK_RESISTANCE))
                         val impulse = origin.vectorTo(target.boundingBox.center).normalize().scale(force)
                         target.push(impulse.x, impulse.y, impulse.z)
                     }

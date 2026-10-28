@@ -1,18 +1,17 @@
 package com.example.sbwhelldiver.entity
 
 import com.atsuishio.superbwarfare.entity.projectile.ProjectileEntity
-import net.minecraft.network.FriendlyByteBuf
+import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientGamePacketListener
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.entity.IEntityAdditionalSpawnData
-import net.minecraftforge.network.NetworkHooks
+import net.neoforged.neoforge.entity.IEntityWithComplexSpawn
 
 /** Vanilla spawn packets clip each velocity component to 3.9, corrupting fast tracer angles. */
 class SentryBulletEntity(type: EntityType<out ProjectileEntity>, level: Level) :
-    ProjectileEntity(type, level), IEntityAdditionalSpawnData {
+    ProjectileEntity(type, level), IEntityWithComplexSpawn {
     private var flightGravity = 0.05f
     private var receivedFullMotion = false
     // Snapshot the decoded spawn packet so diagnostics do not confuse a later gravity tick with clipping.
@@ -31,9 +30,9 @@ class SentryBulletEntity(type: EntityType<out ProjectileEntity>, level: Level) :
         super.setCustomGravity(gravity)
     }
 
-    override fun getAddEntityPacket(): Packet<ClientGamePacketListener> = NetworkHooks.getEntitySpawningPacket(this)
 
-    override fun writeSpawnData(buffer: FriendlyByteBuf) {
+
+    override fun writeSpawnData(buffer: RegistryFriendlyByteBuf) {
         buffer.writeDouble(launchPosition.x)
         buffer.writeDouble(launchPosition.y)
         buffer.writeDouble(launchPosition.z)
@@ -45,7 +44,7 @@ class SentryBulletEntity(type: EntityType<out ProjectileEntity>, level: Level) :
         buffer.writeInt(owner?.id ?: 0)
     }
 
-    override fun readSpawnData(buffer: FriendlyByteBuf) {
+    override fun readSpawnData(buffer: RegistryFriendlyByteBuf) {
         launchPosition = Vec3(buffer.readDouble(),buffer.readDouble(),buffer.readDouble())
         deltaMovement = Vec3(buffer.readDouble(),buffer.readDouble(),buffer.readDouble())
         initialSpawnMotion = deltaMovement

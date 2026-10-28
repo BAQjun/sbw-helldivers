@@ -16,8 +16,7 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
-import net.minecraftforge.network.NetworkHooks
-import net.minecraftforge.client.extensions.common.IClientItemExtensions
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions
 import java.util.UUID
 import java.util.function.Consumer
 
@@ -26,7 +25,7 @@ class BeaconItem(properties: Properties) : Item(properties) {
     override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slot: Int, selected: Boolean) {
         if (!level.isClientSide) {
             BeaconData.ensureIdentity(stack)
-            if (entity is Player && entity.mainHandItem !== stack && entity.offhandItem !== stack && stack.tag?.contains(BeaconData.SELECTED) == true) {
+            if (entity is Player && entity.mainHandItem !== stack && entity.offhandItem !== stack && BeaconData.hasSelection(stack)) {
                 BeaconData.clear(stack)
                 BeaconInput.reset(entity.uuid)
                 entity.inventory.setChanged()
@@ -42,7 +41,7 @@ class BeaconItem(properties: Properties) : Item(properties) {
                 BeaconData.ensureIdentity(stack)
                 BeaconData.clear(stack)
                 BeaconInput.reset(player.uuid)
-                NetworkHooks.openScreen(player, SimpleMenuProvider({ id, inventory, _ ->
+                player.openMenu(SimpleMenuProvider({ id, inventory, _ ->
                     BeaconLoadoutMenu(id, inventory, hand)
                 }, Component.translatable("screen.sbw_helldiver.loadout"))) { it.writeEnum(hand) }
             }
@@ -78,7 +77,7 @@ class BeaconItem(properties: Properties) : Item(properties) {
         return true
     }
 
-    override fun appendHoverText(stack: ItemStack, level: Level?, tooltip: MutableList<Component>, flag: TooltipFlag) {
+    override fun appendHoverText(stack: ItemStack, context: Item.TooltipContext, tooltip: MutableList<Component>, flag: TooltipFlag) {
         tooltip.add(Component.translatable("tooltip.sbw_helldiver.beacon_controls"))
         for (def in BeaconData.loadout(stack).filterNotNull()) tooltip.add(Component.translatable(def.translation))
         BeaconData.selected(stack)?.let { tooltip.add(Component.translatable("tooltip.sbw_helldiver.beacon_ready", Component.translatable(it.translation))) }

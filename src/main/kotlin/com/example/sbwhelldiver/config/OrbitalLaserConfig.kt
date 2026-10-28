@@ -1,7 +1,7 @@
 package com.example.sbwhelldiver.config
 
 import net.minecraft.nbt.CompoundTag
-import net.minecraftforge.common.ForgeConfigSpec
+import net.neoforged.neoforge.common.ModConfigSpec
 import kotlin.math.roundToInt
 
 /** Native movement/timing, with the user-requested damage cadence. Frozen per call. */
@@ -19,11 +19,11 @@ data class OrbitalLaserSettings(val callTicks:Int=40,val durationTicks:Int=500,v
  }
 }
 object OrbitalLaserConfig {
- private lateinit var call:ForgeConfigSpec.DoubleValue;private lateinit var duration:ForgeConfigSpec.DoubleValue
- private lateinit var range:ForgeConfigSpec.DoubleValue;private lateinit var speed:ForgeConfigSpec.DoubleValue
- private lateinit var refresh:ForgeConfigSpec.IntValue;private lateinit var radius:ForgeConfigSpec.DoubleValue
- private lateinit var damage:ForgeConfigSpec.DoubleValue;private lateinit var interval:ForgeConfigSpec.IntValue
- fun register(b:ForgeConfigSpec.Builder){
+ private lateinit var call:ModConfigSpec.DoubleValue;private lateinit var duration:ModConfigSpec.DoubleValue
+ private lateinit var range:ModConfigSpec.DoubleValue;private lateinit var speed:ModConfigSpec.DoubleValue
+ private lateinit var refresh:ModConfigSpec.IntValue;private lateinit var radius:ModConfigSpec.DoubleValue
+ private lateinit var damage:ModConfigSpec.DoubleValue;private lateinit var interval:ModConfigSpec.IntValue
+ fun register(b:ModConfigSpec.Builder){
   b.comment("轨道激光。Orbital Laser.").push("laser")
   call=b.comment("原版抵达等待2秒。Native call-in delay: 2 seconds.").defineInRange("callDelaySeconds",2.0,.05,60.0)
   duration=b.comment("解包组件持续25秒。Decoded component duration: 25 seconds.").defineInRange("durationSeconds",25.0,.05,600.0)

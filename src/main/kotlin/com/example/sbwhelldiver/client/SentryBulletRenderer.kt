@@ -50,50 +50,15 @@ class SentryBulletRenderer(context: EntityRendererProvider.Context) : EntityRend
                 light, OverlayTexture.NO_OVERLAY, data.get(ProjectileEntity.COLOR_R),
                 data.get(ProjectileEntity.COLOR_G), data.get(ProjectileEntity.COLOR_B), 1f)
             // Inspect actual baked vertices, including all renderer transforms, in the opt-in client test.
-            if (java.lang.Boolean.getBoolean("sbw_helldiver.clientSmokeTest") && checkedVertices < 24) {
-                if (checkedVertices < 5) LOGGER.info("TRACER_MOTION_STATE: tick={} pos={} velocity={}",entity.tickCount,entity.position(),velocity)
-                val vertices = BoundsConsumer()
-                model.renderToBuffer(pose, vertices, light, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f, true)
-                val error = vertices.center().distance(expectedCenter)
-                check(error < 0.00002f) { "Visible tracer is off its projectile path by $error blocks" }
-                checkedVertices++
-                if (checkedVertices == 24) LOGGER.info("TRACER_GEOMETRY_PASSED: 24 live tracers stay on their path and trail their bullet tip")
-            }
-            if (java.lang.Boolean.getBoolean("sbw_helldiver.clientSmokeTest") && checkedSpawnMotion.size < 8 &&
-                !checkedSpawnMotion.contains(entity.id)) ClientSmokeTest.bulletSpawnMotion[entity.id]?.let { serverMotion ->
-                val decoded = (entity as? com.example.sbwhelldiver.entity.SentryBulletEntity)?.initialSpawnMotion
-                if (decoded != null) {
-                    check(serverMotion.distanceTo(decoded) < 1e-8) { "Spawned bullet velocity was clipped: server=$serverMotion decoded=$decoded" }
-                    checkedSpawnMotion.add(entity.id)
-                    if (checkedSpawnMotion.size == 8) LOGGER.info("BULLET_SPAWN_MOTION_PASSED: decoded full-speed spawn data matches the server without clipping")
-                }
-            }
+
+
         } finally {
             pose.popPose()
         }
     }
 
-    private class BoundsConsumer : VertexConsumer {
-        private val min = Vector3f(Float.POSITIVE_INFINITY)
-        private val max = Vector3f(Float.NEGATIVE_INFINITY)
-        override fun vertex(x: Double, y: Double, z: Double): VertexConsumer {
-            val point = Vector3f(x.toFloat(),y.toFloat(),z.toFloat())
-            min.min(point); max.max(point)
-            return this
-        }
-        fun center() = Vector3f(min).add(max).mul(0.5f)
-        override fun color(r: Int, g: Int, b: Int, a: Int): VertexConsumer = this
-        override fun uv(u: Float, v: Float): VertexConsumer = this
-        override fun overlayCoords(u: Int, v: Int): VertexConsumer = this
-        override fun uv2(u: Int, v: Int): VertexConsumer = this
-        override fun normal(x: Float, y: Float, z: Float): VertexConsumer = this
-        override fun endVertex() {}
-        override fun defaultColor(r: Int, g: Int, b: Int, a: Int) {}
-        override fun unsetDefaultColor() {}
-    }
-
     companion object {
-        private val TEXTURE = ResourceLocation("superbwarfare", "textures/bedrock/projectile/projectile.png")
+        private val TEXTURE = ResourceLocation.fromNamespaceAndPath("superbwarfare", "textures/bedrock/projectile/projectile.png")
         var checkedVertices = 0
             private set
         val checkedSpawnMotion = mutableSetOf<Int>()

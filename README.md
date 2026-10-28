@@ -1,6 +1,6 @@
 # SBW Helldivers
 
-面向 Minecraft Java 1.20.1 的《绝地潜兵》战备附属模组，基于卓越前线（Superb Warfare）。
+面向 Minecraft Java 1.21.1 / NeoForge 的《绝地潜兵》战备附属模组，基于卓越前线（Superb Warfare）。
 
 ## 内容
 
@@ -12,14 +12,14 @@
 
 依赖环境：
 
-- Minecraft Java 1.20.1
-- Forge 47.2.0
-- 卓越前线 0.8.9.1
-- Kotlin for Forge 4.11.0
+- Minecraft Java 1.21.1 与 Java 21
+- NeoForge 21.1.203 或更新的 21.1.x
+- 卓越前线（Superb Warfare）0.8.9.2 的 NeoForge 1.21.1 版本
+- Kotlin for Forge 5.10.0 的 NeoForge 版本
 
 卓越前线已内嵌的模型库无需重复安装。
 
-可选兼容 TACZ 1.1.8 系列：枪弹、穿甲弹、霰弹与爆炸弹可与炮台、榴弹墙、地雷和护盾交互。护盾仅拦截外部射入的弹药，金属墙体会终止子弹穿透。未安装 TACZ 时可正常使用本模组。
+此分支维护 NeoForge 1.21.1 版本。Forge 1.20.1 版本仍保留在 `main` 与原有 Release 中，两种加载器使用不同的 JAR，不能混装。TACZ 1.20.1 的可选适配仅适用于 Forge 分支。
 
 ## 模型质量
 
@@ -57,18 +57,23 @@
 
 ## 构建
 
-需要 JDK 17 和 Git LFS：
+需要 JDK 21 和 Git LFS：
 
 ```powershell
 git clone https://github.com/BAQjun/sbw-helldivers.git
 cd sbw-helldivers
+git switch neoforge-1.21.1
 git lfs pull
 .\gradlew.bat --no-daemon build
 ```
 
 Linux 使用 `./gradlew --no-daemon build`。首次构建需要下载 Gradle 和依赖，产物位于 `build/libs/`。
 
-`libs/geckolib-forge-1.20.1-4.4.6-sbw-api.jar` 与卓越前线内嵌版本一致，仅用于编译，不打入附属模组。
+构建自动读取卓越前线内嵌的 SimpleBedrockModel 与 GeckoLib API，仅用于编译，不会重复打入附属模组。
+
+开发验证：`./gradlew runGameTestServer -PportTests`。客户端独立场景：`./gradlew runClient -PportTests`，完成后自动退出并移除临时存档；验证代码与场景资源不进入发行 JAR。
+
+NeoForge edition requires Minecraft 1.21.1, Java 21, NeoForge 21.1.203+, Superb Warfare 0.8.9.2 for NeoForge, and Kotlin for Forge 5.10.0 for NeoForge. Use the loader-specific JAR on both client and server. Forge 1.20.1 builds remain available separately.
 
 ## 开发
 
@@ -78,4 +83,4 @@ Linux 使用 `./gradlew --no-daemon build`。首次构建需要下载 Gradle 和
 - `docs/releases/`：版本说明。
 - `ci/github-actions-build.yml`：构建工作流模板。
 
-`main` 为开发分支，版本号由 `gradle.properties` 中的 `mod_version` 管理，发布标签采用 `v<版本号>`。大型模型和几何文件通过 Git LFS 管理。
+`neoforge-1.21.1` 维护当前平台，`main` 维护 Forge 1.20.1，版本号由 `gradle.properties` 中的 `mod_version` 管理，发布标签采用 `v<版本号>`。大型模型和几何文件通过 Git LFS 管理。

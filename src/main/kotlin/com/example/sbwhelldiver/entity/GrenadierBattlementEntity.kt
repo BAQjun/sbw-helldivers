@@ -1,5 +1,6 @@
 package com.example.sbwhelldiver.entity
 
+import net.minecraft.network.syncher.SynchedEntityData
 import com.example.sbwhelldiver.init.ModEntities
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.tags.DamageTypeTags
@@ -16,7 +17,7 @@ class GrenadierBattlementEntity(type: EntityType<*>,level: Level): HmgEmplacemen
     companion object {
         private val DEPLOYMENT_HEADING=net.minecraft.network.syncher.SynchedEntityData.defineId(GrenadierBattlementEntity::class.java,net.minecraft.network.syncher.EntityDataSerializers.FLOAT)
     }
-    override fun defineSynchedData() {super.defineSynchedData();entityData.define(DEPLOYMENT_HEADING,Float.NaN)}
+    override fun defineSynchedData(builder: SynchedEntityData.Builder) {super.defineSynchedData(builder);builder.define(DEPLOYMENT_HEADING,Float.NaN)}
     fun setDeploymentHeading(yaw:Float) {
         require(yaw.isFinite())
         entityData.set(DEPLOYMENT_HEADING,Mth.wrapDegrees(yaw))
@@ -26,8 +27,8 @@ class GrenadierBattlementEntity(type: EntityType<*>,level: Level): HmgEmplacemen
         super.onSyncedDataUpdated(key)
         if(key==DEPLOYMENT_HEADING)entityData.get(DEPLOYMENT_HEADING).takeIf {it.isFinite()}?.let {yRot=it;yRotO=it}
     }
-    override fun lerpTo(x:Double,y:Double,z:Double,yaw:Float,pitch:Float,steps:Int,interpolate:Boolean) {
-        super.lerpTo(x,y,z,entityData.get(DEPLOYMENT_HEADING).takeIf {it.isFinite()} ?: yaw,pitch,steps,interpolate)
+    override fun lerpTo(x:Double,y:Double,z:Double,yaw:Float,pitch:Float,steps:Int) {
+        super.lerpTo(x,y,z,entityData.get(DEPLOYMENT_HEADING).takeIf {it.isFinite()} ?: yaw,pitch,steps)
     }
     override fun addAdditionalSaveData(tag:net.minecraft.nbt.CompoundTag) {
         super.addAdditionalSaveData(tag)

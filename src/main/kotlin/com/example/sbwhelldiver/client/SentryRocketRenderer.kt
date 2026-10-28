@@ -8,6 +8,6 @@ import net.minecraft.resources.ResourceLocation
 class SentryRocketRenderer(context: EntityRendererProvider.Context) : BasicProjectileRenderer<SentryRocketEntity>(context) {
     override fun getTextureLocation(entity: SentryRocketEntity) = TEXTURE
     companion object {
-        val TEXTURE = ResourceLocation("superbwarfare", "textures/bedrock/projectile/small_rocket.png")
+        val TEXTURE = ResourceLocation.fromNamespaceAndPath("superbwarfare", "textures/bedrock/projectile/small_rocket.png")
     }
 }

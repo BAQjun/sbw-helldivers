@@ -1,6 +1,6 @@
 package com.example.sbwhelldiver.config
 
-import net.minecraftforge.common.ForgeConfigSpec
+import net.neoforged.neoforge.common.ModConfigSpec
 import net.minecraft.nbt.CompoundTag
 
 /** Snapshot per call; editing config cannot alter an airborne barrage. */
@@ -25,20 +25,20 @@ data class GatlingSettings(val rounds:Int=5,val shots:Int=60,val interval:Double
  }
 }
 object OrbitalGatlingConfig {
- private lateinit var rounds:ForgeConfigSpec.IntValue
- private lateinit var shots:ForgeConfigSpec.IntValue
- private lateinit var interval:ForgeConfigSpec.DoubleValue
- private lateinit var delay:ForgeConfigSpec.DoubleValue
- private lateinit var flight:ForgeConfigSpec.DoubleValue
- private lateinit var damage:ForgeConfigSpec.DoubleValue
- private lateinit var blast:ForgeConfigSpec.DoubleValue
- private lateinit var inner:ForgeConfigSpec.DoubleValue
- private lateinit var outer:ForgeConfigSpec.DoubleValue
- private lateinit var radius:ForgeConfigSpec.DoubleValue
- private lateinit var start:ForgeConfigSpec.DoubleValue
- private lateinit var stepMin:ForgeConfigSpec.DoubleValue
- private lateinit var stepMax:ForgeConfigSpec.DoubleValue
- fun register(b:ForgeConfigSpec.Builder){
+ private lateinit var rounds:ModConfigSpec.IntValue
+ private lateinit var shots:ModConfigSpec.IntValue
+ private lateinit var interval:ModConfigSpec.DoubleValue
+ private lateinit var delay:ModConfigSpec.DoubleValue
+ private lateinit var flight:ModConfigSpec.DoubleValue
+ private lateinit var damage:ModConfigSpec.DoubleValue
+ private lateinit var blast:ModConfigSpec.DoubleValue
+ private lateinit var inner:ModConfigSpec.DoubleValue
+ private lateinit var outer:ModConfigSpec.DoubleValue
+ private lateinit var radius:ModConfigSpec.DoubleValue
+ private lateinit var start:ModConfigSpec.DoubleValue
+ private lateinit var stepMin:ModConfigSpec.DoubleValue
+ private lateinit var stepMax:ModConfigSpec.DoubleValue
+ fun register(b:ModConfigSpec.Builder){
   b.comment("轨道加特林火力网；连续发射，轮次间无停顿。Continuous Orbital Gatling Barrage.").push("gatlingBarrage")
   rounds=b.defineInRange("rounds",5,1,20);shots=b.defineInRange("shotsPerRound",60,1,200)
   interval=b.defineInRange("shotIntervalSeconds",.045,.01,1.0)

@@ -124,7 +124,7 @@ abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAi
         if (phase == Phase.FALLING) distance < 1024.0 * 1024.0 else super.shouldRenderAtSqrDistance(distance)
 
     override fun getDimensions(pose: Pose): EntityDimensions =
-        if (entityData.hasItem(DATA_PHASE) && phase in listOf(Phase.DONE, Phase.SPENT))
+        if (phase == Phase.DONE || phase == Phase.SPENT)
             EntityDimensions.scalable(2.65f, .13f) else super.getDimensions(pose)
 
     override fun onSyncedDataUpdated(key: EntityDataAccessor<*>) {
@@ -145,24 +145,24 @@ abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAi
         if (!scheduledFlight) super.handleClientSync()
     }
 
-    override fun defineSynchedData() {
-        super.defineSynchedData()
-        entityData.define(DATA_PHASE, Phase.FALLING.ordinal)
-        entityData.define(DATA_PHASE_START, 0L)
-        entityData.define(DATA_BRAKING, false)
-        entityData.define(DATA_BRAKE_START, 0L)
-        entityData.define(DATA_FIRING, false)
-        entityData.define(DATA_SHOT_SERIAL, 0)
-        entityData.define(DATA_TURRET_YAW, 0f)
-        entityData.define(DATA_TURRET_PITCH, 0f)
-        entityData.define(DATA_PHASE_AGE, 0)
-        entityData.define(DATA_BRAKE_AGE, 0)
-        entityData.define(DATA_CAP_RELEASED, false)
-        entityData.define(DATA_REST_Y, Float.NaN)
-        entityData.define(DATA_LAUNCH, -1L)
-        entityData.define(DATA_ARRIVAL, -1L)
-        entityData.define(DATA_START_Y, 0f)
-        entityData.define(DATA_BRAKE_DISTANCE, 12f)
+    override fun defineSynchedData(builder: SynchedEntityData.Builder) {
+        super.defineSynchedData(builder)
+        builder.define(DATA_PHASE, Phase.FALLING.ordinal)
+        builder.define(DATA_PHASE_START, 0L)
+        builder.define(DATA_BRAKING, false)
+        builder.define(DATA_BRAKE_START, 0L)
+        builder.define(DATA_FIRING, false)
+        builder.define(DATA_SHOT_SERIAL, 0)
+        builder.define(DATA_TURRET_YAW, 0f)
+        builder.define(DATA_TURRET_PITCH, 0f)
+        builder.define(DATA_PHASE_AGE, 0)
+        builder.define(DATA_BRAKE_AGE, 0)
+        builder.define(DATA_CAP_RELEASED, false)
+        builder.define(DATA_REST_Y, Float.NaN)
+        builder.define(DATA_LAUNCH, -1L)
+        builder.define(DATA_ARRIVAL, -1L)
+        builder.define(DATA_START_Y, 0f)
+        builder.define(DATA_BRAKE_DISTANCE, 12f)
     }
 
     // SBW's automatic targeting must not compete with the sentry's synchronized aim.

@@ -23,8 +23,6 @@ class SentryCannonShellRenderer(context: EntityRendererProvider.Context) : Entit
     override fun shouldRender(entity: SmallCannonShellEntity, frustum: Frustum, x: Double, y: Double, z: Double) = true
     override fun getBlockLightLevel(entity: SmallCannonShellEntity, pos: BlockPos) = 15
     override fun render(entity: SmallCannonShellEntity, yaw: Float, partial: Float, pose: PoseStack, buffers: MultiBufferSource, light: Int) {
-        if (java.lang.Boolean.getBoolean("sbw_helldiver.clientSmokeTest") && entity is SentryCannonShellEntity)
-            ClientSmokeTest.verifyCannonSpawn(entity)
         val model = entity.modelInstance ?: return
         val velocity = entity.deltaMovement
         if (velocity.lengthSqr() < 1e-8) return
@@ -45,34 +43,11 @@ class SentryCannonShellRenderer(context: EntityRendererProvider.Context) : Entit
             pose.translate(0.0, -4.0 / 16.0, 0.0)
             model.renderToBuffer(pose, buffers.getBuffer(RenderType.energySwirl(TEXTURE, 15f, 15f)),
                 light, OverlayTexture.NO_OVERLAY, 1f, .87058824f, .15294118f, 1f)
-            if (java.lang.Boolean.getBoolean("sbw_helldiver.clientSmokeTest") && checkedVertices < 24) {
-                val vertices = BoundsConsumer()
-                model.renderToBuffer(pose, vertices, light, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f, true)
-                val error = vertices.center().distance(expectedCenter)
-                check(error < .00003f) { "Cannon shell is off its actual path by $error blocks" }
-                checkedVertices++
-                if (checkedVertices == 24) LOGGER.info("CANNON_GEOMETRY_PASSED: 24 live shell frames stay on the ballistic path despite a displaced handheld render offset")
-            }
+
         } finally { pose.popPose() }
     }
-    private class BoundsConsumer : VertexConsumer {
-        private val min = Vector3f(Float.POSITIVE_INFINITY)
-        private val max = Vector3f(Float.NEGATIVE_INFINITY)
-        override fun vertex(x: Double, y: Double, z: Double): VertexConsumer {
-            val p = Vector3f(x.toFloat(), y.toFloat(), z.toFloat()); min.min(p); max.max(p); return this
-        }
-        fun center() = Vector3f(min).add(max).mul(.5f)
-        override fun color(r: Int, g: Int, b: Int, a: Int): VertexConsumer = this
-        override fun uv(u: Float, v: Float): VertexConsumer = this
-        override fun overlayCoords(u: Int, v: Int): VertexConsumer = this
-        override fun uv2(u: Int, v: Int): VertexConsumer = this
-        override fun normal(x: Float, y: Float, z: Float): VertexConsumer = this
-        override fun endVertex() {}
-        override fun defaultColor(r: Int, g: Int, b: Int, a: Int) {}
-        override fun unsetDefaultColor() {}
-    }
     companion object {
-        private val TEXTURE = ResourceLocation("superbwarfare", "textures/bedrock/projectile/small_cannon_shell.png")
+        private val TEXTURE = ResourceLocation.fromNamespaceAndPath("superbwarfare", "textures/bedrock/projectile/small_cannon_shell.png")
         var checkedVertices = 0
             private set
     }

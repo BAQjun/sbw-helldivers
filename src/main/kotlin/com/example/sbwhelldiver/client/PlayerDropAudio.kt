@@ -17,7 +17,7 @@ object PlayerDropAudio {
     private data class StartupGroup(val route:Int,val variants:List<List<SoundTimeline.Cue>>)
     private var startupGroups=emptyList<StartupGroup>()
     fun reload(manager:ResourceManager){
-        val resource=manager.getResource(ResourceLocation(MOD_ID,"helldivers/player_drop_audio.json")).orElseThrow()
+        val resource=manager.getResource(ResourceLocation.fromNamespaceAndPath(MOD_ID,"helldivers/player_drop_audio.json")).orElseThrow()
         val root=resource.openAsReader().use{JsonParser.parseReader(it).asJsonObject}
         startupGroups=root["startup_groups"].asJsonArray.map{group->
             StartupGroup(group.asJsonObject["listener_route"].asInt,group.asJsonObject["variants"].asJsonArray.map{variant->variant.asJsonArray.map{

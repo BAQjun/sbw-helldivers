@@ -14,10 +14,10 @@ enum class StratagemCategory(val beamColor: Int) {
 }
 
 data class StratagemDefinition(val id: String, val code: List<Int>, val category: StratagemCategory = StratagemCategory.GREEN) {
-    val dropId get() = ResourceLocation(MOD_ID, id)
-    val itemId get() = ResourceLocation(MOD_ID, "${id}_stratagem")
+    val dropId get() = ResourceLocation.fromNamespaceAndPath(MOD_ID, id)
+    val itemId get() = ResourceLocation.fromNamespaceAndPath(MOD_ID, "${id}_stratagem")
     val translation get() = "item.$MOD_ID.${id}_stratagem"
-    val icon get() = ResourceLocation(MOD_ID, "textures/item/${id}_stratagem.png")
+    val icon get() = ResourceLocation.fromNamespaceAndPath(MOD_ID, "textures/item/${id}_stratagem.png")
 }
 
 /** Direction order and codes taken from the installed game's StratagemSettings. */
@@ -85,35 +85,43 @@ object BeaconData {
     const val LOADOUT = "StratagemLoadout"
     const val SELECTED = "ActivatedStratagem"
     const val ID = "BeaconIdentity"
-    fun identity(stack: ItemStack): UUID? = stack.tag?.takeIf { it.hasUUID(ID) }?.getUUID(ID)
-    fun ensureIdentity(stack: ItemStack): UUID = identity(stack) ?: UUID.randomUUID().also { stack.orCreateTag.putUUID(ID, it) }
+    private fun data(stack: ItemStack) = stack.getOrDefault(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+        net.minecraft.world.item.component.CustomData.EMPTY).copyTag()
+    private fun update(stack: ItemStack, change: (CompoundTag) -> Unit) {
+        val tag = data(stack); change(tag)
+        stack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(tag))
+    }
+    fun hasSelection(stack: ItemStack) = data(stack).contains(SELECTED)
+    fun identity(stack: ItemStack): UUID? = data(stack).takeIf { it.hasUUID(ID) }?.getUUID(ID)
+    fun ensureIdentity(stack: ItemStack): UUID = identity(stack) ?: UUID.randomUUID().also { id -> update(stack) { it.putUUID(ID, id) } }
     fun storedItems(stack: ItemStack): List<ItemStack> {
         val slots = MutableList(4) { ItemStack.EMPTY }
-        val list = stack.tag?.getList(LOADOUT, Tag.TAG_COMPOUND.toInt()) ?: return slots
-        for (entry in list) {
-            val tag = entry as? CompoundTag ?: continue
+        for (raw in data(stack).getList(LOADOUT, Tag.TAG_COMPOUND.toInt())) {
+            val tag = raw as? CompoundTag ?: continue
             val index = tag.getInt("Slot")
-            val item = ItemStack.of(tag)
-            if (index in 0..3 && !item.isEmpty && Stratagems.fromItem(item) != null) slots[index] = item.copyWithCount(1)
+            val id = ResourceLocation.tryParse(tag.getString("id")) ?: continue
+            val item = ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(id))
+            if (index in 0..3 && !item.isEmpty && Stratagems.fromItem(item) != null) slots[index] = item
         }
         return slots
     }
     fun loadout(stack: ItemStack) = storedItems(stack).map(Stratagems::fromItem)
     fun setItems(stack: ItemStack, items: List<ItemStack>) {
-        val list = ListTag()
-        val seen = mutableSetOf<String>()
+        val list = ListTag(); val seen = mutableSetOf<String>()
         for ((index, item) in items.take(4).withIndex()) {
             val def = Stratagems.fromItem(item) ?: continue
             if (!seen.add(def.id)) continue
-            list.add(item.copyWithCount(1).save(CompoundTag()).also { it.putInt("Slot", index) })
+            list.add(CompoundTag().also {
+                it.putInt("Slot", index)
+                it.putString("id", net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item.item).toString())
+            })
         }
-        stack.orCreateTag.put(LOADOUT, list)
-        clear(stack)
+        update(stack) { it.put(LOADOUT, list); it.remove(SELECTED) }
     }
     fun selected(stack: ItemStack): StratagemDefinition? {
-        val id = stack.tag?.getString(SELECTED) ?: return null
+        val id = data(stack).getString(SELECTED)
         return loadout(stack).filterNotNull().firstOrNull { it.id == id }
     }
-    fun activate(stack: ItemStack, def: StratagemDefinition) { stack.orCreateTag.putString(SELECTED, def.id) }
-    fun clear(stack: ItemStack) { stack.tag?.remove(SELECTED) }
+    fun activate(stack: ItemStack, def: StratagemDefinition) = update(stack) { it.putString(SELECTED, def.id) }
+    fun clear(stack: ItemStack) = update(stack) { it.remove(SELECTED) }
 }

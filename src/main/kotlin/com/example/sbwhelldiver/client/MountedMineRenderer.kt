@@ -25,7 +25,7 @@ object MountedMineRenderer {
     private val models=WeakHashMap<BakedBedrockModel,List<Slot>>()
     fun reload(resources:ResourceManager){
         models.clear();mounts.clear()
-        resources.openAsReader(ResourceLocation(MOD_ID,"helldivers/mine_mounts.json")).use{reader->
+        resources.openAsReader(ResourceLocation.fromNamespaceAndPath(MOD_ID,"helldivers/mine_mounts.json")).use{reader->
             for((name,value) in JsonParser.parseReader(reader).asJsonObject.entrySet()){
                 mounts[name]=value.asJsonArray.map{item->
                     val entry=item.asJsonObject;val rows=entry.getAsJsonArray("matrix")
@@ -73,7 +73,7 @@ object MountedMineRenderer {
             for(index in panel*pod.minesPerPanel until (panel+1)*pod.minesPerPanel)if(visible(pod,index)){
                 pose.pushPose()
                 val transform=Matrix4f(delta).mul(slots[index].transform)
-                pose.mulPoseMatrix(transform)
+                pose.mulPose(transform)
                 // Authored mounts uniformly scale the mine. Remove that scale
                 // from normals before their components are packed into bytes.
                 val normal=Matrix3f(transform).invert().transpose()

@@ -1,7 +1,6 @@
 package com.example.sbwhelldiver.client
 
 import com.example.sbwhelldiver.entity.AbstractHellpodEntity
-import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.Minecraft
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.block.Block
@@ -52,15 +51,12 @@ object TerrainMeshOcclusion {
         val eye = Minecraft.getInstance().gameRenderer.mainCamera.position
         // Spectators inside solid terrain can inspect the complete retained hull.
         if (eye.x in box[0]..box[3] && eye.y in box[1]..box[4] && eye.z in box[2]..box[5]) return null
-        val inverse = RenderSystem.getInverseViewRotationMatrix()
-        // Entity vertices already include the camera rotation. Convert the small
-        // batch bounds back to camera-relative world space before testing blocks.
+        // Since 1.21 entity poses are camera-relative world coordinates. Camera
+        // rotation is applied separately through the render system's model-view
+        // matrix; undoing it here would classify visible support parts as buried.
         return doubleArrayOf(
             box[0] - eye.x, box[1] - eye.y, box[2] - eye.z,
-            box[3] - eye.x, box[4] - eye.y, box[5] - eye.z,
-            inverse.m00().toDouble(), inverse.m01().toDouble(), inverse.m02().toDouble(),
-            inverse.m10().toDouble(), inverse.m11().toDouble(), inverse.m12().toDouble(),
-            inverse.m20().toDouble(), inverse.m21().toDouble(), inverse.m22().toDouble()
+            box[3] - eye.x, box[4] - eye.y, box[5] - eye.z
         )
     }
 }

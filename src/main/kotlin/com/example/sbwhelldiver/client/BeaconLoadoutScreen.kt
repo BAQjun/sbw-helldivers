@@ -27,7 +27,7 @@ class BeaconLoadoutScreen(menu: BeaconLoadoutMenu, inventory: Inventory, title: 
         gui.drawString(font, Component.translatable("screen.sbw_helldiver.loadout_hint"), leftPos + 14, topPos + 177, 0xA4B8AD, false)
     }
     override fun render(gui: GuiGraphics, mouseX: Int, mouseY: Int, partial: Float) {
-        renderBackground(gui)
+        renderBackground(gui,mouseX,mouseY,partial)
         super.render(gui, mouseX, mouseY, partial)
         renderTooltip(gui, mouseX, mouseY)
     }

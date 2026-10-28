@@ -14,7 +14,7 @@ object BinaryEntityTextures {
     private var textures: Set<ResourceLocation> = emptySet()
     fun contains(texture: ResourceLocation) = texture in textures
     fun reload(resources: ResourceManager) {
-        val manifest = resources.getResource(ResourceLocation(MOD_ID,"models/entity_cutout_textures.json")).orElse(null)
+        val manifest = resources.getResource(ResourceLocation.fromNamespaceAndPath(MOD_ID,"models/entity_cutout_textures.json")).orElse(null)
         if(manifest==null){textures=emptySet();return}
         val entries=manifest.openAsReader().use{JsonParser.parseReader(it).asJsonObject}
         val valid=HashSet<ResourceLocation>()

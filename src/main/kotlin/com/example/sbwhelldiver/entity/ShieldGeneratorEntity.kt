@@ -22,7 +22,7 @@ class ShieldGeneratorEntity(type:EntityType<*>,level:Level):AbstractHellpodEntit
     val shieldAge get()=phaseAge
     fun shieldCenter(partial:Float=1f)=getPosition(partial).add(0.0,CENTER_HEIGHT,0.0)
     fun emitter(partial:Float=1f)=getPosition(partial).add(0.0,1.57,0.0)
-    override fun defineSynchedData(){super.defineSynchedData();entityData.define(SHIELD_HEALTH,CAPACITY);entityData.define(BROKEN,false);entityData.define(BROKEN_AT,-1L);entityData.define(HITS,CompoundTag())}
+    override fun defineSynchedData(builder: SynchedEntityData.Builder){super.defineSynchedData(builder);builder.define(SHIELD_HEALTH,CAPACITY);builder.define(BROKEN,false);builder.define(BROKEN_AT,-1L);builder.define(HITS,CompoundTag())}
     override fun canAddPassenger(passenger:Entity)=false
     override fun tick(){super.tick();if(level().isClientSide)com.example.sbwhelldiver.client.ShieldGeneratorClient.update(this)}
     override fun tickActive(){if(shieldOnline)entityData.set(SHIELD_HEALTH,(shieldHealth+REGEN_PER_TICK).coerceAtMost(CAPACITY))}

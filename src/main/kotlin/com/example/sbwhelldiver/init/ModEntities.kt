@@ -10,36 +10,36 @@ import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.MobCategory
 import net.minecraft.world.level.Level
-import net.minecraftforge.registries.DeferredRegister
-import net.minecraftforge.registries.ForgeRegistries
-import net.minecraftforge.registries.RegistryObject
+import net.neoforged.neoforge.registries.DeferredRegister
+import net.minecraft.core.registries.BuiltInRegistries
+import net.neoforged.neoforge.registries.DeferredHolder
 
 object ModEntities {
 
     val ENTITIES: DeferredRegister<EntityType<*>> =
-        DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MOD_ID)
+        DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, MOD_ID)
 
-    val PLAYER_HELLPOD=ENTITIES.register("player_hellpod"){vehicle{t,l->com.example.sbwhelldiver.entity.PlayerHellpodEntity(t,l)}.sized(2.65f,.2f).build("player_hellpod")}
+    val PLAYER_HELLPOD=ENTITIES.register("player_hellpod"){ _ ->vehicle{t,l->com.example.sbwhelldiver.entity.PlayerHellpodEntity(t,l)}.sized(2.65f,.2f).build("player_hellpod")}
 
-    val ORBITAL_LASER=ENTITIES.register("orbital_laser"){EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.OrbitalLaserEntity(t,l)},MobCategory.MISC).sized(1f,1f).clientTrackingRange(32).updateInterval(1).fireImmune().build("orbital_laser")}
-    val ORBITAL_FIELD_SHELL=ENTITIES.register("orbital_field_shell"){EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.OrbitalFieldShellEntity(t,l)},MobCategory.MISC).sized(.3f,.3f).clientTrackingRange(32).updateInterval(1).build("orbital_field_shell")}
-    val ORBITAL_NAPALM_SHELL=ENTITIES.register("orbital_napalm_shell"){EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.OrbitalNapalmShellEntity(t,l)},MobCategory.MISC).sized(.3f,.3f).clientTrackingRange(32).updateInterval(1).build("orbital_napalm_shell")}
-    val ORBITAL_120_SHELL=ENTITIES.register("orbital_120mm_shell"){EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.Orbital120ShellEntity(t,l)},MobCategory.MISC).sized(.3f,.3f).clientTrackingRange(32).updateInterval(1).build("orbital_120mm_shell")}
-    val ORBITAL_AIRBURST_SHELL=ENTITIES.register("orbital_airburst_shell"){EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.OrbitalAirburstShellEntity(t,l)},MobCategory.MISC).sized(.25f,.25f).clientTrackingRange(32).updateInterval(1).build("orbital_airburst_shell")}
-    val ORBITAL_AIRBURST_BOMBLET=ENTITIES.register("orbital_airburst_bomblet"){EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.OrbitalAirburstBombletEntity(t,l)},MobCategory.MISC).sized(.12f,.12f).clientTrackingRange(32).updateInterval(1).build("orbital_airburst_bomblet")}
-    val ORBITAL_GATLING_ROUND=ENTITIES.register("orbital_gatling_round"){EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.OrbitalGatlingRoundEntity(t,l)},MobCategory.MISC).sized(.12f,.12f).clientTrackingRange(32).updateInterval(1).build("orbital_gatling_round")}
-    val ORBITAL_RAILCANNON_SHELL=ENTITIES.register("orbital_railcannon_shell"){EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.OrbitalRailcannonShellEntity(t,l)},MobCategory.MISC).sized(.3f,.3f).clientTrackingRange(32).updateInterval(1).build("orbital_railcannon_shell")}
-    val ORBITAL_SHELL=ENTITIES.register("orbital_precision_shell"){EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.OrbitalPrecisionShellEntity(t,l)},MobCategory.MISC).sized(.3f,.3f).clientTrackingRange(32).updateInterval(1).build("orbital_precision_shell")}
-    val EAGLE=ENTITIES.register("eagle") { EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.EagleEntity(t,l)},MobCategory.MISC).sized(17.8f,8.3f).clientTrackingRange(64).updateInterval(1).fireImmune().build("eagle") }
-    val EAGLE_CLUSTER_BOMB=ENTITIES.register("eagle_cluster_bomb") { EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.EagleClusterBombEntity(t,l)},MobCategory.MISC).sized(0.35f,0.9f).clientTrackingRange(32).updateInterval(1).build("eagle_cluster_bomb") }
-    val EAGLE_110MM_ROCKET=ENTITIES.register("eagle_110mm_rocket") { EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.Eagle110mmRocketEntity(t,l)},MobCategory.MISC).sized(0.2f,1.2f).clientTrackingRange(32).updateInterval(1).build("eagle_110mm_rocket") }
-    val EAGLE_500KG_BOMB=ENTITIES.register("eagle_500kg_bomb") { EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.Eagle500kgBombEntity(t,l)},MobCategory.MISC).sized(0.8f,1.8f).clientTrackingRange(32).updateInterval(1).build("eagle_500kg_bomb") }
-    val EAGLE_CLUSTER_BOMBLET=ENTITIES.register("eagle_cluster_bomblet") { EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.EagleClusterBombletEntity(t,l)},MobCategory.MISC).sized(0.12f,0.2f).clientTrackingRange(32).updateInterval(1).build("eagle_cluster_bomblet") }
-    val EAGLE_NAPALM_BOMB=ENTITIES.register("eagle_napalm_airstrike_bomb") { EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.EagleNapalmBombEntity(t,l)},MobCategory.MISC).sized(.3f,.8f).clientTrackingRange(32).updateInterval(1).build("eagle_napalm_airstrike_bomb") }
-    val EAGLE_GAS_BOMB=ENTITIES.register("eagle_gas_strike_bomb") { EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.EagleGasBombEntity(t,l)},MobCategory.MISC).sized(.3f,.8f).clientTrackingRange(32).updateInterval(1).build("eagle_gas_strike_bomb") }
-    val EAGLE_SMOKE_BOMB=ENTITIES.register("eagle_smoke_strike_bomb") { EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.EagleSmokeBombEntity(t,l)},MobCategory.MISC).sized(.3f,.8f).clientTrackingRange(32).updateInterval(1).build("eagle_smoke_strike_bomb") }
-    val EAGLE_BOMB=ENTITIES.register("eagle_bomb") { EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.EagleBombEntity(t,l)},MobCategory.MISC).sized(.3f,.8f).clientTrackingRange(32).updateInterval(1).build("eagle_bomb") }
-    val EAGLE_CANNON_ROUND=ENTITIES.register("eagle_cannon_round") { EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.EagleCannonRoundEntity(t,l)},MobCategory.MISC).sized(.12f,.12f).clientTrackingRange(32).updateInterval(1).build("eagle_cannon_round") }
+    val ORBITAL_LASER=ENTITIES.register("orbital_laser"){ _ ->EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.OrbitalLaserEntity(t,l)},MobCategory.MISC).sized(1f,1f).clientTrackingRange(32).updateInterval(1).fireImmune().build("orbital_laser")}
+    val ORBITAL_FIELD_SHELL=ENTITIES.register("orbital_field_shell"){ _ ->EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.OrbitalFieldShellEntity(t,l)},MobCategory.MISC).sized(.3f,.3f).clientTrackingRange(32).updateInterval(1).build("orbital_field_shell")}
+    val ORBITAL_NAPALM_SHELL=ENTITIES.register("orbital_napalm_shell"){ _ ->EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.OrbitalNapalmShellEntity(t,l)},MobCategory.MISC).sized(.3f,.3f).clientTrackingRange(32).updateInterval(1).build("orbital_napalm_shell")}
+    val ORBITAL_120_SHELL=ENTITIES.register("orbital_120mm_shell"){ _ ->EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.Orbital120ShellEntity(t,l)},MobCategory.MISC).sized(.3f,.3f).clientTrackingRange(32).updateInterval(1).build("orbital_120mm_shell")}
+    val ORBITAL_AIRBURST_SHELL=ENTITIES.register("orbital_airburst_shell"){ _ ->EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.OrbitalAirburstShellEntity(t,l)},MobCategory.MISC).sized(.25f,.25f).clientTrackingRange(32).updateInterval(1).build("orbital_airburst_shell")}
+    val ORBITAL_AIRBURST_BOMBLET=ENTITIES.register("orbital_airburst_bomblet"){ _ ->EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.OrbitalAirburstBombletEntity(t,l)},MobCategory.MISC).sized(.12f,.12f).clientTrackingRange(32).updateInterval(1).build("orbital_airburst_bomblet")}
+    val ORBITAL_GATLING_ROUND=ENTITIES.register("orbital_gatling_round"){ _ ->EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.OrbitalGatlingRoundEntity(t,l)},MobCategory.MISC).sized(.12f,.12f).clientTrackingRange(32).updateInterval(1).build("orbital_gatling_round")}
+    val ORBITAL_RAILCANNON_SHELL=ENTITIES.register("orbital_railcannon_shell"){ _ ->EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.OrbitalRailcannonShellEntity(t,l)},MobCategory.MISC).sized(.3f,.3f).clientTrackingRange(32).updateInterval(1).build("orbital_railcannon_shell")}
+    val ORBITAL_SHELL=ENTITIES.register("orbital_precision_shell"){ _ ->EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.OrbitalPrecisionShellEntity(t,l)},MobCategory.MISC).sized(.3f,.3f).clientTrackingRange(32).updateInterval(1).build("orbital_precision_shell")}
+    val EAGLE=ENTITIES.register("eagle") { _ -> EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.EagleEntity(t,l)},MobCategory.MISC).sized(17.8f,8.3f).clientTrackingRange(64).updateInterval(1).fireImmune().build("eagle") }
+    val EAGLE_CLUSTER_BOMB=ENTITIES.register("eagle_cluster_bomb") { _ -> EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.EagleClusterBombEntity(t,l)},MobCategory.MISC).sized(0.35f,0.9f).clientTrackingRange(32).updateInterval(1).build("eagle_cluster_bomb") }
+    val EAGLE_110MM_ROCKET=ENTITIES.register("eagle_110mm_rocket") { _ -> EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.Eagle110mmRocketEntity(t,l)},MobCategory.MISC).sized(0.2f,1.2f).clientTrackingRange(32).updateInterval(1).build("eagle_110mm_rocket") }
+    val EAGLE_500KG_BOMB=ENTITIES.register("eagle_500kg_bomb") { _ -> EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.Eagle500kgBombEntity(t,l)},MobCategory.MISC).sized(0.8f,1.8f).clientTrackingRange(32).updateInterval(1).build("eagle_500kg_bomb") }
+    val EAGLE_CLUSTER_BOMBLET=ENTITIES.register("eagle_cluster_bomblet") { _ -> EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.EagleClusterBombletEntity(t,l)},MobCategory.MISC).sized(0.12f,0.2f).clientTrackingRange(32).updateInterval(1).build("eagle_cluster_bomblet") }
+    val EAGLE_NAPALM_BOMB=ENTITIES.register("eagle_napalm_airstrike_bomb") { _ -> EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.EagleNapalmBombEntity(t,l)},MobCategory.MISC).sized(.3f,.8f).clientTrackingRange(32).updateInterval(1).build("eagle_napalm_airstrike_bomb") }
+    val EAGLE_GAS_BOMB=ENTITIES.register("eagle_gas_strike_bomb") { _ -> EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.EagleGasBombEntity(t,l)},MobCategory.MISC).sized(.3f,.8f).clientTrackingRange(32).updateInterval(1).build("eagle_gas_strike_bomb") }
+    val EAGLE_SMOKE_BOMB=ENTITIES.register("eagle_smoke_strike_bomb") { _ -> EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.EagleSmokeBombEntity(t,l)},MobCategory.MISC).sized(.3f,.8f).clientTrackingRange(32).updateInterval(1).build("eagle_smoke_strike_bomb") }
+    val EAGLE_BOMB=ENTITIES.register("eagle_bomb") { _ -> EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.EagleBombEntity(t,l)},MobCategory.MISC).sized(.3f,.8f).clientTrackingRange(32).updateInterval(1).build("eagle_bomb") }
+    val EAGLE_CANNON_ROUND=ENTITIES.register("eagle_cannon_round") { _ -> EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.EagleCannonRoundEntity(t,l)},MobCategory.MISC).sized(.12f,.12f).clientTrackingRange(32).updateInterval(1).build("eagle_cannon_round") }
 
     /**
      * 复刻卓越前线的载具 builder 配方。
@@ -67,138 +67,138 @@ object ModEntities {
      * 两者动画名完全相同（`hellpod.deploy` / `Main.idle` / `Main.fire`），
      * 只有模型文件与武器参数不一样。
      */
-    val ANTI_TANK_EMPLACEMENT = ENTITIES.register("anti_tank_emplacement") {
+    val ANTI_TANK_EMPLACEMENT = ENTITIES.register("anti_tank_emplacement") { _ ->
         vehicle { type,level -> com.example.sbwhelldiver.entity.AntiTankEmplacementEntity(type,level) }
             .sized(2.3f,2.3f).build("anti_tank_emplacement")
     }
-    val ANTI_TANK_EMPLACEMENT_SHELL = ENTITIES.register("anti_tank_emplacement_shell") {
+    val ANTI_TANK_EMPLACEMENT_SHELL = ENTITIES.register("anti_tank_emplacement_shell") { _ ->
         EntityType.Builder.of({ type,level -> com.example.sbwhelldiver.entity.AntiTankEmplacementShellEntity(type,level) },MobCategory.MISC)
             .sized(.12f,.12f).clientTrackingRange(12).updateInterval(1).build("anti_tank_emplacement_shell")
     }
 
-    val SHIELD_GENERATOR = ENTITIES.register("shield_generator") {
+    val SHIELD_GENERATOR = ENTITIES.register("shield_generator") { _ ->
         vehicle {type,level -> com.example.sbwhelldiver.entity.ShieldGeneratorEntity(type,level)}.sized(1.45f,1.6f).build("shield_generator")
     }
 
-    val GRENADIER_BATTLEMENT = ENTITIES.register("grenadier_battlement") {
+    val GRENADIER_BATTLEMENT = ENTITIES.register("grenadier_battlement") { _ ->
         vehicle {type,level -> com.example.sbwhelldiver.entity.GrenadierBattlementEntity(type,level)}
             .sized(2.3f,2.3f).build("grenadier_battlement")
     }
-    val GRENADIER_GRENADE = ENTITIES.register("grenadier_grenade") {
+    val GRENADIER_GRENADE = ENTITIES.register("grenadier_grenade") { _ ->
         EntityType.Builder.of({type,level -> com.example.sbwhelldiver.entity.GrenadierGrenadeEntity(type,level)},MobCategory.MISC)
             .sized(.12f,.12f).clientTrackingRange(12).updateInterval(1).build("grenadier_grenade")
     }
-    val GRENADIER_WALL_PANEL = ENTITIES.register("grenadier_wall_panel") {
+    val GRENADIER_WALL_PANEL = ENTITIES.register("grenadier_wall_panel") { _ ->
         EntityType.Builder.of({type,level -> com.example.sbwhelldiver.entity.GrenadierWallPanelEntity(type,level)},MobCategory.MISC)
             .sized(.21f,1.6f).clientTrackingRange(12).updateInterval(1).noSave().fireImmune().build("grenadier_wall_panel")
     }
-    val HMG_EMPLACEMENT = ENTITIES.register("hmg_emplacement") {
+    val HMG_EMPLACEMENT = ENTITIES.register("hmg_emplacement") { _ ->
         vehicle { type,level -> com.example.sbwhelldiver.entity.HmgEmplacementEntity(type,level) }
             .sized(2.3f,2.3f).build("hmg_emplacement")
     }
 
-    val MACHINE_GUN_SENTRY: RegistryObject<EntityType<SentryHellpodEntity>> =
-        ENTITIES.register("machine_gun_sentry") {
+    val MACHINE_GUN_SENTRY: DeferredHolder<EntityType<*>, EntityType<SentryHellpodEntity>> =
+        ENTITIES.register("machine_gun_sentry") { _ ->
             vehicle { type, level -> SentryHellpodEntity(type, level) }
                 .sized(SENTRY_WIDTH, SENTRY_HEIGHT)
                 .build("machine_gun_sentry")
         }
 
     /** 加特林哨戒炮台。 */
-    val GATLING_SENTRY: RegistryObject<EntityType<SentryHellpodEntity>> =
-        ENTITIES.register("gatling_sentry") {
+    val GATLING_SENTRY: DeferredHolder<EntityType<*>, EntityType<SentryHellpodEntity>> =
+        ENTITIES.register("gatling_sentry") { _ ->
             vehicle { type, level -> SentryHellpodEntity(type, level) }
                 .sized(SENTRY_WIDTH, SENTRY_HEIGHT)
                 .build("gatling_sentry")
         }
 
-    val ROCKET_SENTRY: RegistryObject<EntityType<SentryHellpodEntity>> =
-        ENTITIES.register("rocket_sentry") {
+    val ROCKET_SENTRY: DeferredHolder<EntityType<*>, EntityType<SentryHellpodEntity>> =
+        ENTITIES.register("rocket_sentry") { _ ->
             vehicle { type, level -> SentryHellpodEntity(type, level) }
                 .sized(SENTRY_WIDTH, SENTRY_HEIGHT).build("rocket_sentry")
         }
 
-    val AUTOCANNON_SENTRY: RegistryObject<EntityType<SentryHellpodEntity>> =
-        ENTITIES.register("autocannon_sentry") {
+    val AUTOCANNON_SENTRY: DeferredHolder<EntityType<*>, EntityType<SentryHellpodEntity>> =
+        ENTITIES.register("autocannon_sentry") { _ ->
             vehicle { type, level -> SentryHellpodEntity(type, level) }
                 .sized(SENTRY_WIDTH, SENTRY_HEIGHT).build("autocannon_sentry")
         }
 
-    val MORTAR_SENTRY: RegistryObject<EntityType<SentryHellpodEntity>> = ENTITIES.register("mortar_sentry") {
+    val MORTAR_SENTRY: DeferredHolder<EntityType<*>, EntityType<SentryHellpodEntity>> = ENTITIES.register("mortar_sentry") { _ ->
         vehicle { type, level -> SentryHellpodEntity(type, level) }.sized(SENTRY_WIDTH, SENTRY_HEIGHT).build("mortar_sentry")
     }
-    val MORTAR_SHELL: RegistryObject<EntityType<com.example.sbwhelldiver.entity.MortarShellEntity>> = ENTITIES.register("mortar_shell") {
+    val MORTAR_SHELL: DeferredHolder<EntityType<*>, EntityType<com.example.sbwhelldiver.entity.MortarShellEntity>> = ENTITIES.register("mortar_shell") { _ ->
         EntityType.Builder.of({ type, level -> com.example.sbwhelldiver.entity.MortarShellEntity(type, level) }, MobCategory.MISC)
             .sized(.12f,.12f).clientTrackingRange(8).updateInterval(1).build("mortar_shell")
     }
 
-    val GAS_MORTAR_SENTRY = ENTITIES.register("gas_mortar_sentry") {
+    val GAS_MORTAR_SENTRY = ENTITIES.register("gas_mortar_sentry") { _ ->
         vehicle { type, level -> SentryHellpodEntity(type, level) }.sized(SENTRY_WIDTH,SENTRY_HEIGHT).build("gas_mortar_sentry")
     }
-    val EMS_MORTAR_SENTRY = ENTITIES.register("ems_mortar_sentry") {
+    val EMS_MORTAR_SENTRY = ENTITIES.register("ems_mortar_sentry") { _ ->
         vehicle { type, level -> SentryHellpodEntity(type, level) }.sized(SENTRY_WIDTH,SENTRY_HEIGHT).build("ems_mortar_sentry")
     }
-    val FLAME_SENTRY = ENTITIES.register("flame_sentry") {
+    val FLAME_SENTRY = ENTITIES.register("flame_sentry") { _ ->
         vehicle { type, level -> SentryHellpodEntity(type,level) }.sized(SENTRY_WIDTH,SENTRY_HEIGHT).build("flame_sentry")
     }
-    val LASER_SENTRY = ENTITIES.register("laser_sentry") {
+    val LASER_SENTRY = ENTITIES.register("laser_sentry") { _ ->
         vehicle { type, level -> SentryHellpodEntity(type,level) }.sized(SENTRY_WIDTH,SENTRY_HEIGHT).build("laser_sentry")
     }
-    val TESLA_TOWER = ENTITIES.register("tesla_tower") {
+    val TESLA_TOWER = ENTITIES.register("tesla_tower") { _ ->
         vehicle { type, level -> SentryHellpodEntity(type,level) }.sized(2.65f,5.7f).build("tesla_tower")
     }
-    val ANTI_PERSONNEL_MINEFIELD = ENTITIES.register("anti_personnel_minefield") {
+    val ANTI_PERSONNEL_MINEFIELD = ENTITIES.register("anti_personnel_minefield") { _ ->
         vehicle { type,level -> com.example.sbwhelldiver.entity.MineDispenserEntity(type,level) }
             .sized(1.4f,2.4f).build("anti_personnel_minefield")
     }
-    val ANTI_PERSONNEL_MINE = ENTITIES.register("anti_personnel_mine") {
+    val ANTI_PERSONNEL_MINE = ENTITIES.register("anti_personnel_mine") { _ ->
         EntityType.Builder.of({ type,level -> com.example.sbwhelldiver.entity.AntiPersonnelMineEntity(type,level) },MobCategory.MISC)
             .sized(.28f,.18f).clientTrackingRange(12).updateInterval(1).fireImmune().build("anti_personnel_mine")
     }
-    val INCENDIARY_MINEFIELD = ENTITIES.register("incendiary_minefield") {
+    val INCENDIARY_MINEFIELD = ENTITIES.register("incendiary_minefield") { _ ->
         vehicle { type,level -> com.example.sbwhelldiver.entity.MineDispenserEntity(type,level) }
             .sized(1.4f,2.4f).build("incendiary_minefield")
     }
-    val GAS_MINEFIELD = ENTITIES.register("gas_minefield") {
+    val GAS_MINEFIELD = ENTITIES.register("gas_minefield") { _ ->
         vehicle { type,level -> com.example.sbwhelldiver.entity.MineDispenserEntity(type,level) }
             .sized(1.4f,2.4f).build("gas_minefield")
     }
-    val INCENDIARY_MINE = ENTITIES.register("incendiary_mine") {
+    val INCENDIARY_MINE = ENTITIES.register("incendiary_mine") { _ ->
         EntityType.Builder.of({ type,level -> com.example.sbwhelldiver.entity.AntiPersonnelMineEntity(type,level) },MobCategory.MISC)
             .sized(.28f,.18f).clientTrackingRange(12).updateInterval(1).fireImmune().build("incendiary_mine")
     }
-    val GAS_MINE = ENTITIES.register("gas_mine") {
+    val GAS_MINE = ENTITIES.register("gas_mine") { _ ->
         EntityType.Builder.of({ type,level -> com.example.sbwhelldiver.entity.AntiPersonnelMineEntity(type,level) },MobCategory.MISC)
             .sized(.28f,.18f).clientTrackingRange(12).updateInterval(1).fireImmune().build("gas_mine")
     }
-    val ANTI_TANK_MINEFIELD = ENTITIES.register("anti_tank_minefield") {
+    val ANTI_TANK_MINEFIELD = ENTITIES.register("anti_tank_minefield") { _ ->
         vehicle { type,level -> com.example.sbwhelldiver.entity.MineDispenserEntity(type,level) }
             .sized(1.4f,2.4f).build("anti_tank_minefield")
     }
-    val ANTI_TANK_MINE = ENTITIES.register("anti_tank_mine") {
+    val ANTI_TANK_MINE = ENTITIES.register("anti_tank_mine") { _ ->
         EntityType.Builder.of({ type,level -> com.example.sbwhelldiver.entity.AntiPersonnelMineEntity(type,level) },MobCategory.MISC)
             .sized(.34f,.18f).clientTrackingRange(12).updateInterval(1).fireImmune().build("anti_tank_mine")
     }
-    val GROUND_FIRE = ENTITIES.register("ground_fire") {
+    val GROUND_FIRE = ENTITIES.register("ground_fire") { _ ->
         EntityType.Builder.of({ type,level -> com.example.sbwhelldiver.entity.GroundFireEntity(type,level) },MobCategory.MISC)
             .sized(.1f,.1f).clientTrackingRange(12).updateInterval(20).fireImmune().build("ground_fire")
     }
-    val GAS_MORTAR_SHELL = ENTITIES.register("gas_mortar_shell") {
+    val GAS_MORTAR_SHELL = ENTITIES.register("gas_mortar_shell") { _ ->
         EntityType.Builder.of({ type, level -> com.example.sbwhelldiver.entity.GasMortarShellEntity(type,level) },MobCategory.MISC)
             .sized(.12f,.12f).clientTrackingRange(8).updateInterval(1).build("gas_mortar_shell")
     }
-    val EMS_MORTAR_SHELL = ENTITIES.register("ems_mortar_shell") {
+    val EMS_MORTAR_SHELL = ENTITIES.register("ems_mortar_shell") { _ ->
         EntityType.Builder.of({ type, level -> com.example.sbwhelldiver.entity.EmsMortarShellEntity(type,level) },MobCategory.MISC)
             .sized(.12f,.12f).clientTrackingRange(8).updateInterval(1).build("ems_mortar_shell")
     }
-    val MORTAR_FIELD = ENTITIES.register("mortar_field") {
+    val MORTAR_FIELD = ENTITIES.register("mortar_field") { _ ->
         EntityType.Builder.of({ type, level -> com.example.sbwhelldiver.entity.MortarFieldEntity(type,level) },MobCategory.MISC)
             .sized(.1f,.1f).clientTrackingRange(12).updateInterval(20).build("mortar_field")
     }
 
     /** 独立空投仓，落地开舱后弹出补给容器。 */
-    val SUPPLY_HELLPOD: RegistryObject<EntityType<SupplyHellpodEntity>> =
-        ENTITIES.register("supply_hellpod") {
+    val SUPPLY_HELLPOD: DeferredHolder<EntityType<*>, EntityType<SupplyHellpodEntity>> =
+        ENTITIES.register("supply_hellpod") { _ ->
             vehicle { type, level -> SupplyHellpodEntity(type, level) }
                 .sized(SENTRY_WIDTH, SENTRY_HEIGHT)
                 .build("supply_hellpod")
@@ -219,28 +219,28 @@ object ModEntities {
     private const val SENTRY_WIDTH = 1.4f
     private const val SENTRY_HEIGHT = 1.8f
 
-    val HELLPOD_CAP: RegistryObject<EntityType<HellpodCapEntity>> =
-        ENTITIES.register("hellpod_cap") {
+    val HELLPOD_CAP: DeferredHolder<EntityType<*>, EntityType<HellpodCapEntity>> =
+        ENTITIES.register("hellpod_cap") { _ ->
             EntityType.Builder.of(::HellpodCapEntity, MobCategory.MISC)
                 .sized(1.4f, HellpodCapEntity.MODEL_THICKNESS.toFloat())
                 .clientTrackingRange(8).updateInterval(1).fireImmune()
                 .build("hellpod_cap")
         }
 
-    val SENTRY_ROCKET: RegistryObject<EntityType<com.example.sbwhelldiver.entity.SentryRocketEntity>> =
-        ENTITIES.register("sentry_rocket") {
+    val SENTRY_ROCKET: DeferredHolder<EntityType<*>, EntityType<com.example.sbwhelldiver.entity.SentryRocketEntity>> =
+        ENTITIES.register("sentry_rocket") { _ ->
             EntityType.Builder.of({ type, level -> com.example.sbwhelldiver.entity.SentryRocketEntity(type, level) }, MobCategory.MISC)
                 .sized(0.25f, 0.25f).clientTrackingRange(8).updateInterval(1).build("sentry_rocket")
         }
 
-    val SENTRY_CANNON_SHELL: RegistryObject<EntityType<com.example.sbwhelldiver.entity.SentryCannonShellEntity>> =
-        ENTITIES.register("sentry_cannon_shell") {
+    val SENTRY_CANNON_SHELL: DeferredHolder<EntityType<*>, EntityType<com.example.sbwhelldiver.entity.SentryCannonShellEntity>> =
+        ENTITIES.register("sentry_cannon_shell") { _ ->
             EntityType.Builder.of({ type, level -> com.example.sbwhelldiver.entity.SentryCannonShellEntity(type, level) }, MobCategory.MISC)
                 .sized(0.1f, 0.1f).clientTrackingRange(8).updateInterval(1).build("sentry_cannon_shell")
         }
 
-    val SENTRY_BULLET: RegistryObject<EntityType<com.atsuishio.superbwarfare.entity.projectile.ProjectileEntity>> =
-        ENTITIES.register("sentry_bullet") {
+    val SENTRY_BULLET: DeferredHolder<EntityType<*>, EntityType<com.atsuishio.superbwarfare.entity.projectile.ProjectileEntity>> =
+        ENTITIES.register("sentry_bullet") { _ ->
             EntityType.Builder.of<com.atsuishio.superbwarfare.entity.projectile.ProjectileEntity>({ type, level -> com.example.sbwhelldiver.entity.SentryBulletEntity(type,level) }, MobCategory.MISC)
                 .sized(0.1f,0.1f).clientTrackingRange(8).updateInterval(1)
                 .build("sentry_bullet")
@@ -252,8 +252,8 @@ object ModEntities {
      * 服务端负责倒计时；客户端绘制展开信标、光束和倒计时。
      * 尺寸给得很小，它不参与任何碰撞，只是「一件事的载体」。
      */
-    val STRATAGEM_MARKER: RegistryObject<EntityType<StratagemMarker>> =
-        ENTITIES.register("stratagem_marker") {
+    val STRATAGEM_MARKER: DeferredHolder<EntityType<*>, EntityType<StratagemMarker>> =
+        ENTITIES.register("stratagem_marker") { _ ->
             EntityType.Builder.of({ type, level -> StratagemMarker(type, level) }, MobCategory.MISC)
                 .sized(0.1f, 0.1f)
                 .clientTrackingRange(512)
@@ -267,8 +267,8 @@ object ModEntities {
      * 尺寸 0.25 见方，与雪球一致：要能被正常抛出、被方块挡住、被弹开，
      * 碰撞箱给大了容易卡在墙边飞不出去。
      */
-    val STRATAGEM_BEACON: RegistryObject<EntityType<StratagemBeacon>> =
-        ENTITIES.register("stratagem_beacon") {
+    val STRATAGEM_BEACON: DeferredHolder<EntityType<*>, EntityType<StratagemBeacon>> =
+        ENTITIES.register("stratagem_beacon") { _ ->
             EntityType.Builder.of({ type, level -> StratagemBeacon(type, level) }, MobCategory.MISC)
                 .sized(StratagemBeacon.DIAMETER, StratagemBeacon.DIAMETER)
                 .clientTrackingRange(8)

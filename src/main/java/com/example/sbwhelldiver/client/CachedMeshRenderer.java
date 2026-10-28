@@ -75,7 +75,7 @@ public final class CachedMeshRenderer {
         int p=m.positionIndices[index],n=m.normalIndices[index],u=index*2;
         float[] t=m.transformed;
         if(bulk!=null) bulk.vertexPackedNormal(t[p],t[p+1],t[p+2],color,m.uvs[u],m.uvs[u+1],overlay,light,m.packedNormals[n/3]);
-        else out.vertex(t[p],t[p+1],t[p+2],r,g,b,a,m.uvs[u],m.uvs[u+1],overlay,light,
+        else out.addVertex(t[p],t[p+1],t[p+2],net.minecraft.util.FastColor.ARGB32.color((int)(a*255),(int)(r*255),(int)(g*255),(int)(b*255)),m.uvs[u],m.uvs[u+1],overlay,light,
                         m.transformedNormals[n],m.transformedNormals[n+1],m.transformedNormals[n+2]);
     }
     // Animations hide entire groups with zero scale. They cannot contribute pixels,
@@ -128,7 +128,7 @@ public final class CachedMeshRenderer {
             for(int j=corner;j<corner+4;j++) {
                 int at=mesh.positionIndices[j],u=j*2;
                 if(bulk!=null)bulk.vertexPackedNormal(t[at],t[at+1],t[at+2],color,mesh.uvs[u],mesh.uvs[u+1],overlay,light,mesh.packedNormals[n/3]);
-                else out.vertex(t[at],t[at+1],t[at+2],r,g,b,a,mesh.uvs[u],mesh.uvs[u+1],overlay,light,mesh.transformedNormals[n],mesh.transformedNormals[n+1],mesh.transformedNormals[n+2]);
+                else out.addVertex(t[at],t[at+1],t[at+2],net.minecraft.util.FastColor.ARGB32.color((int)(a*255),(int)(r*255),(int)(g*255),(int)(b*255)),mesh.uvs[u],mesh.uvs[u+1],overlay,light,mesh.transformedNormals[n],mesh.transformedNormals[n+1],mesh.transformedNormals[n+2]);
             }
         }
     }

@@ -2,8 +2,7 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         mavenCentral()
-        maven { url = uri("https://maven.minecraftforge.net/") }
+        maven("https://maven.neoforged.net/releases")
     }
 }
-
 rootProject.name = "sbw_helldiver"

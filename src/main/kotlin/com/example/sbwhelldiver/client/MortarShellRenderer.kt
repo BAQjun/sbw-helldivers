@@ -38,13 +38,13 @@ class MortarShellRenderer(context: EntityRendererProvider.Context) : EntityRende
     object Model : ResourceManagerReloadListener {
         var instance: BakedModelInstance?=null
         override fun onResourceManagerReload(resources: ResourceManager) {
-            resources.openAsReader(ResourceLocation(MOD_ID,"models/bedrock/projectile/mortar_round.geo.json")).use {
+            resources.openAsReader(ResourceLocation.fromNamespaceAndPath(MOD_ID,"models/bedrock/projectile/mortar_round.geo.json")).use {
                 instance=BakedModelInstance(BedrockModelBaker.bake(GsonUtil.CLIENT_GSON.fromJson(it,BedrockModelPOJO::class.java),BakerOptions.defaults()))
             }
         }
     }
     companion object {
-        val GAS_TEXTURE=ResourceLocation(MOD_ID,"textures/bedrock/projectile/gas_mortar_round.png")
-        val EMS_TEXTURE=ResourceLocation(MOD_ID,"textures/bedrock/projectile/ems_mortar_round.png")
-        val TEXTURE=ResourceLocation(MOD_ID,"textures/bedrock/projectile/mortar_round.png") }
+        val GAS_TEXTURE=ResourceLocation.fromNamespaceAndPath(MOD_ID,"textures/bedrock/projectile/gas_mortar_round.png")
+        val EMS_TEXTURE=ResourceLocation.fromNamespaceAndPath(MOD_ID,"textures/bedrock/projectile/ems_mortar_round.png")
+        val TEXTURE=ResourceLocation.fromNamespaceAndPath(MOD_ID,"textures/bedrock/projectile/mortar_round.png") }
 }

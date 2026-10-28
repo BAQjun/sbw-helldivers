@@ -37,7 +37,7 @@ object TeslaArc {
             if(eligible(it)) {
                 it.hurt(FlameDamage.source(it,"tesla_arc",sentry),TeslaClock.DAMAGE)
                 if(it.isAlive) {
-                    it.addEffect(MobEffectInstance(ModEffects.STUN.get(),TeslaClock.STUN_TICKS,0,false,true,true))
+                    it.addEffect(MobEffectInstance(ModEffects.STUN,TeslaClock.STUN_TICKS,0,false,true,true))
                     // The brief EMS interruption stops movement at once; it never ignites ground.
                     it.deltaMovement=Vec3.ZERO
                 }

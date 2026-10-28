@@ -1,6 +1,6 @@
 package com.example.sbwhelldiver.config
 
-import net.minecraftforge.common.ForgeConfigSpec
+import net.neoforged.neoforge.common.ModConfigSpec
 import kotlin.math.roundToInt
 
 /** Native StratagemSettings base values, with Synthetic Supplementation and Morale Augmentation. */
@@ -27,11 +27,11 @@ object StratagemCooldownConfig {
         "eagle_airstrike" to 15.0, "eagle_strafing_run" to 15.0,
         "eagle_cluster_bomb" to 15.0, "eagle_110mm_rocket_pods" to 15.0, "eagle_500kg_bomb" to 15.0, "eagle_smoke_strike" to 15.0, "eagle_gas_strike" to 15.0, "eagle_napalm_airstrike" to 15.0,
     )
-    internal val cooldowns = linkedMapOf<String, ForgeConfigSpec.DoubleValue>()
-    internal val uses = linkedMapOf<String, ForgeConfigSpec.IntValue>()
-    internal lateinit var autoRearm: ForgeConfigSpec.DoubleValue
-    internal lateinit var manualRearm: ForgeConfigSpec.DoubleValue
-    fun register(builder: ForgeConfigSpec.Builder) {
+    internal val cooldowns = linkedMapOf<String, ModConfigSpec.DoubleValue>()
+    internal val uses = linkedMapOf<String, ModConfigSpec.IntValue>()
+    internal lateinit var autoRearm: ModConfigSpec.DoubleValue
+    internal lateinit var manualRearm: ModConfigSpec.DoubleValue
+    fun register(builder: ModConfigSpec.Builder) {
         builder.comment("战备冷却（秒），默认采用满舰船升级。Cooldowns in seconds, fully upgraded defaults.").push("stratagems")
         for ((id, base) in baseSeconds) {
             builder.push(id)

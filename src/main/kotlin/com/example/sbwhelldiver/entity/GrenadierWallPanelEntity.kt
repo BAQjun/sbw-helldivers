@@ -13,7 +13,6 @@ import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.AABB
-import net.minecraftforge.network.NetworkHooks
 import kotlin.math.*
 
 /** Three broad wall sections: tall centre and two lower wings. */
@@ -24,7 +23,7 @@ class GrenadierWallPanelEntity(type: EntityType<*>,level: Level): Entity(type,le
         private val INDEX=SynchedEntityData.defineId(GrenadierWallPanelEntity::class.java,EntityDataSerializers.INT)
     }
     val battlement get() = level().getEntity(entityData.get(PARENT)) as? GrenadierBattlementEntity
-    override fun defineSynchedData() {entityData.define(PARENT,-1);entityData.define(INDEX,0)}
+    override fun defineSynchedData(builder: SynchedEntityData.Builder) {builder.define(PARENT,-1);builder.define(INDEX,0)}
     fun bind(parent:GrenadierBattlementEntity,index:Int) {entityData.set(PARENT,parent.id);entityData.set(INDEX,index);syncBounds(parent)}
     private fun syncBounds(parent:GrenadierBattlementEntity) {
         val index=entityData.get(INDEX)
@@ -60,5 +59,5 @@ class GrenadierWallPanelEntity(type: EntityType<*>,level: Level): Entity(type,le
     override fun interact(player:Player,hand:InteractionHand):InteractionResult = battlement?.interact(player,hand) ?: InteractionResult.PASS
     override fun readAdditionalSaveData(tag:CompoundTag) {}
     override fun addAdditionalSaveData(tag:CompoundTag) {}
-    override fun getAddEntityPacket():Packet<ClientGamePacketListener> = NetworkHooks.getEntitySpawningPacket(this)
+
 }

@@ -18,7 +18,8 @@ import static org.lwjgl.opengl.GL33C.*;
  * charge envelopes and hit normals come from the same code as vanilla rendering.
  * Only material submission changes: no pack can replace these GL programs. */
 final class EnergyEffectGeometry implements MultiBufferSource {
-    private final BufferBuilder builder=new BufferBuilder(262144);
+    private final ByteBufferBuilder storage=new ByteBufferBuilder(262144);
+    private BufferBuilder builder;
     private int program,vao,vbo,indices,indexCapacity;
     private final String fragment;
     private boolean building;
@@ -32,7 +33,7 @@ final class EnergyEffectGeometry implements MultiBufferSource {
     static String diagnostics(){return "energyShield="+shieldFrames+" energyTesla="+teslaFrames;}
     static void release(){shield.close();arc.close();plasma.close();}
     private void close(){
-        if(building){builder.end().release();building=false;}
+        if(building){builder.buildOrThrow().close();building=false;}
         if(program!=0)glDeleteProgram(program);if(vao!=0)glDeleteVertexArrays(vao);
         if(vbo!=0)glDeleteBuffers(vbo);if(indices!=0)glDeleteBuffers(indices);
         program=vao=vbo=indices=indexCapacity=0;
@@ -55,20 +56,21 @@ final class EnergyEffectGeometry implements MultiBufferSource {
         } finally {glDeleteShader(vs);if(fs!=0)glDeleteShader(fs);if(candidate!=0)glDeleteProgram(candidate);}
         vao=glGenVertexArrays();vbo=glGenBuffers();indices=glGenBuffers();
         glBindVertexArray(vao);glBindBuffer(GL_ARRAY_BUFFER,vbo);glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,indices);
-        // POSITION_COLOR_TEX: three floats, four normalized bytes, two floats.
+        // POSITION_TEX_COLOR: three position floats, two texture floats, four normalized color bytes.
         glEnableVertexAttribArray(0);glVertexAttribPointer(0,3,GL_FLOAT,false,24,0L);
-        glEnableVertexAttribArray(1);glVertexAttribPointer(1,4,GL_UNSIGNED_BYTE,true,24,12L);
-        glEnableVertexAttribArray(2);glVertexAttribPointer(2,2,GL_FLOAT,false,24,16L);
+        glEnableVertexAttribArray(1);glVertexAttribPointer(1,4,GL_UNSIGNED_BYTE,true,24,20L);
+        glEnableVertexAttribArray(2);glVertexAttribPointer(2,2,GL_FLOAT,false,24,12L);
     }
     @Override public VertexConsumer getBuffer(RenderType ignored){
-        if(!building){builder.begin(VertexFormat.Mode.QUADS,DefaultVertexFormat.POSITION_COLOR_TEX);building=true;}
+        if(!building){builder=new BufferBuilder(storage,VertexFormat.Mode.QUADS,DefaultVertexFormat.POSITION_TEX_COLOR);building=true;}
         return builder;
     }
     private int uniform(String name){return glGetUniformLocation(program,name);}
     private void flush() {
         if(!building)return;
         building=false;
-        var mesh=builder.end();
+        var mesh=builder.build();
+        if(mesh==null)return;
         try {
             int count=mesh.drawState().vertexCount();if(count==0)return;
             glUseProgram(program);glBindVertexArray(vao);glBindBuffer(GL_ARRAY_BUFFER,vbo);
@@ -101,7 +103,7 @@ final class EnergyEffectGeometry implements MultiBufferSource {
             }else glBlendFuncSeparate(GL_ONE,GL_ONE,GL_ZERO,GL_ONE);
             glColorMask(true,true,true,false);
             glDrawElements(GL_TRIANGLES,count/4*6,GL_UNSIGNED_INT,0L);
-        }finally{mesh.release();}
+        }finally{mesh.close();}
     }
     private void prepare(Matrix4f matrix,int w,int h)throws IOException{initialize();viewProjection=matrix;width=w;height=h;}
     static void draw(List<net.minecraft.world.entity.Entity> entities,float partial,Vec3 camera,Matrix4f projection,Matrix3f inverseView,int w,int h)throws IOException {

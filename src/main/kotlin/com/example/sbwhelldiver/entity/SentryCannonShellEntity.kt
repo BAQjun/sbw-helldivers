@@ -3,7 +3,7 @@ package com.example.sbwhelldiver.entity
 import com.atsuishio.superbwarfare.entity.projectile.DestroyableProjectile
 import com.atsuishio.superbwarfare.entity.projectile.SmallCannonShellEntity
 import net.minecraft.server.level.ServerLevel
-import net.minecraft.network.FriendlyByteBuf
+import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.world.entity.projectile.Projectile
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.level.Level
@@ -39,7 +39,7 @@ open class SentryCannonShellEntity(type: EntityType<out SmallCannonShellEntity>,
         super.shoot(x, y, z, velocity, inaccuracy)
     }
 
-    override fun writeSpawnData(buffer: FriendlyByteBuf) {
+    override fun writeSpawnData(buffer: RegistryFriendlyByteBuf) {
         super.writeSpawnData(buffer)
         buffer.writeDouble(deltaMovement.x)
         buffer.writeDouble(deltaMovement.y)
@@ -51,7 +51,7 @@ open class SentryCannonShellEntity(type: EntityType<out SmallCannonShellEntity>,
         buffer.writeInt(owner?.id ?: 0)
     }
 
-    override fun readSpawnData(buffer: FriendlyByteBuf) {
+    override fun readSpawnData(buffer: RegistryFriendlyByteBuf) {
         super.readSpawnData(buffer)
         deltaMovement = Vec3(buffer.readDouble(), buffer.readDouble(), buffer.readDouble())
         setCustomGravity(buffer.readFloat())

@@ -1,8 +1,8 @@
 package com.example.sbwhelldiver.mixin;
 
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraftforge.client.gui.ModListScreen;
-import net.minecraftforge.forgespi.language.IModInfo;
+import net.neoforged.neoforge.client.gui.ModListScreen;
+import net.neoforged.neoforgespi.language.IModInfo;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

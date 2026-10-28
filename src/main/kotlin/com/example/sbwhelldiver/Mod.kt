@@ -8,10 +8,10 @@ import com.example.sbwhelldiver.init.ModSounds
 import com.example.sbwhelldiver.init.ModParticles
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import net.minecraftforge.fml.ModLoadingContext
-import net.minecraftforge.fml.common.Mod
-import net.minecraftforge.fml.config.ModConfig
-import thedarkcolour.kotlinforforge.forge.MOD_BUS
+import net.neoforged.fml.ModLoadingContext
+import net.neoforged.fml.common.Mod
+import net.neoforged.fml.config.ModConfig
+import thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS
 
 /**
  * 模组 id。
@@ -39,11 +39,11 @@ val LOGGER: Logger = LoggerFactory.getLogger(MOD_ID)
  * 全部复用本体，本模组只负责「怎么把它投下来」。
  */
 @Mod(MOD_ID)
-class Mod {
+class Mod(container: net.neoforged.fml.ModContainer) {
 
     init {
         val bus = MOD_BUS
-        com.example.sbwhelldiver.compat.TaczBootstrap.register()
+
         com.example.sbwhelldiver.init.ModBlocks.BLOCKS.register(bus)
         ModItems.ITEMS.register(bus)
         ModEntities.ENTITIES.register(bus)
@@ -53,21 +53,15 @@ class Mod {
         ModCreativeTabs.TABS.register(bus)
         com.example.sbwhelldiver.init.ModMenus.MENUS.register(bus)
         com.example.sbwhelldiver.network.BeaconNetwork.register()
-        // Retire only the removed standalone call; old saves can load without a missing-item prompt.
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener<net.minecraftforge.registries.MissingMappingsEvent> { event ->
-            event.getMappings(net.minecraft.core.registries.Registries.ITEM, MOD_ID)
-                .filter { it.key.path == "supply_hellpod_stratagem" }.forEach { it.ignore() }
-        }
-
         // 服务端配置：索敌规则、空投延迟、埋深、存活时间等。
         // 用 SERVER 类型而不是 COMMON —— 这些参数会同步到客户端，
         // 且必须在客户端与服务端之间保持一致，否则空投落点会两边算得不一样。
-        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, HelldiversConfig.SPEC)
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, com.example.sbwhelldiver.config.ClientModelConfig.SPEC)
-        bus.addListener<net.minecraftforge.fml.event.config.ModConfigEvent.Loading> { event ->
+        container.registerConfig(ModConfig.Type.SERVER, HelldiversConfig.SPEC)
+        container.registerConfig(ModConfig.Type.CLIENT, com.example.sbwhelldiver.config.ClientModelConfig.SPEC)
+        bus.addListener<net.neoforged.fml.event.config.ModConfigEvent.Loading> { event ->
             if (event.config.modId == MOD_ID && event.config.type == ModConfig.Type.SERVER) com.example.sbwhelldiver.config.TurretConfigs.changed()
         }
-        bus.addListener<net.minecraftforge.fml.event.config.ModConfigEvent.Reloading> { event ->
+        bus.addListener<net.neoforged.fml.event.config.ModConfigEvent.Reloading> { event ->
             if (event.config.modId == MOD_ID && event.config.type == ModConfig.Type.SERVER) com.example.sbwhelldiver.config.TurretConfigs.changed()
         }
     }

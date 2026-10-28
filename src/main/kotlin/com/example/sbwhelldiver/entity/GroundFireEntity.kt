@@ -15,7 +15,6 @@ import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.network.NetworkHooks
 import java.util.UUID
 
 /** Lifetime/source tracker for real mod fire blocks. */
@@ -28,8 +27,8 @@ class GroundFireEntity(type: EntityType<out GroundFireEntity>,level: Level) : En
     var heavyBurning = false; private set
     private val terrainCells = hashSetOf<net.minecraft.core.BlockPos>()
     init { noPhysics = true }
-    override fun defineSynchedData() { entityData.define(REMAINING,LIFETIME);entityData.define(AREA_RADIUS,RADIUS.toFloat()) }
-    override fun getAddEntityPacket(): Packet<ClientGamePacketListener> = NetworkHooks.getEntitySpawningPacket(this)
+    override fun defineSynchedData(builder: SynchedEntityData.Builder) { builder.define(REMAINING,LIFETIME);builder.define(AREA_RADIUS,RADIUS.toFloat()) }
+
     override fun addAdditionalSaveData(tag: CompoundTag) {
         tag.putInt("MaximumLifetime",maximumLifetime);tag.putDouble("InnerRadius",innerRadius)
         tag.putBoolean("HeavyBurning",heavyBurning);tag.putLongArray("TerrainCells",terrainCells.map { it.asLong() });tag.putInt("Remaining",remainingTicks);tag.putDouble("Radius",radius); sourceUuid?.let { tag.putUUID("Source",it) }

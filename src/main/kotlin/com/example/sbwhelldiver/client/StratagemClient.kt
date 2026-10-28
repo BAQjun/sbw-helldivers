@@ -14,20 +14,20 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket
 import net.minecraft.world.InteractionHand
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.client.event.InputEvent
-import net.minecraftforge.client.event.MovementInputUpdateEvent
-import net.minecraftforge.client.event.RegisterGuiOverlaysEvent
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent
-import net.minecraftforge.client.settings.IKeyConflictContext
-import net.minecraftforge.client.settings.KeyConflictContext
-import net.minecraftforge.event.TickEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
+import net.neoforged.api.distmarker.Dist
+import net.neoforged.neoforge.client.event.InputEvent
+import net.neoforged.neoforge.client.event.MovementInputUpdateEvent
+import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent
+import net.neoforged.neoforge.client.settings.IKeyConflictContext
+import net.neoforged.neoforge.client.settings.KeyConflictContext
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.fml.common.Mod
 import org.lwjgl.glfw.GLFW
 import java.util.UUID
 
-@Mod.EventBusSubscriber(modid = MOD_ID, value = [Dist.CLIENT])
+@EventBusSubscriber(modid = MOD_ID, value = [Dist.CLIENT])
 object StratagemClient {
     private val onFootContext = object : IKeyConflictContext {
         override fun isActive() = KeyConflictContext.IN_GAME.isActive && Minecraft.getInstance().player?.isPassenger != true
@@ -213,8 +213,7 @@ object StratagemClient {
             event.input.up = false; event.input.down = false; event.input.left = false; event.input.right = false
         }
     }
-    @SubscribeEvent fun tick(event: TickEvent.ClientTickEvent) {
-        if (event.phase != TickEvent.Phase.END) return
+    @SubscribeEvent fun tick(event: net.neoforged.neoforge.client.event.ClientTickEvent.Post) {
         val mc = Minecraft.getInstance()
         if (mc.level !== previousLevel) {
             failures.clear(); failureLoadout = List(4) { "" }; prefix.clear()
@@ -422,12 +421,12 @@ object StratagemClient {
         gui.pose().popPose()
     }
 
-    @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
+    @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
     object Registration {
         @SubscribeEvent fun keys(event: RegisterKeyMappingsEvent) { event.register(ALT) }
-        @SubscribeEvent fun overlay(event: RegisterGuiOverlaysEvent) {
-            event.registerAboveAll("stratagems") { _, gui, partial, _, _ -> hud(gui, partial) }
-            event.registerAboveAll("beacon_call") { _, gui, partial, _, _ -> BeaconCallHud.draw(gui, partial) }
+        @SubscribeEvent fun overlay(event: RegisterGuiLayersEvent) {
+            event.registerAboveAll(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(MOD_ID,"stratagems")) { gui, timer -> hud(gui, timer.getGameTimeDeltaPartialTick(false)) }
+            event.registerAboveAll(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(MOD_ID,"beacon_call")) { gui, timer -> BeaconCallHud.draw(gui, timer.getGameTimeDeltaPartialTick(false)) }
         }
     }
 }

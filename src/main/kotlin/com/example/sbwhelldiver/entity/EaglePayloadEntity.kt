@@ -95,7 +95,7 @@ class Eagle500kgBombEntity(type:EntityType<out SmallCannonShellEntity>,level:Lev
  val embeddedDirection:Vec3 get(){val v=entityData.get(IMPACT_DIRECTION);return Vec3(v.x.toDouble(),v.y.toDouble(),v.z.toDouble())}
  private fun setEmbeddedDirection(v:Vec3){entityData.set(IMPACT_DIRECTION,org.joml.Vector3f(v.x.toFloat(),v.y.toFloat(),v.z.toFloat()))}
  init{setDamage(320f);setExplosionDamage(240f);setExplosionRadius(25f);setCustomGravity(EagleFlight.BOMB_GRAVITY.toFloat())}
- override fun defineSynchedData(){super.defineSynchedData();entityData.define(EMBEDDED,false);entityData.define(IMPACT_DIRECTION,org.joml.Vector3f(0f,-1f,0f))}
+ override fun defineSynchedData(builder: SynchedEntityData.Builder){super.defineSynchedData(builder);builder.define(EMBEDDED,false);builder.define(IMPACT_DIRECTION,org.joml.Vector3f(0f,-1f,0f))}
  private fun embed(at:Vec3,hit:net.minecraft.world.entity.Entity?=null){
   if(embedded||level().isClientSide)return
   setEmbeddedDirection(if(deltaMovement.lengthSqr()>1e-8)deltaMovement.normalize() else Vec3.directionFromRotation(xRot,yRot))
@@ -111,7 +111,7 @@ class Eagle500kgBombEntity(type:EntityType<out SmallCannonShellEntity>,level:Lev
  override fun onHitEntity(r:EntityHitResult){if(!embedded)super.onHitEntity(r)}
  override fun onHitBlock(r:BlockHitResult){if(!embedded)super.onHitBlock(r)}
  override fun afterHitEntity(r:EntityHitResult){
-  val hit=r.entity.let{if(it is net.minecraftforge.entity.PartEntity<*>)it.parent else it}
+  val hit=r.entity.let{if(it is net.neoforged.neoforge.entity.PartEntity<*>)it.parent else it}
   embed(r.location,hit)
  }
  override fun afterHitBlock(r:BlockHitResult)=embed(r.location)

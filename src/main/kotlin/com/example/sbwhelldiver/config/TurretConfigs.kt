@@ -4,18 +4,18 @@ import com.atsuishio.superbwarfare.data.gun.GunData
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import net.minecraft.world.entity.EntityType
-import net.minecraftforge.common.ForgeConfigSpec
-import net.minecraftforge.registries.ForgeRegistries
+import net.neoforged.neoforge.common.ModConfigSpec
+import net.minecraft.core.registries.BuiltInRegistries
 
 /** One server-config section per turret. Geometry and animation data stay independent. */
-class TurretConfig(private val builder: ForgeConfigSpec.Builder, val id: String, vehicle: JsonObject, profile: JsonObject) {
+class TurretConfig(private val builder: ModConfigSpec.Builder, val id: String, vehicle: JsonObject, profile: JsonObject) {
     private val manual = id in setOf("hmg_emplacement", "anti_tank_emplacement", "grenadier_battlement")
     private val energy = id in setOf("laser_sentry", "tesla_tower")
     private val weapon = vehicle.getAsJsonObject("Weapons")?.getAsJsonObject("Main") ?: JsonObject()
     private fun number(key: String, fallback: Double = 0.0) = weapon[key]?.asDouble ?: fallback
-    private fun real(name: String, value: Double, min: Double = 0.0, max: Double = 100000.0, comment: String): ForgeConfigSpec.DoubleValue =
+    private fun real(name: String, value: Double, min: Double = 0.0, max: Double = 100000.0, comment: String): ModConfigSpec.DoubleValue =
         builder.comment(comment).defineInRange(name, value, min, max)
-    private fun integer(name: String, value: Int, min: Int = 0, max: Int = 100000, comment: String): ForgeConfigSpec.IntValue =
+    private fun integer(name: String, value: Int, min: Int = 0, max: Int = 100000, comment: String): ModConfigSpec.IntValue =
         builder.comment(comment).defineInRange(name, value, min, max)
 
     val maxHealth = real("maxHealth", vehicle["MaxHealth"].asDouble, 1.0, comment = "本体最大生命值。已部署炮台不会因提高上限而自动回血。 / Maximum hull health; raising it does not heal existing turrets.")
@@ -93,7 +93,7 @@ object TurretConfigs {
         private set
     private fun json(path: String): JsonObject = requireNotNull(javaClass.classLoader.getResourceAsStream(path))
         .bufferedReader(Charsets.UTF_8).use { JsonParser.parseReader(it).asJsonObject }
-    fun register(builder: ForgeConfigSpec.Builder) {
+    fun register(builder: ModConfigSpec.Builder) {
         val profiles = json("assets/sbw_helldiver/helldivers/profiles.json")
         val ids = listOf("machine_gun_sentry", "gatling_sentry", "rocket_sentry", "autocannon_sentry", "mortar_sentry",
             "gas_mortar_sentry", "ems_mortar_sentry", "flame_sentry", "laser_sentry", "tesla_tower",
@@ -109,6 +109,6 @@ object TurretConfigs {
     }
     fun changed() { revision++ }
     fun get(id: String) = entries.getValue(id)
-    fun forType(type: EntityType<*>): TurretConfig? = ForgeRegistries.ENTITY_TYPES.getKey(type)
+    fun forType(type: EntityType<*>): TurretConfig? = BuiltInRegistries.ENTITY_TYPE.getKey(type)
         ?.takeIf { it.namespace == "sbw_helldiver" }?.path?.let(entries::get)
 }

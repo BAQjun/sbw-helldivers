@@ -1,10 +1,10 @@
 package com.example.sbwhelldiver.config
 
-import net.minecraftforge.common.ForgeConfigSpec
+import net.neoforged.neoforge.common.ModConfigSpec
 
 /** SERVER values are synchronized; per-world serverconfig files override defaults. */
 object HelldiversConfig {
-    private val builder = ForgeConfigSpec.Builder()
+    private val builder = ModConfigSpec.Builder()
     val dropDelayTicks = builder.comment("信标显示的呼叫倒计时，实际撞地在归零后 20 tick（1 秒）；20 tick = 1 秒。",
         "空投仓出现后固定下落 95 tick（4.75 秒）；默认仍显示四秒倒计时，归零后一秒撞地。")
         .defineInRange("dropDelayTicks", 80, 0, 1200)
@@ -46,7 +46,7 @@ object HelldiversConfig {
     val attackNeutralMobs = builder.comment("是否攻击其他 Mob。默认只攻击 Enemy；始终排除已驯服宠物。")
         .define("attackNeutralMobs", false)
     init { TurretConfigs.register(builder); StratagemCooldownConfig.register(builder); EagleConfig.register(builder); OrbitalConfig.register(builder) }
-    val SPEC: ForgeConfigSpec = builder.build()
+    val SPEC: ModConfigSpec = builder.build()
 
     fun effectiveSentryLifetimeTicks(): Int = sentryLifetimeTicks.get().let { if (it == 12000) 3000 else it }
 

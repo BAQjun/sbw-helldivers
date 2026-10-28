@@ -19,7 +19,6 @@ import net.minecraft.world.entity.projectile.Projectile
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.network.NetworkHooks
 import java.util.UUID
 import com.atsuishio.superbwarfare.tools.forceHurt
 
@@ -53,7 +52,7 @@ class AntiPersonnelMineEntity(type: EntityType<AntiPersonnelMineEntity>,level: L
         if(level().getBlockState(supportPos).isCollisionShapeFullBlock(level(),supportPos))return true
         return level().getBlockCollisions(this,boundingBox.move(0.0,-.04,0.0)).iterator().hasNext()
     }
-    override fun defineSynchedData() { entityData.define(SETTLED,false);entityData.define(ARMED,false) }
+    override fun defineSynchedData(builder: SynchedEntityData.Builder) { builder.define(SETTLED,false);builder.define(ARMED,false) }
     fun launch(at: Vec3,velocity: Vec3,owner: UUID?,dispenser: UUID?) {
         ownerId=owner;dispenserId=dispenser;setPos(at);deltaMovement=velocity;yRot=random.nextFloat()*360f
     }
@@ -117,8 +116,8 @@ class AntiPersonnelMineEntity(type: EntityType<AntiPersonnelMineEntity>,level: L
     // Keep its physical hitbox unchanged and explicitly cover the whole minefield.
     override fun shouldRenderAtSqrDistance(distance: Double)=distance<RENDER_DISTANCE*RENDER_DISTANCE
     override fun isPushedByFluid()=false
-    override fun lerpTo(x: Double,y: Double,z: Double,yaw: Float,pitch: Float,steps: Int,teleport: Boolean) {
-        lerpPosition=Vec3(x,y,z);lerpYaw=yaw;lerpSteps=if(teleport)1 else steps.coerceAtLeast(1)
+    override fun lerpTo(x: Double,y: Double,z: Double,yaw: Float,pitch: Float,steps: Int) {
+        lerpPosition=Vec3(x,y,z);lerpYaw=yaw;lerpSteps=steps.coerceAtLeast(1)
     }
     private fun play(name: String) { ModSounds.EVENTS[name]?.get()?.let { level().playSound(null,x,y,z,it,SoundSource.BLOCKS,1f,1f) } }
     fun detonate() {
@@ -133,7 +132,8 @@ class AntiPersonnelMineEntity(type: EntityType<AntiPersonnelMineEntity>,level: L
         val world=level() as? ServerLevel ?: return
         val at=position().add(0.0,.1,0.0);val owner=ownerId?.let(world::getEntity) as? LivingEntity
         val source=world.damageSources().explosion(this,owner);discard()
-        val victims=if(kind.blastDamage>0)world.getEntities(this,AABB(at,at).inflate(kind.blastRadius)) { !it.isRemoved && !it.ignoreExplosion() } else emptyList()
+        val blast=net.minecraft.world.level.Explosion(world,this,at.x,at.y,at.z,kind.blastRadius.toFloat(),false,net.minecraft.world.level.Explosion.BlockInteraction.KEEP)
+        val victims=if(kind.blastDamage>0)world.getEntities(this,AABB(at,at).inflate(kind.blastRadius)) { !it.isRemoved && !it.ignoreExplosion(blast) } else emptyList()
         for(target in victims) {
             val damage=SentryExplosion.damageAt(SentryExplosion.distanceToBody(at,target.boundingBox),kind.blastDamage,kind.innerRadius,kind.blastRadius)
             if(damage<=0)continue
@@ -159,7 +159,7 @@ class AntiPersonnelMineEntity(type: EntityType<AntiPersonnelMineEntity>,level: L
         play("sfx_ap_mine_trigger_1")
         play(when(kind) { Kind.GAS -> "sfx_gas_mine_release"; Kind.INCENDIARY -> "sfx_incendiary_mine_explosion"; else -> "sfx_ap_mine_explosion_1" })
     }
-    override fun getAddEntityPacket(): Packet<ClientGamePacketListener> = NetworkHooks.getEntitySpawningPacket(this)
+
     override fun addAdditionalSaveData(tag: CompoundTag) {
         ownerId?.let { tag.putUUID("MineOwner",it) };dispenserId?.let { tag.putUUID("MineDispenser",it) }
         tag.putLong("MineChainDue",chainDue)

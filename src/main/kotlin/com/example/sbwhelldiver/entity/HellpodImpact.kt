@@ -13,7 +13,7 @@ import net.minecraft.world.phys.AABB
 object HellpodImpact {
     const val DAMAGE=400f
     const val HULL_RADIUS=1.325
-    private val TYPE=ResourceKey.create(Registries.DAMAGE_TYPE,ResourceLocation(MOD_ID,"hellpod_impact"))
+    private val TYPE=ResourceKey.create(Registries.DAMAGE_TYPE,ResourceLocation.fromNamespaceAndPath(MOD_ID,"hellpod_impact"))
     fun apply(pod:AbstractHellpodEntity,surfaceY:Double) {
         val world=pod.level() as? ServerLevel?:return
         val source=DamageSource(world.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(TYPE),pod)

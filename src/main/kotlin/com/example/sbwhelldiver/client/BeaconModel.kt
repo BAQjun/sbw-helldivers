@@ -14,8 +14,8 @@ import org.joml.Vector3f
 
 /** Cached triangle poses preserve the extracted mesh and articulated hinge motion. */
 object BeaconModel : ResourceManagerReloadListener {
-    val TEXTURE = ResourceLocation(MOD_ID, "textures/mesh/stratagem_beacon.png")
-    val WHITE = ResourceLocation(MOD_ID, "textures/mesh/white.png")
+    val TEXTURE = ResourceLocation.fromNamespaceAndPath(MOD_ID, "textures/mesh/stratagem_beacon.png")
+    val WHITE = ResourceLocation.fromNamespaceAndPath(MOD_ID, "textures/mesh/white.png")
     private data class Triangle(val positions: Array<Vector3f>, val uv: Array<FloatArray>, val normal: Vector3f, val glow: Boolean)
     private var closed = emptyList<Triangle>()
     private var deploy = emptyList<List<Triangle>>()
@@ -24,7 +24,7 @@ object BeaconModel : ResourceManagerReloadListener {
         private set
 
     override fun onResourceManagerReload(resources: ResourceManager) {
-        val json = resources.openAsReader(ResourceLocation(MOD_ID, "models/mesh/stratagem_beacon.mesh.json")).use { JsonParser.parseReader(it).asJsonObject }
+        val json = resources.openAsReader(ResourceLocation.fromNamespaceAndPath(MOD_ID, "models/mesh/stratagem_beacon.mesh.json")).use { JsonParser.parseReader(it).asJsonObject }
         val vertices = json.getAsJsonArray("vertices").map { a -> a.asJsonArray.let { Vector3f(it[0].asFloat / 16, it[1].asFloat / 16, it[2].asFloat / 16) } }
         val joints = json.getAsJsonArray("joint").map { it.asInt }
         val uv = json.getAsJsonArray("uv").map { a -> a.asJsonArray.let { floatArrayOf(it[0].asFloat / 256, it[1].asFloat / 128) } }

@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation
 
 /** Compact 40 mm projectile; do not stretch it into the cannon's tracer streak. */
 class GrenadierGrenadeRenderer(context:EntityRendererProvider.Context):EntityRenderer<SmallCannonShellEntity>(context) {
-    private val texture=ResourceLocation("superbwarfare","textures/bedrock/projectile/small_cannon_shell.png")
+    private val texture=ResourceLocation.fromNamespaceAndPath("superbwarfare","textures/bedrock/projectile/small_cannon_shell.png")
     override fun getTextureLocation(entity:SmallCannonShellEntity)=texture
     override fun render(entity:SmallCannonShellEntity,yaw:Float,partial:Float,pose:PoseStack,buffers:MultiBufferSource,light:Int) {
         val model=entity.modelInstance ?: return

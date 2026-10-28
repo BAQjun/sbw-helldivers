@@ -28,11 +28,11 @@ class AntiPersonnelMineRenderer(context: EntityRendererProvider.Context): Entity
         val texture=getTextureLocation(entity)
         pose.pushPose();pose.mulPose(Axis.YP.rotationDegrees(180f-Mth.rotLerp(partial,entity.yRotO,entity.yRot)));pose.scale(.62f,.62f,.62f)
         mesh.render(pose,buffers.getBuffer(RenderType.entityCutoutNoCull(texture)),light,true)
-        MinefieldClientScene.renderedMine(entity)
+
         pose.popPose();super.render(entity,yaw,partial,pose,buffers,light)
     }
     object Model: ResourceManagerReloadListener {
-        val textures=AntiPersonnelMineEntity.Kind.entries.associateWith{kind->ResourceLocation(MOD_ID,"textures/bedrock/misc/"+when(kind){AntiPersonnelMineEntity.Kind.PERSONNEL->"contact_mine";AntiPersonnelMineEntity.Kind.INCENDIARY->"incendiary_mine";AntiPersonnelMineEntity.Kind.GAS->"gas_mine";else->"anti_tank_mine"}+".png")}
+        val textures=AntiPersonnelMineEntity.Kind.entries.associateWith{kind->ResourceLocation.fromNamespaceAndPath(MOD_ID,"textures/bedrock/misc/"+when(kind){AntiPersonnelMineEntity.Kind.PERSONNEL->"contact_mine";AntiPersonnelMineEntity.Kind.INCENDIARY->"incendiary_mine";AntiPersonnelMineEntity.Kind.GAS->"gas_mine";else->"anti_tank_mine"}+".png")}
         val meshes=mutableMapOf<Triple<AntiPersonnelMineEntity.Kind,Int,Boolean>,CachedMineMesh>()
         val instances=mutableMapOf<AntiPersonnelMineEntity.Kind,BakedModelInstance>()
         val lods=mutableMapOf<Pair<Int,AntiPersonnelMineEntity.Kind>,BakedModelInstance>()
@@ -43,7 +43,7 @@ class AntiPersonnelMineRenderer(context: EntityRendererProvider.Context): Entity
                     for(tier in 0..2){
                         val suffix=if(tier==0)"" else "_lod$tier"
                         val options=BakerOptions.ofAnimatedBones((1..4).map{"trigger_rod_$it"}.toSet())
-                        val model=resources.openAsReader(ResourceLocation(MOD_ID,"models/bedrock/misc/$name$suffix.geo.json")).use{
+                        val model=resources.openAsReader(ResourceLocation.fromNamespaceAndPath(MOD_ID,"models/bedrock/misc/$name$suffix.geo.json")).use{
                             BakedModelInstance(BedrockModelBaker.bake(GsonUtil.CLIENT_GSON.fromJson(it,BedrockModelPOJO::class.java),options))
                         }
                         if(tier==0)instances[kind]=model else lods[tier to kind]=model
@@ -58,7 +58,7 @@ class AntiPersonnelMineRenderer(context: EntityRendererProvider.Context): Entity
     }
 
     companion object {
-        val GEOMETRY=ResourceLocation(MOD_ID,"models/bedrock/misc/contact_mine.geo.json")
-        val TEXTURE=ResourceLocation(MOD_ID,"textures/bedrock/misc/contact_mine.png")
+        val GEOMETRY=ResourceLocation.fromNamespaceAndPath(MOD_ID,"models/bedrock/misc/contact_mine.geo.json")
+        val TEXTURE=ResourceLocation.fromNamespaceAndPath(MOD_ID,"textures/bedrock/misc/contact_mine.png")
     }
 }

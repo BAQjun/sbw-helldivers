@@ -2,7 +2,7 @@ package com.example.sbwhelldiver.entity
 import com.example.sbwhelldiver.init.ModEntities
 import com.example.sbwhelldiver.init.ModSounds
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.network.FriendlyByteBuf
+import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientGamePacketListener
 import net.minecraft.server.level.ServerLevel
@@ -14,13 +14,12 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.levelgen.Heightmap
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.entity.IEntityAdditionalSpawnData
-import net.minecraftforge.network.NetworkHooks
+import net.neoforged.neoforge.entity.IEntityWithComplexSpawn
 import java.util.UUID
 
 /** The replicated carrier stays at the strike anchor so Minecraft never suspends its attack clock.
  * Model, moving audio and real ordnance use the same world-space flight curve, independently of carrier position. */
-class EagleEntity(type:EntityType<*>,level:Level):Entity(type,level),IEntityAdditionalSpawnData {
+class EagleEntity(type:EntityType<*>,level:Level):Entity(type,level),IEntityWithComplexSpawn {
  var target=Vec3.ZERO;private set
  var runDirection=Vec3(0.0,0.0,1.0);private set
  var attack=EagleAttack.AIRSTRIKE;private set
@@ -77,7 +76,7 @@ class EagleEntity(type:EntityType<*>,level:Level):Entity(type,level),IEntityAddi
  private fun updateFlight(t:Double) {
   setPos(target);yRot=Math.toDegrees(kotlin.math.atan2(-runDirection.x,runDirection.z)).toFloat();xRot=EagleFlight.pitch(t,attack,flightHeight)
  }
- override fun defineSynchedData() {}
+ override fun defineSynchedData(builder: net.minecraft.network.syncher.SynchedEntityData.Builder) {}
  override fun tick() {
   super.tick();updateFlight(age)
   if(level().isClientSide)return
@@ -176,10 +175,10 @@ class EagleEntity(type:EntityType<*>,level:Level):Entity(type,level),IEntityAddi
  }
  override fun remove(reason:RemovalReason) {if(java.lang.Boolean.getBoolean("sbw_helldiver.eagleSmokeTest"))com.example.sbwhelldiver.LOGGER.info("EAGLE_REMOVE reason={} age={} fired={} at={}",reason,age,fired,position());val s=level() as? ServerLevel;if(s!=null)for(c in heldChunks)s.chunkSource.removeRegionTicket(TICKET,c,2,id,true);heldChunks.clear();super.remove(reason)}
  override fun shouldRenderAtSqrDistance(distance:Double)=distance<1024.0*1024.0
- override fun getAddEntityPacket():Packet<ClientGamePacketListener> =NetworkHooks.getEntitySpawningPacket(this)
- override fun writeSpawnData(b:FriendlyByteBuf){b.writeDouble(target.x);b.writeDouble(target.y);b.writeDouble(target.z);b.writeDouble(runDirection.x);b.writeDouble(runDirection.z);b.writeEnum(attack);b.writeLong(startedAt);b.writeDouble(flightHeight)}
- override fun readSpawnData(b:FriendlyByteBuf){target=Vec3(b.readDouble(),b.readDouble(),b.readDouble());runDirection=Vec3(b.readDouble(),0.0,b.readDouble());attack=b.readEnum(EagleAttack::class.java);startedAt=b.readLong();flightHeight=b.readDouble();updateFlight(age);xo=x;yo=y;zo=z;xOld=x;yOld=y;zOld=z}
- override fun lerpTo(x:Double,y:Double,z:Double,yaw:Float,pitch:Float,steps:Int,teleport:Boolean) { /* Same clock and path on both sides; vanilla lerp would lag behind the firing position. */ }
+
+ override fun writeSpawnData(b:RegistryFriendlyByteBuf){b.writeDouble(target.x);b.writeDouble(target.y);b.writeDouble(target.z);b.writeDouble(runDirection.x);b.writeDouble(runDirection.z);b.writeEnum(attack);b.writeLong(startedAt);b.writeDouble(flightHeight)}
+ override fun readSpawnData(b:RegistryFriendlyByteBuf){target=Vec3(b.readDouble(),b.readDouble(),b.readDouble());runDirection=Vec3(b.readDouble(),0.0,b.readDouble());attack=b.readEnum(EagleAttack::class.java);startedAt=b.readLong();flightHeight=b.readDouble();updateFlight(age);xo=x;yo=y;zo=z;xOld=x;yOld=y;zOld=z}
+ override fun lerpTo(x:Double,y:Double,z:Double,yaw:Float,pitch:Float,steps:Int) { /* Same clock and path on both sides; vanilla lerp would lag behind the firing position. */ }
  override fun readAdditionalSaveData(n:CompoundTag){target=Vec3(n.getDouble("TargetX"),n.getDouble("TargetY"),n.getDouble("TargetZ"));runDirection=Vec3(n.getDouble("ForwardX"),0.0,n.getDouble("ForwardZ"));attack=if(n.contains("Attack"))EagleAttack.fromId(n.getString("Attack")) else EagleAttack.legacy(n.getBoolean("Airstrike"));startedAt=n.getLong("StartedAt");flightHeight=n.getDouble("Height");fired=n.getInt("Fired");flybyPlayed=n.getBoolean("FlybyPlayed");gunPlayed=n.getBoolean("GunPlayed");ownerUuid=if(n.hasUUID("Owner"))n.getUUID("Owner") else null
   rocketAim=if(n.contains("RocketAimX"))Vec3(n.getDouble("RocketAimX"),n.getDouble("RocketAimY"),n.getDouble("RocketAimZ")) else null
   activeOrdnance.clear();awaitingOrdnance.clear();awaitingChunks.clear();legacyPayloadTracking=n.getBoolean("LegacyPayloadTracking")||!n.contains("ActiveOrdnance")

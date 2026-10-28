@@ -16,7 +16,7 @@ import net.minecraft.server.packs.resources.ResourceManagerReloadListener
 import org.joml.Vector3f
 
 class EagleRenderer(context:EntityRendererProvider.Context):EntityRenderer<EagleEntity>(context) {
- private val aircraftBuffers=MultiBufferSource.immediate(com.mojang.blaze3d.vertex.BufferBuilder(262144))
+ private val aircraftBuffers=MultiBufferSource.immediate(com.mojang.blaze3d.vertex.ByteBufferBuilder(262144))
  override fun shouldRender(e:EagleEntity,f:net.minecraft.client.renderer.culling.Frustum,x:Double,y:Double,z:Double):Boolean {
   val p=e.positionAt(e.age);return e.age<EagleFlight.end(e.attack)&&f.isVisible(net.minecraft.world.phys.AABB(p.x-10,p.y-9,p.z-10,p.x+10,p.y+9,p.z+10))
  }
@@ -61,11 +61,11 @@ class EagleRenderer(context:EntityRendererProvider.Context):EntityRenderer<Eagle
  }
  object Model:ResourceManagerReloadListener {
   data class Tri(val p:Array<Vector3f>,val uv:Array<FloatArray>,val n:Vector3f)
-  val textures=List(4){ResourceLocation(MOD_ID,"textures/mesh/eagle_$it.png")}
+  val textures=List(4){ResourceLocation.fromNamespaceAndPath(MOD_ID,"textures/mesh/eagle_$it.png")}
   var parts=List(4){emptyList<Tri>()};private set
   override fun onResourceManagerReload(r:ResourceManager) {
    val lists=List(4){mutableListOf<Tri>()}
-   r.openAsReader(ResourceLocation(MOD_ID,"models/mesh/eagle.mesh.json")).use {reader ->
+   r.openAsReader(ResourceLocation.fromNamespaceAndPath(MOD_ID,"models/mesh/eagle.mesh.json")).use {reader ->
     JsonParser.parseReader(reader).asJsonObject.getAsJsonArray("triangles").forEach {row ->
      val a=row.asJsonArray;val vv=a[1].asJsonArray.map {it.asJsonArray};val pp=vv.map {Vector3f(it[0].asFloat,it[1].asFloat,it[2].asFloat)}.toTypedArray();val n=Vector3f(pp[1]).sub(pp[0]).cross(Vector3f(pp[2]).sub(pp[0]))
      if(n.lengthSquared()>1e-15f){n.normalize();lists[a[0].asInt].add(Tri(pp,vv.map {floatArrayOf(it[3].asFloat,it[4].asFloat)}.toTypedArray(),n))}

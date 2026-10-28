@@ -200,12 +200,7 @@ object TeslaTowerClient {
                     .color(1f,1f,1f,strength.toFloat()).uv(uv[i].first,uv[i].second).endVertex() }
             }
         }
-        if(TeslaClientSmokeTest.enabled) TeslaClientSmokeTest.rendered(
-            charging,
-            discharging,
-            s.attack)
     }
 
     fun clear(){states.clear()}
 }
-

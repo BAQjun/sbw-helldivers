@@ -40,7 +40,7 @@ public final class LaserEffectGeometry {
         }
         int active=glGetInteger(GL_ACTIVE_TEXTURE);glActiveTexture(GL_TEXTURE1);int previous=glGetInteger(GL_TEXTURE_BINDING_2D);
         try{
-            int texture=Minecraft.getInstance().getTextureManager().getTexture(new ResourceLocation("sbw_helldiver","textures/bedrock/vehicle/laser_hellpod_v1.png")).getId();
+            int texture=Minecraft.getInstance().getTextureManager().getTexture(ResourceLocation.fromNamespaceAndPath("sbw_helldiver","textures/bedrock/vehicle/laser_hellpod_v1.png")).getId();
             glBindTexture(GL_TEXTURE_2D,texture);glBlendFuncSeparate(GL_ONE,GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA);glDrawArrays(GL_TRIANGLES,0,vertices);frames++;
         }finally{glBindTexture(GL_TEXTURE_2D,previous);glActiveTexture(active);}
     }

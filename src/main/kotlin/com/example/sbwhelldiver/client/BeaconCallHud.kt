@@ -13,10 +13,11 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.client.event.RenderLevelStageEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
+import net.neoforged.api.distmarker.Dist
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.fml.common.Mod
 import org.joml.Quaternionf
 import org.joml.Matrix4f
 import org.joml.Vector4f
@@ -26,7 +27,7 @@ import kotlin.math.max
 import kotlin.math.roundToInt
 
 /** Screen-space label at the beam's intersection with the crosshair's horizontal row. */
-@Mod.EventBusSubscriber(modid = MOD_ID, value = [Dist.CLIENT])
+@EventBusSubscriber(modid = MOD_ID, value = [Dist.CLIENT])
 object BeaconCallHud : ResourceManagerReloadListener {
     const val ICON_SIZE = 12
     const val AIM_MARGIN = 32
@@ -54,7 +55,7 @@ object BeaconCallHud : ResourceManagerReloadListener {
                         val lit = max(max(pixel and 255, (pixel ushr 8) and 255), (pixel ushr 16) and 255) >= 80
                         mask.setPixelRGBA(x, y, if (lit) (alpha shl 24) or 0xDADADA else 0)
                     }
-                    val location = ResourceLocation(MOD_ID, "dynamic/call_icon/${def.id}")
+                    val location = ResourceLocation.fromNamespaceAndPath(MOD_ID, "dynamic/call_icon/${def.id}")
                     mc.textureManager.register(location, DynamicTexture(mask))
                     whiteIcons[def.id] = location
                     monochromeIconCount++

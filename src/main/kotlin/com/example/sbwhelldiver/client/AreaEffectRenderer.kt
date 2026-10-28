@@ -17,7 +17,7 @@ import kotlin.math.*
 
 /** Clients animate bounded geometry locally; authoritative area damage remains server-owned. */
 abstract class AreaEffectRenderer<T:Entity>(context:EntityRendererProvider.Context):EntityRenderer<T>(context) {
-    override fun getTextureLocation(entity:T)=ResourceLocation(MOD_ID,"textures/particle/gas_cloud.png")
+    override fun getTextureLocation(entity:T)=ResourceLocation.fromNamespaceAndPath(MOD_ID,"textures/particle/gas_cloud.png")
     protected abstract fun radius(entity:T):Double
     override fun shouldRender(entity:T,frustum:Frustum,x:Double,y:Double,z:Double):Boolean =
         entity.shouldRenderAtSqrDistance(entity.distanceToSqr(x,y,z)) && frustum.isVisible(AABB(entity.x-radius(entity),entity.y,entity.z-radius(entity),entity.x+radius(entity),entity.y+4,entity.z+radius(entity)))

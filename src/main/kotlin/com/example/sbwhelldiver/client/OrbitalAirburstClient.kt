@@ -4,28 +4,27 @@ import com.example.sbwhelldiver.MOD_ID
 import com.example.sbwhelldiver.entity.StratagemMarker
 import com.example.sbwhelldiver.entity.OrbitalAirburstBombletEntity
 import com.example.sbwhelldiver.init.ModSounds
-import com.mojang.blaze3d.vertex.BufferBuilder
+import com.mojang.blaze3d.vertex.ByteBufferBuilder
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.fml.common.Mod
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.event.TickEvent
-import net.minecraftforge.client.event.RenderLevelStageEvent
+import net.neoforged.api.distmarker.Dist
+import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.fml.common.Mod
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import java.util.WeakHashMap
 import kotlin.math.*
 
 /** Far flight is visual only; all impacts and splitting belong to real server projectiles. */
-@Mod.EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
+@EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
 object OrbitalAirburstClient {
- private val buffers=MultiBufferSource.immediate(BufferBuilder(4096))
+ private val buffers=MultiBufferSource.immediate(ByteBufferBuilder(4096))
  private val heard=WeakHashMap<StratagemMarker,Int>()
  private var level:net.minecraft.client.multiplayer.ClientLevel?=null
- @SubscribeEvent fun tick(e:TickEvent.ClientTickEvent){
-  if(e.phase!=TickEvent.Phase.END)return
+ @SubscribeEvent fun tick(e:net.neoforged.neoforge.client.event.ClientTickEvent.Post){
   val mc=Minecraft.getInstance()
   if(mc.level!==level){heard.clear();level=mc.level}
   val world=mc.level?:return
@@ -62,7 +61,7 @@ object OrbitalAirburstClient {
   for(marker in world.entitiesForRendering().filterIsInstance<StratagemMarker>()){
    if(!marker.isOrbitalAirburst||marker.orbitalFiredAt<0)continue
    val source=marker.orbitalOrigin?:continue;val s=marker.airburstSettings;val target=marker.airburstPoint()
-   val age=world.gameTime-marker.orbitalFiredAt+e.partialTick.toDouble()
+   val age=world.gameTime-marker.orbitalFiredAt+e.partialTick.getGameTimeDeltaPartialTick(false).toDouble()
    for(i in 0 until s.rounds){
     val t=(age-s.shotTime(i))/s.flightTicks
     if(t !in 0.0..1.0)continue
@@ -71,7 +70,7 @@ object OrbitalAirburstClient {
   }
   for(child in world.entitiesForRendering().filterIsInstance<OrbitalAirburstBombletEntity>()){
    if(child.tickCount<1)continue
-   val head=Vec3(child.xo,child.yo,child.zo).lerp(child.position(),e.partialTick.toDouble())
+   val head=Vec3(child.xo,child.yo,child.zo).lerp(child.position(),e.partialTick.getGameTimeDeltaPartialTick(false).toDouble())
    tracer(head,head.subtract(child.deltaMovement.scale(.6)),.06)
   }
   buffers.endBatch()

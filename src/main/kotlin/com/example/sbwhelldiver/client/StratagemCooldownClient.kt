@@ -15,13 +15,14 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
+import net.neoforged.api.distmarker.Dist
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.fml.common.Mod
 import kotlin.math.ceil
 
-@Mod.EventBusSubscriber(modid = MOD_ID, value = [Dist.CLIENT])
+@EventBusSubscriber(modid = MOD_ID, value = [Dist.CLIENT])
 object StratagemCooldownClient : ResourceManagerReloadListener {
     data class Visual(val phase: CallPhase = CallPhase.READY, val start: Long = 0, val end: Long = 0,
                       val remaining: Int = -1, val rearming: Boolean = false, val blocked: Boolean = false, val reason:String?=null) {
@@ -148,7 +149,7 @@ object StratagemCooldownClient : ResourceManagerReloadListener {
                 val value = (96 + 159 * coverage).toInt().coerceIn(96, 255)
                 pixels.setPixelRGBA(x, y, (c and -0x1000000) or value or (value shl 8) or (value shl 16))
             }
-            val id = ResourceLocation(MOD_ID,"dynamic/cooldowns/${def.id}")
+            val id = ResourceLocation.fromNamespaceAndPath(MOD_ID,"dynamic/cooldowns/${def.id}")
             textures.register(id, DynamicTexture(pixels)); grey[def.icon] = id
         }
     }

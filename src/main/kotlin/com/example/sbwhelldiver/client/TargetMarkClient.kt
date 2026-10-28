@@ -9,12 +9,12 @@ import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.client.event.*
-import net.minecraftforge.client.settings.KeyConflictContext
-import net.minecraftforge.event.TickEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
+import net.neoforged.api.distmarker.Dist
+import net.neoforged.neoforge.client.event.*
+import net.neoforged.neoforge.client.settings.KeyConflictContext
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.fml.common.Mod
 import org.joml.Matrix4f
 import org.joml.Quaternionf
 import org.joml.Vector4f
@@ -22,16 +22,16 @@ import org.lwjgl.glfw.GLFW
 import kotlin.math.*
 
 /** HUD projection deliberately ignores world depth, so an established mark remains visible through walls. */
-@Mod.EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
+@EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
 object TargetMarkClient {
  var enabled=true;private set
  fun setEnabled(value:Boolean){enabled=value;if(!value){entries=emptyList();labels=emptyList()}}
  const val COMPACT_SCALE=.72f
  val KEY=KeyMapping("key.sbw_helldiver.mark",KeyConflictContext.IN_GAME,InputConstants.Type.KEYSYM,GLFW.GLFW_KEY_X,"key.categories.sbw_helldiver")
- private val ICON=ResourceLocation(MOD_ID,"textures/gui/target_mark.png")
- private val LOCATION=ResourceLocation(MOD_ID,"textures/gui/target_mark_location.png")
- private val CORNERS=ResourceLocation(MOD_ID,"textures/gui/target_mark_corners.png")
- private val POINTER=ResourceLocation(MOD_ID,"textures/gui/target_mark_pointer.png")
+ private val ICON=ResourceLocation.fromNamespaceAndPath(MOD_ID,"textures/gui/target_mark.png")
+ private val LOCATION=ResourceLocation.fromNamespaceAndPath(MOD_ID,"textures/gui/target_mark_location.png")
+ private val CORNERS=ResourceLocation.fromNamespaceAndPath(MOD_ID,"textures/gui/target_mark_corners.png")
+ private val POINTER=ResourceLocation.fromNamespaceAndPath(MOD_ID,"textures/gui/target_mark_pointer.png")
  private var entries=emptyList<TargetMarks.View>()
  private var receivedAt=0L
  data class Label(val mark:TargetMarks.View,val point:Vec3,val x:Int,val y:Int,val hovered:Boolean,val remaining:Int,val distance:Int)
@@ -46,8 +46,7 @@ object TargetMarkClient {
   entries=packet.marks;receivedAt=level.gameTime
  }
  @SubscribeEvent fun disconnect(e:ClientPlayerNetworkEvent.LoggingOut){entries=emptyList();labels=emptyList();enabled=true}
- @SubscribeEvent fun tick(e:TickEvent.ClientTickEvent){
-  if(e.phase!=TickEvent.Phase.END)return
+ @SubscribeEvent fun tick(e:net.neoforged.neoforge.client.event.ClientTickEvent.Post){
   val mc=Minecraft.getInstance();val player=mc.player ?: return
   if(mc.screen!=null||!enabled){while(KEY.consumeClick()){};return}
   while(KEY.consumeClick()){
@@ -69,7 +68,7 @@ object TargetMarkClient {
    val remaining=(m.remaining-(level.gameTime-receivedAt)).toInt();if(remaining<=0)return@mapNotNull null
    val entity=if(m.entityId>=0)level.getEntity(m.entityId)?.takeIf {it.uuid==m.target} else null
    if(entity is net.minecraft.world.entity.LivingEntity&&!entity.isAlive)return@mapNotNull null
-   val point=entity?.let {it.getPosition(e.partialTick).add(0.0,it.bbHeight*.5,0.0)} ?: m.point
+   val point=entity?.let {it.getPosition(e.partialTick.getGameTimeDeltaPartialTick(false)).add(0.0,it.bbHeight*.5,0.0)} ?: m.point
    val delta=point.subtract(camera);val clip=matrix.transform(Vector4f(delta.x.toFloat(),delta.y.toFloat(),delta.z.toFloat(),1f))
    if(clip.w<=.001f)return@mapNotNull null
    val x=(clip.x/clip.w*.5+.5)*w;val y=(-clip.y/clip.w*.5+.5)*h
@@ -94,7 +93,7 @@ object TargetMarkClient {
    g.flush();RenderSystem.enableBlend();RenderSystem.defaultBlendFunc()
    if(l.mark.icon.isNotEmpty())RenderSystem.setShaderColor(1f,1f,1f,1f) else if(red)RenderSystem.setShaderColor(1f,.42f,.42f,1f) else RenderSystem.setShaderColor(1f,.98f,.91f,1f)
    if(l.mark.icon.isEmpty())g.blit(if(l.mark.target==null)LOCATION else ICON,x-9,y-9,0f,0f,19,19,19,19)
-   else g.blit(ResourceLocation(MOD_ID,l.mark.icon.replace("textures/item/","textures/gui/target_marks/")),x-9,y-9,19,19,0f,0f,64,64,64,64)
+   else g.blit(ResourceLocation.fromNamespaceAndPath(MOD_ID,l.mark.icon.replace("textures/item/","textures/gui/target_marks/")),x-9,y-9,19,19,0f,0f,64,64,64,64)
    RenderSystem.setShaderColor(1f,1f,1f,1f);RenderSystem.disableBlend()
    // Pixel-aligned corner mask follows the native four-quadrant lifetime display.
    val fraction=l.remaining.toDouble()/TargetMarks.LIFETIME
@@ -125,6 +124,6 @@ object TargetMarkClient {
    rendered++
   }
  }
- @Mod.EventBusSubscriber(modid=MOD_ID,bus=Mod.EventBusSubscriber.Bus.MOD,value=[Dist.CLIENT])
+ @EventBusSubscriber(modid=MOD_ID,bus=EventBusSubscriber.Bus.MOD,value=[Dist.CLIENT])
  object Bindings{@SubscribeEvent fun register(e:RegisterKeyMappingsEvent){e.register(KEY)}}
 }

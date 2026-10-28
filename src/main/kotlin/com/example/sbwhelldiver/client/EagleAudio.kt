@@ -7,21 +7,20 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance
 import net.minecraft.sounds.SoundSource
 import net.minecraft.util.RandomSource
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.event.TickEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
+import net.neoforged.api.distmarker.Dist
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.fml.common.Mod
 import java.lang.ref.WeakReference
 import java.util.WeakHashMap
-@Mod.EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
+@EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
 object EagleAudio {
  private val played=WeakHashMap<EagleEntity,MutableSet<String>>()
  var flybys=0;private set
  var strafes=0;private set
  val allocated=mutableSetOf<String>()
  private val probes=mutableListOf<Pair<FlySound,Int>>()
- @SubscribeEvent fun tick(e:TickEvent.ClientTickEvent){
-  if(e.phase!=TickEvent.Phase.END)return
+ @SubscribeEvent fun tick(e:net.neoforged.neoforge.client.event.ClientTickEvent.Post){
   val mc=Minecraft.getInstance();val level=mc.level?:run{played.clear();probes.clear();return}
   for(p in level.entitiesForRendering().filterIsInstance<EagleEntity>()){
    val keys=played.getOrPut(p){mutableSetOf()}

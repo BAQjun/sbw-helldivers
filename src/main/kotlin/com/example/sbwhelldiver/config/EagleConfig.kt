@@ -1,10 +1,10 @@
 package com.example.sbwhelldiver.config
-import net.minecraftforge.common.ForgeConfigSpec
+import net.neoforged.neoforge.common.ModConfigSpec
 import kotlin.math.roundToInt
 object EagleConfig {
- lateinit var clusterSplitSeconds:ForgeConfigSpec.DoubleValue
- lateinit var heavyBombFuseSeconds:ForgeConfigSpec.DoubleValue
- fun register(b:ForgeConfigSpec.Builder){
+ lateinit var clusterSplitSeconds:ModConfigSpec.DoubleValue
+ lateinit var heavyBombFuseSeconds:ModConfigSpec.DoubleValue
+ fun register(b:ModConfigSpec.Builder){
   b.push("eagle")
   clusterSplitSeconds=b.comment("集束母弹分裂延时（秒）；暂定0.35，可在试射后调整。Cluster separation delay, seconds.")
    .defineInRange("clusterSplitSeconds",.35,.05,5.0)

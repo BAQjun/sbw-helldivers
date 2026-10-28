@@ -1,7 +1,7 @@
 package com.example.sbwhelldiver.config
 
 import net.minecraft.nbt.CompoundTag
-import net.minecraftforge.common.ForgeConfigSpec
+import net.neoforged.neoforge.common.ModConfigSpec
 
 /** Immutable per-call settings, including ordnance already airborne during a config reload. */
 data class AirburstSettings(val rounds:Int=4,val intervalTicks:Int=80,val flightTicks:Int=30,
@@ -23,23 +23,23 @@ data class AirburstSettings(val rounds:Int=4,val intervalTicks:Int=80,val flight
  }
 }
 object OrbitalAirburstConfig {
- private lateinit var rounds:ForgeConfigSpec.IntValue
- private lateinit var interval:ForgeConfigSpec.DoubleValue
- private lateinit var delay:ForgeConfigSpec.DoubleValue
- private lateinit var flight:ForgeConfigSpec.DoubleValue
- private lateinit var height:ForgeConfigSpec.DoubleValue
- private lateinit var cone:ForgeConfigSpec.DoubleValue
- private lateinit var children:ForgeConfigSpec.IntValue
- private lateinit var speed:ForgeConfigSpec.DoubleValue
- private lateinit var direct:ForgeConfigSpec.DoubleValue
- private lateinit var blast:ForgeConfigSpec.DoubleValue
- private lateinit var inner:ForgeConfigSpec.DoubleValue
- private lateinit var outer:ForgeConfigSpec.DoubleValue
- private lateinit var childDirect:ForgeConfigSpec.DoubleValue
- private lateinit var childBlast:ForgeConfigSpec.DoubleValue
- private lateinit var childInner:ForgeConfigSpec.DoubleValue
- private lateinit var childOuter:ForgeConfigSpec.DoubleValue
- fun register(b:ForgeConfigSpec.Builder){
+ private lateinit var rounds:ModConfigSpec.IntValue
+ private lateinit var interval:ModConfigSpec.DoubleValue
+ private lateinit var delay:ModConfigSpec.DoubleValue
+ private lateinit var flight:ModConfigSpec.DoubleValue
+ private lateinit var height:ModConfigSpec.DoubleValue
+ private lateinit var cone:ModConfigSpec.DoubleValue
+ private lateinit var children:ModConfigSpec.IntValue
+ private lateinit var speed:ModConfigSpec.DoubleValue
+ private lateinit var direct:ModConfigSpec.DoubleValue
+ private lateinit var blast:ModConfigSpec.DoubleValue
+ private lateinit var inner:ModConfigSpec.DoubleValue
+ private lateinit var outer:ModConfigSpec.DoubleValue
+ private lateinit var childDirect:ModConfigSpec.DoubleValue
+ private lateinit var childBlast:ModConfigSpec.DoubleValue
+ private lateinit var childInner:ModConfigSpec.DoubleValue
+ private lateinit var childOuter:ModConfigSpec.DoubleValue
+ fun register(b:ModConfigSpec.Builder){
   b.comment("轨道空爆攻击。Orbital Airburst Strike.").push("airburstStrike")
   rounds=b.defineInRange("rounds",4,1,20);interval=b.defineInRange("salvoIntervalSeconds",4.0,.05,60.0)
   delay=b.defineInRange("firingDelaySeconds",2.0,.5,60.0);flight=b.defineInRange("flightSeconds",1.5,.5,10.0)

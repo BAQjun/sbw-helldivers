@@ -1,10 +1,10 @@
 package com.example.sbwhelldiver.network
 
 import com.example.sbwhelldiver.config.HelldiversConfig
-import net.minecraft.network.FriendlyByteBuf
+import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.server.level.ServerPlayer
-import net.minecraftforge.network.NetworkEvent
-import net.minecraftforge.network.PacketDistributor
+import net.neoforged.neoforge.network.handling.IPayloadContext
+import com.example.sbwhelldiver.network.PacketTargets
 import java.util.function.Supplier
 
 /** The server owns this world setting; ordinary clients can only read it. */
@@ -19,33 +19,33 @@ object AutoRetractionSettings {
 }
 
 data class AutoRetractRequestPacket(val enabled:Boolean?) {
-    fun encode(b:FriendlyByteBuf){b.writeBoolean(enabled!=null);enabled?.let{b.writeBoolean(it)}}
+    fun encode(b:RegistryFriendlyByteBuf){b.writeBoolean(enabled!=null);enabled?.let{b.writeBoolean(it)}}
     companion object {
-        fun decode(b:FriendlyByteBuf)=AutoRetractRequestPacket(if(b.readBoolean())b.readBoolean() else null)
-        fun handle(p:AutoRetractRequestPacket,s:Supplier<NetworkEvent.Context>){
-            val c=s.get()
+        fun decode(b:RegistryFriendlyByteBuf)=AutoRetractRequestPacket(if(b.readBoolean())b.readBoolean() else null)
+        fun handle(p:AutoRetractRequestPacket,s:IPayloadContext){
+            val c=s
             c.enqueueWork {
                 c.sender?.let { player ->
                     val changed=p.enabled?.let{AutoRetractionSettings.update(player,it)}==true
                     val players=if(changed)player.server.playerList.players else listOf(player)
-                    for(recipient in players)BeaconNetwork.CHANNEL.send(PacketDistributor.PLAYER.with{recipient},
+                    for(recipient in players)BeaconNetwork.CHANNEL.send(PacketTargets.PLAYER.with{recipient},
                         AutoRetractStatePacket(HelldiversConfig.autoRetract.get(),AutoRetractionSettings.canEdit(recipient)))
                 }
             }
-            c.packetHandled=true
+
         }
     }
 }
 
 data class AutoRetractStatePacket(val enabled:Boolean,val editable:Boolean) {
-    fun encode(b:FriendlyByteBuf){b.writeBoolean(enabled);b.writeBoolean(editable)}
+    fun encode(b:RegistryFriendlyByteBuf){b.writeBoolean(enabled);b.writeBoolean(editable)}
     companion object {
-        fun decode(b:FriendlyByteBuf)=AutoRetractStatePacket(b.readBoolean(),b.readBoolean())
-        fun handle(p:AutoRetractStatePacket,s:Supplier<NetworkEvent.Context>){val c=s.get();c.enqueueWork{
-            net.minecraftforge.fml.DistExecutor.unsafeRunWhenOn(net.minecraftforge.api.distmarker.Dist.CLIENT){Runnable{
+        fun decode(b:RegistryFriendlyByteBuf)=AutoRetractStatePacket(b.readBoolean(),b.readBoolean())
+        fun handle(p:AutoRetractStatePacket,s:IPayloadContext){val c=s;c.enqueueWork{
+            com.example.sbwhelldiver.platform.ClientDispatch.unsafeRunWhenOn(net.neoforged.api.distmarker.Dist.CLIENT){Runnable{
                 if(HelldiversConfig.SPEC.isLoaded)HelldiversConfig.autoRetract.set(p.enabled)
                 (net.minecraft.client.Minecraft.getInstance().screen as? com.example.sbwhelldiver.client.HelldiversConfigScreen)?.autoRetractReceived(p.enabled,p.editable)
             }}
-        };c.packetHandled=true}
+        };}
     }
 }

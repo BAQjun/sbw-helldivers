@@ -127,7 +127,7 @@ class HelldiversConfigScreen(private val parent: Screen) : Screen(Component.tran
     override fun onClose() { if (!applying) minecraft?.setScreen(parent) }
 
     override fun render(gui: GuiGraphics, mouseX: Int, mouseY: Int, partial: Float) {
-        renderBackground(gui)
+        renderBackground(gui,mouseX,mouseY,partial)
         super.render(gui, mouseX, mouseY, partial)
         gui.drawCenteredString(font, title, width / 2, height / 2 - 95, 0xFFFFFF)
         val message = when {

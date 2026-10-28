@@ -15,55 +15,41 @@ import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.player.Player
 
 class GasEffect : MobEffect(MobEffectCategory.HARMFUL,0x8CA644) {
-    init { addAttributeModifier(Attributes.MOVEMENT_SPEED,"45da23bf-0ca2-49ae-9024-8f47bfc7a421",-.25,AttributeModifier.Operation.MULTIPLY_TOTAL) }
-    override fun isDurationEffectTick(duration: Int,amplifier: Int) = true
-    override fun applyEffectTick(entity: LivingEntity,amplifier: Int) {
+    init { addAttributeModifier(Attributes.MOVEMENT_SPEED,ResourceLocation.fromNamespaceAndPath(MOD_ID,"gas_slow"),-.25,AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL) }
+    override fun shouldApplyEffectTickThisTick(duration: Int,amplifier: Int) = true
+    override fun applyEffectTick(entity: LivingEntity,amplifier: Int): Boolean {
         // Area refreshes duration every tick; use the unit's clock, not the remaining duration.
-        if (entity.level().isClientSide || entity.tickCount % 20 != 0) return
-        val key = ResourceKey.create(Registries.DAMAGE_TYPE,ResourceLocation(MOD_ID,"gas"))
+        if (entity.level().isClientSide || entity.tickCount % 20 != 0) return true
+        val key = ResourceKey.create(Registries.DAMAGE_TYPE,ResourceLocation.fromNamespaceAndPath(MOD_ID,"gas"))
         val source = DamageSource(entity.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(key))
         entity.hurt(source,4f)
+        return true
     }
 }
 class ConfusionEffect : MobEffect(MobEffectCategory.HARMFUL,0xBACD68)
 class PanicEffect : MobEffect(MobEffectCategory.HARMFUL,0xE59A42) {
-    init { addAttributeModifier(Attributes.MOVEMENT_SPEED,"b8667e49-a464-43ed-afbe-20fe40f16269",-.25,AttributeModifier.Operation.MULTIPLY_TOTAL) }
+    init { addAttributeModifier(Attributes.MOVEMENT_SPEED,ResourceLocation.fromNamespaceAndPath(MOD_ID,"panic_slow"),-.25,AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL) }
 }
 class SentryBurningEffect : MobEffect(MobEffectCategory.HARMFUL,0xF46C25) {
-    override fun isDurationEffectTick(duration: Int,amplifier: Int) = true
-    override fun applyEffectTick(entity: LivingEntity,amplifier: Int) {
+    override fun shouldApplyEffectTickThisTick(duration: Int,amplifier: Int) = true
+    override fun applyEffectTick(entity: LivingEntity,amplifier: Int): Boolean {
         if (!entity.level().isClientSide && entity.tickCount % 10 == 0) FlameDamage.burn(entity)
+        return true
     }
-    override fun removeAttributeModifiers(entity: LivingEntity,attributes: AttributeMap,amplifier: Int) {
-        super.removeAttributeModifiers(entity,attributes,amplifier)
-        if (!entity.hasEffect(com.example.sbwhelldiver.init.ModEffects.HEAVY_BURNING.get())) {
-            entity.clearFire()
-            entity.persistentData.remove("HelldiverFlameOwner")
-        }
-    }
+
 }
 class HeavyBurningEffect : MobEffect(MobEffectCategory.HARMFUL,0xFFD245) {
-    override fun isDurationEffectTick(duration: Int,amplifier: Int) = true
-    override fun applyEffectTick(entity: LivingEntity,amplifier: Int) {
+    override fun shouldApplyEffectTickThisTick(duration: Int,amplifier: Int) = true
+    override fun applyEffectTick(entity: LivingEntity,amplifier: Int): Boolean {
         if (!entity.level().isClientSide && entity.tickCount % 10 == 0) FlameDamage.burn(entity,true)
+        return true
     }
-    override fun removeAttributeModifiers(entity: LivingEntity,attributes: AttributeMap,amplifier: Int) {
-        super.removeAttributeModifiers(entity,attributes,amplifier)
-        if (!entity.hasEffect(com.example.sbwhelldiver.init.ModEffects.BURNING.get())) {
-            entity.clearFire();entity.persistentData.remove("HelldiverFlameOwner")
-        }
-    }
+
 }
 class StunEffect : MobEffect(MobEffectCategory.HARMFUL,0x8FCDE4) {
-    init { addAttributeModifier(Attributes.MOVEMENT_SPEED,"ad037612-4101-4e90-80b7-aec4c6df2a98",-.70,AttributeModifier.Operation.MULTIPLY_TOTAL) }
-    override fun addAttributeModifiers(entity: LivingEntity,attributes: AttributeMap,amplifier: Int) {
-        super.addAttributeModifiers(entity,attributes,amplifier)
-        if (entity !is Player) disable(entity)
-    }
-    override fun removeAttributeModifiers(entity: LivingEntity,attributes: AttributeMap,amplifier: Int) {
-        super.removeAttributeModifiers(entity,attributes,amplifier)
-        restore(entity)
-    }
+    init { addAttributeModifier(Attributes.MOVEMENT_SPEED,ResourceLocation.fromNamespaceAndPath(MOD_ID,"stun_slow"),-.70,AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL) }
+
+
     companion object {
         private const val SAVED = "HelldiverStunSavedNoAI"
         fun disable(entity: LivingEntity) {

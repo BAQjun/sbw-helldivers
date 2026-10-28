@@ -1,16 +1,16 @@
 package com.example.sbwhelldiver.config
-import net.minecraftforge.common.ForgeConfigSpec
+import net.neoforged.neoforge.common.ModConfigSpec
 object OrbitalConfig {
- lateinit var range:ForgeConfigSpec.DoubleValue
- lateinit var altitude:ForgeConfigSpec.DoubleValue
- lateinit var offset:ForgeConfigSpec.DoubleValue
- lateinit var callSeconds:ForgeConfigSpec.DoubleValue
- lateinit var flightSeconds:ForgeConfigSpec.DoubleValue
- lateinit var direct:ForgeConfigSpec.DoubleValue
- lateinit var blast:ForgeConfigSpec.DoubleValue
- lateinit var inner:ForgeConfigSpec.DoubleValue
- lateinit var outer:ForgeConfigSpec.DoubleValue
- fun register(b:ForgeConfigSpec.Builder){
+ lateinit var range:ModConfigSpec.DoubleValue
+ lateinit var altitude:ModConfigSpec.DoubleValue
+ lateinit var offset:ModConfigSpec.DoubleValue
+ lateinit var callSeconds:ModConfigSpec.DoubleValue
+ lateinit var flightSeconds:ModConfigSpec.DoubleValue
+ lateinit var direct:ModConfigSpec.DoubleValue
+ lateinit var blast:ModConfigSpec.DoubleValue
+ lateinit var inner:ModConfigSpec.DoubleValue
+ lateinit var outer:ModConfigSpec.DoubleValue
+ fun register(b:ModConfigSpec.Builder){
   b.comment("超级驱逐舰与轨道火力。Super Destroyer and orbital support.").push("orbital")
   range=b.comment("以呼叫时地面位置为圆心的水平支援半径。Horizontal coverage around the call position.").defineInRange("supportRadius",1024.0,32.0,16384.0)
   altitude=b.comment("舰船相对呼叫者的高度。Height above the caller.").defineInRange("shipAltitude",900.0,256.0,8192.0)

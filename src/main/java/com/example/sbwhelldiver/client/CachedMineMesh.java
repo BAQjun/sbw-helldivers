@@ -28,7 +28,7 @@ public final class CachedMineMesh {
             float px=p.m00()*x+p.m10()*y+p.m20()*z+p.m30(),py=p.m01()*x+p.m11()*y+p.m21()*z+p.m31(),pz=p.m02()*x+p.m12()*y+p.m22()*z+p.m32();
             float xx=n.m00()*nx+n.m10()*ny+n.m20()*nz,yy=n.m01()*nx+n.m11()*ny+n.m21()*nz,zz=n.m02()*nx+n.m12()*ny+n.m22()*nz;
             if(bulk!=null)bulk.vertex(px,py,pz,-1,vertices[i+3],vertices[i+4],OverlayTexture.NO_OVERLAY,light,xx,yy,zz);
-            else out.vertex(px,py,pz,1,1,1,1,vertices[i+3],vertices[i+4],OverlayTexture.NO_OVERLAY,light,xx,yy,zz);
+            else out.addVertex(px,py,pz,-1,vertices[i+3],vertices[i+4],OverlayTexture.NO_OVERLAY,light,xx,yy,zz);
         }
         if(bulk!=null)bulk.flush();
         if(glow&&!ShaderPackCompat.INSTANCE.shadowPass())MineGlowGeometry.capture(emission,p);
@@ -44,7 +44,7 @@ public final class CachedMineMesh {
         Recorder(NativeImage texture,int kind){this.texture=texture;this.kind=kind;}
         public VertexConsumer getBuffer(RenderType type){flush();stride=type.mode()==VertexFormat.Mode.TRIANGLES?3:4;return this;}
         void flush(){if(size!=0)throw new IllegalStateException("Incomplete cached mine primitive");}
-        public void vertex(float x,float y,float z,float r,float g,float b,float a,float u,float v,int overlay,int light,float nx,float ny,float nz){
+        public void addVertex(float x,float y,float z,int color,float u,float v,int overlay,int light,float nx,float ny,float nz){
             float[] p=pending[size++];p[0]=x;p[1]=y;p[2]=z;p[3]=u;p[4]=v;p[5]=nx;p[6]=ny;p[7]=nz;
             if(size<stride)return;
             float u0=0,v0=0;for(int k=0;k<stride;k++){u0+=pending[k][3];v0+=pending[k][4];}
@@ -59,12 +59,12 @@ public final class CachedMineMesh {
             size=0;
         }
         // Bedrock emits complete vertices; attribute calls indicate an unsupported path.
-        public VertexConsumer vertex(double x,double y,double z){throw new UnsupportedOperationException();}
-        public VertexConsumer color(int r,int g,int b,int a){return this;}
-        public VertexConsumer uv(float u,float v){return this;}
-        public VertexConsumer overlayCoords(int u,int v){return this;}
-        public VertexConsumer uv2(int u,int v){return this;}
-        public VertexConsumer normal(float x,float y,float z){return this;}
+        public VertexConsumer addVertex(float x,float y,float z){throw new UnsupportedOperationException();}
+        public VertexConsumer setColor(int r,int g,int b,int a){return this;}
+        public VertexConsumer setUv(float u,float v){return this;}
+        public VertexConsumer setUv1(int u,int v){return this;}
+        public VertexConsumer setUv2(int u,int v){return this;}
+        public VertexConsumer setNormal(float x,float y,float z){return this;}
         public void endVertex(){throw new UnsupportedOperationException();}
         public void defaultColor(int r,int g,int b,int a){}
         public void unsetDefaultColor(){}

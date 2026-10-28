@@ -6,10 +6,10 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.lwjgl.system.MemoryStack;
@@ -51,7 +51,7 @@ public final class FieldVolumeRenderer {
         return sourcePath("shaders/volume/"+name);
     }
     static String sourcePath(String path) throws IOException {
-        try(var input=Minecraft.getInstance().getResourceManager().open(new ResourceLocation("sbw_helldiver",path))) {
+        try(var input=Minecraft.getInstance().getResourceManager().open(ResourceLocation.fromNamespaceAndPath("sbw_helldiver",path))) {
             return new String(input.readAllBytes(),StandardCharsets.UTF_8);
         }
     }
@@ -100,7 +100,7 @@ public final class FieldVolumeRenderer {
     }
     // Restrict each ray-march pass to its projected bounds. Inside/near-plane cases use the full screen.
     private static void fieldScissor(MortarFieldEntity field,Vec3 camera,Matrix4f projection,int w,int h,float down) {
-        Matrix4f view=new Matrix4f(new Matrix3f(RenderSystem.getInverseViewRotationMatrix()).transpose());
+        Matrix4f view=new Matrix4f(new Matrix3f(new org.joml.Matrix3f().rotation(net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().rotation())).transpose());
         Matrix4f clip=new Matrix4f(projection).mul(view);
         float minX=1,minY=1,maxX=-1,maxY=-1;
         for(int dx:new int[]{-1,1})for(int dz:new int[]{-1,1})for(int dy:new int[]{0,1}) {
@@ -129,12 +129,12 @@ public final class FieldVolumeRenderer {
             if(entity instanceof com.example.sbwhelldiver.entity.ShieldGeneratorEntity ||
                 ShaderPackCompat.INSTANCE.active()&&entity instanceof com.example.sbwhelldiver.entity.SentryHellpodEntity s&&s.getProfile().isTesla())energy.add(entity);
         }
-        float[] fuelFlames=FlameJetVisual.INSTANCE.volumeInstances(event.getPartialTick(),camera,event.getFrustum());
-        float[] impacts=OrbitalLaserImpact.INSTANCE.volumeInstances(event.getPartialTick(),camera,event.getFrustum());
+        float[] fuelFlames=FlameJetVisual.INSTANCE.volumeInstances(event.getPartialTick().getGameTimeDeltaPartialTick(false),camera,event.getFrustum());
+        float[] impacts=OrbitalLaserImpact.INSTANCE.volumeInstances(event.getPartialTick().getGameTimeDeltaPartialTick(false),camera,event.getFrustum());
         final float[] flames;
         if(impacts.length>0){int previous=fuelFlames.length;flames=java.util.Arrays.copyOf(fuelFlames,previous+impacts.length);System.arraycopy(impacts,0,flames,previous,impacts.length);}else flames=fuelFlames;
-        var orbitalBeams=OrbitalBeamGeometry.collect(event.getPartialTick(),camera);
-        float[] lasers=LaserPostVisual.INSTANCE.collect(event.getPartialTick(),camera,event.getFrustum());
+        var orbitalBeams=OrbitalBeamGeometry.collect(event.getPartialTick().getGameTimeDeltaPartialTick(false),camera);
+        float[] lasers=LaserPostVisual.INSTANCE.collect(event.getPartialTick().getGameTimeDeltaPartialTick(false),camera,event.getFrustum());
         if((fields.isEmpty()&&flames.length==0&&lasers.length==0&&orbitalBeams.isEmpty()&&energy.isEmpty()&&MineGlowGeometry.vertexCount()==0)||(failed&&!reload))return;
         fields.sort(Comparator.comparingDouble((MortarFieldEntity f)->f.distanceToSqr(camera)).reversed());
         try(var stack=MemoryStack.stackPush()) {
@@ -185,7 +185,7 @@ public final class FieldVolumeRenderer {
                 glViewport(0,0,w,h);glDisable(GL_DEPTH_TEST);glDepthMask(false);glDisable(GL_CULL_FACE);glDisable(GL_SCISSOR_TEST);
                 glColorMask(true,true,true,true);glEnable(GL_BLEND);glBlendEquationSeparate(GL_FUNC_ADD,GL_FUNC_ADD);
                 glBlendFuncSeparate(GL_ONE,GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA);
-                FieldArcGeometry.draw(fields,event.getPartialTick(),camera,event.getProjectionMatrix(),new Matrix3f(RenderSystem.getInverseViewRotationMatrix()),w,h);
+                FieldArcGeometry.draw(fields,event.getPartialTick().getGameTimeDeltaPartialTick(false),camera,event.getProjectionMatrix(),new Matrix3f(new org.joml.Matrix3f().rotation(net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().rotation())),w,h);
                 int fogW=Math.max(1,(w+1)/2),fogH=Math.max(1,(h+1)/2);
                 if(!fields.isEmpty())FieldFogLayer.begin(fogW,fogH);
                 glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,depth);
@@ -195,7 +195,7 @@ public final class FieldVolumeRenderer {
                 FloatBuffer matrix=stack.mallocFloat(16);
                 new Matrix4f(event.getProjectionMatrix()).invert().get(matrix);glUniformMatrix4fv(uniform("InverseProjection"),false,matrix);
                 FloatBuffer rotation=stack.mallocFloat(9);
-                new Matrix3f(RenderSystem.getInverseViewRotationMatrix()).get(rotation);glUniformMatrix3fv(uniform("InverseViewRotation"),false,rotation);
+                new Matrix3f(new org.joml.Matrix3f().rotation(net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().rotation())).get(rotation);glUniformMatrix3fv(uniform("InverseViewRotation"),false,rotation);
                 glUniform2f(uniform("Viewport"),fogW,fogH);
                 glEnable(GL_SCISSOR_TEST);
                 for(var field:fields) {
@@ -207,7 +207,7 @@ public final class FieldVolumeRenderer {
                     glUniform2f(uniform("TerrainSize"),33,33);
                     glUniform1f(uniform("DownwardDepth"),floor.depth());
                     Vec3 eye=camera.subtract(field.position());boolean gas=field.getKind()==MortarFieldEntity.Kind.GAS,smoke=field.getKind()==MortarFieldEntity.Kind.SMOKE;
-                    float partial=event.getPartialTick();
+                    float partial=event.getPartialTick().getGameTimeDeltaPartialTick(false);
                     float fade=(float)Math.max(0,Math.min(1,Math.min((field.tickCount+partial)/(gas?7:6),field.getRemainingTicks()/(gas?20.0:12.0))));
                     glUniform3f(uniform("Eye"),(float)eye.x,(float)eye.y,(float)eye.z);
                     glUniform1f(uniform("Radius"),(float)field.getRadius());glUniform1f(uniform("Time"),(field.tickCount+partial)/20f);
@@ -225,14 +225,14 @@ public final class FieldVolumeRenderer {
                 glDisable(GL_SCISSOR_TEST);
                 if(!fields.isEmpty())FieldFogLayer.composite(target.frameBufferId,depth,w,h,event.getProjectionMatrix());
                 if(flames.length>0){
-                    FlameSurfaceLighting.draw(flames,camera,event.getProjectionMatrix(),new Matrix3f(RenderSystem.getInverseViewRotationMatrix()),w,h);
-                    FlameGlow.render(w,h,()->FlameVolumeGeometry.draw(flames,event.getProjectionMatrix(),new Matrix3f(RenderSystem.getInverseViewRotationMatrix()),camera,w,h,(mc.level.getGameTime()+event.getPartialTick())/20f));
+                    FlameSurfaceLighting.draw(flames,camera,event.getProjectionMatrix(),new Matrix3f(new org.joml.Matrix3f().rotation(net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().rotation())),w,h);
+                    FlameGlow.render(w,h,()->FlameVolumeGeometry.draw(flames,event.getProjectionMatrix(),new Matrix3f(new org.joml.Matrix3f().rotation(net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().rotation())),camera,w,h,(mc.level.getGameTime()+event.getPartialTick().getGameTimeDeltaPartialTick(false))/20f));
                 }
-                if(!orbitalBeams.isEmpty())FlameGlow.renderAdditive(w,h,.18f,()->OrbitalBeamGeometry.draw(orbitalBeams,event.getProjectionMatrix(),new Matrix3f(RenderSystem.getInverseViewRotationMatrix()),w,h));
+                if(!orbitalBeams.isEmpty())FlameGlow.renderAdditive(w,h,.18f,()->OrbitalBeamGeometry.draw(orbitalBeams,event.getProjectionMatrix(),new Matrix3f(new org.joml.Matrix3f().rotation(net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().rotation())),w,h));
                 glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,depth);
-                if(lasers.length>0)FlameGlow.render(w,h,.18f,()->LaserEffectGeometry.draw(lasers,event.getProjectionMatrix(),new Matrix3f(RenderSystem.getInverseViewRotationMatrix()),w,h));
+                if(lasers.length>0)FlameGlow.render(w,h,.18f,()->LaserEffectGeometry.draw(lasers,event.getProjectionMatrix(),new Matrix3f(new org.joml.Matrix3f().rotation(net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().rotation())),w,h));
                 glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,depth);
-                EnergyEffectGeometry.draw(energy,event.getPartialTick(),camera,event.getProjectionMatrix(),new Matrix3f(RenderSystem.getInverseViewRotationMatrix()),w,h);
+                EnergyEffectGeometry.draw(energy,event.getPartialTick().getGameTimeDeltaPartialTick(false),camera,event.getProjectionMatrix(),new Matrix3f(new org.joml.Matrix3f().rotation(net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().rotation())),w,h);
                 glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,depth);
                 if(MineGlowGeometry.vertexCount()>0)FlameGlow.render(w,h,.28f,()->MineGlowGeometry.draw(event.getProjectionMatrix(),w,h));
                 if(Boolean.getBoolean("sbw_helldiver.energyShaderSmokeTest")||Boolean.getBoolean("sbw_helldiver.shaderFieldSmokeTest")||Boolean.getBoolean("sbw_helldiver.flameVolumeSmokeTest")||Boolean.getBoolean("sbw_helldiver.laserShaderSmokeTest")) {

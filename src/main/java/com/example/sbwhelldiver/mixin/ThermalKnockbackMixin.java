@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public abstract class ThermalKnockbackMixin {
     @Unique
     private static final TagKey<DamageType> HELLDIVERS_NO_KNOCKBACK = TagKey.create(
-        Registries.DAMAGE_TYPE, new ResourceLocation("sbw_helldiver", "no_knockback"));
+        Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath("sbw_helldiver", "no_knockback"));
 
     @Redirect(method = "hurt", at = @At(value = "INVOKE",
         target = "Lnet/minecraft/world/entity/LivingEntity;knockback(DDD)V"))

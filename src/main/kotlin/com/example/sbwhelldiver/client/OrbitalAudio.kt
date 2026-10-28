@@ -9,14 +9,14 @@ import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance
 import net.minecraft.sounds.SoundSource
 import net.minecraft.util.RandomSource
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.event.TickEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
+import net.neoforged.api.distmarker.Dist
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.fml.common.Mod
 import java.lang.ref.WeakReference
 import java.util.WeakHashMap
 
-@Mod.EventBusSubscriber(modid = MOD_ID, value = [Dist.CLIENT])
+@EventBusSubscriber(modid = MOD_ID, value = [Dist.CLIENT])
 object OrbitalAudio {
     private val heard = WeakHashMap<StratagemMarker, Boolean>()
     private val sounds = mutableListOf<SpatialSound>()
@@ -34,8 +34,7 @@ object OrbitalAudio {
         sounds.add(sound)
         Minecraft.getInstance().soundManager.play(sound)
     }
-    @SubscribeEvent fun tick(event: TickEvent.ClientTickEvent) {
-        if (event.phase != TickEvent.Phase.END) return
+    @SubscribeEvent fun tick(event: net.neoforged.neoforge.client.event.ClientTickEvent.Post) {
         val mc = Minecraft.getInstance()
         if (currentLevel !== mc.level) {
             sounds.forEach { it.finish(); mc.soundManager.stop(it) }

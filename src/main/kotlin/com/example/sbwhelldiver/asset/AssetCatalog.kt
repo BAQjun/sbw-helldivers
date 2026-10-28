@@ -5,7 +5,7 @@ import com.google.gson.JsonParser
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.registries.ForgeRegistries
+import net.minecraft.core.registries.BuiltInRegistries
 
 data class SentryProfile(
     val id: String, val model: String, val podHeight: Double,
@@ -55,7 +55,7 @@ object AssetCatalog {
             }
         }
     }
-    fun profile(type: EntityType<*>): SentryProfile = requireNotNull(ForgeRegistries.ENTITY_TYPES.getKey(type)).path.let {if(it=="player_hellpod")profiles.getValue("supply_hellpod").copy(id=it) else profiles.getValue(it)}
+    fun profile(type: EntityType<*>): SentryProfile = requireNotNull(BuiltInRegistries.ENTITY_TYPE.getKey(type)).path.let {if(it=="player_hellpod")profiles.getValue("supply_hellpod").copy(id=it) else profiles.getValue(it)}
     val audibleEffects: Set<String> = run {
         val stream = requireNotNull(javaClass.classLoader.getResourceAsStream("assets/$MOD_ID/sounds.json"))
         stream.bufferedReader(Charsets.UTF_8).use { JsonParser.parseReader(it).asJsonObject.keySet().toSet() }
@@ -70,5 +70,5 @@ object AssetCatalog {
             }
         }
     }
-    fun sound(effect: String) = ResourceLocation(MOD_ID, effect)
+    fun sound(effect: String) = ResourceLocation.fromNamespaceAndPath(MOD_ID, effect)
 }

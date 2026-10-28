@@ -6,16 +6,16 @@ import com.example.sbwhelldiver.entity.PlayerHellpodEntity
 import net.minecraft.client.CameraType
 import net.minecraft.client.Minecraft
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.client.event.*
-import net.minecraftforge.event.TickEvent
-import net.minecraftforge.eventbus.api.EventPriority
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
+import net.neoforged.api.distmarker.Dist
+import net.neoforged.neoforge.client.event.*
+import net.neoforged.bus.api.EventPriority
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.fml.common.Mod
 import kotlin.math.*
 
 /** Vertical descent camera, then a level view and a smooth push into first person. */
-@Mod.EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
+@EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
 object PlayerDropClient {
  private var original:CameraType?=null
  private var waiting:com.example.sbwhelldiver.network.DropPreparePacket?=null
@@ -26,7 +26,7 @@ object PlayerDropClient {
  fun prepare(packet:com.example.sbwhelldiver.network.DropPreparePacket){original=Minecraft.getInstance().options.cameraType;if(java.lang.Boolean.getBoolean("sbw_helldiver.playerDropSmokeTest"))com.example.sbwhelldiver.LOGGER.info("DROP_CAMERA_PREPARE original={}",original);waiting=packet;waitingTicks=0;sent=false;restoreTicks=0;completed=false}
  fun cancel(token:java.util.UUID){if(waiting?.token==token){waiting=null;restore()}}
  private fun loading()=waiting!=null
- private val position by lazy {net.minecraftforge.fml.util.ObfuscationReflectionHelper.findMethod(net.minecraft.client.Camera::class.java,"m_90581_",Vec3::class.java)}
+ private val position by lazy {net.neoforged.fml.util.ObfuscationReflectionHelper.findMethod(net.minecraft.client.Camera::class.java,"setPosition",Vec3::class.java)}
  fun mounted()=Minecraft.getInstance().player?.vehicle as? PlayerHellpodEntity
  // The entity can tick before its passenger packet. Keep the first entry sound
  // on the occupant route using the already acknowledged, reserved landing point.
@@ -36,8 +36,7 @@ object PlayerDropClient {
   return pod.level().dimension().location()==order.dimension && abs(pod.x-order.point.x)<.05 && abs(pod.z-order.point.z)<.05
  }
  private fun restore(){original?.let{Minecraft.getInstance().options.cameraType=it};original=null}
- @SubscribeEvent fun tick(e:TickEvent.ClientTickEvent){
-  if(e.phase!=TickEvent.Phase.END)return
+ @SubscribeEvent fun tick(e:net.neoforged.neoforge.client.event.ClientTickEvent.Post){
   val mc=Minecraft.getInstance();val pod=mounted()
   if(pod==null){
    val w=waiting
@@ -48,7 +47,7 @@ object PlayerDropClient {
     if((!sent||waitingTicks%10==0)&&waitingTicks>=20&&l!=null&&l.dimension().location()==w.dimension){
      val center=net.minecraft.world.level.ChunkPos(net.minecraft.core.BlockPos.containing(w.point))
      val loaded=(-2..2).all{x->(-2..2).all{z->l.hasChunk(center.x+x,center.z+z)}}
-     if(loaded&&mc.levelRenderer.isChunkCompiled(net.minecraft.core.BlockPos.containing(w.point).below())){com.example.sbwhelldiver.network.BeaconNetwork.CHANNEL.sendToServer(com.example.sbwhelldiver.network.DropReadyPacket(w.token));sent=true}
+     if(loaded&&mc.levelRenderer.isSectionCompiled(net.minecraft.core.BlockPos.containing(w.point).below())){com.example.sbwhelldiver.network.BeaconNetwork.CHANNEL.sendToServer(com.example.sbwhelldiver.network.DropReadyPacket(w.token));sent=true}
     }
    }else if(original!=null){if(java.lang.Boolean.getBoolean("sbw_helldiver.playerDropSmokeTest"))com.example.sbwhelldiver.LOGGER.info("DROP_CAMERA_RESTORE saved={} before={} tick={}",original,mc.options.cameraType,restoreTicks);mc.options.cameraType=if(completed)CameraType.FIRST_PERSON else original!!;if(++restoreTicks>=3){original=null;restoreTicks=0}}
    return
@@ -98,5 +97,5 @@ object PlayerDropClient {
   HellpodLandingShake.apply(e)
  }
  @SubscribeEvent fun hand(e:RenderHandEvent){if(mounted()!=null||loading())e.isCanceled=true}
- @SubscribeEvent fun overlay(e:RenderGuiOverlayEvent.Pre){if(mounted()!=null&&(e.overlay.id.namespace in setOf("superbwarfare","tacz")||e.overlay.id.path in setOf("crosshair","hotbar","experience_bar","jump_bar")))e.isCanceled=true}
+ @SubscribeEvent fun overlay(e:RenderGuiLayerEvent.Pre){if(mounted()!=null&&(e.name.namespace in setOf("superbwarfare","tacz")||e.name.path in setOf("crosshair","hotbar","experience_bar","jump_bar")))e.isCanceled=true}
 }

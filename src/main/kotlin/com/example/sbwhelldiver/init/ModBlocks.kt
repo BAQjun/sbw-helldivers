@@ -3,9 +3,9 @@ import com.example.sbwhelldiver.MOD_ID
 import com.example.sbwhelldiver.block.SentryFireBlock
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockBehaviour
-import net.minecraftforge.registries.DeferredRegister
-import net.minecraftforge.registries.ForgeRegistries
+import net.neoforged.neoforge.registries.DeferredRegister
+import net.minecraft.core.registries.BuiltInRegistries
 object ModBlocks {
-    val BLOCKS=DeferredRegister.create(ForgeRegistries.BLOCKS,MOD_ID)
-    val SENTRY_FIRE=BLOCKS.register("sentry_fire") { SentryFireBlock(BlockBehaviour.Properties.copy(Blocks.FIRE)) }
+    val BLOCKS=DeferredRegister.create(BuiltInRegistries.BLOCK,MOD_ID)
+    val SENTRY_FIRE=BLOCKS.register("sentry_fire") { _ -> SentryFireBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.FIRE)) }
 }

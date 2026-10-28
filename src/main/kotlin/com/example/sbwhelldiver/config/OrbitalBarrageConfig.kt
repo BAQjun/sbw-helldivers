@@ -1,7 +1,7 @@
 package com.example.sbwhelldiver.config
 
 import net.minecraft.nbt.CompoundTag
-import net.minecraftforge.common.ForgeConfigSpec
+import net.neoforged.neoforge.common.ModConfigSpec
 import kotlin.math.roundToInt
 
 /** Immutable call snapshot. Round pause starts after the preceding round's last shell. */
@@ -37,7 +37,7 @@ data class BarrageSettings(val kind:String="orbital_120mm_he_barrage",val rounds
  }
 }
 object OrbitalBarrageConfig{
- private class Entry(b:ForgeConfigSpec.Builder,val d:BarrageSettings){
+ private class Entry(b:ModConfigSpec.Builder,val d:BarrageSettings){
   val rounds=b.defineInRange("rounds",d.rounds,1,20)
   val shots=b.defineInRange("shotsPerRound",d.shots,1,20)
   val gap=b.defineInRange("shotIntervalSeconds",d.shotGap/20.0,.05,60.0)
@@ -56,7 +56,7 @@ object OrbitalBarrageConfig{
    (call.get()*20).roundToInt(),(flight.get()*20).roundToInt(),(direct?.get()?:OrbitalConfig.direct.get()).toFloat(),(blast?.get()?:OrbitalConfig.blast.get()).toFloat(),inner?.get()?:OrbitalConfig.inner.get(),(outer?.get()?:OrbitalConfig.outer.get()).toFloat(),fireRadius?.get()?:0.0,fireLife?.get()?.let{(it*20).roundToInt()}?:0)
  }
  private val entries=linkedMapOf<String,Entry>()
- fun register(b:ForgeConfigSpec.Builder){
+ fun register(b:ModConfigSpec.Builder){
   for((id,section)in BarrageSettings.ids.zip(listOf("he120mmBarrage","he380mmBarrage","walkingBarrage","napalmBarrage"))){
    b.comment("轨道炮击；380mm与徐进共用precisionStrike弹药伤害。380mm and Walking Barrage share precisionStrike ammunition damage.").push(section)
    entries[id]=Entry(b,BarrageSettings.defaults(id));b.pop()

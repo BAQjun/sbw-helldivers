@@ -17,15 +17,15 @@ import net.minecraft.world.level.ClipContext
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.minecraft.world.phys.HitResult
-import net.minecraftforge.event.TickEvent
-import net.minecraftforge.event.entity.player.PlayerEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
-import net.minecraftforge.network.PacketDistributor
+import net.neoforged.neoforge.event.entity.player.PlayerEvent
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.fml.common.Mod
+import com.example.sbwhelldiver.network.PacketTargets
 import java.util.UUID
 
 /** Server owns selection, visual lifetime and moving target positions; clients send a view ray only. */
-@Mod.EventBusSubscriber(modid=MOD_ID)
+@EventBusSubscriber(modid=MOD_ID)
 object TargetMarks {
     const val RANGE=300.0
     const val LIFETIME=160 // Eight seconds of HUD visibility; the targeting instruction remains active.
@@ -83,7 +83,7 @@ object TargetMarks {
             sound=if(hit.first is Enemy)0 else if(hit.first==null)2 else 1
         }
         sync(level)
-        BeaconNetwork.CHANNEL.send(PacketDistributor.DIMENSION.with {level.dimension()},com.example.sbwhelldiver.network.MarkFeedbackPacket(sound))
+        BeaconNetwork.CHANNEL.send(PacketTargets.DIMENSION.with {level.dimension()},com.example.sbwhelldiver.network.MarkFeedbackPacket(sound))
     }
     private fun finite(v:Vec3)=v.x.isFinite()&&v.y.isFinite()&&v.z.isFinite()
     private fun compatible(sentry:SentryHellpodEntity,m:Mark):Boolean {
@@ -106,9 +106,8 @@ object TargetMarks {
         View(m.owner,m.serial,e?.id ?: -1,m.target,point(level,m)!!,e is Enemy,
             e?.displayName ?: Component.translatable("hud.sbw_helldiver.special_location"),(m.expires-level.gameTime).toInt(),if(e is AbstractHellpodEntity && !e.profile.isSupply) "textures/item/${e.profile.id}_stratagem.png" else "")
     }
-    fun sync(level:ServerLevel){BeaconNetwork.CHANNEL.send(PacketDistributor.DIMENSION.with {level.dimension()},MarkSnapshotPacket(level.dimension().location(),views(level)))}
-    @SubscribeEvent fun tick(e:TickEvent.ServerTickEvent){
-        if(e.phase!=TickEvent.Phase.END)return
+    fun sync(level:ServerLevel){BeaconNetwork.CHANNEL.send(PacketTargets.DIMENSION.with {level.dimension()},MarkSnapshotPacket(level.dimension().location(),views(level)))}
+    @SubscribeEvent fun tick(e:net.neoforged.neoforge.event.tick.ServerTickEvent.Post){
         val changed=mutableSetOf<ServerLevel>()
         val iter=marks.iterator()
         while(iter.hasNext()){
@@ -125,5 +124,5 @@ object TargetMarks {
     @SubscribeEvent fun logout(e:PlayerEvent.PlayerLoggedOutEvent)=leaving(e.entity)
     @SubscribeEvent fun dimension(e:PlayerEvent.PlayerChangedDimensionEvent){leaving(e.entity);(e.entity as? ServerPlayer)?.serverLevel()?.let(::sync)}
     @SubscribeEvent fun login(e:PlayerEvent.PlayerLoggedInEvent){(e.entity as? ServerPlayer)?.let {MarkSettings.sync(it);sync(it.serverLevel())}}
-    @SubscribeEvent fun stop(e:net.minecraftforge.event.server.ServerStoppedEvent)=clear()
+    @SubscribeEvent fun stop(e:net.neoforged.neoforge.event.server.ServerStoppedEvent)=clear()
 }

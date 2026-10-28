@@ -1,7 +1,7 @@
 package com.example.sbwhelldiver.config
 
 import net.minecraft.nbt.CompoundTag
-import net.minecraftforge.common.ForgeConfigSpec
+import net.neoforged.neoforge.common.ModConfigSpec
 
 /** Settings are frozen when the beacon activates, including across save/load. */
 data class RailcannonSettings(val callTicks:Int=20,val lockTicks:Int=34,val beamTicks:Int=40,
@@ -18,16 +18,16 @@ data class RailcannonSettings(val callTicks:Int=20,val lockTicks:Int=34,val beam
  }
 }
 object OrbitalRailcannonConfig {
- private lateinit var call:ForgeConfigSpec.DoubleValue
- private lateinit var lock:ForgeConfigSpec.DoubleValue
- private lateinit var beam:ForgeConfigSpec.DoubleValue
- private lateinit var flight:ForgeConfigSpec.DoubleValue
- private lateinit var range:ForgeConfigSpec.DoubleValue
- private lateinit var direct:ForgeConfigSpec.DoubleValue
- private lateinit var blast:ForgeConfigSpec.DoubleValue
- private lateinit var inner:ForgeConfigSpec.DoubleValue
- private lateinit var outer:ForgeConfigSpec.DoubleValue
- fun register(b:ForgeConfigSpec.Builder) {
+ private lateinit var call:ModConfigSpec.DoubleValue
+ private lateinit var lock:ModConfigSpec.DoubleValue
+ private lateinit var beam:ModConfigSpec.DoubleValue
+ private lateinit var flight:ModConfigSpec.DoubleValue
+ private lateinit var range:ModConfigSpec.DoubleValue
+ private lateinit var direct:ModConfigSpec.DoubleValue
+ private lateinit var blast:ModConfigSpec.DoubleValue
+ private lateinit var inner:ModConfigSpec.DoubleValue
+ private lateinit var outer:ModConfigSpec.DoubleValue
+ fun register(b:ModConfigSpec.Builder) {
   b.comment("轨道炮攻击。Orbital Railcannon Strike.").push("railcannonStrike")
   call=b.comment("红光启动前的等待时间。Delay before the targeting beam starts.").defineInRange("callDelaySeconds",1.0,.05,60.0)
   lock=b.comment("红光启动至发射；原版1.7秒。Beam start to firing; native 1.7 seconds.").defineInRange("lockSeconds",1.7,.05,60.0)

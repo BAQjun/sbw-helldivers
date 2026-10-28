@@ -10,11 +10,11 @@ import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.level.saveddata.SavedData
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.event.TickEvent
-import net.minecraftforge.event.entity.player.PlayerEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
-import net.minecraftforge.network.PacketDistributor
+import net.neoforged.neoforge.event.entity.player.PlayerEvent
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.fml.common.Mod
+import com.example.sbwhelldiver.network.PacketTargets
 import java.util.UUID
 
 /** World anchors, not entities: ships never load remote chunks or follow a moving player. */
@@ -61,14 +61,14 @@ class DestroyerState {
   transitionEnd=t.getLong("TransitionEnd");appearedAt=t.getLong("AppearedAt");resupplyPending=t.getBoolean("ResupplyPending")
  }}
 }
-@Mod.EventBusSubscriber(modid=MOD_ID)
+@EventBusSubscriber(modid=MOD_ID)
 object SuperDestroyers {
  class Fleet:SavedData(){
   val ships=mutableMapOf<UUID,DestroyerState>()
-  override fun save(t:CompoundTag):CompoundTag {val list=ListTag();ships.forEach{(id,s)->list.add(s.save().also{it.putUUID("Owner",id)})};t.put("Ships",list);return t}
+  override fun save(t:CompoundTag,registries:net.minecraft.core.HolderLookup.Provider):CompoundTag {val list=ListTag();ships.forEach{(id,s)->list.add(s.save().also{it.putUUID("Owner",id)})};t.put("Ships",list);return t}
   companion object{fun load(t:CompoundTag)=Fleet().apply{t.getList("Ships",Tag.TAG_COMPOUND.toInt()).forEach{raw->val a=raw as CompoundTag;if(a.hasUUID("Owner"))ships[a.getUUID("Owner")]=DestroyerState.load(a)}}}
  }
- private fun fleet(s:MinecraftServer):Fleet=s.overworld().dataStorage.computeIfAbsent(Fleet::load,::Fleet,"sbw_helldiver_destroyers")
+ private fun fleet(s:MinecraftServer):Fleet=s.overworld().dataStorage.computeIfAbsent(SavedData.Factory(::Fleet,{t, _ -> Fleet.load(t)},null),"sbw_helldiver_destroyers")
  fun state(p:ServerPlayer)=fleet(p.server).ships.getOrPut(p.uuid){DestroyerState()}
  fun hasOrbital(p:ServerPlayer)=(0 until p.inventory.containerSize).any{slot->BeaconData.loadout(p.inventory.getItem(slot)).any{it?.id?.let(Stratagems::isOrbital)==true}}
  fun available(p:ServerPlayer)=state(p).available(p.level().dimension().location().toString(),p.position(),OrbitalConfig.range.get(),StratagemCooldowns.now(p.server))
@@ -88,29 +88,28 @@ object SuperDestroyers {
   fleet(p.server).setDirty();syncAll(p.server);return true
  }
  fun sync(p:ServerPlayer){
-  if(p is net.minecraftforge.common.util.FakePlayer)return
+  if(p is net.neoforged.neoforge.common.util.FakePlayer)return
   val f=fleet(p.server);val list=ListTag();val dimension=p.level().dimension().location().toString()
   f.ships.forEach{(id,s)->if(s.anchor?.dimension==dimension||s.destination?.dimension==dimension)list.add(s.save().also{it.putUUID("Owner",id)})}
   val data=CompoundTag();data.put("Ships",list);data.put("Own",state(p).save());data.putDouble("Range",OrbitalConfig.range.get());data.putBoolean("Equipped",hasOrbital(p))
-  BeaconNetwork.CHANNEL.send(PacketDistributor.PLAYER.with{p},DestroyerSnapshotPacket(StratagemCooldowns.now(p.server),data))
+  BeaconNetwork.CHANNEL.send(PacketTargets.PLAYER.with{p},DestroyerSnapshotPacket(StratagemCooldowns.now(p.server),data))
  }
  fun fire(level:net.minecraft.server.level.ServerLevel,origin:Vec3,target:Vec3){
   if(!Stratagems.dimensionAllowed(level.dimension().location().toString()))return
   val reach=OrbitalConfig.range.get()
   level.players().filter{it.position().distanceToSqr(target)<=reach*reach}.forEach{
-   BeaconNetwork.CHANNEL.send(PacketDistributor.PLAYER.with{it},DestroyerFirePacket(origin))
+   BeaconNetwork.CHANNEL.send(PacketTargets.PLAYER.with{it},DestroyerFirePacket(origin))
   }
  }
  private fun syncAll(s:MinecraftServer)=s.playerList.players.forEach(::sync)
  private fun cue(s:MinecraftServer,anchor:DestroyerAnchor?,name:String){
   if(anchor==null||!Stratagems.dimensionAllowed(anchor.dimension))return
   s.playerList.players.filter{it.level().dimension().location().toString()==anchor.dimension&&it.position().distanceToSqr(anchor.center)<4096.0*4096.0}.forEach{
-   BeaconNetwork.CHANNEL.send(PacketDistributor.PLAYER.with{it},DestroyerWarpPacket(anchor.position,name=="super_destroyer_warp_out"))
+   BeaconNetwork.CHANNEL.send(PacketTargets.PLAYER.with{it},DestroyerWarpPacket(anchor.position,name=="super_destroyer_warp_out"))
   }
  }
- @SubscribeEvent fun tick(e:TickEvent.ServerTickEvent){
-  if(e.phase!=TickEvent.Phase.END)return
-  val server=net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer()?:return
+ @SubscribeEvent fun tick(e:net.neoforged.neoforge.event.tick.ServerTickEvent.Post){
+  val server=net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer()?:return
   val now=StratagemCooldowns.now(server);val f=fleet(server);var changed=false
   for((owner,s) in f.ships){
    if(s.transitionEnd>0){

@@ -1,5 +1,5 @@
 modLoader = "kotlinforforge"
-loaderVersion = "[4.11.0,)"
+loaderVersion = "[5.10.0,)"
 license = "${mod_license}"
 
 [[mods]]
@@ -11,9 +11,9 @@ authors = "${mod_authors}"
 description = '''${mod_description}'''
 
 [[dependencies.${mod_id}]]
-modId = "forge"
-mandatory = true
-versionRange = "[47.2.0,)"
+modId = "neoforge"
+type = "required"
+versionRange = "[21.1.203,)"
 ordering = "NONE"
 side = "BOTH"
 
@@ -22,15 +22,15 @@ side = "BOTH"
 # 是为了前置缺失时能给出清楚的报错，而不是一堆找不到类的堆栈。
 [[dependencies.${mod_id}]]
 modId = "kotlinforforge"
-mandatory = true
-versionRange = "[4.11.0,)"
+type = "required"
+versionRange = "[5.10.0,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.${mod_id}]]
 modId = "minecraft"
-mandatory = true
-versionRange = "[1.20.1,1.21)"
+type = "required"
+versionRange = "[1.21.1,1.21.2)"
 ordering = "NONE"
 side = "BOTH"
 
@@ -39,7 +39,7 @@ side = "BOTH"
 # 版本上限收得比较紧：换版本前先验证这几项仍然存在。
 [[dependencies.${mod_id}]]
 modId = "superbwarfare"
-mandatory = true
+type = "required"
 versionRange = "[${superbwarfare_version},)"
 ordering = "NONE"
 side = "BOTH"
@@ -50,15 +50,13 @@ side = "BOTH"
 # 是为了缺失时能给出「缺哪个前置」的明确提示，而不是一堆找不到类的堆栈。
 [[dependencies.${mod_id}]]
 modId = "simplebedrockmodel"
-mandatory = true
-versionRange = "[2.5.1,)"
+type = "required"
+versionRange = "[2.5.1.1,)"
 ordering = "NONE"
 side = "BOTH"
 
-# Optional integration; installations without TACZ keep the native projectile path.
-[[dependencies.${mod_id}]]
-modId = "tacz"
-mandatory = false
-versionRange = "[1.1.8,1.2)"
-ordering = "AFTER"
-side = "BOTH"
+[[mixins]]
+config="sbw_helldiver.mixins.json"
+
+[[mixins]]
+config="sbw_helldiver.iris.mixins.json"

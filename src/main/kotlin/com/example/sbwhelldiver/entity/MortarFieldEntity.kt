@@ -18,7 +18,6 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.network.NetworkHooks
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -41,7 +40,7 @@ class MortarFieldEntity(type: EntityType<out MortarFieldEntity>,level: Level) : 
     val lifetimeTicks get()=entityData.get(LIFETIME).takeIf{it>0}?:kind.lifetime
     val remainingTicks get() = entityData.get(REMAINING)
     init { noPhysics = true }
-    override fun defineSynchedData() { entityData.define(ORBITAL_EMS,false); entityData.define(LIFETIME,0);entityData.define(EFFECT_TICKS,-1);entityData.define(MINE_CLOUD,false);entityData.define(AREA_RADIUS,0f);entityData.define(KIND,0);entityData.define(REMAINING,300) }
+    override fun defineSynchedData(builder: SynchedEntityData.Builder) { builder.define(ORBITAL_EMS,false); builder.define(LIFETIME,0);builder.define(EFFECT_TICKS,-1);builder.define(MINE_CLOUD,false);builder.define(AREA_RADIUS,0f);builder.define(KIND,0);builder.define(REMAINING,300) }
     override fun readAdditionalSaveData(tag: CompoundTag) {
         entityData.set(EFFECT_TICKS,if(tag.contains("EffectTicks")) tag.getInt("EffectTicks").coerceIn(0,1200) else -1)
         entityData.set(MINE_CLOUD,tag.getBoolean("MineCloud"))
@@ -55,7 +54,7 @@ class MortarFieldEntity(type: EntityType<out MortarFieldEntity>,level: Level) : 
         tag.putInt("Lifetime",lifetimeTicks)
         tag.putInt("EffectTicks",effectTicks);tag.putBoolean("MineCloud",mineCloud);tag.putDouble("Radius",radius);tag.putInt("Kind",kind.ordinal);tag.putInt("Remaining",remainingTicks)
     }
-    override fun getAddEntityPacket(): Packet<ClientGamePacketListener> = NetworkHooks.getEntitySpawningPacket(this)
+
     override fun tick() {
         super.tick()
         if (!level().isClientSide) {
@@ -69,9 +68,9 @@ class MortarFieldEntity(type: EntityType<out MortarFieldEntity>,level: Level) : 
                 it.isAlive && !it.isSpectator && (it.x-x)*(it.x-x)+(it.z-z)*(it.z-z) <= radius*radius
             }.forEach { target ->
                 if (kind == Kind.GAS) {
-                    target.addEffect(MobEffectInstance(ModEffects.GAS.get(),effectTicks,0,false,true,true))
-                    if (target !is Player) target.addEffect(MobEffectInstance(ModEffects.CONFUSION.get(),effectTicks,0,false,true,true))
-                } else target.addEffect(MobEffectInstance(ModEffects.STUN.get(),effectTicks,0,false,true,true))
+                    target.addEffect(MobEffectInstance(ModEffects.GAS,effectTicks,0,false,true,true))
+                    if (target !is Player) target.addEffect(MobEffectInstance(ModEffects.CONFUSION,effectTicks,0,false,true,true))
+                } else target.addEffect(MobEffectInstance(ModEffects.STUN,effectTicks,0,false,true,true))
             }
             entityData.set(REMAINING,remainingTicks-1)
         }

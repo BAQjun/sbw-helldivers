@@ -12,7 +12,6 @@ import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.MoverType
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.network.NetworkHooks
 import java.util.UUID
 import kotlin.math.cos
 import kotlin.math.round
@@ -44,10 +43,10 @@ class HellpodCapEntity(type: EntityType<HellpodCapEntity>, level: Level) : Entit
     private var lerpPosition = Vec3.ZERO
     private var lerpYaw = 0f
 
-    override fun defineSynchedData() {
-        entityData.define(DATA_SETTLED, false)
-        entityData.define(DATA_PITCH, 0f)
-        entityData.define(DATA_ROLL, 0f)
+    override fun defineSynchedData(builder: SynchedEntityData.Builder) {
+        builder.define(DATA_SETTLED, false)
+        builder.define(DATA_PITCH, 0f)
+        builder.define(DATA_ROLL, 0f)
     }
 
     fun ejectFrom(pod: AbstractHellpodEntity) {
@@ -100,14 +99,14 @@ class HellpodCapEntity(type: EntityType<HellpodCapEntity>, level: Level) : Entit
     }
 
     // Server-authoritative block collision; smooth network updates without client physics drift.
-    override fun lerpTo(x: Double, y: Double, z: Double, yaw: Float, pitch: Float, steps: Int, teleport: Boolean) {
+    override fun lerpTo(x: Double, y: Double, z: Double, yaw: Float, pitch: Float, steps: Int) {
         lerpPosition = Vec3(x, y, z)
         lerpYaw = yaw
-        lerpSteps = if (teleport) 1 else steps.coerceAtLeast(1)
+        lerpSteps = steps.coerceAtLeast(1)
     }
 
     override fun isPushedByFluid() = false
-    override fun getAddEntityPacket(): Packet<ClientGamePacketListener> = NetworkHooks.getEntitySpawningPacket(this)
+
 
     override fun addAdditionalSaveData(tag: CompoundTag) {
         sourcePodUUID?.let { tag.putUUID("SourcePod", it) }

@@ -44,7 +44,7 @@ object SoundTimeline : ResourceManagerReloadListener {
 
     override fun onResourceManagerReload(manager: ResourceManager) {
         clear()
-        val resource = manager.getResource(ResourceLocation(MOD_ID, "helldivers/audio.json")).orElseThrow()
+        val resource = manager.getResource(ResourceLocation.fromNamespaceAndPath(MOD_ID, "helldivers/audio.json")).orElseThrow()
         val root = resource.openAsReader().use { JsonParser.parseReader(it).asJsonObject }
         effects = root["effects"].asJsonObject.entrySet().associate { (name, value) ->
             val e = value.asJsonObject

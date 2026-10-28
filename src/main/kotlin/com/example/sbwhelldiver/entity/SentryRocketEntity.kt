@@ -21,6 +21,6 @@ class SentryRocketEntity(type: EntityType<out SmallRocketEntity>, level: Level) 
     override fun getModelInstance() = ProjectileModelReloadListener.getModel(MODEL)?.createInstance()
 
     companion object {
-        val MODEL = ResourceLocation("superbwarfare", "models/bedrock/projectile/small_rocket.geo.json")
+        val MODEL = ResourceLocation.fromNamespaceAndPath("superbwarfare", "models/bedrock/projectile/small_rocket.geo.json")
     }
 }

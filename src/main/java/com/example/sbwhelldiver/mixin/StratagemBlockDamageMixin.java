@@ -4,7 +4,7 @@ import com.atsuishio.superbwarfare.entity.projectile.FastThrowableProjectile;
 import com.atsuishio.superbwarfare.tools.CustomExplosion;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -13,11 +13,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(value = CustomExplosion.class, remap = false)
 public abstract class StratagemBlockDamageMixin {
     /** SBW's global switch is only consulted for explosions that are not ours. */
-    // SBW overrides Minecraft's Explosion.explode(): its name is SRG in a
-    // shipped game, even though CustomExplosion itself is not remapped.
-    @Redirect(method = {"explode", "m_46061_"}, at = @At(value = "INVOKE",
-        target = "Lnet/minecraftforge/common/ForgeConfigSpec$BooleanValue;get()Ljava/lang/Object;", ordinal = 0), remap = false)
-    private Object helldivers$independentTerrainSwitch(ForgeConfigSpec.BooleanValue setting) {
+    @Redirect(method = "explode", at = @At(value = "INVOKE",
+        target = "Lnet/neoforged/neoforge/common/ModConfigSpec$BooleanValue;get()Ljava/lang/Object;", ordinal = 0), remap = false)
+    private Object helldivers$independentTerrainSwitch(ModConfigSpec.BooleanValue setting) {
         CustomExplosion explosion = (CustomExplosion) (Object) this;
         return isStratagem(explosion.getDirectSourceEntity()) ? explosion.interactsWithBlocks() : setting.get();
     }

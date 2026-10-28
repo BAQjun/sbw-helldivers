@@ -120,24 +120,24 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
     var ejectedCasingCount = 0
         private set
 
-    override fun defineSynchedData() {
-        super.defineSynchedData()
-        entityData.define(DATA_RELOADING, false)
-        entityData.define(DATA_RELOAD_START, 0L)
-        entityData.define(DATA_RELOAD_AGE, 0)
-        entityData.define(DATA_SPINNING, false)
-        entityData.define(DATA_CLIP, 0)
-        entityData.define(DATA_ROTOR_ANGLE, 0f)
-        entityData.define(DATA_SERVER_TURRET_YAW, 0f)
-        entityData.define(DATA_SERVER_TURRET_PITCH, 0f)
-        entityData.define(DATA_FLAME_STATE, 0)
-        entityData.define(DATA_LASER_STATE, 0)
-        entityData.define(DATA_LASER_HEAT, 0f)
-        entityData.define(DATA_LASER_LENGTH, 0f)
-        entityData.define(DATA_LASER_BACKOFF, 0f)
-        entityData.define(DATA_TESLA_STATE,0)
-        entityData.define(DATA_TESLA_AGE,0)
-        entityData.define(DATA_TESLA_ARC,CompoundTag())
+    override fun defineSynchedData(builder: SynchedEntityData.Builder) {
+        super.defineSynchedData(builder)
+        builder.define(DATA_RELOADING, false)
+        builder.define(DATA_RELOAD_START, 0L)
+        builder.define(DATA_RELOAD_AGE, 0)
+        builder.define(DATA_SPINNING, false)
+        builder.define(DATA_CLIP, 0)
+        builder.define(DATA_ROTOR_ANGLE, 0f)
+        builder.define(DATA_SERVER_TURRET_YAW, 0f)
+        builder.define(DATA_SERVER_TURRET_PITCH, 0f)
+        builder.define(DATA_FLAME_STATE, 0)
+        builder.define(DATA_LASER_STATE, 0)
+        builder.define(DATA_LASER_HEAT, 0f)
+        builder.define(DATA_LASER_LENGTH, 0f)
+        builder.define(DATA_LASER_BACKOFF, 0f)
+        builder.define(DATA_TESLA_STATE,0)
+        builder.define(DATA_TESLA_AGE,0)
+        builder.define(DATA_TESLA_ARC,CompoundTag())
     }
 
     override fun tick() {
@@ -238,7 +238,8 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
         val world = level() as? ServerLevel ?: return
         val origin = position().add(0.0, .1, 0.0)
         val source = world.damageSources().explosion(this, lastAttacker as? LivingEntity)
-        world.getEntities(this, AABB(origin, origin).inflate(4.0)) { !it.isRemoved && !it.ignoreExplosion() }
+        val blast=net.minecraft.world.level.Explosion(world,this,origin.x,origin.y,origin.z,4f,false,net.minecraft.world.level.Explosion.BlockInteraction.KEEP)
+        world.getEntities(this, AABB(origin, origin).inflate(4.0)) { !it.isRemoved && !it.ignoreExplosion(blast) }
             .forEach { victim ->
                 val damage = SentryExplosion.damageAt(SentryExplosion.distanceToBody(origin, victim.boundingBox), 60f, .4, 4.0)
                 if (damage <= 0f) return@forEach
@@ -554,7 +555,7 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
         if (!candidate.isAlive || candidate.isRemoved || candidate is Player || candidate === owner || candidate.isAlliedTo(this)) return false
         if (candidate is TamableAnimal && candidate.isTame) return false
         if (!marked && candidate !is Enemy && !(candidate is Mob && HelldiversConfig.attackNeutralMobs.get())) return false
-        if (!marked && profile.isGasMortar && candidate.hasEffect(com.example.sbwhelldiver.init.ModEffects.GAS.get())) return false
+        if (!marked && profile.isGasMortar && candidate.hasEffect(com.example.sbwhelldiver.init.ModEffects.GAS)) return false
         val distance = distanceToSqr(candidate)
         if (!marked && profile.isLaser && candidate === target) return distance <= LaserClock.BEAM_RANGE.pow(2)
         return distance in minRange().pow(2)..seekRange().pow(2) &&

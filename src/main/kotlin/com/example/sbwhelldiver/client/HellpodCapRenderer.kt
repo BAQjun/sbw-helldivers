@@ -49,7 +49,7 @@ class HellpodCapRenderer(context: EntityRendererProvider.Context) : EntityRender
     }
 
     companion object {
-        val GEOMETRY = ResourceLocation(MOD_ID, "models/bedrock/misc/hellpod_cap.geo.json")
-        val TEXTURE = ResourceLocation(MOD_ID, "textures/bedrock/vehicle/hellpod_v3.png")
+        val GEOMETRY = ResourceLocation.fromNamespaceAndPath(MOD_ID, "models/bedrock/misc/hellpod_cap.geo.json")
+        val TEXTURE = ResourceLocation.fromNamespaceAndPath(MOD_ID, "textures/bedrock/vehicle/hellpod_v3.png")
     }
 }

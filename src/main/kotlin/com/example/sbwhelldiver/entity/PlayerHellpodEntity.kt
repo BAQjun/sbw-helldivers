@@ -1,5 +1,6 @@
 package com.example.sbwhelldiver.entity
 
+import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
@@ -32,7 +33,7 @@ class PlayerHellpodEntity(type:EntityType<*>,level:Level):AbstractHellpodEntity(
  private var steerForward=0f
  private var steerLeft=0f
  private var inputAt=-100L
- override fun defineSynchedData(){super.defineSynchedData();entityData.define(TARGET_X,0L);entityData.define(TARGET_Z,0L)}
+ override fun defineSynchedData(builder: SynchedEntityData.Builder){super.defineSynchedData(builder);builder.define(TARGET_X,0L);builder.define(TARGET_Z,0L)}
  override fun tickClient(){
   val tx=Double.fromBits(entityData.get(TARGET_X));val tz=Double.fromBits(entityData.get(TARGET_Z))
   setPos(tx,y,tz)

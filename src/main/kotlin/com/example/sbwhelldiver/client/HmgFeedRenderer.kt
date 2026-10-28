@@ -18,9 +18,9 @@ object HmgFeedRenderer: ResourceManagerReloadListener {
     private data class Mesh(val positions: Array<Vector3f>,val weights: FloatArray,
         val uvs: Array<FloatArray>,val faces: List<Array<Corner>>)
     private var meshes=emptyList<Mesh>()
-    private val texture=ResourceLocation(MOD_ID,"textures/bedrock/vehicle/hmg_hellpod_v1.png")
+    private val texture=ResourceLocation.fromNamespaceAndPath(MOD_ID,"textures/bedrock/vehicle/hmg_hellpod_v1.png")
     override fun onResourceManagerReload(resources: ResourceManager) {
-        val parsed=resources.openAsReader(ResourceLocation(MOD_ID,"helldivers/hmg_feed.json")).use {JsonParser.parseReader(it).asJsonObject}
+        val parsed=resources.openAsReader(ResourceLocation.fromNamespaceAndPath(MOD_ID,"helldivers/hmg_feed.json")).use {JsonParser.parseReader(it).asJsonObject}
         val width=parsed["texture_width"].asFloat;val height=parsed["texture_height"].asFloat
         meshes=parsed["meshes"].asJsonArray.map { item ->
             val raw=item.asJsonObject["poly_mesh"].asJsonObject

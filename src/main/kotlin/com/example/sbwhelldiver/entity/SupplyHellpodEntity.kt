@@ -94,7 +94,7 @@ class SupplyHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
 
     companion object {
         /** 卓越前线的普通补给箱，带随机战利品表。 */
-        private val CONTAINER_ID = ResourceLocation("superbwarfare", "small_container")
+        private val CONTAINER_ID = ResourceLocation.fromNamespaceAndPath("superbwarfare", "small_container")
 
         /** 环形搜索的四个方向。 */
         private val RING_OFFSETS = listOf(0 to 1, 1 to 0, 0 to -1, -1 to 0)

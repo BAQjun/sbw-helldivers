@@ -2,7 +2,12 @@
   "required": false,
   "minVersion": "0.8",
   "package": "com.example.sbwhelldiver.mixin.iris",
-  "compatibilityLevel": "JAVA_17",
-  "client": ["IrisFireMaterialMixin"],
-  "injectors": {"defaultRequire": 0}
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "IrisFireMaterialMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  },
+  "mixins": []
 }

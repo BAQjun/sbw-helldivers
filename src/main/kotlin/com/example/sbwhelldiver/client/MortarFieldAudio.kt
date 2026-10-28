@@ -12,16 +12,16 @@ import net.minecraft.server.packs.resources.ResourceManagerReloadListener
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundSource
 import net.minecraft.util.RandomSource
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.event.TickEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
+import net.neoforged.api.distmarker.Dist
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.fml.common.Mod
 import java.lang.ref.WeakReference
 import java.util.WeakHashMap
 import kotlin.math.ceil
 
 /** World impact audio follows the field, independently of the turret and the removed shell. */
-@Mod.EventBusSubscriber(modid = MOD_ID, value = [Dist.CLIENT])
+@EventBusSubscriber(modid = MOD_ID, value = [Dist.CLIENT])
 object MortarFieldAudio : ResourceManagerReloadListener {
     private class State(var nextCrackle: Int = 10)
     private val fields = WeakHashMap<MortarFieldEntity, State>()
@@ -39,7 +39,7 @@ object MortarFieldAudio : ResourceManagerReloadListener {
 
     override fun onResourceManagerReload(manager: ResourceManager) {
         clear()
-        val resource = manager.getResource(ResourceLocation(MOD_ID, "helldivers/audio.json")).orElseThrow()
+        val resource = manager.getResource(ResourceLocation.fromNamespaceAndPath(MOD_ID, "helldivers/audio.json")).orElseThrow()
         durations = resource.openAsReader().use { reader ->
             JsonParser.parseReader(reader).asJsonObject["effects"].asJsonObject.entrySet().associate { (name, value) ->
                 name to ceil(value.asJsonObject["duration"].asDouble * 20).toInt()
@@ -58,8 +58,7 @@ object MortarFieldAudio : ResourceManagerReloadListener {
         Minecraft.getInstance().soundManager.play(sound)
         if (java.lang.Boolean.getBoolean("sbw_helldiver.statusMortarSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.emsProbe")) started.merge(effect, 1, Int::plus)
     }
-    @SubscribeEvent fun tick(event: TickEvent.ClientTickEvent) {
-        if (event.phase != TickEvent.Phase.END) return
+    @SubscribeEvent fun tick(event: net.neoforged.neoforge.client.event.ClientTickEvent.Post) {
         val level = Minecraft.getInstance().level
         if (level !== currentLevel) { clear(); currentLevel = level }
         if (level == null) return

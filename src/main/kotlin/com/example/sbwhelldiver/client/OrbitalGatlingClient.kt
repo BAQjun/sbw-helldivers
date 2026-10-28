@@ -4,7 +4,7 @@ import com.example.sbwhelldiver.MOD_ID
 import com.example.sbwhelldiver.entity.StratagemMarker
 import com.example.sbwhelldiver.init.ModSounds
 import com.example.sbwhelldiver.stratagem.OrbitalGatlingPattern
-import com.mojang.blaze3d.vertex.BufferBuilder
+import com.mojang.blaze3d.vertex.ByteBufferBuilder
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.texture.OverlayTexture
@@ -12,23 +12,22 @@ import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance
 import net.minecraft.sounds.SoundSource
 import net.minecraft.util.RandomSource
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.fml.common.Mod
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.event.TickEvent
-import net.minecraftforge.client.event.RenderLevelStageEvent
+import net.neoforged.api.distmarker.Dist
+import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.fml.common.Mod
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import java.lang.ref.WeakReference
 import java.util.WeakHashMap
 import kotlin.math.*
 
-@Mod.EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
+@EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
 object OrbitalGatlingClient {
- private val buffers=MultiBufferSource.immediate(BufferBuilder(32768))
+ private val buffers=MultiBufferSource.immediate(ByteBufferBuilder(32768))
  private val heard=WeakHashMap<StratagemMarker,Boolean>()
  private var level:net.minecraft.client.multiplayer.ClientLevel?=null
  private val sounds=mutableListOf<BarrageSound>()
- @SubscribeEvent fun tick(e:TickEvent.ClientTickEvent){
-  if(e.phase!=TickEvent.Phase.END)return
+ @SubscribeEvent fun tick(e:net.neoforged.neoforge.client.event.ClientTickEvent.Post){
   val mc=Minecraft.getInstance()
   if(mc.level!==level){sounds.forEach{it.finish();mc.soundManager.stop(it)};sounds.clear();heard.clear();level=mc.level}
   val world=mc.level?:return
@@ -61,7 +60,7 @@ object OrbitalGatlingClient {
    if(!marker.isOrbitalGatling||marker.orbitalFiredAt<0)continue
    val source=marker.orbitalOrigin?:continue
    val s=marker.gatlingSettings
-   val age=world.gameTime-marker.orbitalFiredAt+e.partialTick.toDouble()
+   val age=world.gameTime-marker.orbitalFiredAt+e.partialTick.getGameTimeDeltaPartialTick(false).toDouble()
    val first=OrbitalGatlingPattern.due(age-s.flightTicks,s)
    val end=OrbitalGatlingPattern.due(age,s)
    if(first>=end)continue

@@ -2,7 +2,7 @@ package com.example.sbwhelldiver.config
 
 import com.example.sbwhelldiver.entity.MortarFieldEntity
 import net.minecraft.nbt.CompoundTag
-import net.minecraftforge.common.ForgeConfigSpec
+import net.neoforged.neoforge.common.ModConfigSpec
 import kotlin.math.roundToInt
 
 /** Field and flight parameters are captured once per call and survive saving/loading. */
@@ -22,7 +22,7 @@ data class OrbitalFieldSettings(val id:String="orbital_gas_strike",val radius:Do
  }
 }
 object OrbitalFieldConfig{
- private class Entry(b:ForgeConfigSpec.Builder,val d:OrbitalFieldSettings){
+ private class Entry(b:ModConfigSpec.Builder,val d:OrbitalFieldSettings){
   val radius=b.comment("命中后的区域半径。Radius of each impact field.").defineInRange("fieldRadius",d.radius,.1,16.0)
   val life=b.comment("区域持续时间；不会修改其它来源的区域。Field duration, independent of other field sources.").defineInRange("fieldSeconds",d.lifetime/20.0,.05,3600.0)
   val effect=if(d.effectTicks>0)b.comment("持续刷新异常状态的时间。Refreshed status duration.").defineInRange("effectSeconds",d.effectTicks/20.0,.05,60.0)else null
@@ -34,7 +34,7 @@ object OrbitalFieldConfig{
   fun snapshot()=OrbitalFieldSettings(d.id,radius.get(),(life.get()*20).roundToInt(),effect?.let{(it.get()*20).roundToInt()}?:0,shells.get(),spread.get(),(call.get()*20).roundToInt(),(flight.get()*20).roundToInt(),damage.get().toFloat())
  }
  private val entries=linkedMapOf<String,Entry>()
- fun register(b:ForgeConfigSpec.Builder){
+ fun register(b:ModConfigSpec.Builder){
   for((id,name)in OrbitalFieldSettings.ids.zip(listOf("gasStrike","emsStrike","smokeStrike"))){b.push(name);entries[id]=Entry(b,OrbitalFieldSettings.defaults(id));b.pop()}
  }
  fun snapshot(id:String)=entries.getValue(id).snapshot()

@@ -20,7 +20,7 @@ object WreckTextureCache : ResourceManagerReloadListener {
         preparedTextures.clear()
         val started = System.nanoTime()
         for (profile in AssetCatalog.profiles.values.filterNot { it.isSupply }) {
-            val location = ResourceLocation(MOD_ID,"sbw/vehicles/${profile.id}.json")
+            val location = ResourceLocation.fromNamespaceAndPath(MOD_ID,"sbw/vehicles/${profile.id}.json")
             val resource = manager.getResource(location).orElse(null) ?: continue
             val root = resource.openAsReader().use { JsonParser.parseReader(it).asJsonObject }
             for (model in root.getAsJsonArray("Models")) {
