@@ -21,8 +21,6 @@ import net.neoforged.bus.api.EventPriority
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.fml.common.Mod
-import org.joml.Quaternionf
-import org.joml.Matrix4f
 import org.joml.Vector4f
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import net.minecraft.world.level.ClipContext
@@ -97,9 +95,7 @@ object HmgClient {
         val partial=event.partialTick.getGameTimeDeltaPartialTick(false)
         val point=pod.effectiveAimTarget(pod.nextBarrel,partial)
         val delta=point.subtract(event.camera.position)
-        // Camera.rotation uses +Z forward; OpenGL projection uses -Z forward.
-        val view=Matrix4f().rotationY(Math.PI.toFloat()).rotate(Quaternionf(event.camera.rotation()).conjugate())
-        val clip=Matrix4f(event.projectionMatrix).mul(view).transform(Vector4f(delta.x.toFloat(),delta.y.toFloat(),delta.z.toFloat(),1f))
+        val clip=WorldHudProjection.matrix(event).transform(Vector4f(delta.x.toFloat(),delta.y.toFloat(),delta.z.toFloat(),1f))
         val mc=Minecraft.getInstance()
         val denominator=maxOf(.00001,abs(clip.w.toDouble()))
         projectedX=clip.x/denominator*mc.window.guiScaledWidth*.5

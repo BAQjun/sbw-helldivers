@@ -15,8 +15,6 @@ import net.neoforged.neoforge.client.settings.KeyConflictContext
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.fml.common.Mod
-import org.joml.Matrix4f
-import org.joml.Quaternionf
 import org.joml.Vector4f
 import org.lwjgl.glfw.GLFW
 import kotlin.math.*
@@ -61,8 +59,7 @@ object TargetMarkClient {
   if(e.stage!=RenderLevelStageEvent.Stage.AFTER_LEVEL)return
   labels=emptyList();val mc=Minecraft.getInstance();val level=mc.level ?: return
   if(!enabled||mc.options.hideGui||mc.screen!=null)return
-  val view=Matrix4f().rotationY(PI.toFloat()).rotate(Quaternionf(e.camera.rotation()).conjugate())
-  val matrix=Matrix4f(e.projectionMatrix).mul(view);val camera=e.camera.position
+  val matrix=WorldHudProjection.matrix(e);val camera=e.camera.position
   val w=mc.window.guiScaledWidth;val h=mc.window.guiScaledHeight
   val projected=entries.mapNotNull {m->
    val remaining=(m.remaining-(level.gameTime-receivedAt)).toInt();if(remaining<=0)return@mapNotNull null

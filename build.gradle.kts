@@ -27,7 +27,10 @@ neoForge {
     addModdingDependenciesTo(portTest)
     runs {
         create("client") { client(); gameDirectory = file(".codex/neoforge1211/runtime-client")
-            if (providers.gradleProperty("portTests").isPresent) systemProperty("sbw_helldiver.portClientTests", "true") }
+            if (providers.gradleProperty("portTests").isPresent) systemProperty("sbw_helldiver.portClientTests", "true")
+            if (providers.gradleProperty("hudTests").isPresent) {
+                systemProperty("sbw_helldiver.hudRegression", "true")
+            } }
         create("server") { server(); programArgument("--nogui"); gameDirectory = file(".codex/neoforge1211/runtime-server") }
         create("gameTestServer") { type = "gameTestServer"; gameDirectory = file(".codex/neoforge1211/runtime-gametest"); systemProperty("neoforge.enabledGameTestNamespaces", "sbw_helldiver") }
     }

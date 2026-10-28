@@ -18,8 +18,6 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.fml.common.Mod
-import org.joml.Quaternionf
-import org.joml.Matrix4f
 import org.joml.Vector4f
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -71,9 +69,7 @@ object BeaconCallHud : ResourceManagerReloadListener {
         val level = mc.level ?: return
         if (mc.options.hideGui || mc.screen != null) return
         val camera = event.camera.position
-        // Camera rotation is independent of the temporary world-render pose stack.
-        val view = Matrix4f().rotationY(Math.PI.toFloat()).rotate(Quaternionf(event.camera.rotation()).conjugate())
-        val matrix = Matrix4f(event.projectionMatrix).mul(view)
+        val matrix = WorldHudProjection.matrix(event)
         val width = mc.window.guiScaledWidth
         val height = mc.window.guiScaledHeight
         val beamHeight = AbstractHellpodEntity.descentSpawnHeight().toFloat()
