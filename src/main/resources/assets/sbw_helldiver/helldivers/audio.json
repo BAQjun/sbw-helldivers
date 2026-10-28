@@ -2366,6 +2366,46 @@
       "fade_out": 0,
       "duration": 0.911,
       "stop_effects": []
+    },
+    "sfx_orbital_ems_impact_1": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 2.484,
+      "stop_effects": []
+    },
+    "sfx_orbital_ems_impact_2": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 7.98,
+      "stop_effects": []
+    },
+    "sfx_orbital_ems_loop": {
+      "kind": "loop",
+      "audible": true,
+      "fade_in": 1,
+      "fade_out": 0.5,
+      "duration": 9.997333333333334,
+      "stop_effects": []
+    },
+    "sfx_orbital_ems_crackle": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0.5,
+      "duration": 0.996,
+      "stop_effects": []
+    },
+    "sfx_orbital_ems_stop": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 2.494666666666667,
+      "stop_effects": []
     }
   },
   "models": {

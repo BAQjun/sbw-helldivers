@@ -66,7 +66,6 @@ public final class FieldArcGeometry {
                 }
             };
             EmsFieldVisual.INSTANCE.collect(field,partial,sink);
-            if(field.tickCount<9)sink.flash(new Vec3(0,1,0),1.6,(1-(field.tickCount+partial)/9)*.5);
         }
         data.flip();if(!data.hasRemaining())return;
         initialize();glUseProgram(program);glBindVertexArray(vao);glBindBuffer(GL_ARRAY_BUFFER,vbo);glBufferData(GL_ARRAY_BUFFER,data,GL_STREAM_DRAW);

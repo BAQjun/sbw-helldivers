@@ -23,7 +23,7 @@ import kotlin.math.ceil
 /** World impact audio follows the field, independently of the turret and the removed shell. */
 @Mod.EventBusSubscriber(modid = MOD_ID, value = [Dist.CLIENT])
 object MortarFieldAudio : ResourceManagerReloadListener {
-    private class State(var activationPending: Boolean = false)
+    private class State(var nextCrackle: Int = 10)
     private val fields = WeakHashMap<MortarFieldEntity, State>()
     private val sounds = mutableListOf<FieldSound>()
     private var durations = emptyMap<String, Int>()
@@ -56,7 +56,7 @@ object MortarFieldAudio : ResourceManagerReloadListener {
         val sound = FieldSound(field, effect, durations.getValue(effect), gasAmbient)
         sounds.add(sound)
         Minecraft.getInstance().soundManager.play(sound)
-        if (java.lang.Boolean.getBoolean("sbw_helldiver.statusMortarSmokeTest")) started.merge(effect, 1, Int::plus)
+        if (java.lang.Boolean.getBoolean("sbw_helldiver.statusMortarSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.emsProbe")) started.merge(effect, 1, Int::plus)
     }
     @SubscribeEvent fun tick(event: TickEvent.ClientTickEvent) {
         if (event.phase != TickEvent.Phase.END) return
@@ -64,7 +64,7 @@ object MortarFieldAudio : ResourceManagerReloadListener {
         if (level !== currentLevel) { clear(); currentLevel = level }
         if (level == null) return
         level.entitiesForRendering().filterIsInstance<MortarFieldEntity>().forEach { field ->
-            if(field.kind==MortarFieldEntity.Kind.SMOKE)return@forEach
+            if(field.kind==MortarFieldEntity.Kind.SMOKE || field.remainingTicks<=0)return@forEach
             val age = field.lifetimeTicks - field.remainingTicks
             val state = fields.getOrPut(field) {
                 // Tracking an existing field must not replay the original impact or activation.
@@ -72,15 +72,26 @@ object MortarFieldAudio : ResourceManagerReloadListener {
                 if (field.kind == MortarFieldEntity.Kind.GAS) {
                     if (fresh && !field.mineCloud) for (layer in 1..6) play(field, "sfx_gas_mortar_impact_$layer")
                     if (field.remainingTicks > 0) play(field, "sfx_gas_mortar_loop", true)
-                } else if (fresh) play(field, "sfx_ems_mortar_impact_1")
-                State(fresh && field.kind == MortarFieldEntity.Kind.EMS)
+                } else if (field.orbitalEms) {
+                    if(fresh) for(layer in 1..2) play(field,"sfx_orbital_ems_impact_$layer")
+                    play(field,"sfx_orbital_ems_loop")
+                } else if(fresh) {
+                    play(field,"sfx_ems_mortar_impact_1")
+                    // Native field event 1541665272 has no delayed Play action.
+                    for(layer in 1..4) play(field,"sfx_ems_mortar_field_$layer")
+                }
+                State(if(fresh)10 else age+3)
             }
-            if (state.activationPending && age >= 10) {
-                for (layer in 1..4) play(field, "sfx_ems_mortar_field_$layer")
-                state.activationPending = false
+            if(field.orbitalEms && age>=state.nextCrackle && field.remainingTicks>0) {
+                play(field,"sfx_orbital_ems_crackle")
+                state.nextCrackle=age+3+level.random.nextInt(8)
             }
         }
-        fields.keys.removeAll { it.isRemoved }
+        val expired=fields.keys.filter { it.isRemoved || it.remainingTicks<=0 }
+        for(field in expired) {
+            if(field.orbitalEms && (field.remainingTicks<=1 || field.removalReason==net.minecraft.world.entity.Entity.RemovalReason.DISCARDED)) play(field,"sfx_orbital_ems_stop")
+            fields.remove(field)
+        }
         sounds.removeAll { it.isStopped }
     }
     private class FieldSound(field: MortarFieldEntity, val effect: String, private val duration: Int,
@@ -96,7 +107,8 @@ object MortarFieldAudio : ResourceManagerReloadListener {
             volume = 1f; pitch = 1f; delay = 0
             // The original 20-second gas source exceeds the 15-second field lifetime.
             // Its native Stop action ends playback; no timed restart or extra release clip is needed.
-            looping = false
+            looping = effect == "sfx_orbital_ems_loop"
+            if(looping) volume=.01f
         }
         fun finish() { volume = 0f; stop() }
         override fun tick() {
@@ -112,8 +124,14 @@ object MortarFieldAudio : ResourceManagerReloadListener {
                     if (fade-- <= 0) { gasFadeCompletions++; finish() }
                 }
             }
+            if(effect == "sfx_orbital_ems_loop") {
+                val field=reference.get()
+                if(fade<0 && (field==null || field.isRemoved || field.remainingTicks<=0)) fade=10
+                volume=if(fade<0)(age/20f).coerceAtMost(1f) else (fade/10f).coerceAtLeast(0f)
+                if(fade>=0 && fade--==0)finish()
+            }
             // One-shot tails survive removal of the field or shell.
-            if (age > duration + 20) finish()
+            if (!looping && age > duration + 20) finish()
         }
     }
 }

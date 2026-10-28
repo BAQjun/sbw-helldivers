@@ -121,7 +121,7 @@ public final class FieldVolumeRenderer {
         events++;Minecraft mc=Minecraft.getInstance();if(mc.level==null)return;
         Vec3 camera=event.getCamera().getPosition();
         var fields=new ArrayList<MortarFieldEntity>();
-        for(var entity:mc.level.entitiesForRendering())if(entity instanceof MortarFieldEntity f&&f.isAlive()&&f.distanceToSqr(camera)<128*128&&event.getFrustum().isVisible(new net.minecraft.world.phys.AABB(f.getX()-f.getRadius(),f.getY()-FieldTerrainMask.maximumDepth(f),f.getZ()-f.getRadius(),f.getX()+f.getRadius(),f.getY()+visualHeight(f),f.getZ()+f.getRadius())))fields.add(f);
+        for(var entity:mc.level.entitiesForRendering())if(entity instanceof MortarFieldEntity f&&f.isAlive()&&f.distanceToSqr(camera)<128*128&&event.getFrustum().isVisible(new net.minecraft.world.phys.AABB(f.getX()-f.getRadius(),f.getY()-FieldTerrainMask.maximumDepth(f),f.getZ()-f.getRadius(),f.getX()+f.getRadius(),f.getY()+(f.getKind()==MortarFieldEntity.Kind.EMS?Math.max(visualHeight(f),5.8f):visualHeight(f)),f.getZ()+f.getRadius())))fields.add(f);
         visible=fields.size();
         var energy=new ArrayList<net.minecraft.world.entity.Entity>();
         for(var entity:mc.level.entitiesForRendering()){
@@ -217,7 +217,7 @@ public final class FieldVolumeRenderer {
                     glUniform1i(uniform("Smoke"),smoke||gas?1:0);
                     if(smoke||gas)glUniform3f(uniform("SmokeNoiseOrigin"),(float)((field.getX()*.22)%64),
                         (float)((field.getY()*.30-(mc.level.getGameTime()+(double)partial)*.055/20)%64),(float)((field.getZ()*.22)%64));
-                    glUniform1f(uniform("Extinction"),(smoke?.95f:gas?.20f:.16f)*fade);
+                    glUniform1f(uniform("Extinction"),(smoke?.95f:gas?.20f:.028f)*fade);
                     glUniform3f(uniform("FogColor"),smoke?.82f:gas?.48f:.38f,smoke?.84f:gas?.55f:.60f,smoke?.86f:gas?.15f:.84f);
                     glDrawArrays(GL_TRIANGLES,0,3);
                 }

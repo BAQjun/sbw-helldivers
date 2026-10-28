@@ -26,6 +26,7 @@ import kotlin.math.sqrt
 /** A server-owned circular area; particles are generated locally without per-particle networking. */
 class MortarFieldEntity(type: EntityType<out MortarFieldEntity>,level: Level) : Entity(type,level) {
     enum class Kind(val radius: Double,val lifetime: Int,val effectTicks: Int) { GAS(7.0,300,100), EMS(10.0,140,60), SMOKE(15.0,600,0) }
+    val orbitalEms get()=entityData.get(ORBITAL_EMS)
     val mineCloud get()=entityData.get(MINE_CLOUD)
     val kind get() = Kind.entries[entityData.get(KIND).coerceIn(0,Kind.entries.lastIndex)]
     val radius get() = entityData.get(AREA_RADIUS).toDouble().takeIf { it>0 } ?: kind.radius
@@ -40,15 +41,17 @@ class MortarFieldEntity(type: EntityType<out MortarFieldEntity>,level: Level) : 
     val lifetimeTicks get()=entityData.get(LIFETIME).takeIf{it>0}?:kind.lifetime
     val remainingTicks get() = entityData.get(REMAINING)
     init { noPhysics = true }
-    override fun defineSynchedData() { entityData.define(LIFETIME,0);entityData.define(EFFECT_TICKS,-1);entityData.define(MINE_CLOUD,false);entityData.define(AREA_RADIUS,0f);entityData.define(KIND,0);entityData.define(REMAINING,300) }
+    override fun defineSynchedData() { entityData.define(ORBITAL_EMS,false); entityData.define(LIFETIME,0);entityData.define(EFFECT_TICKS,-1);entityData.define(MINE_CLOUD,false);entityData.define(AREA_RADIUS,0f);entityData.define(KIND,0);entityData.define(REMAINING,300) }
     override fun readAdditionalSaveData(tag: CompoundTag) {
         entityData.set(EFFECT_TICKS,if(tag.contains("EffectTicks")) tag.getInt("EffectTicks").coerceIn(0,1200) else -1)
         entityData.set(MINE_CLOUD,tag.getBoolean("MineCloud"))
+        entityData.set(ORBITAL_EMS,tag.getBoolean("OrbitalEms"))
         entityData.set(KIND,tag.getInt("Kind").coerceIn(0,Kind.entries.lastIndex));entityData.set(AREA_RADIUS,if(tag.contains("Radius"))tag.getDouble("Radius").coerceIn(.1,16.0).toFloat() else 0f)
         entityData.set(LIFETIME,if(tag.contains("Lifetime"))tag.getInt("Lifetime").coerceIn(1,72000)else kind.lifetime)
         entityData.set(REMAINING,tag.getInt("Remaining").coerceIn(0,lifetimeTicks))
     }
     override fun addAdditionalSaveData(tag: CompoundTag) {
+        tag.putBoolean("OrbitalEms",orbitalEms)
         tag.putInt("Lifetime",lifetimeTicks)
         tag.putInt("EffectTicks",effectTicks);tag.putBoolean("MineCloud",mineCloud);tag.putDouble("Radius",radius);tag.putInt("Kind",kind.ordinal);tag.putInt("Remaining",remainingTicks)
     }
@@ -75,17 +78,19 @@ class MortarFieldEntity(type: EntityType<out MortarFieldEntity>,level: Level) : 
     }
     override fun shouldRenderAtSqrDistance(distance: Double)=distance<128.0*128.0
     companion object {
+        private val ORBITAL_EMS=SynchedEntityData.defineId(MortarFieldEntity::class.java,EntityDataSerializers.BOOLEAN)
         private val LIFETIME=SynchedEntityData.defineId(MortarFieldEntity::class.java,EntityDataSerializers.INT)
         private val EFFECT_TICKS=SynchedEntityData.defineId(MortarFieldEntity::class.java,EntityDataSerializers.INT)
         private val MINE_CLOUD=SynchedEntityData.defineId(MortarFieldEntity::class.java,EntityDataSerializers.BOOLEAN)
         private val AREA_RADIUS=SynchedEntityData.defineId(MortarFieldEntity::class.java,EntityDataSerializers.FLOAT)
         private val KIND=SynchedEntityData.defineId(MortarFieldEntity::class.java,EntityDataSerializers.INT)
         private val REMAINING=SynchedEntityData.defineId(MortarFieldEntity::class.java,EntityDataSerializers.INT)
-        fun create(level: ServerLevel,at: Vec3,kind: Kind,radius: Double=kind.radius,mineCloud: Boolean=false,effectTicks: Int=kind.effectTicks,lifetimeTicks:Int=kind.lifetime): MortarFieldEntity {
+        fun create(level: ServerLevel,at: Vec3,kind: Kind,radius: Double=kind.radius,mineCloud: Boolean=false,effectTicks: Int=kind.effectTicks,lifetimeTicks:Int=kind.lifetime,orbitalEms:Boolean=false): MortarFieldEntity {
             val field=MortarFieldEntity(ModEntities.MORTAR_FIELD.get(),level)
             field.setPos(at.add(0.0,.02,0.0))
             field.entityData.set(EFFECT_TICKS,effectTicks.coerceIn(0,1200))
             field.entityData.set(MINE_CLOUD,mineCloud)
+            field.entityData.set(ORBITAL_EMS,orbitalEms && kind==Kind.EMS)
             field.entityData.set(AREA_RADIUS,radius.coerceIn(.1,16.0).toFloat())
             field.entityData.set(KIND,kind.ordinal)
             field.entityData.set(LIFETIME,lifetimeTicks.coerceIn(1,72000))

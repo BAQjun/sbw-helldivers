@@ -25,8 +25,8 @@ class OrbitalFieldShellEntity(t:EntityType<out SmallCannonShellEntity>,l:Level):
   val hit=server.clip(ClipContext(vec3.add(0.0,.15,0.0),vec3.add(0.0,-64.0,0.0),ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,this))
   val at=if(hit.type==HitResult.Type.BLOCK)hit.location else vec3
   val s=fieldSettings
-  MortarFieldEntity.create(server,at,s.kind,s.radius,effectTicks=s.effectTicks,lifetimeTicks=s.lifetime)
-  // EMS/Gas field audio is owned by MortarFieldAudio; smoke uses the shared canister impact.
+  MortarFieldEntity.create(server,at,s.kind,s.radius,effectTicks=s.effectTicks,lifetimeTicks=s.lifetime,orbitalEms=s.kind==MortarFieldEntity.Kind.EMS)
+  // Field audio retains the orbital/mortar distinction after the shell is removed.
   if(s.kind==MortarFieldEntity.Kind.SMOKE)server.playSound(null,vec3.x,vec3.y,vec3.z,ModSounds.EVENTS.getValue("sfx_eagle_smoke_impact").get(),SoundSource.HOSTILE,4f,1f)
  }
  override fun afterHitEntity(result:EntityHitResult){causeExplode(result.location);discard()}

@@ -554,6 +554,6 @@
     "gasAndEmsImpact": "Exact beacon point as requested; ignore native 1m scatter",
     "smokeScatter": "Native six zero-interval salvos, area_size=15, no wandering center. MC samples six independent uniform-area points inside a 15m disk. Native random-number generator/distribution has not been recovered, so this is an explicit density adaptation, not an exact RNG port.",
     "effects": "Existing gas/confusion, EMS stun and vanilla-goal-compatible smoke occlusion",
-    "audio": "Existing gas/EMS field layers and shared Eagle smoke canister impact; no new orbital-only native event extraction claimed."
+    "audio": "Gas uses existing gas field layers; smoke uses shared Eagle smoke impact. Orbital EMS has distinct native impact, ambience and stop layers; see ems_sources.json for bank actions, timing and mapping limitations."
   }
 }

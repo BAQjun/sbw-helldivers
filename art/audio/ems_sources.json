@@ -1,0 +1,98 @@
+{
+  "source": "Helldivers 2 native Wwise banks",
+  "orbitalBank": "stratagems_orbital_ems_strike",
+  "orbitalBankSHA256": "49bea9714e82c5c6bc7f09f6b27fdd655c20a3475f9c460f03b6e566e5fd4bd3",
+  "orbitalImpactEvent": 3019812052,
+  "orbitalImpactPlayActions": [
+    210517629,
+    1018184870,
+    996119341
+  ],
+  "orbitalImpactStopAction": 442242181,
+  "orbitalFieldStartEvent": 3893120696,
+  "orbitalFieldStopEvent": 3500593726,
+  "nativeFieldBedFadeInMs": 1000,
+  "nativeCrackleStartDelayMs": 500,
+  "nativeCrackleRandomIntervalMs": [
+    150,
+    500
+  ],
+  "nativeFieldStopFadeMs": 500,
+  "mortarBank": "stratagems_sentry_static_field",
+  "mortarImpactEvent": 3659073444,
+  "mortarFieldEvent": 1541665272,
+  "mortarFieldActionDelayMs": 0,
+  "implementation": "Native sampled layers use an additional -8dB headroom. Procedural Wwise generator layers, distance RTPCs and game reverb are not emulated. Field event selection follows the bank action relationships; no audio is taken from the silent preview video. Native data-library audio key 1597132704 has not been resolved to its Wwise event name.",
+  "effects": {
+    "sfx_orbital_ems_impact_1": {
+      "media": [
+        26912141,
+        458447687,
+        398429810
+      ],
+      "baseGainDB": -7,
+      "duration": 2.484,
+      "sha256": {
+        "26912141": "008376dc074d9497571a6c71a213bf0e999cd73f2ba3b159ee672b5974e4b820",
+        "458447687": "2c5558f9749b6c64dead1739f87624149ff37742c288cef4b90e8c10bc9aec2f",
+        "398429810": "c77d60d0f42d163c745325383b12a4e9b77ee7031ee795faf183c797b43c2dea"
+      }
+    },
+    "sfx_orbital_ems_impact_2": {
+      "media": [
+        27614841,
+        515919500,
+        913901541
+      ],
+      "baseGainDB": -5,
+      "duration": 7.98,
+      "sha256": {
+        "27614841": "c718022b01b8a82b6914e371ec95cec28155e3271e6b5afbc91e5a904e4568f5",
+        "515919500": "046d5a6888d1c6d585d46a6e03f5d001049f5b6cf9f345c0a5f1b83d6264f2d7",
+        "913901541": "3fb9988e20217bbd0eeea1657b83b662a2221de361b1ebd713bf3da54bd57c1b"
+      }
+    },
+    "sfx_orbital_ems_loop": {
+      "media": [
+        955402478
+      ],
+      "baseGainDB": -12,
+      "duration": 9.997333333333334,
+      "sha256": {
+        "955402478": "1612df4715604c41e3b30fd89b01b6f3dd6cdc5e3edc624c9e04f2b664fbe7e4"
+      }
+    },
+    "sfx_orbital_ems_crackle": {
+      "media": [
+        656478199,
+        763339766,
+        1060828176,
+        194142162,
+        495747242,
+        1052371156,
+        1040199753
+      ],
+      "baseGainDB": -20,
+      "duration": 0.996,
+      "sha256": {
+        "656478199": "adbc1794fc9d4ee0d1b7a3273565cb404625d397e3198f69cdb4e5b09b9ea559",
+        "763339766": "13f2d2a7d2ffa9184a1b37760dfca11338f6b838051467cbcfae9a9ceb7ce5f3",
+        "1060828176": "443e4d528fc50d5385c0440970b544f4077df3403a2787374bb7a267c88bfd1a",
+        "194142162": "0d82b3246d52ab8bb89ca03c6d890d83df8269de147d92f8451e62f548976b21",
+        "495747242": "c9592b5cf13e28232ce9b8f4fa1c6e8d93f33a2721321766c0dc696afcfc30a2",
+        "1052371156": "e2a355d028a83ed7235941a3d9227dc2b3440a53d84c5484535c1245fe05504e",
+        "1040199753": "e7c537a8af839ac6350f6a2b85c91731626f57823cb4fb2d35c68f75b5d4004a"
+      }
+    },
+    "sfx_orbital_ems_stop": {
+      "media": [
+        630682025
+      ],
+      "baseGainDB": -13,
+      "duration": 2.494666666666667,
+      "sha256": {
+        "630682025": "cd19124f1352f024fef49c702b6b074c0a11c788a29136cbdc06df3c8181df08"
+      }
+    }
+  }
+}

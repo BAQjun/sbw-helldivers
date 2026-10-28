@@ -5299,5 +5299,100 @@
         "attenuation_distance": 128
       }
     ]
+  },
+  "sfx_orbital_ems_impact_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/orbital_ems/26912141",
+        "volume": 0.44668359215096315,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_ems/458447687",
+        "volume": 0.44668359215096315,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_ems/398429810",
+        "volume": 0.44668359215096315,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_orbital_ems_impact_2": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/orbital_ems/27614841",
+        "volume": 0.5623413251903491,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_ems/515919500",
+        "volume": 0.5623413251903491,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_ems/913901541",
+        "volume": 0.5623413251903491,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_orbital_ems_loop": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/orbital_ems/955402478",
+        "volume": 0.251188643150958,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_orbital_ems_crackle": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/orbital_ems/656478199",
+        "volume": 0.1,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_ems/763339766",
+        "volume": 0.11220184543019636,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_ems/1060828176",
+        "volume": 0.1,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_ems/194142162",
+        "volume": 0.1,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_ems/495747242",
+        "volume": 0.1,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_ems/1052371156",
+        "volume": 0.1,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/orbital_ems/1040199753",
+        "volume": 0.11220184543019636,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_orbital_ems_stop": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/orbital_ems/630682025",
+        "volume": 0.22387211385683395,
+        "attenuation_distance": 96
+      }
+    ]
   }
 }

@@ -6,10 +6,10 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.world.phys.Vec3
 import kotlin.math.*
-/** Blue-white ground haze, flickering vertical discharges and pin-point flashes. */
+/** An airy volume of suspended blue-white charge, fine short discharges and a brief impact burst. */
 object EmsFieldVisual {
     private fun quad(pose:PoseStack,vc:VertexConsumer,c:Vec3,w:Double,h:Double,color:FloatArray) {
-        val cam=Minecraft.getInstance().entityRenderDispatcher.cameraOrientation();val right=org.joml.Vector3f(1f,0f,0f).rotate(cam);val up=org.joml.Vector3f(0f,1f,0f)
+        val cam=Minecraft.getInstance().entityRenderDispatcher.cameraOrientation();val right=org.joml.Vector3f(1f,0f,0f).rotate(cam);val up=org.joml.Vector3f(0f,1f,0f).rotate(cam)
         val matrix=pose.last().pose()
         for(v in arrayOf(floatArrayOf(-1f,-1f,0f,0f),floatArrayOf(1f,-1f,1f,0f),floatArrayOf(1f,1f,1f,1f),floatArrayOf(-1f,1f,0f,1f))) {
             val p=org.joml.Vector3f(c.x.toFloat(),c.y.toFloat(),c.z.toFloat()).fma((v[0]*w*.5).toFloat(),right).fma((v[1]*h*.5).toFloat(),up)
@@ -18,7 +18,6 @@ object EmsFieldVisual {
     }
     fun render(e:MortarFieldEntity,partial:Float,pose:PoseStack,buffers:MultiBufferSource) {
         if(ShaderPackCompat.active()||ShaderPackCompat.shadowPass())return
-        val fade=min((e.tickCount+partial)/6.0,e.remainingTicks/12.0).coerceIn(0.0,1.0)
         if(!TeslaRenderTypes.isReady())return
         val arcs=buffers.getBuffer(TeslaRenderTypes.ARC);val matrix=pose.last().pose()
         val camera=Minecraft.getInstance().gameRenderer.mainCamera.position.subtract(e.position())
@@ -30,39 +29,76 @@ object EmsFieldVisual {
             fun vertex(p:Vec3,u:Double,v:Float){arcs.vertex(matrix,p.x.toFloat(),p.y.toFloat(),p.z.toFloat()).color(packed,0,255,(alpha*255).toInt().coerceIn(0,255)).uv(u.toFloat(),v).endVertex()}
             vertex(start.subtract(side),0.0,0f);vertex(start.add(side),0.0,1f);vertex(end.add(side),aspect+2,1f);vertex(end.subtract(side),aspect+2,0f)
         }
-        val flashes=mutableListOf<Vec3>()
+        data class Flash(val at:Vec3,val size:Double,val alpha:Double)
+        val flashes=ArrayList<Flash>()
         collect(e,partial,object:FieldArcGeometry.Sink {
             override fun segment(a:Vec3,b:Vec3,width:Double,alpha:Double)=drawSegment(a,b,width,alpha)
-            override fun flash(at:Vec3,size:Double,alpha:Double){flashes.add(at)}
+            override fun flash(at:Vec3,size:Double,alpha:Double){flashes.add(Flash(at,size,alpha))}
         })
         val plasma=buffers.getBuffer(TeslaRenderTypes.PLASMA)
-        if(e.tickCount<9)quad(pose,plasma,Vec3(0.0,1.0,0.0),8.0,5.0,floatArrayOf(1f,1f,1f,((1-(e.tickCount+partial)/9.0)*.5).toFloat()))
-        flashes.forEach{quad(pose,plasma,it,.40,.40,floatArrayOf(1f,1f,1f,(fade*.60).toFloat()))}
+        flashes.forEach{quad(pose,plasma,it.at,it.size*2,it.size*2,floatArrayOf(1f,1f,1f,it.alpha.toFloat()))}
     }
-    /** Shared branching/timing; compatible rendering changes only the material. */
+
+    // Stateless integer hashing keeps positions stable between frames without allocating recursive
+    // lightning trees or a fresh random generator for every filament on every frame.
+    private fun noise(seed:Int):Double {
+        var n=seed
+        n=(n xor (n ushr 16))*0x45d9f3b
+        n=(n xor (n ushr 16))*0x45d9f3b
+        return ((n xor (n ushr 16)).toLong() and 0xffffffffL)/4294967296.0
+    }
+    /** Shared geometry and sub-tick animation for vanilla and shader rendering. */
     fun collect(e:MortarFieldEntity,partial:Float,sink:FieldArcGeometry.Sink) {
-        val fade=min((e.tickCount+partial)/6.0,e.remainingTicks/12.0).coerceIn(0.0,1.0)
-        for(i in 0 until 64) {
-            val period=17+i%19;val age=(e.tickCount+i*11)%period
-            if(age>=8)continue
-            val cycle=(e.tickCount+i*11)/period;val rng=java.util.Random(e.id*317L+i*199L+cycle*827L)
-            val a=rng.nextDouble()*PI*2;val r=sqrt(rng.nextDouble())*e.radius*.88
-            val base=Vec3(cos(a)*r,.06+rng.nextDouble()*.35,sin(a)*r)
-            val end=base.add((rng.nextDouble()-.5)*3.4,if(i%3==0).25+rng.nextDouble()*.6 else 1.3+rng.nextDouble()*1.8,(rng.nextDouble()-.5)*3.4)
-            fun branch(start:Vec3,finish:Vec3,displacement:Double,depth:Int):List<Vec3> {
-                if(depth==0)return listOf(start,finish)
-                val mid=start.add(finish).scale(.5).add((rng.nextDouble()-.5)*displacement,(rng.nextDouble()-.5)*displacement,(rng.nextDouble()-.5)*displacement)
-                return branch(start,mid,displacement*.52,depth-1).dropLast(1)+branch(mid,finish,displacement*.52,depth-1)
+        val age=e.lifetimeTicks-e.remainingTicks+partial.toDouble()
+        val fade=min(age/5.0,(e.remainingTicks-partial)/14.0).coerceIn(0.0,1.0)
+        val seed=e.id*317
+        val height=min(5.8,e.radius*.55)
+        val motes=(e.radius*9).roundToInt().coerceIn(36,120)
+        for(i in 0 until motes) {
+            val key=seed+i*199
+            val angle=noise(key)*PI*2
+            val radius=sqrt(noise(key+1))*e.radius*.94
+            val phase=noise(key+2)*PI*2
+            val y=.18+noise(key+3)*height+.10*sin(age*.045+phase)
+            val at=Vec3(cos(angle)*radius+.10*sin(age*.024+phase),y,sin(angle)*radius+.10*cos(age*.029+phase))
+            val shimmer=(.5+.5*sin(age*(.13+noise(key+4)*.19)+phase)).pow(3)
+            sink.flash(at,.13+noise(key+5)*.10,fade*(.16+shimmer*.84))
+            // Occasional soft, slender downward charge trails, rather than thick electric ropes.
+            if(i%4==0) sink.segment(at,at.add(.025,-.22-noise(key+6)*.32,.015),.035,fade*shimmer*.55)
+        }
+        for(i in 0 until 32) {
+            val key=seed+i*827
+            val period=19+(noise(key)*30).toInt()
+            val clock=age+noise(key+1)*period
+            val cycle=floor(clock/period).toInt()
+            val t=clock-cycle*period
+            if(t>=3.0)continue
+            val k=key+cycle*1999
+            val angle=noise(k+2)*PI*2
+            val radius=sqrt(noise(k+3))*e.radius*.90
+            val at=Vec3(cos(angle)*radius,.12+noise(k+4)*height*.83,sin(angle)*radius)
+            val end=at.add((noise(k+5)-.5)*1.2,.28+noise(k+6)*.7,(noise(k+7)-.5)*1.2)
+            val alpha=fade*sin(t/3.0*PI).coerceAtLeast(0.0)*(.4+noise(k+8)*.35)
+            var last=at
+            for(j in 1..7) {
+                val f=j/7.0
+                val jitter=sin(f*PI)*.12
+                val next=at.lerp(end,f).add((noise(k+j*23)-.5)*jitter,(noise(k+j*23+1)-.5)*jitter,(noise(k+j*23+2)-.5)*jitter)
+                sink.segment(last,next,.055,alpha)
+                last=next
             }
-            val points=branch(base,end,.9,4)
-            val pulse=(.65+.35*sin(age*3.1+i)).coerceIn(.15,1.0)
-            val alpha=(1-age/8.0).pow(.5)*fade*pulse
-            points.zipWithNext().forEach{(p,q)->sink.segment(p,q,.18,alpha)}
-            for(j in listOf(5,10)) {
-                val origin=points[j];val tip=origin.add((rng.nextDouble()-.5)*1.5,.4+rng.nextDouble()*.7,(rng.nextDouble()-.5)*1.5)
-                branch(origin,tip,.45,3).zipWithNext().forEach{(p,q)->sink.segment(p,q,.08,alpha*.7)}
+            sink.flash(end,.14,alpha*.65)
+        }
+        // One short opening pulse; no persistent sphere or ground disc remains afterwards.
+        if(age in 0.0..10.0) {
+            val burst=(1-age/10).pow(1.5)
+            sink.flash(Vec3(0.0,.45,0.0),2.2+age*.10,burst)
+            for(i in 0 until 20) {
+                val angle=i*PI*.1+noise(seed+i)*.25
+                val r=.3+age*.40
+                val base=Vec3(cos(angle)*r,.08,sin(angle)*r)
+                sink.segment(base,base.add(cos(angle)*.2,.6+noise(seed+i+81)*1.7,sin(angle)*.2),.075,burst*.95)
             }
-            if(age<3)sink.flash(points[8],.40,fade*.60)
         }
     }
 
