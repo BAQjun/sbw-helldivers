@@ -22,6 +22,7 @@ object ModEntities {
     val PLAYER_HELLPOD=ENTITIES.register("player_hellpod"){vehicle{t,l->com.example.sbwhelldiver.entity.PlayerHellpodEntity(t,l)}.sized(2.65f,.2f).build("player_hellpod")}
 
     val ORBITAL_LASER=ENTITIES.register("orbital_laser"){EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.OrbitalLaserEntity(t,l)},MobCategory.MISC).sized(1f,1f).clientTrackingRange(32).updateInterval(1).fireImmune().build("orbital_laser")}
+    val ORBITAL_FIELD_SHELL=ENTITIES.register("orbital_field_shell"){EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.OrbitalFieldShellEntity(t,l)},MobCategory.MISC).sized(.3f,.3f).clientTrackingRange(32).updateInterval(1).build("orbital_field_shell")}
     val ORBITAL_NAPALM_SHELL=ENTITIES.register("orbital_napalm_shell"){EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.OrbitalNapalmShellEntity(t,l)},MobCategory.MISC).sized(.3f,.3f).clientTrackingRange(32).updateInterval(1).build("orbital_napalm_shell")}
     val ORBITAL_120_SHELL=ENTITIES.register("orbital_120mm_shell"){EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.Orbital120ShellEntity(t,l)},MobCategory.MISC).sized(.3f,.3f).clientTrackingRange(32).updateInterval(1).build("orbital_120mm_shell")}
     val ORBITAL_AIRBURST_SHELL=ENTITIES.register("orbital_airburst_shell"){EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.OrbitalAirburstShellEntity(t,l)},MobCategory.MISC).sized(.25f,.25f).clientTrackingRange(32).updateInterval(1).build("orbital_airburst_shell")}

@@ -18,6 +18,12 @@ object OrbitalBarragePattern{
   if(s.total<=0)return emptyList()
   if(s.radius<=0)return List(s.total){center(it,s,0f)}
   val random=Random(seed)
+  // Native smoke: six zero-interval salvos, area_size=15, no wandering center.
+  // Uniform disk sampling is the MC scatter adaptation; no artillery separation bias.
+  if(s.kind in com.example.sbwhelldiver.config.OrbitalFieldSettings.ids)return List(s.total){
+   val angle=random.nextDouble()*2*PI;val radius=s.radius*sqrt(random.nextDouble())
+   Vec3(cos(angle)*radius,0.0,sin(angle)*radius)
+  }
   val result=ArrayList<Vec3>(s.total)
   val phase=random.nextDouble()*2*PI
   // Radius squared is proportional to disk area. Every call visits each small

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "sbw_helldiver:item/orbital_ems_strike_stratagem"
+  }
+}

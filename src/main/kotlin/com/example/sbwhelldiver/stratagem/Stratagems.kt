@@ -28,6 +28,9 @@ object Stratagems {
     const val DOWN = 2
     const val LEFT = 3
     val definitions = listOf(
+        StratagemDefinition("orbital_gas_strike",listOf(RIGHT,RIGHT,DOWN,RIGHT),StratagemCategory.RED),
+        StratagemDefinition("orbital_ems_strike",listOf(RIGHT,RIGHT,LEFT,DOWN),StratagemCategory.RED),
+        StratagemDefinition("orbital_smoke_strike",listOf(RIGHT,RIGHT,DOWN,UP),StratagemCategory.RED),
         StratagemDefinition("orbital_napalm_barrage",listOf(RIGHT,RIGHT,DOWN,LEFT,RIGHT,UP),StratagemCategory.RED),
         StratagemDefinition("orbital_laser",listOf(RIGHT,DOWN,UP,RIGHT,DOWN),StratagemCategory.RED),
         StratagemDefinition("orbital_120mm_he_barrage",listOf(RIGHT,RIGHT,DOWN,LEFT,RIGHT,DOWN),StratagemCategory.RED),

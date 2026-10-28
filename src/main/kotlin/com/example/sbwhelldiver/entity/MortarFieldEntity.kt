@@ -37,16 +37,19 @@ class MortarFieldEntity(type: EntityType<out MortarFieldEntity>,level: Level) : 
         Kind.GAS -> (radius * radius / 14.0).coerceIn(4.0,10.0)
         Kind.SMOKE -> 10.0
     }
+    val lifetimeTicks get()=entityData.get(LIFETIME).takeIf{it>0}?:kind.lifetime
     val remainingTicks get() = entityData.get(REMAINING)
     init { noPhysics = true }
-    override fun defineSynchedData() { entityData.define(EFFECT_TICKS,-1);entityData.define(MINE_CLOUD,false);entityData.define(AREA_RADIUS,0f);entityData.define(KIND,0);entityData.define(REMAINING,300) }
+    override fun defineSynchedData() { entityData.define(LIFETIME,0);entityData.define(EFFECT_TICKS,-1);entityData.define(MINE_CLOUD,false);entityData.define(AREA_RADIUS,0f);entityData.define(KIND,0);entityData.define(REMAINING,300) }
     override fun readAdditionalSaveData(tag: CompoundTag) {
         entityData.set(EFFECT_TICKS,if(tag.contains("EffectTicks")) tag.getInt("EffectTicks").coerceIn(0,1200) else -1)
         entityData.set(MINE_CLOUD,tag.getBoolean("MineCloud"))
         entityData.set(KIND,tag.getInt("Kind").coerceIn(0,Kind.entries.lastIndex));entityData.set(AREA_RADIUS,if(tag.contains("Radius"))tag.getDouble("Radius").coerceIn(.1,16.0).toFloat() else 0f)
-        entityData.set(REMAINING,tag.getInt("Remaining").coerceIn(0,kind.lifetime))
+        entityData.set(LIFETIME,if(tag.contains("Lifetime"))tag.getInt("Lifetime").coerceIn(1,72000)else kind.lifetime)
+        entityData.set(REMAINING,tag.getInt("Remaining").coerceIn(0,lifetimeTicks))
     }
     override fun addAdditionalSaveData(tag: CompoundTag) {
+        tag.putInt("Lifetime",lifetimeTicks)
         tag.putInt("EffectTicks",effectTicks);tag.putBoolean("MineCloud",mineCloud);tag.putDouble("Radius",radius);tag.putInt("Kind",kind.ordinal);tag.putInt("Remaining",remainingTicks)
     }
     override fun getAddEntityPacket(): Packet<ClientGamePacketListener> = NetworkHooks.getEntitySpawningPacket(this)
@@ -72,19 +75,21 @@ class MortarFieldEntity(type: EntityType<out MortarFieldEntity>,level: Level) : 
     }
     override fun shouldRenderAtSqrDistance(distance: Double)=distance<128.0*128.0
     companion object {
+        private val LIFETIME=SynchedEntityData.defineId(MortarFieldEntity::class.java,EntityDataSerializers.INT)
         private val EFFECT_TICKS=SynchedEntityData.defineId(MortarFieldEntity::class.java,EntityDataSerializers.INT)
         private val MINE_CLOUD=SynchedEntityData.defineId(MortarFieldEntity::class.java,EntityDataSerializers.BOOLEAN)
         private val AREA_RADIUS=SynchedEntityData.defineId(MortarFieldEntity::class.java,EntityDataSerializers.FLOAT)
         private val KIND=SynchedEntityData.defineId(MortarFieldEntity::class.java,EntityDataSerializers.INT)
         private val REMAINING=SynchedEntityData.defineId(MortarFieldEntity::class.java,EntityDataSerializers.INT)
-        fun create(level: ServerLevel,at: Vec3,kind: Kind,radius: Double=kind.radius,mineCloud: Boolean=false,effectTicks: Int=kind.effectTicks): MortarFieldEntity {
+        fun create(level: ServerLevel,at: Vec3,kind: Kind,radius: Double=kind.radius,mineCloud: Boolean=false,effectTicks: Int=kind.effectTicks,lifetimeTicks:Int=kind.lifetime): MortarFieldEntity {
             val field=MortarFieldEntity(ModEntities.MORTAR_FIELD.get(),level)
             field.setPos(at.add(0.0,.02,0.0))
             field.entityData.set(EFFECT_TICKS,effectTicks.coerceIn(0,1200))
             field.entityData.set(MINE_CLOUD,mineCloud)
             field.entityData.set(AREA_RADIUS,radius.coerceIn(.1,16.0).toFloat())
             field.entityData.set(KIND,kind.ordinal)
-            field.entityData.set(REMAINING,kind.lifetime)
+            field.entityData.set(LIFETIME,lifetimeTicks.coerceIn(1,72000))
+            field.entityData.set(REMAINING,field.lifetimeTicks)
             level.addFreshEntity(field)
             if(kind==Kind.SMOKE)com.example.sbwhelldiver.effect.SmokeOcclusion.register(field)
             return field

@@ -195,3 +195,24 @@ Each shell deals 80 direct plus 60 blast damage with 3.3/10 m inner/outer radii 
 Decoded components confirm the 25 m area parameter, five shells per salvo, 0.5 s shell spacing and 2 s salvo pause. The native base record has five salvos; six are used as requested. Native explosions 63/74 use template 4. Recovered native code passes their own 3.3/10 m radii into terrain-fire generation; the lifetime formula gives a nominal 13.2-second inner maximum with squared edge falloff. The mod adapts this as six lifetime bands. See [ground-fire lifetime](ground-fire.md).
 
 配置 / Configuration: `orbital.napalmBarrage` (`rounds`, `shotsPerRound`, `shotIntervalSeconds`, `roundPauseSeconds`, `spreadRadius`, `firingDelaySeconds`, `flightSeconds`, `directDamage`, `explosionDamage`, `innerRadius`, `outerRadius`, `groundFireRadius`, `groundFireSeconds`); cooldown: `stratagems.orbital_napalm_barrage.cooldownSeconds`.
+
+
+## 轨道毒气、电磁与烟雾 / Orbital Gas, EMS and Smoke
+
+| 战备 / Stratagem | 指令 / Code | 炮弹 / Shells | 每枚区域半径 / Field radius | 持续时间 / Duration |
+| --- | --- | ---: | ---: | ---: |
+| 轨道毒气攻击 / Orbital Gas Strike | → → ↓ → | 1 | 15 m | 15 s |
+| 轨道电磁冲击波攻击 / Orbital EMS Strike | → → ← ↓ | 1 | 13 m | 15 s |
+| 轨道烟雾攻击 / Orbital Smoke Strike | → → ↓ ↑ | 6 | 12 m | 30 s |
+
+三者炮弹均造成50直击伤害，不附加爆炸伤害或方块破坏。默认2秒后由己方驱逐舰开炮，随后飞行1.5秒；飞行时长为MC适配值。毒气与电磁准确命中信标；烟雾六枚同时开炮，在信标周围15米内随机散布。原版记录确认六轮各一发、轮间隔0、`area_size=15`且不游走；MC使用圆盘内等面积随机采样，未将未恢复的原版随机分布算法描述为精确复刻。
+
+All three shells deal 50 direct damage, with no extra explosion damage or block destruction. An owned Super Destroyer fires after a default 2-second delay, followed by 1.5 seconds of flight adapted for Minecraft. Gas and EMS target the beacon exactly. Smoke fires six shells simultaneously within 15 m of the beacon. Native data confirms six one-shell salvos, zero salvo interval, `area_size=15` and no wandering center. Minecraft uses uniform-area random disk sampling; the native RNG/distribution has not been recovered.
+
+毒气持续刷新6秒毒气及混乱效果；电磁沿用现有眩晕机制。烟雾接入原有生物视觉/导航限制，遮挡索敌、保留最后发现位置，不替换原版寻路目标。区域采用已有光影兼容的体积效果。旧迫击炮、地雷与飞鹰区域的参数不变。每次调用保存配置、落点和发射进度，重载不会重新随机或重复发射。默认满升级冷却均为64.125秒，从开炮时开始。
+
+Gas refreshes 6-second gas/confusion effects; EMS uses the existing stun effect. Smoke uses the existing visibility and last-known-position constraints on vanilla sensing/navigation, without replacing mobs' goals. Fields reuse the shader-compatible volume effects. Mortar, mine and Eagle field defaults are unchanged. Per-call settings, targets and firing progress survive reloads without rerolling or firing twice. Fully upgraded cooldown defaults to 64.125 seconds from firing for each strike.
+
+配置 / Configuration: `orbital.gasStrike`, `orbital.emsStrike`, `orbital.smokeStrike`: `directDamage`, `shells`, `spreadRadius`, `fieldRadius`, `fieldSeconds`, `effectSeconds`（仅毒气/电磁 / Gas/EMS only）, `firingDelaySeconds`, `flightSeconds`. 冷却 / Cooldown: `stratagems.orbital_*_strike.cooldownSeconds`.
+
+数据链 / Data chain: `StratagemSettings` → `BombardmentComponentData` → `ProjectileInfo` → `ExplosionInfo`. Gas explosion 82: 15 m/15 s; EMS explosion 188: 13 m/15 s; Smoke explosion 75: 12 m/30 s. Native call-in delay 2 s and base cooldown 75 s. Evidence and implementation distinctions: `art/audio/orbital_fields_data.json`.

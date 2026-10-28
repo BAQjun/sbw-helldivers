@@ -92,7 +92,9 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         else {entityData.set(RAIL_TARGET,-1);setRailAim(Vec3(x,surfaceY+.02,z))}
     }
     val isOrbitalGatling get()=(dropTypeId?.path ?: entityData.get(STRATAGEM))=="orbital_gatling_barrage"
-    val isOrbitalBarrage get()=(dropTypeId?.path ?: entityData.get(STRATAGEM)) in com.example.sbwhelldiver.config.BarrageSettings.ids
+    val isOrbitalField get()=(dropTypeId?.path ?: entityData.get(STRATAGEM)) in com.example.sbwhelldiver.config.OrbitalFieldSettings.ids
+    val fieldSettings get()=com.example.sbwhelldiver.config.OrbitalFieldSettings.load(entityData.get(FIELD_SETTINGS))
+    val isOrbitalBarrage get()=isOrbitalField || (dropTypeId?.path ?: entityData.get(STRATAGEM)) in com.example.sbwhelldiver.config.BarrageSettings.ids
     val barrageSettings get()=com.example.sbwhelldiver.config.BarrageSettings.load(entityData.get(BARRAGE_SETTINGS))
     private var barrageNextShot=0
     private var barrageReports=0
@@ -103,7 +105,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         return barragePath?:t.getList("Points",net.minecraft.nbt.Tag.TAG_COMPOUND.toInt()).map{val p=it as CompoundTag;Vec3(p.getDouble("X"),p.getDouble("Y"),p.getDouble("Z"))}.also{barragePath=it}
     }
     private fun prepareBarrage(){
-        val settings=com.example.sbwhelldiver.config.OrbitalBarrageConfig.snapshot(dropTypeId!!.path)
+        val settings=if(isOrbitalField)fieldSettings.delivery() else com.example.sbwhelldiver.config.OrbitalBarrageConfig.snapshot(dropTypeId!!.path)
         entityData.set(BARRAGE_SETTINGS,settings.save())
         val world=level() as ServerLevel
         val targets=com.example.sbwhelldiver.stratagem.OrbitalBarragePattern.offsets(uuid.mostSignificantBits xor uuid.leastSignificantBits,settings,yRot).map{offset->
@@ -166,6 +168,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         surfaceY = groundY
         descentTicks = if(isOrbital) orbitalTerminalTicks() else if(isEagle) eagleCallTicks else AbstractHellpodEntity.FALL_TICKS
         if(isOrbitalLaser)entityData.set(LASER_SETTINGS,com.example.sbwhelldiver.config.OrbitalLaserConfig.snapshot().save())
+        if(isOrbitalField)entityData.set(FIELD_SETTINGS,com.example.sbwhelldiver.config.OrbitalFieldConfig.snapshot(dropType.path).save())
         if(isOrbitalBarrage)prepareBarrage()
         if(isOrbitalRailcannon)entityData.set(RAIL_SETTINGS,com.example.sbwhelldiver.config.OrbitalRailcannonConfig.snapshot().save())
         entityData.set(DURATION, if(isOrbitalLaser)com.example.sbwhelldiver.config.OrbitalLaserSettings.load(entityData.get(LASER_SETTINGS)).callTicks else if(isOrbitalRailcannon)railcannonSettings.callTicks+railcannonSettings.lockTicks else if(isOrbitalBarrage)barrageSettings.callTicks else if(isOrbitalAirburst) com.example.sbwhelldiver.config.OrbitalAirburstConfig.callTicks() else if(isOrbitalGatling) com.example.sbwhelldiver.config.OrbitalGatlingConfig.callTicks() else if(isOrbital) com.example.sbwhelldiver.config.OrbitalConfig.callTicks() else if(isEagle) eagleCallTicks else delayTicks.coerceAtLeast(maxOf(20, descentTicks - landingGraceTicks)))
@@ -267,13 +270,14 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         val reports=pattern.due(age,s)
         while(barrageReports<reports){com.example.sbwhelldiver.stratagem.SuperDestroyers.fire(server,origin,targets[barrageReports]);barrageReports++}
         // Spawn collidable shells only for the final <=128 blocks; the ship's distant chunks stay unloaded.
-        repeat(minOf(4,s.total-barrageNextShot)){
+        repeat(minOf(if(isOrbitalField)20 else 4,s.total-barrageNextShot)){
             val index=barrageNextShot;val target=targets[index]
             val speed=origin.distanceTo(target)/s.flightTicks
             val terminal=minOf(3,(128.0/speed.coerceAtLeast(.01)).toInt().coerceAtLeast(1))
             if(age<s.shotTime(index)+s.flightTicks-terminal)return@repeat
-            val shell=(if(s.napalm)com.example.sbwhelldiver.init.ModEntities.ORBITAL_NAPALM_SHELL.get() else if(s.kind==com.example.sbwhelldiver.config.BarrageSettings.ids[0])com.example.sbwhelldiver.init.ModEntities.ORBITAL_120_SHELL.get() else com.example.sbwhelldiver.init.ModEntities.ORBITAL_SHELL.get()).create(server)?:return
+            val shell=(if(isOrbitalField)com.example.sbwhelldiver.init.ModEntities.ORBITAL_FIELD_SHELL.get() else if(s.napalm)com.example.sbwhelldiver.init.ModEntities.ORBITAL_NAPALM_SHELL.get() else if(s.kind==com.example.sbwhelldiver.config.BarrageSettings.ids[0])com.example.sbwhelldiver.init.ModEntities.ORBITAL_120_SHELL.get() else com.example.sbwhelldiver.init.ModEntities.ORBITAL_SHELL.get()).create(server)?:return
             shell.configure(s.direct,s.blast,s.inner,s.outer)
+            if(shell is OrbitalFieldShellEntity)shell.configureField(fieldSettings)
             if(shell is OrbitalNapalmShellEntity)shell.configureFire(s.fireRadius,s.fireTicks,s.inner)
             val direction=target.subtract(origin).normalize();shell.setPos(target.subtract(direction.scale(speed*terminal)))
             ownerUuid?.let(server::getEntity)?.let{shell.owner=it};shell.shoot(direction.x,direction.y,direction.z,speed.toFloat(),0f)
@@ -393,6 +397,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
 
     override fun defineSynchedData() {
+        entityData.define(FIELD_SETTINGS,com.example.sbwhelldiver.config.OrbitalFieldSettings().save())
         entityData.define(LASER_SETTINGS,com.example.sbwhelldiver.config.OrbitalLaserSettings().save())
         entityData.define(RAIL_SETTINGS,com.example.sbwhelldiver.config.RailcannonSettings().save())
         entityData.define(RAIL_LOCK_START,-1L);entityData.define(RAIL_TARGET,-1);entityData.define(RAIL_AIM,CompoundTag())
@@ -414,6 +419,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         entityData.define(STRATAGEM, "")
     }
     override fun readAdditionalSaveData(tag: CompoundTag) {
+        if(tag.contains("FieldSettings"))entityData.set(FIELD_SETTINGS,tag.getCompound("FieldSettings"))
         if(tag.contains("LaserSettings"))entityData.set(LASER_SETTINGS,tag.getCompound("LaserSettings"))
         if(tag.contains("RailSettings"))entityData.set(RAIL_SETTINGS,tag.getCompound("RailSettings"))
         entityData.set(RAIL_LOCK_START,if(tag.contains("RailLockStart"))tag.getLong("RailLockStart") else -1L)
@@ -459,6 +465,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         noPhysics = true
     }
     override fun addAdditionalSaveData(tag: CompoundTag) {
+        tag.put("FieldSettings",entityData.get(FIELD_SETTINGS))
         tag.put("LaserSettings",entityData.get(LASER_SETTINGS))
         tag.put("RailSettings",entityData.get(RAIL_SETTINGS));tag.putLong("RailLockStart",railLockStartedAt)
         tag.put("RailAim",entityData.get(RAIL_AIM));railTargetUUID?.let{tag.putUUID("RailTarget",it)}
@@ -488,6 +495,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
     companion object {
         const val LANDING_GRACE_TICKS = 20
+        private val FIELD_SETTINGS=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.COMPOUND_TAG)
         private val LASER_SETTINGS=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.COMPOUND_TAG)
         private val RAIL_SETTINGS=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.COMPOUND_TAG)
         private val RAIL_LOCK_START=SynchedEntityData.defineId(StratagemMarker::class.java,EntityDataSerializers.LONG)

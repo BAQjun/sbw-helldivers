@@ -28,10 +28,10 @@ data class BarrageSettings(val kind:String="orbital_120mm_he_barrage",val rounds
    else->BarrageSettings()
   }
   fun load(t:CompoundTag):BarrageSettings{
-   val d=defaults(t.getString("Kind"));if(!t.contains("Rounds"))return d
-   return BarrageSettings(d.kind,t.getInt("Rounds").coerceIn(1,20),t.getInt("Shots").coerceIn(1,20),t.getInt("ShotGap").coerceIn(1,1200),t.getInt("RoundPause").coerceIn(0,1200),
+   val id=t.getString("Kind");val d=if(id in OrbitalFieldSettings.ids)OrbitalFieldSettings.defaults(id).delivery()else defaults(id);if(!t.contains("Rounds"))return d
+   return BarrageSettings(d.kind,t.getInt("Rounds").coerceIn(1,20),t.getInt("Shots").coerceIn(1,20),t.getInt("ShotGap").coerceIn(if(d.kind in OrbitalFieldSettings.ids)0 else 1,1200),t.getInt("RoundPause").coerceIn(0,1200),
     t.getDouble("Radius").coerceIn(0.0,128.0),t.getDouble("Speed").coerceIn(0.0,20.0),t.getInt("Call").coerceIn(10,1200),t.getInt("Flight").coerceIn(10,200),
-    t.getFloat("Direct").coerceIn(0f,100000f),t.getFloat("Blast").coerceIn(0f,100000f),t.getDouble("Inner").coerceIn(0.0,128.0),t.getFloat("Outer").coerceIn(.1f,256f),
+    t.getFloat("Direct").coerceIn(0f,100000f),t.getFloat("Blast").coerceIn(0f,100000f),t.getDouble("Inner").coerceIn(0.0,128.0),t.getFloat("Outer").coerceIn(if(d.kind in OrbitalFieldSettings.ids)0f else .1f,256f),
     if(t.contains("FireRadius"))t.getDouble("FireRadius").coerceIn(0.0,16.0)else d.fireRadius,if(t.contains("FireTicks"))t.getInt("FireTicks").coerceIn(0,72000)else d.fireTicks)
   }
  }

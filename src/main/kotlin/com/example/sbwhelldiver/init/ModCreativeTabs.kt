@@ -25,6 +25,9 @@ object ModCreativeTabs {
             .icon { ItemStack(ModItems.BEACON.get()) }
             .displayItems { _, output ->
                 output.accept(ModItems.BEACON.get())
+                output.accept(ModItems.ORBITAL_GAS_STRIKE.get())
+                output.accept(ModItems.ORBITAL_EMS_STRIKE.get())
+                output.accept(ModItems.ORBITAL_SMOKE_STRIKE.get())
                 output.accept(ModItems.ORBITAL_NAPALM_BARRAGE.get())
                 output.accept(ModItems.ORBITAL_120MM_BARRAGE.get())
                 output.accept(ModItems.ORBITAL_380MM_BARRAGE.get())

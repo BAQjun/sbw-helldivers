@@ -227,5 +227,9 @@
   "config.sbw_helldiver.explosion_block_damage.tooltip": "独立于 SBW 的爆炸总开关。关闭后保护方块，保留生物伤害、击退、音效和粒子。仅房主或管理员可修改。",
   "config.sbw_helldiver.explosion_block_damage.enter_world": "进入世界后可修改该世界的战备爆炸破坏设置。",
   "item.sbw_helldiver.orbital_napalm_barrage_stratagem": "轨道凝固汽油弹火力网",
-  "entity.sbw_helldiver.orbital_napalm_shell": "轨道凝固汽油炮弹"
+  "entity.sbw_helldiver.orbital_napalm_shell": "轨道凝固汽油炮弹",
+  "item.sbw_helldiver.orbital_gas_strike_stratagem": "轨道毒气攻击",
+  "entity.sbw_helldiver.orbital_field_shell": "轨道区域炮弹",
+  "item.sbw_helldiver.orbital_ems_strike_stratagem": "轨道电磁冲击波攻击",
+  "item.sbw_helldiver.orbital_smoke_strike_stratagem": "轨道烟雾攻击"
 }

@@ -65,7 +65,7 @@ object MortarFieldAudio : ResourceManagerReloadListener {
         if (level == null) return
         level.entitiesForRendering().filterIsInstance<MortarFieldEntity>().forEach { field ->
             if(field.kind==MortarFieldEntity.Kind.SMOKE)return@forEach
-            val age = field.kind.lifetime - field.remainingTicks
+            val age = field.lifetimeTicks - field.remainingTicks
             val state = fields.getOrPut(field) {
                 // Tracking an existing field must not replay the original impact or activation.
                 val fresh = age <= 4

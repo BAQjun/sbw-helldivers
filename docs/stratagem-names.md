@@ -6,6 +6,9 @@
 
 | 注册 ID | 简体中文 | English | 原版字符串键 |
 | --- | --- | --- | ---: |
+| `orbital_gas_strike` | 轨道毒气攻击 | Orbital Gas Strike | 179374902 |
+| `orbital_ems_strike` | 轨道电磁冲击波攻击 | Orbital EMS Strike | 1447724304 |
+| `orbital_smoke_strike` | 轨道烟雾攻击 | Orbital Smoke Strike | 2769005858 |
 | `eagle_smoke_strike` | “飞鹰”烟雾攻击 | Eagle Smoke Strike | 2087441269 |
 | `eagle_gas_strike` | “飞鹰”毒气空袭 | Eagle Gas Airstrike | 513886541 |
 | `eagle_napalm_airstrike` | “飞鹰”凝固汽油弹空袭 | Eagle Napalm Airstrike | 1278805896 |

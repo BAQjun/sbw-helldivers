@@ -74,5 +74,29 @@
     "nativeStratagemType": "StratagemType_OrbitalNapalmBarrage",
     "format": "Native vector paths with a shared two-pixel red frame",
     "sourceSha256": "ff8211e1dd25570e50d71a0bb3c69d24649058da5c7d8480d3d8a767179b8ef6"
+  },
+  {
+    "id": "orbital_gas_strike",
+    "nativeSource": "content/ui/shared/resources/generated_icons/stratagem_icons.xaml",
+    "template": "DataTemplate.Icon.StratagemType.OrbitalGas",
+    "nativeStratagemType": "StratagemType_OrbitalGas",
+    "format": "Native vector paths with shared two-pixel red frame",
+    "sourceSha256": "c130ea33f9122f501afb4c8ed669f63001e21f03717b44ef0d7db2fa5dc5ba10"
+  },
+  {
+    "id": "orbital_ems_strike",
+    "nativeSource": "content/ui/shared/resources/generated_icons/stratagem_icons.xaml",
+    "template": "DataTemplate.Icon.StratagemType.OrbitalStun",
+    "nativeStratagemType": "StratagemType_Orbital_EMS_Strike",
+    "format": "Native vector paths with shared two-pixel red frame",
+    "sourceSha256": "2db2cd09592c06e439f902c3daf8f8cd6b3ba6d9f368b8cac1812138ed56a176"
+  },
+  {
+    "id": "orbital_smoke_strike",
+    "nativeSource": "content/ui/shared/resources/generated_icons/stratagem_icons.xaml",
+    "template": "DataTemplate.Icon.StratagemType.OrbitalSmoke",
+    "nativeStratagemType": "StratagemType_OrbitalSmoke",
+    "format": "Native vector paths with shared two-pixel red frame",
+    "sourceSha256": "001a37d7b5c67b4d3b30cb87812280266e5ebc5422856bab30c4fdd206a3ab0a"
   }
 ]
