@@ -234,7 +234,9 @@ public final class FieldVolumeRenderer {
                 glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,depth);
                 EnergyEffectGeometry.draw(energy,event.getPartialTick().getGameTimeDeltaPartialTick(false),camera,event.getProjectionMatrix(),new Matrix3f(new org.joml.Matrix3f().rotation(net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().rotation())),w,h);
                 glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,depth);
-                if(MineGlowGeometry.vertexCount()>0)FlameGlow.render(w,h,.28f,()->MineGlowGeometry.draw(event.getProjectionMatrix(),w,h));
+                // 1.21 entity poses contain camera-relative positions, without camera rotation.
+                // Use the same view matrix as the base mesh for the depth-tested lamp pass.
+                if(MineGlowGeometry.vertexCount()>0)FlameGlow.render(w,h,.28f,()->MineGlowGeometry.draw(new Matrix4f(event.getProjectionMatrix()).mul(event.getModelViewMatrix()),w,h));
                 if(Boolean.getBoolean("sbw_helldiver.energyShaderSmokeTest")||Boolean.getBoolean("sbw_helldiver.shaderFieldSmokeTest")||Boolean.getBoolean("sbw_helldiver.flameVolumeSmokeTest")||Boolean.getBoolean("sbw_helldiver.laserShaderSmokeTest")) {
                     int error=glGetError();if(error!=GL_NO_ERROR)throw new IllegalStateException("Volume GL error "+error);
                 }
