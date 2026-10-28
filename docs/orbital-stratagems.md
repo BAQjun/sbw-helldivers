@@ -114,7 +114,7 @@ They do not directly specify a fixed burst altitude. Minecraft defaults to 20 bl
 
 120mm造成560直击、200爆炸伤害，内半径3.3m、外半径10m。380mm与游走直接使用轨道精准打击炮弹，共享其伤害配置；默认640直击、240爆炸、内半径4m、外半径12m。
 
-游走方向为投掷位置指向信标落点的水平连线，在信标展开时固定。解包的 `BombardmentComponentData` 中，游走火力网 `speed=3`、`area_size=25`，MC据此采用每秒推进3格、半径25格的移动散布区域，默认末发圆心前移81格。同轮弹幕保留中心附近的随机落点，其余炮弹分散，默认配置下爆炸范围互不重叠；这是MC中的散布实现，组件数据不能证明原版内部使用相同的随机算法。
+游走方向为投掷位置指向信标落点的水平连线，在信标展开时固定。解包的 `BombardmentComponentData` 中，游走火力网 `speed=3`、`area_size=25`，MC据此采用每秒推进3格、半径25格的移动散布区域，默认末发圆心前移81格。完整弹幕按等面积的径向分区与角向分区分配落点，各轮覆盖内、中、外区域，发射顺序随机。优先拉开同轮炮弹并避开先前落点；范围过紧时允许爆炸覆盖重叠，避免把落点挤到外围。游走的分区随每发的移动圆心推进，已保存的落点不会因升级或重载重新生成。这是MC中的散布实现，组件数据不能证明原版内部使用相同的随机算法。
 
 炮弹从本次呼叫确定的驱逐舰位置射来。远距离飞行以发光航迹表示，末段生成真实碰撞炮弹；可被沿途地形或生物截住，无需加载远方舰位区块。落点按当地地表高度确定。
 
@@ -124,7 +124,7 @@ The round pause runs from a salvo's last shot to the next salvo's first. The fir
 
 120mm deals 560 direct and 200 blast damage with 3.3/10 m inner/outer radii. 380mm and Walking use the actual Precision Strike projectile and share its damage settings, defaulting to 640 direct, 240 blast and 4/12 m radii.
 
-Walking advances along the horizontal throw-origin-to-beacon line, fixed when the beacon deploys. Native component values `speed=3` and `area_size=25` are adapted to 3 blocks/s and a 25-block radius; the last shot's center is 81 blocks forward by default. Each salvo retains a randomized inner hit, with separated companion impacts; blast footprints do not overlap within a default salvo. The original internal sampling algorithm is not available from these component records.
+Walking advances along the horizontal throw-origin-to-beacon line, fixed when the beacon deploys. Native component values `speed=3` and `area_size=25` are adapted to 3 blocks/s and a 25-block radius; the last shot's center is 81 blocks forward by default. The complete barrage samples equal-area radial strata and angular sectors, distributing impacts through the inner, middle and outer area with randomized firing order. Same-salvo spacing and avoidance of earlier impacts are preferences: tight strike areas may have overlapping blast footprints instead of pushing shells onto the rim. Walking strata follow each shell's moving center. Persisted targets are not regenerated after upgrading or reloading. The original internal sampling algorithm is not available from these component records.
 
 Flight originates at the fixed ship position, using glowing distant traces and real terminal collision projectiles. Terrain and creatures can intercept incoming shells without loading distant ship chunks. Targets use the local surface height.
 
@@ -184,13 +184,13 @@ The thick beam and impact glow use additive emissive rendering with terrain dept
 
 指令 → → ↓ ← → ↑。需要己方超级驱逐舰支援，信标展开5秒后开炮。按要求发射6轮、每轮5发，共30发；同轮间隔0.5秒，上一轮末发到下一轮首发间隔2秒，首发至末发22秒。每枚炮弹默认飞行1.5秒，满升级冷却205.2秒，从首发开炮开始。
 
-每发80直击、60爆炸伤害，内半径3.3米、外半径10米，外圈线性衰减；每次真实命中产生与飞鹰凝固汽油弹相同的贴地火焰，默认外半径10米、内圈最长13.2秒，外圈分批提前熄灭，并持续刷新3秒普通燃烧与1秒重型燃烧。沿用已有燃烧伤害：每0.5秒分别造成10与20点，可叠加。默认25米轰炸半径，沿用保留中心覆盖、同轮爆炸互不重叠的散布方式。更紧的5发齐射通过非等角伴随落点保留中心弹，而不扩大配置的轰炸范围。
+每发80直击、60爆炸伤害，内半径3.3米、外半径10米，外圈线性衰减；每次真实命中产生与飞鹰凝固汽油弹相同的贴地火焰，默认外半径10米、内圈最长13.2秒，外圈分批提前熄灭，并持续刷新3秒普通燃烧与1秒重型燃烧。沿用已有燃烧伤害：每0.5秒分别造成10与20点，可叠加。默认25米轰炸半径，采用与120mm、380mm及游走相同的整次弹幕等面积散布方式，覆盖中心至外缘及中间环带；同轮间距为软约束，不再以中间空缺为代价强求爆炸互不重叠。
 
 解包组件确认 `area_size=25`、每轮5发、弹间隔0.5秒、轮间隔2秒；基础记录为5轮，此处按要求采用6轮。原生爆炸记录63/74使用模板4；原生生成代码将该弹自身的3.3/10米参数传给地火生成，寿命公式给出内圈名义上限13.2秒，外围强度按平方衰减。本模组以六档寿命实现外圈先熄灭。详见 [地火持续时间核对](ground-fire.md)。
 
 Code: Right, Right, Down, Left, Right, Up. Requires an owned Super Destroyer in range. Fires after five seconds, with six five-shell salvos (30 shells), 0.5 s between shells and 2 s from each salvo's last shell to the next salvo's first. The first-to-last-shot span is 22 s. Default shell flight: 1.5 s; fully upgraded cooldown: 205.2 s, starting with the first shot.
 
-Each shell deals 80 direct plus 60 blast damage with 3.3/10 m inner/outer radii and linear outer falloff. Real impacts create Eagle-style terrain-following napalm, defaulting to a 10 m outer radius and a 13.2 s inner-ring maximum, with shorter-lived outer rings, refreshing three seconds of ordinary burning and one second of heavy burning. Existing burn damage remains 10 and 20 every 0.5 s, stacking together. The 25 m strike disk uses the existing center-covering, same-salvo non-overlap planner; an irregular companion arc accommodates five shells without losing the inner hit or expanding the configured area.
+Each shell deals 80 direct plus 60 blast damage with 3.3/10 m inner/outer radii and linear outer falloff. Real impacts create Eagle-style terrain-following napalm, defaulting to a 10 m outer radius and a 13.2 s inner-ring maximum, with shorter-lived outer rings, refreshing three seconds of ordinary burning and one second of heavy burning. Existing burn damage remains 10 and 20 every 0.5 s, stacking together. The 25 m strike disk uses the same whole-barrage, equal-area sampling as 120mm, 380mm and Walking, including the middle annulus. Same-salvo spacing is a soft preference, so blast overlap is allowed where necessary to preserve even coverage.
 
 Decoded components confirm the 25 m area parameter, five shells per salvo, 0.5 s shell spacing and 2 s salvo pause. The native base record has five salvos; six are used as requested. Native explosions 63/74 use template 4. Recovered native code passes their own 3.3/10 m radii into terrain-fire generation; the lifetime formula gives a nominal 13.2-second inner maximum with squared edge falloff. The mod adapts this as six lifetime bands. See [ground-fire lifetime](ground-fire.md).
 

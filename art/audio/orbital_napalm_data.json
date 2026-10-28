@@ -271,7 +271,7 @@
     "fireRadius": 10,
     "fireLifetimeSeconds": 13.2,
     "fireRadiusSource": "Native explosion processing passes this shell's own inner/outer radii (3.3/10 m) to ground-fire generation; template 4 nominal lifetime is 13.2 seconds. See verifiedNativeFire and docs/ground-fire.md.",
-    "scatter": "Same center-covering, per-salvo blast-separated planner as 0.5.20.",
+    "scatter": "Whole-call equal-area radial and angular strata (0.5.23), including the middle annulus. Prefer separated salvos and avoid previous impacts without forcing points onto the rim; preserve configured radius and saved targets.",
     "salvosSource": "Decoded base record has 5 salvos; use the user-requested 6.",
     "groundFireInnerRadius": 3.3
   },

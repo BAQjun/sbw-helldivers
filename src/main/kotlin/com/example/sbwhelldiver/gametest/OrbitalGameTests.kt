@@ -390,9 +390,6 @@ object OrbitalGameTests {
     val targets=pattern.offsets(seed,s,yaw)
     h.assertTrue(targets==pattern.offsets(seed,s,yaw)&&targets.toSet().size==s.total,"Unstable barrage samples")
     targets.forEachIndexed{j,v->h.assertTrue(v.subtract(pattern.center(j,s,yaw)).length()<=s.radius+1e-7,"Impact outside spread disk")}
-    targets.chunked(s.shots).forEach{salvo->
-     for(a in salvo.indices)for(b in 0 until a)h.assertTrue(salvo[a].distanceTo(salvo[b])>=2.0*s.outer+.5-1e-7,"Same-salvo blast footprints overlap: $id seed=$seed")
-    }
     val center=pattern.center(s.total-1,s,yaw)
     h.assertTrue(abs(center.length()-if(s.walking)81.0 else 0.0)<1e-6,"Wrong walking speed or direction")
     if(s.walking)h.assertTrue(center.normalize().dot(pattern.direction(yaw))>.99999,"Walking barrage advanced backward")
@@ -422,9 +419,7 @@ object OrbitalGameTests {
    val targets=pattern.offsets(seed,custom,0f)
    val rotated=pattern.offsets(seed,custom,90f)
    targets.forEachIndexed{i,p->h.assertTrue(rotated[i].distanceTo(Vec3(-p.z,0.0,p.x))<1e-6,"Yaw changed seeded scatter instead of rotating the strike")}
-   targets.chunked(custom.shots).forEach{salvo->
-    for(i in salvo.indices)for(j in 0 until i)h.assertTrue(salvo[i].distanceTo(salvo[j])>=30.5-1e-7,"Configured blast radius was ignored")
-   }
+   targets.forEachIndexed{i,p->h.assertTrue(p.distanceTo(pattern.center(i,custom,0f))<=custom.radius+1e-7,"Custom footprint expanded for spacing")}
   }
   // An impossible user configuration must stay bounded and cannot hang the server.
   val narrow=custom.copy(radius=0.0,advanceSpeed=0.0,shots=20)
@@ -435,20 +430,22 @@ object OrbitalGameTests {
   h.succeed()
  }
  @JvmStatic @GameTest(templateNamespace="sbw_helldiver_cooldowns",template="sentry_test",timeoutTicks=10)
- fun barrageKeepsInnerCoverageWithoutOverlappingSalvos(h:GameTestHelper){
+ fun barrageCoversMiddleAndOuterAreaWithoutRadialGaps(h:GameTestHelper){
   for(id in com.example.sbwhelldiver.config.BarrageSettings.ids){
    val s=com.example.sbwhelldiver.config.BarrageSettings.defaults(id)
-   val innerOrder=mutableSetOf<Int>()
-   for(seed in 0L..511L){
+   for(seed in 0L..255L){
     val targets=OrbitalBarragePattern.offsets(seed,s,37f)
-    targets.chunked(s.shots).forEachIndexed{round,salvo->
-     val inner=salvo.indices.filter{shot->salvo[shot].distanceTo(OrbitalBarragePattern.center(round*s.shots+shot,s,37f))<=s.radius*.5+1e-7}
-     h.assertTrue(inner.isNotEmpty(),"Salvo left the inner half-radius empty: $id seed=$seed round=$round")
-     innerOrder.addAll(inner)
-     for(a in salvo.indices)for(b in 0 until a)h.assertTrue(salvo[a].distanceTo(salvo[b])>=2.0*s.outer+.5-1e-7,"Inner coverage sacrificed same-salvo blast separation: $id seed=$seed")
+    val radii=targets.mapIndexed{i,p->p.distanceTo(OrbitalBarragePattern.center(i,s,37f))/s.radius}
+    // Check area coverage, not a particular planner's slots or ordering.
+    for(area in listOf(.125,.25,.375,.5,.625,.75,.875)){
+     val count=radii.count{it*it<area}
+     h.assertTrue(abs(count-s.total*area)<=1.000001,"Radial coverage biased: $id seed=$seed area=$area hits=$count/${s.total}")
     }
+    val middle=radii.count{it>=.45 && it<.8}
+    h.assertTrue(middle>=s.total*.3,"Empty middle annulus: $id seed=$seed hits=$middle/${s.total}")
+    val local=targets.mapIndexed{i,p->p.subtract(OrbitalBarragePattern.center(i,s,37f))}
+    for(x in listOf(-1,1))for(z in listOf(-1,1))h.assertTrue(local.any{it.x*x>0 && it.z*z>0},"Whole quadrant was left unserved: $id seed=$seed")
    }
-   h.assertTrue(innerOrder.size==s.shots,"Inner hit was always assigned to the same firing position: $id")
   }
   h.succeed()
  }
