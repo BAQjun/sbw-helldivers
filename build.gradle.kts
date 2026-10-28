@@ -268,7 +268,17 @@ repositories {
     }
 }
 
+// Ship the composable injector, allowing other mods to supply a newer compatible version.
+jarJar.enable()
+// The normal distribution includes the injector; keep the unbundled development jar distinct.
+tasks.named<Jar>("jar") { archiveClassifier.set("slim") }
+tasks.named<Jar>("jarJar") { archiveClassifier.set("") }
+
 dependencies {
+    compileOnly("io.github.llamalad7:mixinextras-common:0.3.6")
+    jarJar("io.github.llamalad7:mixinextras-forge:0.3.6") {
+        jarJar.ranged(this, "[0.3.6,)")
+    }
     minecraft("net.minecraftforge:forge:1.20.1-47.2.0")
     implementation("thedarkcolour:kotlinforforge:4.11.0")
 

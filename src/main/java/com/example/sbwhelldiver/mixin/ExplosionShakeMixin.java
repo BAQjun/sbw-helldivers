@@ -9,18 +9,22 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.damagesource.DamageSource;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
-/** Scale only our selected projectile blasts; preserve SBW sound, particles and duration. */
+/**
+ * Compose with the existing call (including other mods' redirects/wrappers).
+ * Never replace the shared SBW shake invocation or bypass another mod's policy.
+ */
 @Mixin(value = CustomExplosion.class, remap = false)
 public abstract class ExplosionShakeMixin {
-    @Redirect(method = "<init>(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;FDDDFLnet/minecraft/world/level/Explosion$BlockInteraction;)V",
+    @WrapOperation(method = "<init>(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;FDDDFLnet/minecraft/world/level/Explosion$BlockInteraction;)V",
         at = @At(value = "INVOKE", target = "Lcom/atsuishio/superbwarfare/network/message/receive/ShakeClientMessage$Companion;sendToNearbyPlayers(Lnet/minecraft/world/level/Level;DDDDDD)V"), remap = false)
     private void helldivers$blastShake(ShakeClientMessage.Companion sender, Level level,
-            double x, double y, double z, double radius, double time, double amplitude,
+            double x, double y, double z, double radius, double time, double amplitude, Operation<Void> original,
             Level sourceLevel, Entity source, DamageSource damage, float amount,
             double px, double py, double pz, float blastRadius, Explosion.BlockInteraction interaction) {
         double scale = ExplosionShakePolicy.scale(source);
-        if (scale > 0) sender.sendToNearbyPlayers(level, x, y, z, radius, time, amplitude * scale);
+        if (scale > 0) original.call(sender, level, x, y, z, radius, time, amplitude * scale);
     }
 }

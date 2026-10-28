@@ -1,5 +1,17 @@
 # 版本记录
 
+## 0.5.27
+
+## 中文
+
+- 修复与 Doggie’s New Vehicle 等同样修改爆炸震屏的模组共同安装时，战备炮弹爆炸可能导致游戏崩溃的问题。
+- 爆炸震屏改为可组合的处理方式，保留轨道加特林不震屏、自动机炮与火箭哨戒炮减弱震屏的设定，并保留其他模组的震屏处理。
+
+## English
+
+- Fixed a crash on stratagem projectile explosions when installed alongside Doggie’s New Vehicle or other mods modifying the same explosion camera-shake call.
+- Made explosion camera-shake handling composable while preserving disabled shake for Orbital Gatling Barrage, reduced shake for Autocannon and Rocket Sentries, and other mods’ shake handling.
+
 ## 0.5.23
 
 ## 中文
