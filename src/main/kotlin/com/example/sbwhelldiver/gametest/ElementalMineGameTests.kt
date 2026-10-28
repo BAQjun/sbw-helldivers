@@ -29,7 +29,7 @@ object ElementalMineGameTests {
         val p=point(h);for(x in -5..5)for(z in -5..5)h.level.setBlock(BlockPos.containing(p.add(x.toDouble(),-1.0,z.toDouble())),Blocks.STONE.defaultBlockState(),2);val m=ModEntities.INCENDIARY_MINE.get().create(h.level)!!;m.setPos(p);h.level.addFreshEntity(m)
         val inner=cow(h,p.add(.5,0.0,0.0));val edge=cow(h,p.add(3.5,0.0,0.0));val outside=cow(h,p.add(5.0,0.0,0.0))
         m.detonate();h.assertTrue(m.isRemoved&&abs(inner.health-450f)<.01&&edge.health in 450.1f..499.9f&&outside.health==500f,"Incendiary blast must peak at 50 with falloff and stop at 4 m")
-        val field=h.level.getEntitiesOfClass(GroundFireEntity::class.java,AABB(p,p).inflate(5.0)).single();h.assertTrue(field.radius==4.0&&field.remainingTicks==300,"Wrong incendiary field dimensions/lifetime")
+        val field=h.level.getEntitiesOfClass(GroundFireEntity::class.java,AABB(p,p).inflate(5.0)).single();h.assertTrue(field.radius==4.0&&field.remainingTicks==GroundFireEntity.LIFETIME,"Wrong incendiary field dimensions/lifetime")
         field.tick();h.assertTrue(inner.hasEffect(ModEffects.BURNING.get())&&edge.hasEffect(ModEffects.BURNING.get())&&!outside.hasEffect(ModEffects.BURNING.get())&&!inner.hasEffect(ModEffects.PANIC.get()),"Ground fire must refresh 3-s burn inside 4 m without panic")
         val before=inner.health;inner.invulnerableTime=0;FlameDamage.burn(inner);h.assertTrue(abs(inner.health-(before-10))<.01&&inner.getEffect(ModEffects.BURNING.get())!!.duration==60,"Custom burning must deal 10 per half-second, not vanilla damage")
         cleanup(h,p);h.succeed()
@@ -49,8 +49,8 @@ object ElementalMineGameTests {
         val p=point(h);val fire=GroundFireEntity.create(h.level,p,null,4.0);val gas=MortarFieldEntity.create(h.level,p.add(12.0,0.0,0.0),MortarFieldEntity.Kind.GAS,6.0,true)
         repeat(120){fire.tick();gas.tick()};val ft=CompoundTag();val gt=CompoundTag();fire.saveWithoutId(ft);gas.saveWithoutId(gt)
         val f=ModEntities.GROUND_FIRE.get().create(h.level)!!;f.load(ft);val g=ModEntities.MORTAR_FIELD.get().create(h.level)!!;g.load(gt)
-        h.assertTrue(f.radius==4.0&&g.radius==6.0&&g.mineCloud&&f.remainingTicks==180&&g.remainingTicks==180,"Field save lost radius or remaining lifespan")
-        repeat(180){fire.tick();gas.tick()};h.assertTrue(fire.remainingTicks==0&&gas.remainingTicks==0,"Field lifetime differs from 15 seconds")
+        h.assertTrue(f.radius==4.0&&g.radius==6.0&&g.mineCloud&&f.remainingTicks==GroundFireEntity.LIFETIME-120&&g.remainingTicks==180,"Field save lost radius or remaining lifespan")
+        repeat(180){fire.tick();gas.tick()};h.assertTrue(fire.remainingTicks==0&&gas.remainingTicks==0,"Field did not expire at its own maximum lifetime")
         fire.tick();gas.tick();h.assertTrue(fire.isRemoved&&gas.isRemoved,"Expired areas remained active");f.discard();g.discard();cleanup(h,p);h.succeed()
     }
     @JvmStatic @GameTest(template="sentry_test",batch="elemental_trigger",timeoutTicks=10)
@@ -101,14 +101,14 @@ object ElementalMineGameTests {
         val state=h.level.getBlockState(pos);h.assertTrue(state.`is`(ModBlocks.SENTRY_FIRE.get()) && !state.`is`(Blocks.FIRE),"Ground fire must be a real mod block")
         val victim=cow(h,p);val before=victim.health
         ModBlocks.SENTRY_FIRE.get().entityInside(state,h.level,pos,victim)
-        h.assertTrue(victim.health==before && victim.getEffect(ModEffects.BURNING.get())?.duration==60 && !victim.hasEffect(ModEffects.PANIC.get()),"Ground fire applied vanilla/contact damage or panic")
+        h.assertTrue(victim.health==before && victim.getEffect(ModEffects.BURNING.get())?.duration==60 && !victim.hasEffect(ModEffects.PANIC.get()),"Ground fire contact: hp=${victim.health}/$before effects=${victim.activeEffects} pos=$p field=${field.position()} life=${field.remainingTicks} covers=${field.coversCell(pos)} owners=${h.level.getEntitiesOfClass(GroundFireEntity::class.java,AABB(pos).inflate(16.0)).map{it.position()}}")
         val mine=ModEntities.INCENDIARY_MINE.get().create(h.level)!!;mine.setPos(p);h.level.addFreshEntity(mine)
         ModBlocks.SENTRY_FIRE.get().entityInside(state,h.level,pos,mine);h.assertTrue(!mine.isRemoved,"Fire block triggered mine")
         mine.discard();victim.discard()
         h.runAfterDelay(100) {
             val refreshed=GroundFireEntity.create(h.level,p,null,.75);h.assertTrue(refreshed===field,"Same fire cell duplicated its lifetime tracker")
-            h.runAfterDelay(202) { h.assertTrue(h.level.getBlockState(pos).`is`(ModBlocks.SENTRY_FIRE.get()),"Refreshed flame expired early") }
-            h.runAfterDelay(302) { h.assertTrue(h.level.getBlockState(pos).isAir,"Real fire block exceeded refreshed 15-second life");cleanup(h,p);h.succeed() }
+            h.runAfterDelay((GroundFireEntity.LIFETIME-2).toLong()) { h.assertTrue(h.level.getBlockState(pos).`is`(ModBlocks.SENTRY_FIRE.get()),"Refreshed flame expired early") }
+            h.runAfterDelay((GroundFireEntity.LIFETIME+2).toLong()) { h.assertTrue(h.level.getBlockState(pos).isAir,"Real fire block exceeded refreshed maximum life");cleanup(h,p);h.succeed() }
         }
     }
     @JvmStatic @GameTest(template="sentry_test",batch="effect_gas_height",timeoutTicks=10)

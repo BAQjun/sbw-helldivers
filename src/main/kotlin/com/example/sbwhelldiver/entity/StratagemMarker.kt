@@ -274,7 +274,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
             if(age<s.shotTime(index)+s.flightTicks-terminal)return@repeat
             val shell=(if(s.napalm)com.example.sbwhelldiver.init.ModEntities.ORBITAL_NAPALM_SHELL.get() else if(s.kind==com.example.sbwhelldiver.config.BarrageSettings.ids[0])com.example.sbwhelldiver.init.ModEntities.ORBITAL_120_SHELL.get() else com.example.sbwhelldiver.init.ModEntities.ORBITAL_SHELL.get()).create(server)?:return
             shell.configure(s.direct,s.blast,s.inner,s.outer)
-            if(shell is OrbitalNapalmShellEntity)shell.configureFire(s.fireRadius,s.fireTicks)
+            if(shell is OrbitalNapalmShellEntity)shell.configureFire(s.fireRadius,s.fireTicks,s.inner)
             val direction=target.subtract(origin).normalize();shell.setPos(target.subtract(direction.scale(speed*terminal)))
             ownerUuid?.let(server::getEntity)?.let{shell.owner=it};shell.shoot(direction.x,direction.y,direction.z,speed.toFloat(),0f)
             if(!server.addFreshEntity(shell))return

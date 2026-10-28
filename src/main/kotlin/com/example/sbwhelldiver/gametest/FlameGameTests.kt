@@ -104,8 +104,8 @@ object FlameGameTests {
         repeat(recovering.retractTicks+1){recovering.tick()}
         h.assertTrue(recovering.phase==AbstractHellpodEntity.Phase.DONE && fields().size==1,"Normal recovery detonated fuel")
         val saved=CompoundTag();field.saveWithoutId(saved);val restored=ModEntities.GROUND_FIRE.get().create(h.level)!!;restored.load(saved)
-        h.assertTrue(restored.radius==field.radius && restored.remainingTicks==299,"Reload reset fuel-fire radius or lifetime")
-        repeat(299){field.tick()};field.tick();h.assertTrue(field.isRemoved,"Fuel ground fire outlived jet ground fire")
+        h.assertTrue(restored.radius==field.radius && restored.remainingTicks==GroundFireEntity.LIFETIME-1,"Reload reset fuel-fire radius or lifetime")
+        repeat(GroundFireEntity.LIFETIME-1){field.tick()};field.tick();h.assertTrue(field.isRemoved,"Fuel ground fire outlived jet ground fire")
         listOf(pod,inside,outside,recovering,restored).forEach{it.discard()}
         for(dx in -5..5)for(dz in -5..5){val at=BlockPos.containing(p.add(dx.toDouble(),0.0,dz.toDouble()));if(h.level.getBlockState(at).`is`(ModBlocks.SENTRY_FIRE.get()))h.level.removeBlock(at,false)}
         h.succeed()
@@ -185,10 +185,10 @@ object FlameGameTests {
         val support=BlockPos.containing(ground).below();val previousSupport=h.level.getBlockState(support)
         h.level.setBlock(support,Blocks.STONE.defaultBlockState(),2)
         val field=GroundFireEntity.create(h.level,ground,sentry);field.tick()
-        h.assertTrue(stepping.getEffect(ModEffects.BURNING.get())?.duration==60 && !stepping.hasEffect(ModEffects.PANIC.get()),"Ground flame does not refresh three seconds burn")
+        h.assertTrue(stepping.getEffect(ModEffects.BURNING.get())?.duration==60 && !stepping.hasEffect(ModEffects.PANIC.get()),"Ground flame: effects=${stepping.activeEffects} at=$ground field=${field.position()} life=${field.remainingTicks} covers=${field.coversCell(BlockPos.containing(ground))} block=${h.level.getBlockState(BlockPos.containing(ground))} maxY=${h.level.maxBuildHeight}")
         val saved=CompoundTag();field.saveWithoutId(saved);val restored=ModEntities.GROUND_FIRE.get().create(h.level)!!;restored.load(saved)
-        h.assertTrue(restored.remainingTicks==299,"Save reset ground flame lifetime")
-        repeat(299) { field.tick() };field.tick();h.assertTrue(field.isRemoved,"Ground flame outlived fifteen seconds")
+        h.assertTrue(restored.remainingTicks==GroundFireEntity.LIFETIME-1,"Save reset ground flame lifetime")
+        repeat(GroundFireEntity.LIFETIME-1) { field.tick() };field.tick();h.assertTrue(field.isRemoved,"Ground flame outlived its maximum lifetime")
         for(dx in -1..1)for(y in 0..2)h.level.setBlock(BlockPos.containing(p.add(dx.toDouble(),y.toDouble(),4.0)),Blocks.AIR.defaultBlockState(),2)
         h.level.setBlock(support,previousSupport,2)
         listOf(near,far,spread,outside,stepping,sentry,restored).forEach { it.discard() };h.succeed()

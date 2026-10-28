@@ -1,5 +1,17 @@
 # 版本记录
 
+## 0.5.22
+
+## 中文
+
+- 地火现在由外向内分批熄灭，适用于轨道凝固汽油弹、飞鹰凝固汽油弹、燃烧地雷及火焰哨戒炮被摧毁后的火区；修正重叠火区与存档续燃行为。
+- 核对原生计时逻辑，将凝固汽油地火默认最长时间修正为 13.2 秒，普通地火为约 10.6 秒。燃烧伤害与状态持续时间不变；已有自定义配置保留。
+
+## English
+
+- Ground fire now extinguishes in stages from the outside inward for Orbital/Eagle Napalm, incendiary mines, and destroyed Flame Sentries. Fixed overlapping-fire and save/reload lifetime handling.
+- Checked native fire timing and corrected default maximum lifetimes to 13.2 seconds for napalm and approximately 10.6 seconds for ordinary ground fire. Burn damage and status durations are unchanged; existing custom configuration is preserved.
+
 ## 0.5.20
 
 ## 中文

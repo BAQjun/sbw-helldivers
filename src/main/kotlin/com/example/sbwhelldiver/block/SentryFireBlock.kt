@@ -27,7 +27,7 @@ class SentryFireBlock(properties:BlockBehaviour.Properties):FireBlock(properties
         !it.isRemoved && it.remainingTicks>0 && it.coversCell(pos)
     }
     override fun tick(state:BlockState,level:ServerLevel,pos:BlockPos,random:RandomSource) {
-        val remaining=owners(level,pos).maxOfOrNull{it.remainingTicks}?:0
+        val remaining=owners(level,pos).maxOfOrNull{it.remainingAt(pos)}?:0
         if(remaining<=0 || !canSurvive(state,level,pos))level.removeBlock(pos,false)
         else level.scheduleTick(pos,this,remaining.coerceIn(1,20))
     }

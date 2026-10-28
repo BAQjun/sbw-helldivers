@@ -26,7 +26,7 @@ object OrbitalNapalmGameTests {
  fun napalmShellDamageAndHeavyTerrainFire(h:GameTestHelper){
   val at=origin(h);floor(h,at)
   val s=OrbitalBarrageConfig.snapshot("orbital_napalm_barrage")
-  h.assertTrue(s.total==30 && s.radius==25.0 && s.shotGap==10 && s.roundPause==40 && s.fireRadius==10.0 && s.fireTicks==420,"Native footprint/lifetime or requested cadence incorrect")
+  h.assertTrue(s.total==30 && s.radius==25.0 && s.shotGap==10 && s.roundPause==40 && s.fireRadius==10.0 && s.fireTicks==GroundFireEntity.NAPALM_LIFETIME,"Native footprint/lifetime or requested cadence incorrect")
   h.assertTrue(Stratagems.get(s.kind)!!.itemId==net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(ModItems.ORBITAL_NAPALM_BARRAGE.get()),"Card not connected to deployment")
   val shell=ModEntities.ORBITAL_NAPALM_SHELL.get().create(h.level)!!;shell.setPos(at);shell.tickCount=1;h.level.addFreshEntity(shell)
   fun victim(distance:Double)=EntityType.RAVAGER.create(h.level)!!.also{m->
@@ -38,7 +38,7 @@ object OrbitalNapalmGameTests {
   shell.onHitEntity(ExtendedEntityRayTraceResult(EntityResult(victims[0],at,false,false)))
   victims.zip(listOf(140f,60f,29.5f,0f,0f)).forEachIndexed{i,(m,damage)->h.assertTrue(abs(1000-m.health-damage)<.03,"Napalm damage $i expected $damage got ${1000-m.health}")}
   val fields=h.level.getEntitiesOfClass(GroundFireEntity::class.java,AABB(at,at).inflate(1.0))
-  h.assertTrue(fields.size==1 && fields[0].heavyBurning && fields[0].remainingTicks==420 && fields[0].radius==10.0,"Missing/duplicate Eagle-style heavy napalm field")
+  h.assertTrue(fields.size==1 && fields[0].heavyBurning && fields[0].remainingTicks==GroundFireEntity.NAPALM_LIFETIME && fields[0].radius==10.0,"Missing/duplicate Eagle-style heavy napalm field")
   val field=fields.single();val cell=BlockPos.containing(at)
   h.assertTrue(field.coversCell(cell) && h.level.getBlockState(cell).`is`(ModBlocks.SENTRY_FIRE.get()) && !field.coversCell(cell.offset(11,0,0)),"Incorrect real ground-fire footprint")
   val health=victims.map{it.health};shell.causeExplode(at)

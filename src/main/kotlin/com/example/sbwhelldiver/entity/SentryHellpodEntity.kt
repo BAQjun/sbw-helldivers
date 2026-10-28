@@ -256,8 +256,8 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
         val floor = world.clip(ClipContext(position().add(0.0, .5, 0.0), position().add(0.0, -4.0, 0.0),
             ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this))
         if (floor.type == HitResult.Type.BLOCK && floor.direction == Direction.UP) {
-            // Share the jet's real fire blocks, 15-second lifetime and custom burn.
-            GroundFireEntity.create(world, floor.location, this, 3.0 + random.nextDouble())
+            // Share the jet's fire profile and custom burn, with shorter-lived outer rings.
+            GroundFireEntity.create(world, floor.location, this, 3.0 + random.nextDouble(), innerRadius=.4)
         }
     }
 

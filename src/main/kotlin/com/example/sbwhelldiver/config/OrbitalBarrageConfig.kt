@@ -24,7 +24,7 @@ data class BarrageSettings(val kind:String="orbital_120mm_he_barrage",val rounds
   fun defaults(id:String)=when(id){
    ids[1]->BarrageSettings(kind=id,shotGap=30,roundPause=60,radius=36.0,callTicks=120,direct=640f,blast=240f,inner=4.0,outer=12f)
    ids[2]->BarrageSettings(kind=id,shotGap=30,roundPause=60,radius=25.0,advanceSpeed=3.0,callTicks=60,direct=640f,blast=240f,inner=4.0,outer=12f)
-   ids[3]->BarrageSettings(kind=id,rounds=6,shots=5,shotGap=10,roundPause=40,radius=25.0,direct=80f,blast=60f,fireRadius=10.0,fireTicks=420)
+   ids[3]->BarrageSettings(kind=id,rounds=6,shots=5,shotGap=10,roundPause=40,radius=25.0,direct=80f,blast=60f,fireRadius=10.0,fireTicks=com.example.sbwhelldiver.entity.GroundFireEntity.NAPALM_LIFETIME)
    else->BarrageSettings()
   }
   fun load(t:CompoundTag):BarrageSettings{
@@ -50,8 +50,8 @@ object OrbitalBarrageConfig{
   val blast=if(direct!=null)b.defineInRange("explosionDamage",d.blast.toDouble(),0.0,100000.0)else null
   val inner=if(direct!=null)b.defineInRange("innerRadius",d.inner,0.0,128.0)else null
   val outer=if(direct!=null)b.defineInRange("outerRadius",d.outer.toDouble(),.1,256.0)else null
-  val fireRadius=if(d.napalm)b.comment("与飞鹰凝固汽油弹相同的贴地火焰范围。Terrain-aware Eagle-style napalm footprint.").defineInRange("groundFireRadius",d.fireRadius,.1,16.0)else null
-  val fireLife=if(d.napalm)b.defineInRange("groundFireSeconds",d.fireTicks/20.0,.05,3600.0)else null
+  val fireRadius=if(d.napalm)b.comment("贴地火焰外半径，内外圈分批熄灭。Ground-fire outer radius; rings extinguish from outside inward.").defineInRange("groundFireRadius",d.fireRadius,.1,16.0)else null
+  val fireLife=if(d.napalm)b.comment("内圈最长燃烧时间；外圈更短。Maximum inner-ring lifetime; outer rings burn for less time.").defineInRange("groundFireSeconds",d.fireTicks/20.0,.05,3600.0)else null
   fun snapshot()=BarrageSettings(d.kind,rounds.get(),shots.get(),(gap.get()*20).roundToInt(),(pause.get()*20).roundToInt(),radius.get(),speed?.get()?:0.0,
    (call.get()*20).roundToInt(),(flight.get()*20).roundToInt(),(direct?.get()?:OrbitalConfig.direct.get()).toFloat(),(blast?.get()?:OrbitalConfig.blast.get()).toFloat(),inner?.get()?:OrbitalConfig.inner.get(),(outer?.get()?:OrbitalConfig.outer.get()).toFloat(),fireRadius?.get()?:0.0,fireLife?.get()?.let{(it*20).roundToInt()}?:0)
  }

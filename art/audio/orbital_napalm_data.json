@@ -269,9 +269,122 @@
     ],
     "spreadRadius": 25,
     "fireRadius": 10,
-    "fireLifetimeSeconds": 21,
-    "fireRadiusSource": "Native napalm explosion outer_radius=10; no separate terrain fire footprint radius is resolved. Reuse the existing Eagle napalm terrain-aware 10 m footprint and FireTemplate_Large (21 seconds).",
+    "fireLifetimeSeconds": 13.2,
+    "fireRadiusSource": "Native explosion processing passes this shell's own inner/outer radii (3.3/10 m) to ground-fire generation; template 4 nominal lifetime is 13.2 seconds. See verifiedNativeFire and docs/ground-fire.md.",
     "scatter": "Same center-covering, per-salvo blast-separated planner as 0.5.20.",
-    "salvosSource": "Decoded base record has 5 salvos; use the user-requested 6."
+    "salvosSource": "Decoded base record has 5 salvos; use the user-requested 6.",
+    "groundFireInnerRadius": 3.3
+  },
+  "verifiedNativeFire": {
+    "snapshotSha256": "bcad43f462e452407d7ac41ae4d7bf17810802720f6aea325afd1d99b1e8ce00",
+    "source": "https://github.com/HWG90/hd2-reverse/tree/main/game-dll",
+    "tableRva": "0x1febf80",
+    "templates": [
+      {
+        "id": 0,
+        "fuel": 0,
+        "intensity": 0,
+        "nominalMaximumSeconds": 0.0
+      },
+      {
+        "id": 1,
+        "fuel": 8,
+        "intensity": 24,
+        "nominalMaximumSeconds": 2.176
+      },
+      {
+        "id": 2,
+        "fuel": 30,
+        "intensity": 50,
+        "nominalMaximumSeconds": 7.84
+      },
+      {
+        "id": 3,
+        "fuel": 40,
+        "intensity": 80,
+        "nominalMaximumSeconds": 10.56
+      },
+      {
+        "id": 4,
+        "fuel": 50,
+        "intensity": 100,
+        "nominalMaximumSeconds": 13.2
+      },
+      {
+        "id": 5,
+        "fuel": 100,
+        "intensity": 200,
+        "nominalMaximumSeconds": 26.4
+      }
+    ],
+    "formula": "(fuel*256 + max(0, intensity-fuel)*8)/1000",
+    "formulaRva": "0x11438a0",
+    "unitConstants": {
+      "0x11438cd": {
+        "rva": "0x2246d74",
+        "value": 8.0
+      },
+      "0x11438d5": {
+        "rva": "0x2247200",
+        "value": 256.0
+      },
+      "0x11438e1": {
+        "rva": "0x2247590",
+        "value": 1000.0
+      }
+    },
+    "liveUpdate": "256 ms update; intensity decreases by 1 while fuel remains, then 32; active intensity threshold 16. Quantization and terrain edge falloff change visible duration.",
+    "explosionLinks": [
+      {
+        "explosion": 63,
+        "inner": 3.299999952316284,
+        "outer": 10.0,
+        "template": 4
+      },
+      {
+        "explosion": 74,
+        "inner": 3.299999952316284,
+        "outer": 10.0,
+        "template": 4
+      },
+      {
+        "explosion": 360,
+        "inner": 2.0,
+        "outer": 10.0,
+        "template": 4
+      },
+      {
+        "explosion": 72,
+        "inner": 1.2000000476837158,
+        "outer": 4.0,
+        "template": 3
+      },
+      {
+        "explosion": 190,
+        "inner": 0.4000000059604645,
+        "outer": 4.0,
+        "template": 3
+      },
+      {
+        "explosion": 161,
+        "inner": 0.4000000059604645,
+        "outer": 4.0,
+        "template": 3
+      }
+    ],
+    "flameSentry": {
+      "entity": "820cc3bafe962858",
+      "component": "0x8e551126",
+      "template": 3
+    },
+    "modDefaults": {
+      "regularTicks": 211,
+      "napalmTicks": 264
+    },
+    "limits": [
+      "Orbital laser residual fire uses the mod shared regular profile; a distinct native orbital-laser ground-fire template was not independently identified.",
+      "Flame Sentry destruction shares the regular profile in the mod; explosion records 161/190 match its requested 0.4/4 m footprint and template 3, but their entity owner is not independently mapped here."
+    ],
+    "historicalAnnotationNotice": "Raw fire_template enum annotations, including the old 21-second label, are retained as historical export text only. Use the verified native formula and adaptation values for current lifetimes."
   }
 }

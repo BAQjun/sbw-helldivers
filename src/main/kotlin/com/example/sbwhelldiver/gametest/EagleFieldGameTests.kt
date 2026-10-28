@@ -89,15 +89,15 @@ object EagleFieldGameTests {
         cleanup(h,at);h.succeed()
     }
     @JvmStatic @GameTest(template="sentry_test",batch="eagle_fields_terrain",timeoutTicks=20)
-    fun napalmFollowsTerrainAndSaves21SecondHeavyFire(h: GameTestHelper) {
+    fun napalmFollowsTerrainAndSavesHeavyFire(h: GameTestHelper) {
         val at=origin(h);floor(h,at)
         h.level.setBlock(BlockPos.containing(at.add(2.0,0.0,0.0)),Blocks.STONE.defaultBlockState(),3)
         val field=GroundFireEntity.create(h.level,at,null,GroundFireEntity.NAPALM_RADIUS,true)
         val stepped=BlockPos.containing(at.add(2.0,1.0,0.0))
-        h.assertTrue(field.remainingTicks==420 && field.coversCell(stepped) && h.level.getBlockState(stepped).`is`(ModBlocks.SENTRY_FIRE.get()),"Napalm did not follow a raised terrain cell")
+        h.assertTrue(field.remainingTicks==GroundFireEntity.NAPALM_LIFETIME && field.coversCell(stepped) && h.level.getBlockState(stepped).`is`(ModBlocks.SENTRY_FIRE.get()),"Napalm did not follow a raised terrain cell")
         h.assertTrue(!field.coversCell(BlockPos.containing(at.add(11.0,0.0,0.0))),"Fire outside footprint")
         val tag=CompoundTag();field.saveWithoutId(tag);val restored=ModEntities.GROUND_FIRE.get().create(h.level)!!;restored.load(tag)
-        h.assertTrue(restored.heavyBurning && restored.remainingTicks==420 && restored.coversCell(stepped),"Saved napalm lost lifetime/terrain/heavy effect")
+        h.assertTrue(restored.heavyBurning && restored.remainingTicks==GroundFireEntity.NAPALM_LIFETIME && restored.coversCell(stepped),"Saved napalm lost lifetime/terrain/heavy effect")
         restored.discard();cleanup(h,at);h.succeed()
     }
     @JvmStatic @GameTest(template="sentry_test",batch="eagle_fields_burn",timeoutTicks=20)

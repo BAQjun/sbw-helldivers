@@ -142,7 +142,7 @@ class AntiPersonnelMineEntity(type: EntityType<AntiPersonnelMineEntity>,level: L
             finally { target.invulnerableTime=cooldown }
         }
         when(kind) {
-            Kind.INCENDIARY -> GroundFireEntity.create(world,position(),owner,kind.fieldRadius)
+            Kind.INCENDIARY -> GroundFireEntity.create(world,position(),owner,kind.fieldRadius,innerRadius=kind.innerRadius)
             Kind.GAS -> MortarFieldEntity.create(world,position(),MortarFieldEntity.Kind.GAS,kind.fieldRadius,true)
             else -> Unit
         }
