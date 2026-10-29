@@ -82,6 +82,9 @@ object DestroyerClient:ResourceManagerReloadListener {
   if(e.stage==RenderLevelStageEvent.Stage.AFTER_SKY){
    val fogStart=RenderSystem.getShaderFogStart();val fogEnd=RenderSystem.getShaderFogEnd()
    RenderSystem.setShaderFogStart(4096f);RenderSystem.setShaderFogEnd(8192f)
+   // AFTER_SKY precedes the entity pass that installs camera rotation globally in 1.21.
+   // Its event pose is identity, so apply the supplied view to both the hull and warp trail.
+   val skyPose=e.poseStack;skyPose.pushPose();skyPose.mulPose(e.modelViewMatrix)
    try{
     var drewShip=false
     val dimension=level.dimension().location().toString();val camera=e.camera.position
@@ -101,7 +104,7 @@ object DestroyerClient:ResourceManagerReloadListener {
      if(flight.trailLength>0)drawWarpTrail(e,flight,camera,factor)
     }
     if(drewShip){RenderSystem.depthMask(true);RenderSystem.clear(256,Minecraft.ON_OSX)}
-   }finally{RenderSystem.setShaderFogStart(fogStart);RenderSystem.setShaderFogEnd(fogEnd)}
+   }finally{skyPose.popPose();RenderSystem.setShaderFogStart(fogStart);RenderSystem.setShaderFogEnd(fogEnd)}
   }
   if(e.stage==RenderLevelStageEvent.Stage.AFTER_PARTICLES){
    val camera=e.camera.position;val p=e.poseStack
