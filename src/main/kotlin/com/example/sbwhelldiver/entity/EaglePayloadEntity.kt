@@ -76,7 +76,13 @@ class Eagle110mmRocketEntity(type:EntityType<out SmallCannonShellEntity>,level:L
  override val innerBlastRadius get()=1.6
  init{setDamage(100f);setExplosionDamage(50f);setExplosionRadius(5f);setCustomGravity(.084f)}
  override fun crushProjectile(velocity:Vec3) {}
- override fun tick(){super.tick();if(!isRemoved)smallTrail()}
+ override fun projectileMove(level:Level){
+  val from=position();super.projectileMove(level)
+  if(!isRemoved)RocketTrails.send(this,from,position())
+ }
+ override fun onHit(result:net.minecraft.world.phys.HitResult){
+  RocketTrails.send(this,position(),result.location);super.onHit(result)
+ }
  override fun getSound()=com.atsuishio.superbwarfare.init.ModSounds.ROCKET_FLY.get()
  override fun getVolume()=.2f
 }

@@ -16,6 +16,20 @@ class SentryRocketEntity(type: EntityType<out SmallRocketEntity>, level: Level) 
         setLegShot(1f)
     }
 
+    // SmallRocketEntity calls this after moving; authoritative segments below replace it.
+    override fun smallTrail() {}
+
+    override fun projectileMove(level: Level) {
+        val from = position()
+        super.projectileMove(level)
+        if (!isRemoved) RocketTrails.send(this, from, position())
+    }
+
+    override fun onHit(result: net.minecraft.world.phys.HitResult) {
+        RocketTrails.send(this, position(), result.location)
+        super.onHit(result)
+    }
+
     override fun causeExplode(vec3: Vec3) = SentryExplosion.explode(this, vec3,
         com.example.sbwhelldiver.config.TurretConfigs.get("rocket_sentry").innerRadius!!.get(), hasExplosionDestroy())
     override fun getModelInstance() = ProjectileModelReloadListener.getModel(MODEL)?.createInstance()

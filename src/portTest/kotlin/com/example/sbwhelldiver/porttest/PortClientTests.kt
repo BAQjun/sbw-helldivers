@@ -29,7 +29,7 @@ object PortClientTests {
     private var ticks=0
     private var launchMillis=System.currentTimeMillis()
     @SubscribeEvent fun tick(event:ClientTickEvent.Post) {
-        if(!java.lang.Boolean.getBoolean("sbw_helldiver.portClientTests") || java.lang.Boolean.getBoolean("sbw_helldiver.hudRegression") || java.lang.Boolean.getBoolean("sbw_helldiver.mineRegression") || java.lang.Boolean.getBoolean("sbw_helldiver.destroyerRegression") || java.lang.Boolean.getBoolean("sbw_helldiver.explosionRegression")) return
+        if(!java.lang.Boolean.getBoolean("sbw_helldiver.portClientTests") || java.lang.Boolean.getBoolean("sbw_helldiver.hudRegression") || java.lang.Boolean.getBoolean("sbw_helldiver.mineRegression") || java.lang.Boolean.getBoolean("sbw_helldiver.destroyerRegression") || java.lang.Boolean.getBoolean("sbw_helldiver.explosionRegression") || java.lang.Boolean.getBoolean("sbw_helldiver.rocketRegression")) return
         val mc=Minecraft.getInstance()
         if(System.currentTimeMillis()-launchMillis>300000) { LOGGER.error("PORT_CLIENT_TIMEOUT");mc.stop();return }
         if(!started&&mc.screen is TitleScreen&&mc.overlay==null) {

@@ -61,6 +61,7 @@ data class BeaconFailurePacket(val stratagemId: String, val loadoutIds: List<Str
 object BeaconNetwork {
     val CHANNEL = PacketChannel()
     fun register() {
+        CHANNEL.registerMessage(23,RocketTrailPacket::class.java,{p,b->p.encode(b)},RocketTrailPacket::decode,RocketTrailPacket::handle,Optional.of(PacketDirection.PLAY_TO_CLIENT))
         thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS.addListener<net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent> { CHANNEL.registerPayloads(it) }
         CHANNEL.registerMessage(21,ExplosionBlockDamageRequestPacket::class.java,{p,b->p.encode(b)},ExplosionBlockDamageRequestPacket::decode,ExplosionBlockDamageRequestPacket::handle,Optional.of(PacketDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(22,ExplosionBlockDamageStatePacket::class.java,{p,b->p.encode(b)},ExplosionBlockDamageStatePacket::decode,ExplosionBlockDamageStatePacket::handle,Optional.of(PacketDirection.PLAY_TO_CLIENT))
