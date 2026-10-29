@@ -28,6 +28,7 @@ neoForge {
     runs {
         create("client") { client(); gameDirectory = file(".codex/neoforge1211/runtime-client")
             if (providers.gradleProperty("portTests").isPresent) systemProperty("sbw_helldiver.portClientTests", "true")
+            if (providers.gradleProperty("explosionTests").isPresent) systemProperty("sbw_helldiver.explosionRegression", "true")
             if (providers.gradleProperty("destroyerTests").isPresent) systemProperty("sbw_helldiver.destroyerRegression", "true")
             if (providers.gradleProperty("mineTests").isPresent) systemProperty("sbw_helldiver.mineRegression", "true")
             if (providers.gradleProperty("hudTests").isPresent) {

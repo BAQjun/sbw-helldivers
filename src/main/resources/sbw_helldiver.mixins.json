@@ -16,7 +16,8 @@
   "client": [
     "EagleProjectileRenderMixin",
     "HellpodMeshRenderMixin",
-    "ModListSearchMixin"
+    "ModListSearchMixin",
+    "ExplosionSmokeRenderMixin"
   ],
   "injectors": {
     "defaultRequire": 1
