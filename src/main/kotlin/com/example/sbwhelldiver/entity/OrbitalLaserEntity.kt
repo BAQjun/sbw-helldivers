@@ -42,7 +42,9 @@ class OrbitalLaserEntity(type:EntityType<*>,level:Level):Entity(type,level) {
  private var lerpSteps=0
  private var lerpGoal=Vec3.ZERO
  val targetId get()=entityData.get(TARGET)
- init {noPhysics=true;isNoGravity=true}
+ // The visible shaft extends far outside the contact box. Culling that box must
+ // not pause client interpolation while the separately drawn beam stays visible.
+ init {noPhysics=true;isNoGravity=true;noCulling=true}
  fun configure(at:Vec3,ship:Vec3,owner:UUID?,s:OrbitalLaserSettings){
   center=at;cursor=at;setPos(at);previousFireContact=at;fireRefresh.clear();sourceUuid=owner;entityData.set(ORIGIN,tag(ship));entityData.set(SETTINGS,s.save())
   entityData.set(START,level().gameTime);nextPulse=level().gameTime+s.interval;nextRefresh=0
@@ -66,10 +68,17 @@ class OrbitalLaserEntity(type:EntityType<*>,level:Level):Entity(type,level) {
   for(i in 0..12)if(!level().hasChunkAt(net.minecraft.core.BlockPos.containing(at.lerp(top,i/12.0))))return null
   return top
  }
- private fun exposed(m:LivingEntity):Boolean {
-  val aim=m.position().add(0.0,minOf(.5,m.bbHeight*.25),0.0);val top=traceStart(aim)?:return false
-  return level().clip(ClipContext(top,aim,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,this)).type!=net.minecraft.world.phys.HitResult.Type.BLOCK
+ /** Prefer the low contact, but allow the exposed torso/head above low cover. */
+ private fun visibleAim(m:LivingEntity):Vec3? {
+  val base=m.position()
+  val heights=doubleArrayOf(minOf(.5,m.bbHeight*.25),m.bbHeight*.5,m.eyeY-m.y)
+  for(height in heights){
+   val aim=base.add(0.0,height,0.0);val top=traceStart(aim)?:continue
+   if(level().clip(ClipContext(top,aim,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,this)).type!=net.minecraft.world.phys.HitResult.Type.BLOCK)return aim
+  }
+  return null
  }
+ private fun exposed(m:LivingEntity)=visibleAim(m)!=null
  private fun refresh(server:ServerLevel){
   candidates.clear();candidates.addAll(server.getEntitiesOfClass(LivingEntity::class.java,AABB(center,center).inflate(settings.range)){valid(it)&&exposed(it)}.map{it.uuid})
   nextRefresh=server.gameTime+settings.refreshTicks
@@ -86,11 +95,19 @@ class OrbitalLaserEntity(type:EntityType<*>,level:Level):Entity(type,level) {
   if(!com.example.sbwhelldiver.stratagem.Stratagems.dimensionAllowed(server.dimension().location().toString()) || !active){discard();return}
   if(server.gameTime>=nextRefresh)refresh(server)
   var target=targetUuid?.let{server.getEntity(it) as? LivingEntity}?.takeIf{valid(it)&&it.uuid in candidates}
-  if(target==null){target=selectTarget();targetUuid=target?.uuid}
+  var aim=target?.let(::visibleAim)
+  if(aim==null){
+   // A cached target may have moved behind cover since the last acquisition refresh.
+   while(true){
+    target=selectTarget();aim=target?.let(::visibleAim)
+    if(target==null || aim!=null)break
+    candidates.remove(target.uuid)
+   }
+  }
+  targetUuid=target?.uuid
   entityData.set(TARGET,target?.id?:-1)
-  if(target!=null){
-   // Steering is independent of surface contact: the tip may hit a creature above the cursor.
-   val aim=target.position().add(0.0,minOf(.5,target.bbHeight*.25),0.0)
+  if(aim!=null){
+   // Steer to the visible sample too; steering to hidden feet would still hit the cover.
    cursor=stepToward(cursor,aim,settings.speed/20.0)
   }
   updateContact(server)
