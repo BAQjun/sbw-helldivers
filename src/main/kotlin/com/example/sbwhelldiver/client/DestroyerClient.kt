@@ -4,7 +4,6 @@ import com.example.sbwhelldiver.network.DestroyerSnapshotPacket
 import com.example.sbwhelldiver.stratagem.DestroyerAnchor
 import com.example.sbwhelldiver.stratagem.DestroyerState
 import com.example.sbwhelldiver.stratagem.DestroyerWarp
-import com.example.sbwhelldiver.entity.StratagemMarker
 import com.google.gson.JsonParser
 import com.mojang.blaze3d.vertex.ByteBufferBuilder
 import com.mojang.blaze3d.systems.RenderSystem
@@ -105,23 +104,6 @@ object DestroyerClient:ResourceManagerReloadListener {
     }
     if(drewShip){RenderSystem.depthMask(true);RenderSystem.clear(256,Minecraft.ON_OSX)}
    }finally{skyPose.popPose();RenderSystem.setShaderFogStart(fogStart);RenderSystem.setShaderFogEnd(fogEnd)}
-  }
-  if(e.stage==RenderLevelStageEvent.Stage.AFTER_PARTICLES){
-   val camera=e.camera.position;val p=e.poseStack
-   for(marker in level.entitiesForRendering().filterIsInstance<StratagemMarker>()){
-    if(marker.isOrbitalLaser||marker.isOrbitalGatling||marker.isOrbitalBarrage || marker.isOrbitalAirburst)continue
-    val origin=marker.orbitalOrigin?:continue
-    val target=marker.orbitalTarget(e.partialTick.getGameTimeDeltaPartialTick(false));val t=marker.orbitalProgress(e.partialTick.getGameTimeDeltaPartialTick(false))
-    if(t !in 0.0..1.0)continue
-    val head=origin.lerp(target,t);val tail=origin.lerp(target,(t-.018).coerceAtLeast(0.0))
-    val direction=head.subtract(tail).normalize();var right=direction.cross(head.subtract(camera)).normalize().scale(.24)
-    if(right.lengthSqr()<1e-6)right=Vec3(.24,0.0,0.0)
-    val relative=head.subtract(camera);val factor=minOf(1.0,192.0/relative.length().coerceAtLeast(1.0))
-    // Both ends use one scale, preserving the streak's direction and angular length.
-    val points=listOf(head.add(right),tail.add(right),tail.subtract(right),head.subtract(right))
-    val vc=buffers.getBuffer(DestroyerRenderTypes.GLOW);val pose=p.last()
-    points.forEach{v->val q=v.subtract(camera).scale(factor);vc.vertex(pose.pose(),q.x.toFloat(),q.y.toFloat(),q.z.toFloat()).color(1f,.84f,.52f,1f).uv(0f,0f).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).normal(pose.normal(),0f,1f,0f).endVertex()}
-   };buffers.endBatch()
   }
  }
 }
