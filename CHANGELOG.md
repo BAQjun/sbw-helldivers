@@ -1,5 +1,17 @@
 # 版本记录
 
+## 0.6.0-alpha.2
+
+## 中文
+
+- 设备部署信标终端改用信标球界面的粗箭头，包括设备指令、提交材料及返回按钮。
+- 移除终端底部的按键提示和信标球提示中的单次投掷耗能文字。
+
+## English
+
+- Updated the equipment deployment terminal to use the beacon ball HUD's bold arrows for equipment codes, material submission and the back button.
+- Removed the terminal's bottom key hint and the per-throw energy cost text from the beacon ball tooltip.
+
 ## 0.6.0-alpha.1
 
 ## 中文

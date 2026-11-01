@@ -66,7 +66,12 @@ class EquipmentBeaconRenderer(context:EntityRendererProvider.Context):EntityRend
             p.popPose()
         }
         fun arrows(code:List<Int>,x:Float,y:Float,progress:Int) {
-            code.forEachIndexed{i,d->text(Component.literal(listOf("↑","→","↓","←")[d]),x+i*14,y,if(i<progress)0xFF65D8A0.toInt()else 0xFFEFECDD.toInt())}
+            code.forEachIndexed{i,d->
+                val color=if(i<progress)0xFF65D8A0.toInt()else 0xFFEFECDD.toInt()
+                ArrowGlyph.forEachPixel(d){dx,dy->
+                    quad(p,b,BeaconModel.WHITE,x+i*14+dx*1.5f,y+dy*1.5f,1.5f,1.5f,color)
+                }
+            }
         }
         text(Component.translatable("terminal.sbw_helldiver.title"),8f,6f,0xFFE8D474.toInt())
         val machine=e.selectedMachine
@@ -94,10 +99,11 @@ class EquipmentBeaconRenderer(context:EntityRendererProvider.Context):EntityRend
                     if(have>=material.count)0xFF65D8A0.toInt() else 0xFFFF8777.toInt(),94f)
             }
             arrows(List(6){1},10f,117f,e.prefix.size)
-            text(Component.translatable("terminal.sbw_helldiver.back"),174f,117f)
+            arrows(listOf(3),174f,117f,0)
+            text(Component.translatable("terminal.sbw_helldiver.back"),190f,117f)
         }
         if(e.error>0)text(Component.translatable(when(e.error){1->"terminal.sbw_helldiver.no_space";2->"terminal.sbw_helldiver.no_material";else->"terminal.sbw_helldiver.deployment_busy"}),8f,h-15,0xFFFF766A.toInt())
-        else text(Component.translatable(if(e.paid)"terminal.sbw_helldiver.waiting" else "terminal.sbw_helldiver.controls"),8f,h-15,0xFF86A8AE.toInt())
+        else if(e.paid)text(Component.translatable("terminal.sbw_helldiver.waiting"),8f,h-15,0xFF86A8AE.toInt())
         p.popPose()
     }
     private fun quad(p:PoseStack,b:MultiBufferSource,texture:ResourceLocation,x:Float,y:Float,w:Float,h:Float,color:Int) {
