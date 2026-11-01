@@ -1,0 +1,26 @@
+{
+  "type": "sbw_helldiver:sample_processing",
+  "machine": "bioprocessor",
+  "ingredient": {
+    "item": "minecraft:echo_shard"
+  },
+  "count": 1,
+  "ticks": 100,
+  "outcomes": [
+    {
+      "tier": 0,
+      "chance": 20,
+      "count": 64
+    },
+    {
+      "tier": 1,
+      "chance": 60,
+      "count": 20
+    },
+    {
+      "tier": 2,
+      "chance": 20,
+      "count": 5
+    }
+  ]
+}

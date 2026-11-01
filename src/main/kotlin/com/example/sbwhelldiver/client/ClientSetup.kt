@@ -66,6 +66,7 @@ object ClientSetup {
         event.registerReloadListener(DestroyerClient)
         event.registerReloadListener(BeaconModel)
         event.registerReloadListener(EquipmentBeaconRenderer.Model)
+        event.registerReloadListener(MachineMesh)
         event.registerReloadListener(MortarShellRenderer.Model)
         event.registerReloadListener(HmgFeedRenderer)
         event.registerReloadListener(LaserPostVisual)
@@ -87,6 +88,8 @@ object ClientSetup {
 
     @SubscribeEvent
     fun registerRenderers(event: EntityRenderersEvent.RegisterRenderers) {
+        event.registerBlockEntityRenderer(com.example.sbwhelldiver.survival.MachineRegistry.MACHINE.get(),::SampleMachineRenderer)
+        event.registerEntityRenderer(ModEntities.MACHINE_CONTAINER.get(),::MachineContainerRenderer)
         event.registerEntityRenderer(ModEntities.EQUIPMENT_BEACON.get(),::EquipmentBeaconRenderer)
         event.registerEntityRenderer<AutoAimableEntity>(ModEntities.PLAYER_HELLPOD.get(),::HellpodRenderer)
         event.registerEntityRenderer(ModEntities.EAGLE.get(),::EagleRenderer)

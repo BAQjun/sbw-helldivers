@@ -33,6 +33,7 @@ neoForge {
             if (providers.gradleProperty("destroyerTests").isPresent) systemProperty("sbw_helldiver.destroyerRegression", "true")
             if (providers.gradleProperty("mineTests").isPresent) systemProperty("sbw_helldiver.mineRegression", "true")
             if (providers.gradleProperty("equipmentTests").isPresent) systemProperty("sbw_helldiver.equipmentRegression", "true")
+            if (providers.gradleProperty("machineTests").isPresent) systemProperty("sbw_helldiver.machineRegression", "true")
             if (providers.gradleProperty("hudTests").isPresent) {
                 systemProperty("sbw_helldiver.hudRegression", "true")
             } }
@@ -52,6 +53,7 @@ val extractSbwApis = tasks.register<Copy>("extractSbwApis") {
 val embeddedSbwApis = files(provider { fileTree(layout.buildDirectory.dir("generated/sbw-api")) { include("*.jar") } }).builtBy(extractSbwApis)
 
 dependencies {
+    compileOnly("maven.modrinth:jei:UJRXzDfp") { isTransitive = false }
     add("sbwApiSource", "maven.modrinth:superb-warfare:bl7W8fjU")
     implementation("thedarkcolour:kotlinforforge-neoforge:5.10.0")
     implementation("maven.modrinth:superb-warfare:bl7W8fjU")

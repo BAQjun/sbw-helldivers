@@ -53,6 +53,10 @@ class Mod(container: net.neoforged.fml.ModContainer) {
         ModCreativeTabs.TABS.register(bus)
         com.example.sbwhelldiver.init.ModMenus.MENUS.register(bus)
         com.example.sbwhelldiver.survival.BeaconCraftingRecipe.SERIALIZERS.register(bus)
+        com.example.sbwhelldiver.survival.SampleRecipe.TYPES.register(bus)
+        com.example.sbwhelldiver.survival.SampleRecipe.SERIALIZERS.register(bus)
+        com.example.sbwhelldiver.survival.MachineRegistry.BLOCK_ENTITIES.register(bus)
+        bus.addListener<net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent>(com.example.sbwhelldiver.survival.MachineRegistry::capabilities)
         com.example.sbwhelldiver.survival.MachineDeployment.checkCodes()
         com.example.sbwhelldiver.network.BeaconNetwork.register()
         // 服务端配置：索敌规则、空投延迟、埋深、存活时间等。

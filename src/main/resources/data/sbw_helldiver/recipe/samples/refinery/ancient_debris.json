@@ -1,0 +1,26 @@
+{
+  "type": "sbw_helldiver:sample_processing",
+  "machine": "refinery",
+  "ingredient": {
+    "item": "minecraft:ancient_debris"
+  },
+  "count": 1,
+  "ticks": 100,
+  "outcomes": [
+    {
+      "tier": 0,
+      "chance": 20,
+      "count": 48
+    },
+    {
+      "tier": 1,
+      "chance": 60,
+      "count": 16
+    },
+    {
+      "tier": 2,
+      "chance": 20,
+      "count": 4
+    }
+  ]
+}

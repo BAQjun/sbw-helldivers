@@ -20,7 +20,7 @@ import net.minecraft.world.phys.Vec3
 import java.util.UUID
 import kotlin.math.abs
 
-/** Equipment call prototype: payment stops at a saved ten-second deployment reservation. */
+/** Terminal session, payment and the saved ten-second equipment delivery reservation. */
 class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBeaconEntity>,level:Level):Entity(type,level) {
     val phase get()=entityData.get(PHASE)
     val phaseStart get()=entityData.get(START)
@@ -40,6 +40,8 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
     private var arrival=0L
     private var born=0L
     private var previousSoundTick=-1
+    private var reservedFacing=net.minecraft.core.Direction.NORTH
+    private var containerSent=false
     init { isNoGravity=true;noPhysics=true }
     override fun defineSynchedData(b:SynchedEntityData.Builder) {
         b.define(PHASE,PACKED);b.define(START,-1L);b.define(MACHINE,-1);b.define(PREFIX,"");b.define(ERROR,0)
@@ -54,11 +56,12 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
         setPos(x,heightAt(born.toDouble()),z)
     }
     private fun heightAt(now:Double):Double {
-        val duration=(entityData.get(ARRIVAL)-entityData.get(BORN)).coerceAtLeast(1)
-        val t=((now-entityData.get(BORN))/duration).coerceIn(0.0,1.0)
-        val fall=com.example.sbwhelldiver.entity.AbstractHellpodEntity.descentSpawnHeight()+5.45
-        return entityData.get(GROUND)+.0956+fall*(1-t)*(1-t)
+        val landing=entityData.get(GROUND)+.0956
+        return com.example.sbwhelldiver.entity.HellpodFlight.height(now,entityData.get(BORN),entityData.get(ARRIVAL),landing+com.example.sbwhelldiver.entity.AbstractHellpodEntity.descentSpawnHeight()+5.45,landing,com.example.sbwhelldiver.entity.AbstractHellpodEntity.descentBrakeHeight())
     }
+    val flightArrival get()=entityData.get(ARRIVAL)
+    val flightBraking get()=level().gameTime>=com.example.sbwhelldiver.entity.HellpodFlight.brakeStart(entityData.get(BORN),flightArrival)
+    fun sampleClientFlight(){if(phase==PACKED){xo=x;yo=y;zo=z;setPos(x,heightAt(level().gameTime.toDouble()),z)}}
     fun localToWorld(v:Vec3)=v.yRot(-yRot*(Math.PI/180).toFloat()).add(position())
     fun screenCenter()=localToWorld(EquipmentBeaconGeometry.center)
     fun screenNormal()=EquipmentBeaconGeometry.normal.yRot(-yRot*(Math.PI/180).toFloat())
@@ -106,7 +109,7 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
             entityData.set(PREFIX,input.joinToString(""));sound(player,"terminal_input")
             candidates.firstOrNull{it.code.size==input.size}?.let{
                 entityData.set(PREFIX,"")
-                if(!it.spaceAvailable(level() as ServerLevel,deploymentPoint(),screenFacingYaw,this))entityData.set(ERROR,1)
+                if(chooseFacing(it)==null)entityData.set(ERROR,1)
                 else entityData.set(MACHINE,it.ordinal)
             }
         }else {
@@ -114,7 +117,8 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
             entityData.set(PREFIX,input.joinToString(""));sound(player,"terminal_input")
             if(input.size==6) {
                 entityData.set(PREFIX,"")
-                if(!machine.spaceAvailable(level() as ServerLevel,deploymentPoint(),screenFacingYaw,this))entityData.set(ERROR,1)
+                val facing=chooseFacing(machine)
+                if(facing==null)entityData.set(ERROR,1)
                 else {
                     if(!machine.hasMaterials(player.inventory))entityData.set(ERROR,2)
                     else if(!com.example.sbwhelldiver.stratagem.StratagemCooldowns.reserve(player,Stratagems.equipmentDeployment.id,uuid))entityData.set(ERROR,3)
@@ -122,6 +126,7 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
                         // Server thread, phase transition and debit are atomic. Replayed inputs cannot pay twice.
                         check(machine.consumeMaterials(player.inventory));player.containerMenu.broadcastChanges()
                         owner=player.uuid
+                        reservedFacing=facing;containerSent=false
                         val now=level().gameTime;entityData.set(DEPLOYMENT_END,now+200);transition(COUNTDOWN,now)
                         com.example.sbwhelldiver.stratagem.StratagemCooldowns.change((level() as ServerLevel).server,player.uuid){state,time->state.beginEquipmentDeployment(uuid,time,time+200,machine.id)}
                         closeTerminal();return true
@@ -133,6 +138,15 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
         sendState(player,true);return true
     }
     private fun deploymentPoint()=Vec3(x,groundY,z)
+    private fun deploymentRoot()=net.minecraft.core.BlockPos.containing(deploymentPoint())
+    private fun chooseFacing(m:MachineDeployment)=MachineStructure.choose(level() as ServerLevel,deploymentRoot(),m,net.minecraft.core.Direction.fromYRot(screenFacingYaw.toDouble()),this)
+    private fun sendContainer() {
+        val m=selectedMachine?:return
+        val l=level() as ServerLevel
+        val box=com.example.sbwhelldiver.init.ModEntities.MACHINE_CONTAINER.get().create(l)?:return
+        box.configure(m,deploymentRoot(),reservedFacing,CompoundTag(),true,deploymentEnd)
+        if(l.addFreshEntity(box))containerSent=true
+    }
     private fun sendState(p:ServerPlayer,open:Boolean) {
         if(p is net.neoforged.neoforge.common.util.FakePlayer)return
         BeaconNetwork.CHANNEL.send(PacketTargets.PLAYER.with{p},EquipmentTerminalStatePacket(id,uuid,nonce?:UUID(0,0),open,entityData.get(MACHINE),entityData.get(PREFIX),error))
@@ -146,19 +160,20 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
     override fun tick() {
         super.tick()
         if(phaseStart<0)return
-        if(phase==PACKED)setPos(x,heightAt(level().gameTime.toDouble()),z)
         if(level().isClientSide)return
+        if(phase==PACKED)setPos(x,heightAt(level().gameTime.toDouble()),z)
         if(!Stratagems.dimensionAllowed(level().dimension().location().toString())){closeTerminal();discard();return}
         val now=level().gameTime
+        if((phase==COUNTDOWN||phase==RETRACTING)&&!containerSent)sendContainer()
         if(operator!=null) {
             val p=(level() as ServerLevel).server.playerList.getPlayer(operator!!)
             if(p==null||nonce==null||!valid(p,nonce!!))closeTerminal()
         }
         when(phase) {
-            PACKED->if(now>=arrival){setPos(x,groundY+.0956,z);transition(DEPLOYING,now);playWorld("sfx_hellpod_impact");releaseCap()}
+            PACKED->if(now>=arrival){setPos(x,groundY+.0956,z);transition(DEPLOYING,now);releaseCap()}
             DEPLOYING->if(now-phaseStart>=53)transition(ACTIVE,now)
             COUNTDOWN->if(now>=deploymentEnd-60)transition(RETRACTING,deploymentEnd-60)
-            RETRACTING->if(now>=deploymentEnd){transition(FINISHED,now);owner?.let{(level() as ServerLevel).server.playerList.getPlayer(it)}?.sendSystemMessage(Component.translatable("terminal.sbw_helldiver.prototype_ready",Component.translatable(selectedMachine?.translation?:"")))}
+            RETRACTING->if(now>=deploymentEnd)transition(FINISHED,now)
         }
         val age=(now-phaseStart).toInt()
         if(phase==DEPLOYING && previousSoundTick<0)playWorld("sfx_hellpod_cap_release")
@@ -181,6 +196,7 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
     private fun playWorld(name:String){ModSounds.EVENTS[name]?.get()?.let{level().playSound(null,x,y,z,it,SoundSource.BLOCKS,1f,1f)}}
     override fun readAdditionalSaveData(n:CompoundTag) {
         groundY=n.getDouble("Ground");arrival=n.getLong("Arrival");born=n.getLong("Born")
+        reservedFacing=net.minecraft.core.Direction.from2DDataValue(n.getInt("ReservedFacing"));containerSent=n.getBoolean("ContainerSent")
         owner=if(n.hasUUID("Owner"))n.getUUID("Owner")else null
         entityData.set(GROUND,groundY.toFloat());entityData.set(ARRIVAL,arrival);entityData.set(BORN,born)
         entityData.set(PHASE,n.getInt("Phase").coerceIn(PACKED,FINISHED));entityData.set(START,n.getLong("Start"));entityData.set(MACHINE,n.getInt("Machine").coerceIn(-1,1))
@@ -193,6 +209,7 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
         n.putInt("Phase",phase);n.putLong("Start",phaseStart);n.putInt("Machine",entityData.get(MACHINE))
         n.putBoolean("CapReleased",capReleased)
         n.putLong("DeploymentEnd",deploymentEnd)
+        n.putInt("ReservedFacing",reservedFacing.get2DDataValue());n.putBoolean("ContainerSent",containerSent)
     }
     companion object {
         const val PACKED=0;const val DEPLOYING=1;const val ACTIVE=2;const val RETRACTING=3;const val COUNTDOWN=4;const val FINISHED=5

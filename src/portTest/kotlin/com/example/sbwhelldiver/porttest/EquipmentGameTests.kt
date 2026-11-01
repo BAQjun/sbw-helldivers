@@ -56,17 +56,13 @@ object EquipmentGameTests {
     }
     @JvmStatic @GameTest(template="port_test",timeoutTicks=20)
     fun deploymentFootprintsRespectBlockGridAndObstructions(h:GameTestHelper) {
-        val at=Vec3.atBottomCenterOf(h.absolutePos(BlockPos(2,4,2)))
-        for(machine in MachineDeployment.entries)for(yaw in listOf(0f,90f,180f,270f)) {
-            val box=machine.footprint(at,yaw)
-            h.assertTrue(box.minX%1.0==0.0&&box.minZ%1.0==0.0&&box.maxX%1.0==0.0&&box.maxZ%1.0==0.0,"Footprint straddles block boundaries")
-            val lo=BlockPos.containing(box.minX,at.y,box.minZ);val hi=BlockPos.containing(box.maxX-.01,box.maxY-.01,box.maxZ-.01)
-            for(p in BlockPos.betweenClosed(lo,hi))h.level.setBlock(p,Blocks.AIR.defaultBlockState(),3)
-            for(x in lo.x..hi.x)for(z in lo.z..hi.z)h.level.setBlock(BlockPos(x,lo.y-1,z),Blocks.STONE.defaultBlockState(),3)
-            h.assertTrue(machine.spaceAvailable(h.level,at,yaw,null),"Empty supported area rejected")
-            h.level.setBlock(lo,Blocks.STONE.defaultBlockState(),3)
-            h.assertTrue(!machine.spaceAvailable(h.level,at,yaw,null),"Blocked deployment accepted")
-            h.level.setBlock(lo,Blocks.AIR.defaultBlockState(),3)
+        val root=h.absolutePos(BlockPos(5,12,5))
+        for(machine in MachineDeployment.entries)for(facing in net.minecraft.core.Direction.Plane.HORIZONTAL) {
+            for(x in -4..4)for(z in -4..4)for(y in -1..7)h.level.setBlock(root.offset(x,y,z),if(y==-1)Blocks.STONE.defaultBlockState()else Blocks.AIR.defaultBlockState(),3)
+            h.assertTrue(MachineStructure.space(h.level,root,machine,facing),"Empty supported area rejected")
+            val port=root.offset(MachineLayout.rotate(MachineLayout.portOffset(machine,MachineLayout.Port.INPUT),facing))
+            h.level.setBlock(port,Blocks.STONE.defaultBlockState(),3)
+            h.assertTrue(!MachineStructure.space(h.level,root,machine,facing),"Blocked deployment accepted")
         }
         h.succeed()
     }
@@ -100,8 +96,8 @@ object EquipmentGameTests {
     @JvmStatic @GameTest(template="port_test",timeoutTicks=400)
     fun terminalPaymentAndRetractionAreServerAuthoritative(h:GameTestHelper) {
         val level=h.level
-        val at=Vec3.atBottomCenterOf(h.absolutePos(BlockPos(30,8,30)))
-        for(x in -4..4)for(z in -4..4){level.setBlock(BlockPos.containing(at.add(x.toDouble(),-1.0,z.toDouble())),Blocks.STONE.defaultBlockState(),3)}
+        val at=Vec3.atBottomCenterOf(h.absolutePos(BlockPos(5,12,5)))
+        for(x in -4..4)for(z in -4..4)for(y in -1..7){level.setBlock(BlockPos.containing(at.add(x.toDouble(),y.toDouble(),z.toDouble())),if(y==-1)Blocks.STONE.defaultBlockState()else Blocks.AIR.defaultBlockState(),3)}
         val e=ModEntities.EQUIPMENT_BEACON.get().create(level)!!;e.setPos(at);e.configure(at.y,level.gameTime,null);level.addFreshEntity(e)
         val player=net.neoforged.neoforge.common.util.FakePlayerFactory.get(level,com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(),"TerminalQA"))
         // Keep the mock operator discoverable through the same player-list lookup as a real session.

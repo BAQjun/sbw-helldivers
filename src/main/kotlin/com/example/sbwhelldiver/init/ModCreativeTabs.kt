@@ -24,6 +24,8 @@ object ModCreativeTabs {
             .title(Component.translatable("itemGroup.${MOD_ID}.main"))
             .icon { ItemStack(ModItems.BEACON.get()) }
             .displayItems { _, output ->
+                output.accept(ModItems.COMMON_SAMPLE.get());output.accept(ModItems.RARE_SAMPLE.get());output.accept(ModItems.SUPER_SAMPLE.get())
+                output.accept(ModItems.BIOPROCESSOR_CONTAINER.get());output.accept(ModItems.REFINERY_CONTAINER.get())
                 output.accept(ItemStack(ModItems.BEACON.get()).also { com.example.sbwhelldiver.survival.BeaconEnergy.set(it,com.example.sbwhelldiver.survival.BeaconEnergy.capacity()) })
                 output.accept(ModItems.ORBITAL_GAS_STRIKE.get())
                 output.accept(ModItems.ORBITAL_EMS_STRIKE.get())

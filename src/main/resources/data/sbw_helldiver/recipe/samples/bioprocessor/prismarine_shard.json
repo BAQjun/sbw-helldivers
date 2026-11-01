@@ -1,0 +1,26 @@
+{
+  "type": "sbw_helldiver:sample_processing",
+  "machine": "bioprocessor",
+  "ingredient": {
+    "item": "minecraft:prismarine_shard"
+  },
+  "count": 5,
+  "ticks": 100,
+  "outcomes": [
+    {
+      "tier": 0,
+      "chance": 60,
+      "count": 8
+    },
+    {
+      "tier": 1,
+      "chance": 37,
+      "count": 3
+    },
+    {
+      "tier": 2,
+      "chance": 3,
+      "count": 1
+    }
+  ]
+}

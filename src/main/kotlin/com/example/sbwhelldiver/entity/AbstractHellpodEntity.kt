@@ -96,25 +96,9 @@ abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAi
     }
 
     /** Both sides evaluate one monotonic descent, rather than predicting vehicle gravity. */
-    fun scheduledHeight(gameTime: Double): Double {
-        val launch = entityData.get(DATA_LAUNCH)
-        val arrival = impactDeadline
-        val duration = (arrival - launch).coerceAtLeast(1)
-        val age = (gameTime - launch).coerceIn(0.0, duration.toDouble())
-        val brakeTicks = minOf(scheduledBrakingTicks.toLong(), maxOf(1L, duration - 1))
-        val fastTicks = duration - brakeTicks
-        val fullDistance = (entityData.get(DATA_START_Y).toDouble() - landingY).coerceAtLeast(0.0)
-        val brakeDistance = minOf(entityData.get(DATA_BRAKE_DISTANCE).toDouble(), fullDistance)
-        val distance = if (age < fastTicks && fastTicks > 0)
-            fullDistance - (fullDistance - brakeDistance) * age / fastTicks
-        else {
-            val remaining = ((duration - age) / brakeTicks).coerceIn(0.0, 1.0)
-            // Keep a substantial terminal speed: braking is not a soft landing.
-            remainingBrakeDistance(remaining,brakeDistance,brakeTicks,
-                if(fastTicks>0)(fullDistance-brakeDistance)/fastTicks else 0.0)
-        }
-        return landingY + distance
-    }
+    fun scheduledHeight(gameTime: Double): Double = HellpodFlight.height(gameTime,
+        entityData.get(DATA_LAUNCH),impactDeadline,entityData.get(DATA_START_Y).toDouble(),landingY,
+        entityData.get(DATA_BRAKE_DISTANCE).toDouble(),scheduledBrakingTicks,::remainingBrakeDistance)
 
     // A pod follows its own descent and then stays buried. SBW vehicle gravity and
     // step-up collision must never move it before our path is applied each tick.

@@ -8,4 +8,5 @@ import net.minecraft.core.registries.BuiltInRegistries
 object ModBlocks {
     val BLOCKS=DeferredRegister.create(BuiltInRegistries.BLOCK,MOD_ID)
     val SENTRY_FIRE=BLOCKS.register("sentry_fire") { _ -> SentryFireBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.FIRE)) }
+    val SAMPLE_MACHINE=BLOCKS.register("sample_machine"){_->com.example.sbwhelldiver.survival.SampleMachineBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.NETHERITE_BLOCK).noOcclusion().noLootTable())}
 }

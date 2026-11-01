@@ -101,6 +101,24 @@ object EquipmentClientTests {
             check(mechanicalSounds.count{it=="sfx_native_machine_gun_sentry_deploy_81997979_0"}==1){"Extension sound not played exactly once: $mechanicalSounds"}
             check(mechanicalSounds.count{it=="sfx_emplacement_retract_mechanism"}==2){"Folding/lowering sound missing or duplicated: $mechanicalSounds"}
         }
+        if(ticks==515)server.execute {
+            val l=server.overworld()
+            val boxes=l.getEntitiesOfClass(MachineContainerEntity::class.java,net.minecraft.world.phys.AABB(-4.0,79.0,-4.0,5.0,85.0,5.0))
+            check(boxes.size==1&&boxes.single().phase==MachineContainerEntity.CLOSED){"Paid deployment did not deliver one closed container"}
+            check(l.getBlockEntity(BlockPos(0,80,0))==null){"Machine generated before opening the delivered container"}
+            server.playerList.getPlayer(player.uuid)!!.teleportTo(l,5.0,80.0,7.0,145f,-10f)
+            LOGGER.info("EQUIPMENT_REAL_CONTAINER_DELIVERED")
+        }
+        if(ticks==525)capture("equipment-container-arrived.png")
+        if(ticks==530)server.execute {
+            val l=server.overworld();val p=server.playerList.getPlayer(player.uuid)!!
+            p.setItemInHand(InteractionHand.MAIN_HAND,ItemStack(com.atsuishio.superbwarfare.init.ModItems.CROWBAR.get()))
+            l.getEntitiesOfClass(MachineContainerEntity::class.java,net.minecraft.world.phys.AABB(-4.0,79.0,-4.0,5.0,85.0,5.0)).single().interact(p,InteractionHand.MAIN_HAND)
+        }
+        if(ticks==585){
+            server.execute {check(server.overworld().getBlockEntity(BlockPos(0,80,0)) is SampleMachineBlockEntity);LOGGER.info("EQUIPMENT_MACHINE_OPENED")}
+            capture("equipment-machine-deployed.png")
+        }
         if(ticks==600){LOGGER.info("EQUIPMENT_CLIENT_COMPLETED");mc.stop()}
     }
     private fun capture(name:String){val mc=Minecraft.getInstance();Screenshot.grab(mc.gameDirectory,name,mc.mainRenderTarget){LOGGER.info("EQUIPMENT_SCREENSHOT {} {}",name,it.string)}}

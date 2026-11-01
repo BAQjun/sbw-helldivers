@@ -1,0 +1,143 @@
+package com.example.sbwhelldiver.porttest
+
+import com.example.sbwhelldiver.survival.*
+import com.example.sbwhelldiver.init.*
+import net.minecraft.core.*
+import net.minecraft.gametest.framework.*
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.world.InteractionHand
+import net.minecraft.world.entity.item.ItemEntity
+import net.minecraft.world.item.*
+import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.entity.ChestBlockEntity
+import net.neoforged.neoforge.capabilities.Capabilities
+import net.neoforged.neoforge.gametest.*
+
+@GameTestHolder("sbw_helldiver")
+@PrefixGameTestTemplate(false)
+object MachineGameTests {
+    private fun fixture(h:GameTestHelper):BlockPos {
+        val root=h.absolutePos(BlockPos(5,4,5))
+        for(x in -5..5)for(z in -5..5)for(y in -1..7)h.level.setBlock(root.offset(x,y,z),if(y==-1)Blocks.STONE.defaultBlockState()else Blocks.AIR.defaultBlockState(),3)
+        return root
+    }
+    private fun player(h:GameTestHelper)=net.neoforged.neoforge.common.util.FakePlayerFactory.get(h.level,com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(),"MachineQA"))
+    private fun energy(h:GameTestHelper,root:BlockPos,m:MachineDeployment)=h.level.getCapability(Capabilities.EnergyStorage.BLOCK,root.offset(MachineLayout.portOffset(m,MachineLayout.Port.ENERGY)),Direction.NORTH)!!
+    @JvmStatic @GameTest(template="port_test",timeoutTicks=20)
+    fun portsAndFiveSecondEnergyBatch(h:GameTestHelper) {
+        val root=fixture(h);val m=MachineDeployment.BIOPROCESSOR
+        val be=MachineStructure.place(h.level,root,m,Direction.NORTH,CompoundTag(),null)!!;be.readyAt=0
+        val inputPos=root.offset(MachineLayout.portOffset(m,MachineLayout.Port.INPUT));val outputPos=root.offset(MachineLayout.portOffset(m,MachineLayout.Port.OUTPUT))
+        val input=h.level.getCapability(Capabilities.ItemHandler.BLOCK,inputPos,Direction.NORTH)!!
+        val output=h.level.getCapability(Capabilities.ItemHandler.BLOCK,outputPos,Direction.NORTH)!!
+        h.assertTrue(h.level.getCapability(Capabilities.ItemHandler.BLOCK,inputPos,Direction.SOUTH)==null,"Input capability exposed on wrong face")
+        h.assertTrue(input.insertItem(0,ItemStack(Items.DIRT),false).count==1,"Invalid input accepted")
+        h.assertTrue(input.insertItem(0,ItemStack(Items.DRAGON_EGG),false).isEmpty,"Dragon egg rejected")
+        h.assertTrue(input.extractItem(0,1,false).isEmpty,"Input allows extraction")
+        val power=energy(h,root,m)
+        h.assertTrue(power.maxEnergyStored==20_000_000,"Energy capacity differs from large battery")
+        power.receiveEnergy(150000,false)
+        repeat(99){be.serverTick()}
+        h.assertTrue(be.progress==99&&output.getStackInSlot(0).isEmpty,"Batch completed early")
+        h.assertTrue(power.energyStored==1500,"Wrong per-tick power cost")
+        be.serverTick()
+        h.assertTrue(output.getStackInSlot(0).`is`(ModItems.SUPER_SAMPLE.get())&&output.getStackInSlot(0).count==50,"Dragon egg output differs from 50 super samples")
+        h.assertTrue(power.energyStored==0&&!output.insertItem(0,ItemStack(Items.DIRT),false).isEmpty,"Output insertion or energy debit wrong")
+        h.succeed()
+    }
+    @JvmStatic @GameTest(template="port_test",timeoutTicks=20)
+    fun interruptedBatchPackingAndStaleCapabilities(h:GameTestHelper) {
+        val root=fixture(h);val m=MachineDeployment.BIOPROCESSOR
+        val be=MachineStructure.place(h.level,root,m,Direction.NORTH,CompoundTag(),null)!!;be.readyAt=0
+        be.inventory.setStackInSlot(0,ItemStack(Items.DRAGON_EGG));val power=energy(h,root,m);power.receiveEnergy(15000,false)
+        repeat(15){be.serverTick()}
+        h.assertTrue(be.progress==10&&be.energy==0,"Unpowered processing did not pause")
+        val saved=be.contents();MachineStructure.remove(be,true)
+        h.assertTrue(power.receiveEnergy(5000,false)==0,"Removed capability still receives energy")
+        val drops=h.level.getEntitiesOfClass(ItemEntity::class.java,MachineLayout.containerBounds(m).move(root.x+.5,root.y.toDouble(),root.z+.5))
+        val stack=drops.single().item
+        h.assertTrue(stack.`is`(ModItems.BIOPROCESSOR_CONTAINER.get()),"Packing did not drop one container")
+        h.assertTrue(stack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA)!!.copyTag()==saved,"Packing lost machine contents")
+        drops.forEach{it.discard()}
+        val restored=MachineStructure.place(h.level,root,m,Direction.NORTH,saved,null)!!;restored.readyAt=0
+        h.assertTrue(restored.progress==10&&restored.inventory.getStackInSlot(0).isEmpty,"Pending batch duplicated its input")
+        energy(h,root,m).receiveEnergy(135000,false);repeat(90){restored.serverTick()}
+        h.assertTrue(restored.inventory.getStackInSlot(9).count==50&&restored.energy==0,"Packed batch did not resume correctly")
+        h.succeed()
+    }
+    @JvmStatic @GameTest(template="port_test",timeoutTicks=20)
+    fun savedPendingBatchResumesWithoutReroll(h:GameTestHelper) {
+        val root=fixture(h);val m=MachineDeployment.BIOPROCESSOR
+        val be=MachineStructure.place(h.level,root,m,Direction.NORTH,CompoundTag(),null)!!;be.readyAt=0
+        be.inventory.setStackInSlot(0,ItemStack(Items.ROTTEN_FLESH,5));energy(h,root,m).receiveEnergy(150000,false)
+        repeat(37){be.serverTick()}
+        val saved=be.saveWithoutMetadata(h.level.registryAccess())
+        val expected=ItemStack.parseOptional(h.level.registryAccess(),saved.getCompound("Pending"))
+        h.assertTrue(!expected.isEmpty&&be.progress==37,"Batch was not saved in flight")
+        val loaded=SampleMachineBlockEntity(root,be.blockState)
+        loaded.loadWithComponents(saved,h.level.registryAccess());h.level.setBlockEntity(loaded)
+        h.assertTrue(loaded.progress==37&&loaded.energy==94500&&loaded.inventory.getStackInSlot(0).isEmpty,"Reload lost progress, energy or reserved input")
+        repeat(63){loaded.serverTick()}
+        val result=loaded.inventory.getStackInSlot(9)
+        h.assertTrue(ItemStack.isSameItemSameComponents(expected,result)&&expected.count==result.count&&loaded.energy==0,"Reload rerolled or duplicated the batch")
+        h.succeed()
+    }
+    @JvmStatic @GameTest(template="port_test",timeoutTicks=20)
+    fun pullPushAndFullContainerRetention(h:GameTestHelper) {
+        val root=fixture(h);val m=MachineDeployment.BIOPROCESSOR
+        val be=MachineStructure.place(h.level,root,m,Direction.NORTH,CompoundTag(),null)!!;be.readyAt=0
+        val from=root.offset(MachineLayout.portOffset(m,MachineLayout.Port.INPUT)).north();val to=root.offset(MachineLayout.portOffset(m,MachineLayout.Port.OUTPUT)).north()
+        h.level.setBlock(from,Blocks.CHEST.defaultBlockState(),3);h.level.setBlock(to,Blocks.CHEST.defaultBlockState(),3)
+        val source=h.level.getBlockEntity(from) as ChestBlockEntity;val target=h.level.getBlockEntity(to) as ChestBlockEntity
+        source.setItem(0,ItemStack(Items.ROTTEN_FLESH,5));source.setItem(1,ItemStack(Items.DIRT,5))
+        for(i in 0 until target.containerSize)target.setItem(i,ItemStack(Items.COBBLESTONE,64))
+        be.inventory.setStackInSlot(9,ItemStack(ModItems.COMMON_SAMPLE.get(),5))
+        h.runAtTickTime(6){
+            h.assertTrue(source.getItem(0).isEmpty&&source.getItem(1).count==5,"Auto input pulled invalid ingredients or failed")
+            h.assertTrue(be.inventory.getStackInSlot(9).count==5,"Full output container lost samples")
+            target.setItem(0,ItemStack.EMPTY)
+        }
+        h.runAtTickTime(12){
+            h.assertTrue(target.getItem(0).count==5&&be.inventory.getStackInSlot(9).isEmpty,"Auto output failed")
+            h.succeed()
+        }
+    }
+    @JvmStatic @GameTest(template="port_test",timeoutTicks=90)
+    fun containerWaitsForCrowbarAndShellFinishes(h:GameTestHelper) {
+        val root=fixture(h);val m=MachineDeployment.BIOPROCESSOR
+        val box=ModEntities.MACHINE_CONTAINER.get().create(h.level)!!;box.configure(m,root,Direction.NORTH,CompoundTag(),true,h.level.gameTime+5);h.level.addFreshEntity(box)
+        h.assertTrue(MachineLayout.shapes(m,Direction.NORTH).keys.none{h.level.getBlockState(root.offset(it)).`is`(ModBlocks.SAMPLE_MACHINE.get())},"Machine generated during descent")
+        h.runAtTickTime(8){
+            h.assertTrue(box.phase==MachineContainerEntity.CLOSED&&h.level.getBlockEntity(root)==null,"Closed container generated a machine")
+            val p=player(h);p.setItemInHand(InteractionHand.MAIN_HAND,ItemStack(com.atsuishio.superbwarfare.init.ModItems.CROWBAR.get()))
+            box.interact(p,InteractionHand.MAIN_HAND)
+            h.assertTrue(box.phase==MachineContainerEntity.OPENING&&!box.isRemoved&&h.level.getBlockEntity(root) is SampleMachineBlockEntity,"Crowbar did not create machine/open shell")
+        }
+        h.runAtTickTime(54){h.assertTrue(!box.isRemoved,"Shell disappeared before animation completed")}
+        h.runAtTickTime(59){h.assertTrue(box.isRemoved,"Shell remained after animation");h.succeed()}
+    }
+    @JvmStatic @GameTest(template="port_test",timeoutTicks=20)
+    fun orientationFallbackAndDestructiveRemoval(h:GameTestHelper) {
+        val root=fixture(h);val m=MachineDeployment.BIOPROCESSOR
+        h.level.setBlock(root.offset(-2,1,0),Blocks.STONE.defaultBlockState(),3)
+        h.assertTrue(MachineStructure.choose(h.level,root,m,Direction.NORTH)==Direction.EAST,"Facing fallback did not try east first")
+        val be=MachineStructure.place(h.level,root,m,Direction.EAST,CompoundTag(),null)!!
+        val parts=MachineLayout.shapes(m,Direction.EAST).keys
+        val target=root.offset(parts.first{it!=BlockPos.ZERO});h.level.destroyBlock(target,true)
+        h.assertTrue(parts.none{h.level.getBlockState(root.offset(it)).`is`(ModBlocks.SAMPLE_MACHINE.get())},"Breaking a part left other machine blocks")
+        h.assertTrue(h.level.getEntitiesOfClass(ItemEntity::class.java,be.bounds()).isEmpty(),"Mining produced a machine drop")
+        h.succeed()
+    }
+    @JvmStatic @GameTest(template="port_test",timeoutTicks=20)
+    fun acceptedSampleTablesAndSteppedRefinery(h:GameTestHelper) {
+        val root=fixture(h)
+        val bio=SampleRecipe.forMachine(h.level,MachineDeployment.BIOPROCESSOR);val ref=SampleRecipe.forMachine(h.level,MachineDeployment.REFINERY)
+        h.assertTrue(bio.size==23&&ref.size==13,"Processing recipe count differs from accepted table")
+        h.assertTrue(bio.none{it.ingredient.test(ItemStack(Items.STRING))||it.ingredient.test(ItemStack(Items.EMERALD))||it.ingredient.test(ItemStack(Items.GLOWSTONE_DUST))},"Rejected extra drops have recipes")
+        val echo=bio.single{it.ingredient.test(ItemStack(Items.ECHO_SHARD))};val head=bio.single{it.ingredient.test(ItemStack(Items.DRAGON_HEAD))}
+        h.assertTrue(head.outcomes==echo.outcomes,"Dragon head differs from echo shard")
+        val refinery=MachineStructure.place(h.level,root,MachineDeployment.REFINERY,Direction.NORTH,CompoundTag(),null)!!
+        h.assertTrue(h.level.getBlockEntity(root.offset(2,3,2))==null&&h.level.getBlockEntity(root.offset(0,3,-1))!=null,"Refinery collision is not stepped")
+        h.succeed()
+    }
+}

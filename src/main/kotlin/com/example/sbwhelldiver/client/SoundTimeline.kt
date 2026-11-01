@@ -32,13 +32,13 @@ object SoundTimeline : ResourceManagerReloadListener {
     }
     private var effects = emptyMap<String, Effect>()
     private var models = emptyMap<String, Map<String, List<Cue>>>()
-    private val states = WeakHashMap<AbstractHellpodEntity, State>()
+    private val states = WeakHashMap<net.minecraft.world.entity.Entity, State>()
     private val started = mutableMapOf<String, Int>()
     private val allocatedChannels = mutableSetOf<String>()
     fun startedCount(effect: String) = started[effect] ?: 0
     fun allocatedChannel(effect: String) = effect in allocatedChannels
-    fun activeMix(entity:AbstractHellpodEntity)=states[entity]?.sounds?.filter{!it.isStopped}?.associate{it.effect to it.mixVolume()}.orEmpty()
-    fun activeEffects(entity:AbstractHellpodEntity)=states[entity]?.sounds?.filter{!it.isStopped}?.map{it.effect}.orEmpty()
+    fun activeMix(entity:net.minecraft.world.entity.Entity)=states[entity]?.sounds?.filter{!it.isStopped}?.associate{it.effect to it.mixVolume()}.orEmpty()
+    fun activeEffects(entity:net.minecraft.world.entity.Entity)=states[entity]?.sounds?.filter{!it.isStopped}?.map{it.effect}.orEmpty()
     fun debugReport() = "effects=${effects.size}, models=${models.size}, started=$started, loops=" +
         states.values.sumOf { state -> state.sounds.count { !it.isStopped && it.isLooping } }
 
@@ -66,25 +66,26 @@ object SoundTimeline : ResourceManagerReloadListener {
     }
 
     fun startedWithPrefix(prefix:String)=started.filterKeys{it.startsWith(prefix)}.values.sum()
-    fun cues(entity: AbstractHellpodEntity, animation: String): List<Cue> =
-        models[entity.profile.model]?.get(animation).orEmpty()
+    private fun clock(entity:net.minecraft.world.entity.Entity)=if(entity is AbstractHellpodEntity)entity.tickCount.toLong()else entity.level().gameTime
+    fun cues(entity: net.minecraft.world.entity.Entity, animation: String): List<Cue> =
+        models[(entity as? AbstractHellpodEntity)?.profile?.model ?: "hellpod_v3"]?.get(animation).orEmpty()
 
-    fun schedule(entity: AbstractHellpodEntity, animation: String, age: Int = 0, group: String = animation, catchUp: Boolean = false) {
+    fun schedule(entity: net.minecraft.world.entity.Entity, animation: String, age: Int = 0, group: String = animation, catchUp: Boolean = false) {
         schedule(entity, cues(entity, animation), age, group, catchUp)
     }
-    fun schedule(entity: AbstractHellpodEntity, cues: List<Cue>, age: Int = 0, group: String = "manual", catchUp: Boolean = false) {
+    fun schedule(entity: net.minecraft.world.entity.Entity, cues: List<Cue>, age: Int = 0, group: String = "manual", catchUp: Boolean = false) {
         val state = states.getOrPut(entity) { State() }
-        val now = entity.tickCount.toLong()
+        val now = clock(entity)
         cues.forEach { cue ->
             val tick = ceil(cue.time * 20 - 1e-7).toInt()
             if (catchUp || age <= 2 || tick >= age) state.pending.add(Pending(now + (tick - age).coerceAtLeast(0), cue, group))
         }
         tick(entity)
     }
-    fun cancel(entity: AbstractHellpodEntity, group: String) {
+    fun cancel(entity: net.minecraft.world.entity.Entity, group: String) {
         states[entity]?.pending?.removeAll { it.group == group }
     }
-    fun stopMatching(entity: AbstractHellpodEntity, fadeTicks:Int=0, predicate: (String) -> Boolean) {
+    fun stopMatching(entity: net.minecraft.world.entity.Entity, fadeTicks:Int=0, predicate: (String) -> Boolean) {
         val state = states[entity] ?: return
         state.pending.removeAll { predicate(it.cue.effect) }
         state.sounds.filter { predicate(it.effect) }.forEach {
@@ -99,7 +100,7 @@ object SoundTimeline : ResourceManagerReloadListener {
             }
         }
     }
-    private fun play(entity: AbstractHellpodEntity, cue: Cue, state: State) {
+    private fun play(entity: net.minecraft.world.entity.Entity, cue: Cue, state: State) {
         val definition = effects[cue.effect] ?: return
         // A Stop action targets existing instances, never this new event's pending Play action.
         definition.stops.forEach { effect -> state.sounds.filter { it.effect == effect }.forEach { it.release(definition.fadeOut) } }
@@ -110,9 +111,9 @@ object SoundTimeline : ResourceManagerReloadListener {
         state.sounds.add(sound)
         Minecraft.getInstance().soundManager.play(sound)
     }
-    fun tick(entity: AbstractHellpodEntity) {
+    fun tick(entity: net.minecraft.world.entity.Entity) {
         val state = states[entity] ?: return
-        val ready = state.pending.filter { it.due <= entity.tickCount }
+        val ready = state.pending.filter { it.due <= clock(entity) }
         state.pending.removeAll(ready.toSet())
         ready.forEach { play(entity, it.cue, state) }
         state.sounds.removeAll { it.isStopped }
@@ -130,7 +131,8 @@ object SoundTimeline : ResourceManagerReloadListener {
         check(states.values.none { state -> state.sounds.any { !it.isStopped && it.isLooping } }) { "Orphaned loops" }
     }
 
-    private fun position(entity: AbstractHellpodEntity, locator: String): Vec3 = when {
+    private fun position(entity: net.minecraft.world.entity.Entity, locator: String): Vec3 = when {
+        entity !is AbstractHellpodEntity -> entity.position().add(0.0,0.1,0.0)
         locator=="emitter" && entity is com.example.sbwhelldiver.entity.ShieldGeneratorEntity -> entity.emitter()
         locator=="tesla_top" -> entity.position().add(0.0,entity.profile.aimHeight,0.0)
         locator.contains("muzzle") && entity is com.example.sbwhelldiver.entity.HmgEmplacementEntity -> entity.muzzlePosition(entity.nextBarrel)
@@ -139,14 +141,14 @@ object SoundTimeline : ResourceManagerReloadListener {
             entity.position().add(0.0, entity.profile.aimHeight, 0.0)
         else -> entity.position().add(0.0, 0.1, 0.0)
     }
-    private fun allowed(entity: AbstractHellpodEntity, definition: Effect): Boolean {
+    private fun allowed(entity: net.minecraft.world.entity.Entity, definition: Effect): Boolean {
         if(definition.requiresMineRotation && (entity !is com.example.sbwhelldiver.entity.MineDispenserEntity || !entity.spinning))return false
         val minimum=definition.minimumLaserHeat ?: return true
         val sentry=entity as? SentryHellpodEntity ?: return false
         return sentry.profile.isLaser && sentry.phase==AbstractHellpodEntity.Phase.ACTIVE &&
             sentry.laserHeat>=minimum-0.0001f && (!definition.requiresLaserFiring || sentry.laserState==LaserClock.State.FIRING)
     }
-    private class NodeSound(entity: AbstractHellpodEntity, cue: Cue, private val definition: Effect) :
+    private class NodeSound(entity: net.minecraft.world.entity.Entity, cue: Cue, private val definition: Effect) :
         AbstractTickableSoundInstance(SoundEvent.createVariableRangeEvent(AssetCatalog.sound(cue.effect)),
             SoundSource.NEUTRAL, RandomSource.create()) {
         val effect = cue.effect
@@ -168,7 +170,7 @@ object SoundTimeline : ResourceManagerReloadListener {
             if(onboard){relative=true;attenuation=net.minecraft.client.resources.sounds.SoundInstance.Attenuation.NONE}
             updatePosition(entity)
         }
-        private fun updatePosition(entity: AbstractHellpodEntity) {
+        private fun updatePosition(entity: net.minecraft.world.entity.Entity) {
             val p = if(onboard) Vec3.ZERO else fixed ?: position(entity, locator)
             x = p.x; y = p.y; z = p.z
         }

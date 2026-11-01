@@ -252,5 +252,16 @@
   "subtitles.sbw_helldiver.terminal_error": "Terminal input rejected",
   "terminal.sbw_helldiver.deployment_busy": "Another equipment deployment is in progress",
   "terminal.sbw_helldiver.material_line": "%s %s/%s",
-  "terminal.sbw_helldiver.waiting": "Materials submitted · awaiting equipment"
+  "terminal.sbw_helldiver.waiting": "Materials submitted · awaiting equipment",
+  "block.sbw_helldiver.sample_machine": "Sample Production Machine",
+  "item.sbw_helldiver.common_sample": "Common Sample",
+  "item.sbw_helldiver.rare_sample": "Rare Sample",
+  "item.sbw_helldiver.super_sample": "Super Sample",
+  "item.sbw_helldiver.bioprocessor_container": "Bioprocessor Container",
+  "item.sbw_helldiver.refinery_container": "Refinery Container",
+  "jei.sbw_helldiver.deployment": "Equipment Deployment Materials",
+  "jei.sbw_helldiver.chance": "%s%% chance (one result per batch)",
+  "jei.sbw_helldiver.processing": "%s seconds · %s RF/t",
+  "terminal.sbw_helldiver.deployment_blocked": "Landing site blocked; equipment container returned",
+  "jei.sbw_helldiver.one_result": "One random result per batch"
 }

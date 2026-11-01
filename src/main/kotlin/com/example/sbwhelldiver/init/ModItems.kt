@@ -17,6 +17,11 @@ import net.neoforged.neoforge.registries.DeferredHolder
 object ModItems {
 
     val ITEMS: DeferredRegister<Item> = DeferredRegister.create(BuiltInRegistries.ITEM, MOD_ID)
+    val COMMON_SAMPLE=ITEMS.register("common_sample"){_->Item(Item.Properties())}
+    val RARE_SAMPLE=ITEMS.register("rare_sample"){_->Item(Item.Properties())}
+    val SUPER_SAMPLE=ITEMS.register("super_sample"){_->Item(Item.Properties())}
+    val BIOPROCESSOR_CONTAINER=ITEMS.register("bioprocessor_container"){_->com.example.sbwhelldiver.survival.MachineContainerItem(com.example.sbwhelldiver.survival.MachineDeployment.BIOPROCESSOR,Item.Properties().stacksTo(1))}
+    val REFINERY_CONTAINER=ITEMS.register("refinery_container"){_->com.example.sbwhelldiver.survival.MachineContainerItem(com.example.sbwhelldiver.survival.MachineDeployment.REFINERY,Item.Properties().stacksTo(1))}
 
     val ORBITAL_GAS_STRIKE=ITEMS.register("orbital_gas_strike_stratagem"){ _ ->StratagemItem(Item.Properties().stacksTo(16),dropId("orbital_gas_strike"))}
     val ORBITAL_EMS_STRIKE=ITEMS.register("orbital_ems_strike_stratagem"){ _ ->StratagemItem(Item.Properties().stacksTo(16),dropId("orbital_ems_strike"))}

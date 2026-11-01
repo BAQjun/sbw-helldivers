@@ -1,0 +1,26 @@
+{
+  "type": "sbw_helldiver:sample_processing",
+  "machine": "bioprocessor",
+  "ingredient": {
+    "item": "minecraft:breeze_rod"
+  },
+  "count": 1,
+  "ticks": 100,
+  "outcomes": [
+    {
+      "tier": 0,
+      "chance": 45,
+      "count": 16
+    },
+    {
+      "tier": 1,
+      "chance": 48,
+      "count": 6
+    },
+    {
+      "tier": 2,
+      "chance": 7,
+      "count": 2
+    }
+  ]
+}

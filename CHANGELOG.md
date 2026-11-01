@@ -1,5 +1,23 @@
 # 版本记录
 
+## 0.6.0-alpha.3
+
+## 中文
+
+- 接入生物处理器与精炼厂：提交部署材料后，集装箱从天而降，使用卓越前线的撬棍打开后生成多方块设备。
+- 新增普通、稀有和超级样本，以及生物掉落物和矿物的概率加工配方。每批默认加工 5 秒，运行耗能 1,500 RF/t，储能容量与大型电池组一致。
+- 设备无需 GUI，通过正面的能量、输入和输出接口连接管道；支持自动抽入原料、向相邻容器输出产物，无容器时以掉落物输出。
+- 支持 Shift + 撬棍右键打包设备，保留储能、物品和加工进度；直接挖掘任意部分会拆除整台设备，不掉落机器。
+- 新增可选 JEI 支持，显示加工需求、样本产量与概率，以及两种设备的部署材料；补齐集装箱喷焰、音效、开箱和精炼厂运作动画。
+
+## English
+
+- Added the Bioprocessor and Refinery. After submitting deployment materials, a container descends from the sky; open it with a Superb Warfare crowbar to assemble the multiblock machine.
+- Added Common, Rare and Super Samples with weighted processing recipes for mob drops and minerals. Batches take 5 seconds by default at 1,500 RF/t, with energy storage matching a large battery pack.
+- Machines use front-facing energy, input and output ports without a GUI. They accept standard energy and item pipes, automatically pull valid ingredients and output to adjacent inventories, or drop products when no container is present.
+- Shift-right-click with a crowbar to pack a machine while preserving energy, contents and processing progress. Mining any part removes the entire machine without dropping it.
+- Added optional JEI integration for ingredients, sample yields and probabilities, and equipment deployment materials, plus container thruster effects, sounds, opening animations and the Refinery working animation.
+
 ## 0.6.0-alpha.2
 
 ## 中文

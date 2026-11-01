@@ -1,0 +1,26 @@
+{
+  "type": "sbw_helldiver:sample_processing",
+  "machine": "refinery",
+  "ingredient": {
+    "item": "minecraft:raw_gold"
+  },
+  "count": 3,
+  "ticks": 100,
+  "outcomes": [
+    {
+      "tier": 0,
+      "chance": 55,
+      "count": 10
+    },
+    {
+      "tier": 1,
+      "chance": 40,
+      "count": 4
+    },
+    {
+      "tier": 2,
+      "chance": 5,
+      "count": 1
+    }
+  ]
+}

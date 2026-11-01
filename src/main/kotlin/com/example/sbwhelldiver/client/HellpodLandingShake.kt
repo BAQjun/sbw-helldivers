@@ -18,7 +18,7 @@ object HellpodLandingShake {
     private data class Impulse(val time:Long,val strength:Double,val seed:Double)
     private val impulses=ArrayList<Impulse>()
     private var world:net.minecraft.client.multiplayer.ClientLevel?=null
-    fun impact(pod:AbstractHellpodEntity){
+    fun impact(pod:net.minecraft.world.entity.Entity){
         val mc=Minecraft.getInstance();val player=mc.player?:return
         if(mc.level!==pod.level())return
         if(world!==mc.level){impulses.clear();world=mc.level}

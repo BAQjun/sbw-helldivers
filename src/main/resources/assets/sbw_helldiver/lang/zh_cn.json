@@ -252,5 +252,16 @@
   "subtitles.sbw_helldiver.terminal_error": "终端输入错误",
   "terminal.sbw_helldiver.deployment_busy": "已有设备正在部署，请稍后再试",
   "terminal.sbw_helldiver.material_line": "%s %s/%s",
-  "terminal.sbw_helldiver.waiting": "材料已提交，等待设备抵达"
+  "terminal.sbw_helldiver.waiting": "材料已提交，等待设备抵达",
+  "block.sbw_helldiver.sample_machine": "样本生产设备",
+  "item.sbw_helldiver.common_sample": "普通样本",
+  "item.sbw_helldiver.rare_sample": "稀有样本",
+  "item.sbw_helldiver.super_sample": "超级样本",
+  "item.sbw_helldiver.bioprocessor_container": "生物处理器集装箱",
+  "item.sbw_helldiver.refinery_container": "精炼厂集装箱",
+  "jei.sbw_helldiver.deployment": "设备部署材料",
+  "jei.sbw_helldiver.chance": "概率：%s%%（每批随机一种）",
+  "jei.sbw_helldiver.processing": "%s 秒 · %s RF/t",
+  "terminal.sbw_helldiver.deployment_blocked": "落点被阻挡，已退还设备集装箱",
+  "jei.sbw_helldiver.one_result": "每批随机产出其中一种"
 }
