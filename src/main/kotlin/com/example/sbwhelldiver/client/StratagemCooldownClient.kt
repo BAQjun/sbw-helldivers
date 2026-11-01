@@ -48,6 +48,9 @@ object StratagemCooldownClient : ResourceManagerReloadListener {
         return if(task==null)all else all.map{if(it==Stratagems.destroyerCall)task else it}
     }
     fun now(partial: Float = 0f) = serverTime + ((Minecraft.getInstance().level?.gameTime ?: localTime) - localTime).toDouble() + partial
+    private fun equipmentMachine(def:StratagemDefinition)=if(def==Stratagems.equipmentDeployment && visual(def.id).phase==CallPhase.ARRIVING)
+        com.example.sbwhelldiver.survival.MachineDeployment.entries.firstOrNull{it.id==entries[def.id]?.getString("EquipmentMachine")} else null
+    fun displayName(def:StratagemDefinition)=Component.translatable(equipmentMachine(def)?.translation?:def.translation)
     fun visual(id: String, partial: Float = 0f): Visual {
         if(Minecraft.getInstance().level?.let{!Stratagems.dimensionAllowed(it.dimension().location().toString())}==true)
             return Visual(blocked=true,reason="dimension_unavailable")
@@ -63,6 +66,8 @@ object StratagemCooldownClient : ResourceManagerReloadListener {
         if(activity!=null)
             return Visual(activity,activityStart,if(finished<0)e!!.getLong("ActivityEnd") else finished,
                 e!!.getInt("Remaining"),blocked=enabled && e.getInt("Phase")!=CallPhase.READY.ordinal)
+        if(id==Stratagems.equipmentDeployment.id && e?.getInt("Phase")==CallPhase.ARRIVING.ordinal && e.getLong("End")>time)
+            return Visual(CallPhase.ARRIVING,e.getLong("Start"),e.getLong("End"),blocked=true)
         if (!enabled) return Visual()
         val eagle = id.startsWith("eagle_")
         if (eagle && data.getLong("RearmEnd") > time) return Visual(CallPhase.COOLDOWN, data.getLong("RearmStart"), data.getLong("RearmEnd"), e?.getInt("Remaining") ?: -1, true, true)
@@ -104,20 +109,21 @@ object StratagemCooldownClient : ResourceManagerReloadListener {
     }
     fun drawIcon(gui: GuiGraphics, def: StratagemDefinition, x: Int, y: Int, partial: Float) {
         val v = visual(def.id, partial)
-        val gray = grey[def.icon] ?: def.icon
+        val icon = equipmentMachine(def)?.icon ?: def.icon
+        val gray = grey[icon] ?: icon
         val arrival = v.phase == CallPhase.ARRIVING
         val cooling = v.phase == CallPhase.COOLDOWN
-        val base = if (arrival || !v.blocked && v.phase !in listOf(CallPhase.ACTIVE,CallPhase.ARRIVED)) def.icon else gray
+        val base = if (arrival || !v.blocked && v.phase !in listOf(CallPhase.ACTIVE,CallPhase.ARRIVED)) icon else gray
         gui.blit(base, x, y, 26, 26, 0f, 0f, 64, 64, 64, 64)
         if (arrival || cooling && (v.remaining != 0 || v.rearming)) {
             val h = (v.progress(now(partial)) * 26).toInt().coerceIn(0,26)
-            if (h > 0) gui.blit(if (arrival) gray else def.icon, x, y, 26, h, 0f, 0f, 64, (h * 64f / 26).toInt(), 64, 64)
+            if (h > 0) gui.blit(if (arrival) gray else icon, x, y, 26, h, 0f, 0f, 64, (h * 64f / 26).toInt(), 64, 64)
         }
     }
     override fun onResourceManagerReload(manager: ResourceManager) {
         val textures = Minecraft.getInstance().textureManager
         grey.values.forEach(textures::release); grey.clear()
-        for (def in Stratagems.definitions + listOf(Stratagems.eagleRearm,Stratagems.destroyerCall,Stratagems.destroyerDirection,Stratagems.destroyerManage)) {
+        for (def in Stratagems.definitions + listOf(Stratagems.equipmentDeployment,Stratagems.eagleRearm,Stratagems.destroyerCall,Stratagems.destroyerDirection,Stratagems.destroyerManage)) {
             val resource = manager.getResource(def.icon).orElse(null) ?: continue
             val pixels = resource.open().use(NativeImage::read)
             // Native icons encode category and ammunition as two independent masks.

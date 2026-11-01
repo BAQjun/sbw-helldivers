@@ -5394,5 +5394,47 @@
         "attenuation_distance": 96
       }
     ]
+  },
+  "terminal_input": {
+    "subtitle": "subtitles.sbw_helldiver.terminal_input",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:terminal/key_0",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:terminal/key_1",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:terminal/key_2",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:terminal/key_3",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:terminal/key_4",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:terminal/key_5",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:terminal/key_6",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "terminal_error": {
+    "subtitle": "subtitles.sbw_helldiver.terminal_error",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:terminal/error",
+        "attenuation_distance": 64
+      }
+    ]
   }
 }

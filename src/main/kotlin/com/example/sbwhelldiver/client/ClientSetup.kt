@@ -65,6 +65,7 @@ object ClientSetup {
         event.registerReloadListener(EagleRenderer.Model)
         event.registerReloadListener(DestroyerClient)
         event.registerReloadListener(BeaconModel)
+        event.registerReloadListener(EquipmentBeaconRenderer.Model)
         event.registerReloadListener(MortarShellRenderer.Model)
         event.registerReloadListener(HmgFeedRenderer)
         event.registerReloadListener(LaserPostVisual)
@@ -86,6 +87,7 @@ object ClientSetup {
 
     @SubscribeEvent
     fun registerRenderers(event: EntityRenderersEvent.RegisterRenderers) {
+        event.registerEntityRenderer(ModEntities.EQUIPMENT_BEACON.get(),::EquipmentBeaconRenderer)
         event.registerEntityRenderer<AutoAimableEntity>(ModEntities.PLAYER_HELLPOD.get(),::HellpodRenderer)
         event.registerEntityRenderer(ModEntities.EAGLE.get(),::EagleRenderer)
         event.registerEntityRenderer(ModEntities.ORBITAL_FIELD_SHELL.get(),{net.minecraft.client.renderer.entity.NoopRenderer(it)})

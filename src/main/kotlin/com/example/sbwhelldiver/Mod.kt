@@ -52,6 +52,8 @@ class Mod(container: net.neoforged.fml.ModContainer) {
         com.example.sbwhelldiver.init.ModEffects.EFFECTS.register(bus)
         ModCreativeTabs.TABS.register(bus)
         com.example.sbwhelldiver.init.ModMenus.MENUS.register(bus)
+        com.example.sbwhelldiver.survival.BeaconCraftingRecipe.SERIALIZERS.register(bus)
+        com.example.sbwhelldiver.survival.MachineDeployment.checkCodes()
         com.example.sbwhelldiver.network.BeaconNetwork.register()
         // 服务端配置：索敌规则、空投延迟、埋深、存活时间等。
         // 用 SERVER 类型而不是 COMMON —— 这些参数会同步到客户端，

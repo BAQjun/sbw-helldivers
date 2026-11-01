@@ -1,5 +1,23 @@
 # 版本记录
 
+## 0.6.0-alpha.1
+
+## 中文
+
+- 新增设备部署信标，持有信标球即可呼叫；支持屏幕交互、设备指令、材料提交与部署空间检查。
+- 信标球新增合成配方与储能，每次投掷消耗 1,000 RF，合成时继承小型电池组的电量。
+- 设备提交后立即在左上角以所选设备的名称和图标显示 10 秒抵达倒计时，剩余 3 秒时回收信标。新增两种设备的材料清单；当前阶段尚未接入集装箱部署。
+- 屏幕根据投掷点与落点的连线朝向最接近的四个正方向之一，方便接近和操作。
+- 使用原版终端输入音效，补齐展开和回收机械音效；加粗终端文字并修正屏幕交互视角，空投仓盖板改为独立弹出实体。
+
+## English
+
+- Added an Equipment Deployment Beacon, callable with any beacon ball, with an interactive terminal, equipment codes, material submission and deployment clearance checks.
+- Added a beacon ball crafting recipe and energy storage. Each throw costs 1,000 RF; crafting preserves the small battery pack's charge.
+- Submission immediately starts a 10-second arrival countdown with the selected machine's name and icon in the upper-left HUD. The beacon retracts during the final three seconds. Added separate material bills for both machines; container deployment is not implemented yet.
+- The screen faces the nearest cardinal direction towards the beacon's original throwing position for easier access.
+- Added native terminal input sounds and mechanical deployment/retraction sounds, bolder terminal text, a corrected interaction camera, and a separately ejected hellpod cover entity.
+
 ## 0.5.27
 
 ## 中文

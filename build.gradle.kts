@@ -32,6 +32,7 @@ neoForge {
             if (providers.gradleProperty("explosionTests").isPresent) systemProperty("sbw_helldiver.explosionRegression", "true")
             if (providers.gradleProperty("destroyerTests").isPresent) systemProperty("sbw_helldiver.destroyerRegression", "true")
             if (providers.gradleProperty("mineTests").isPresent) systemProperty("sbw_helldiver.mineRegression", "true")
+            if (providers.gradleProperty("equipmentTests").isPresent) systemProperty("sbw_helldiver.equipmentRegression", "true")
             if (providers.gradleProperty("hudTests").isPresent) {
                 systemProperty("sbw_helldiver.hudRegression", "true")
             } }

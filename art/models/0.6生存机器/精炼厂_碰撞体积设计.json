@@ -1,0 +1,38 @@
+{
+  "format": "planned_multibox_collision",
+  "units": "minecraft_blocks",
+  "model_units_per_block": 16,
+  "status": "design_only_not_runtime",
+  "reference": "user stepped side-view diagram",
+  "origin": "base center on ground",
+  "rotation": "rotate all boxes together with machine facing",
+  "boxes": [
+    {
+      "name": "whole_base",
+      "min": [
+        -2.5,
+        0,
+        -2.5
+      ],
+      "max": [
+        2.5,
+        1.25,
+        2.5
+      ]
+    },
+    {
+      "name": "tower_2x2_column",
+      "min": [
+        -0.75,
+        1.25,
+        -2.125
+      ],
+      "max": [
+        1.25,
+        6.25,
+        -0.125
+      ]
+    }
+  ],
+  "rule": "No full-width box above the foundation; open deck beside and behind the tower remains passable."
+}

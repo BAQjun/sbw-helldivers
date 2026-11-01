@@ -1,0 +1,97 @@
+{
+  "clip": "animation.refinery.working",
+  "length_seconds": 4,
+  "loop": true,
+  "fps": 30,
+  "bones": [
+    {
+      "name": "crusher_left",
+      "pivot": [
+        -1.45234,
+        14.60998,
+        10.55
+      ],
+      "axis": "z",
+      "degrees_per_cycle": -360,
+      "components": [
+        34,
+        35,
+        36,
+        37,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59
+      ]
+    },
+    {
+      "name": "crusher_right",
+      "pivot": [
+        8.333205,
+        14.768995,
+        11.04
+      ],
+      "axis": "z",
+      "degrees_per_cycle": 360,
+      "components": [
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72
+      ]
+    },
+    {
+      "name": "drive_rotor",
+      "pivot": [
+        -16.44459,
+        28.36687,
+        -23.57846
+      ],
+      "axis": "x",
+      "degrees_per_cycle": 360,
+      "components": [
+        27,
+        75,
+        76,
+        257,
+        258,
+        259,
+        260
+      ]
+    }
+  ],
+  "source_mesh_faces_preserved": 72540,
+  "fixed_housing_base_and_interfaces_unchanged": true,
+  "runtime_note": "运作动画已制作；工作状态启停、RF耗能与配方尚未接入游戏。",
+  "bind_pose_geometry_unchanged": true,
+  "roller_uv_remapped_for_paint": true,
+  "paint": "粉碎滚筒整体工业黄涂装，少量边缘磨损",
+  "roller_front_finish": "前端部分工作面及边缘为裸钢，其余黄漆"
+}

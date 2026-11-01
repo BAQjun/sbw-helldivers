@@ -379,6 +379,16 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     private fun spawnHellpod(): Boolean {
         val server = level() as? ServerLevel ?: return false
         val id = dropTypeId ?: return false
+        if(id.path=="machine_deployment_beacon") {
+            val pod=com.example.sbwhelldiver.init.ModEntities.EQUIPMENT_BEACON.get().create(server)?:return false
+            pod.moveTo(x,surfaceY,z,yRot,0f)
+            val arrival=maxOf(arrivalDeadline,server.gameTime+AbstractHellpodEntity.FALL_TICKS)
+            entityData.set(DURATION,(arrival-startedAt-landingGraceTicks).toInt())
+            entityData.set(LEFT,(duration-elapsedTicks).coerceAtLeast(0))
+            pod.configure(surfaceY,arrival,ownerUuid)
+            if(!server.addFreshEntity(pod))return false
+            podUUID=pod.uuid;return true
+        }
         if (!BuiltInRegistries.ENTITY_TYPE.containsKey(id)) return false
         val pod = BuiltInRegistries.ENTITY_TYPE.get(id).create(server) as? AbstractHellpodEntity ?: return false
         val spawnY = surfaceY + AbstractHellpodEntity.descentSpawnHeight() + AbstractHellpodEntity.ORIGIN_ABOVE_BOTTOM

@@ -153,7 +153,11 @@ class StratagemBeacon(type: EntityType<StratagemBeacon>, level: Level) :
                     if(origin==null){failDeployment();return}
                 }
                 val marker = StratagemMarker(ModEntities.STRATAGEM_MARKER.get(), level())
-                val deployYaw=if(selected.dropId.path=="grenadier_battlement" || selected.category==com.example.sbwhelldiver.stratagem.StratagemCategory.RED)wallDeploymentYaw(result.location) else yRot
+                val deployYaw=when {
+                    selected==com.example.sbwhelldiver.stratagem.Stratagems.equipmentDeployment->com.example.sbwhelldiver.survival.EquipmentBeaconGeometry.deploymentYaw(launchOrigin?:position(),result.location,launchYaw)
+                    selected.dropId.path=="grenadier_battlement" || selected.category==com.example.sbwhelldiver.stratagem.StratagemCategory.RED->wallDeploymentYaw(result.location)
+                    else->yRot
+                }
                 marker.moveTo(result.location.x, result.location.y + 0.015, result.location.z, deployYaw, 0f)
                 marker.configure(selected.dropId, HelldiversConfig.dropDelayTicks.get(), owner?.uuid ?: savedCallOwner,
                     Direction.UP, result.location.y, selected.category.beamColor)

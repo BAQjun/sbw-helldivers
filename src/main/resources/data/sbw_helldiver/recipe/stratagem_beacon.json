@@ -1,0 +1,12 @@
+{
+  "type": "sbw_helldiver:beacon_energy",
+  "category": "equipment",
+  "pattern": [" A ", "ICI", " B "],
+  "key": {
+    "A": {"item": "minecraft:amethyst_shard"},
+    "I": {"item": "minecraft:iron_ingot"},
+    "C": {"item": "superbwarfare:ancient_cpu"},
+    "B": {"item": "superbwarfare:small_battery_pack"}
+  },
+  "result": {"id": "sbw_helldiver:stratagem_beacon", "count": 1}
+}

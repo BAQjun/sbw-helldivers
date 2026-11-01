@@ -360,7 +360,7 @@ object StratagemClient {
             gui.drawString(mc.font, uses, boxX + (boxWidth - textWidth) / 2, y + 22, 0xFF202020.toInt(), false)
         }
         val enabled = StratagemCooldownClient.available(def.id) && (visiblePrefix.isEmpty() || def in candidates || selected == def)
-        val label = Component.translatable(def.translation).string
+        val label = StratagemCooldownClient.displayName(def).string
         if(def==Stratagems.destroyerDirection||def==Stratagems.destroyerManage){
             gui.pose().pushPose();gui.pose().translate(textX.toDouble(),y.toDouble(),0.0)
             gui.drawString(mc.font,Component.translatable(def.translation),0,0,0xF4F4EF,true)

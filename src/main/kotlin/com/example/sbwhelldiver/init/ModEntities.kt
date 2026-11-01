@@ -18,6 +18,7 @@ object ModEntities {
 
     val ENTITIES: DeferredRegister<EntityType<*>> =
         DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, MOD_ID)
+    val EQUIPMENT_BEACON=ENTITIES.register("machine_deployment_beacon"){_->EntityType.Builder.of({t,l->com.example.sbwhelldiver.survival.EquipmentDeploymentBeaconEntity(t,l)},MobCategory.MISC).sized(2.65f,4.4f).clientTrackingRange(32).updateInterval(1).fireImmune().build("machine_deployment_beacon")}
 
     val PLAYER_HELLPOD=ENTITIES.register("player_hellpod"){ _ ->vehicle{t,l->com.example.sbwhelldiver.entity.PlayerHellpodEntity(t,l)}.sized(2.65f,.2f).build("player_hellpod")}
 
