@@ -55,14 +55,41 @@ def export(name,path):
         n=closed[i];x,y,z,w=n['r']
         a=np.array([[1-2*y*y-2*z*z,2*x*y-2*z*w,2*x*z+2*y*w,0],[2*x*y+2*z*w,1-2*x*x-2*z*z,2*y*z-2*x*w,0],[2*x*z-2*y*w,2*y*z+2*x*w,1-2*x*x-2*y*y,0],[0,0,0,1]],dtype=float)
         a[:3,:3]*=np.array(n['s']);a[:3,3]=n['t'];matrices[i]=world(n['parent'])@a if n['parent']>=0 else a;return matrices[i]
-    nozzles=[];allpoints=[]
+    nozzles=[];allpoints=[];edges=[]
     for i,n in enumerate(closed):
         if n['mesh']<0:continue
         points=np.concatenate([np.array(p['p'])for p in meshes[n['mesh']]])
         points=(world(i)@np.column_stack([points,np.ones(len(points))]).T).T[:,:3];allpoints.extend(points)
-        if '深处遮光板' in n['name']:nozzles.append(np.round((points.min(axis=0)+points.max(axis=0))/2,5).tolist())
+        if '深处遮光板' in n['name']:
+            mouth=(points.min(axis=0)+points.max(axis=0))/2;mouth[1]=-.23
+            nozzles.append(np.round(mouth,5).tolist())
+        if not name.endswith('_container'):
+            for primitive in meshes[n['mesh']]:
+                local=np.array(primitive['p']);vertices=(world(i)@np.column_stack([local,np.ones(len(local))]).T).T[:,:3]
+                triangles=vertices[np.array(primitive['indices']).reshape(-1,3)]
+                edges.extend(np.stack([triangles,np.roll(triangles,-1,axis=1)],axis=2).reshape(-1,2,3))
     points=np.array(allpoints)
     print(name,'closed bounds',points.min(axis=0).round(4).tolist(),points.max(axis=0).round(4).tolist(),'jets',nozzles)
+    if not name.endswith('_container'):
+        # Horizontal envelopes of the accepted mesh, clipped at each height.
+        # Include edge/plane intersections, not only vertex positions: long
+        # armour panels otherwise leave gaps in intermediate block layers.
+        edge=np.array(edges);boxes=[]
+        for low in np.arange(0,np.ceil(points[:,1].max()*4)/4,.25):
+            high=low+.25;band=[points[(points[:,1]>=low)&(points[:,1]<=high)]]
+            for plane in [low,high]:
+                mask=(edge[:,0,1]<plane)&(edge[:,1,1]>=plane)|(edge[:,1,1]<plane)&(edge[:,0,1]>=plane)
+                crossing=edge[mask]
+                if len(crossing):
+                    fraction=(plane-crossing[:,0,1])/(crossing[:,1,1]-crossing[:,0,1])
+                    band.append(crossing[:,0]+fraction[:,None]*(crossing[:,1]-crossing[:,0]))
+            selected=np.concatenate(band)
+            if not len(selected):continue
+            lo=np.floor(selected.min(axis=0)*16+1e-5)/16;hi=np.ceil(selected.max(axis=0)*16-1e-5)/16
+            half=1.5 if name=='bioprocessor' else 2.5
+            lo[0]=max(-half,lo[0]);hi[0]=min(half,hi[0]);lo[2]=max(-half,lo[2]);hi[2]=min(.5 if name=='bioprocessor' else 2.5,hi[2])
+            boxes.append([float(lo[0]),float(low),float(lo[2]),float(hi[0]),float(min(high,hi[1])),float(hi[2])])
+        (OUT/f'helldivers/{name}_collision.json').write_text(json.dumps(boxes,separators=(',',':'))+'\n')
     target=OUT/f'models/mesh/{name}.mesh.json.gz';target.parent.mkdir(parents=True,exist_ok=True)
     target.write_bytes(gzip.compress(json.dumps(dict(nodes=nodes,meshes=meshes,clips=clips,nozzles=nozzles),separators=(',',':')).encode(),mtime=0))
     for i,m in enumerate(g['materials']):
@@ -96,6 +123,7 @@ write(ROOT/'src/main/resources/data/sbw_helldiver/recipe/samples/bioprocessor/dr
 for lang in ['zh_cn','en_us']:
     path=OUT/f'lang/{lang}.json';data=json.loads(path.read_text(encoding='utf-8'));cn=lang=='zh_cn'
     data.pop('screen.sbw_helldiver.machine_energy',None)
+    data['terminal.sbw_helldiver.recall']='收回信标' if cn else 'Recall beacon'
     data.update({'block.sbw_helldiver.sample_machine':'样本生产设备' if cn else 'Sample Production Machine','item.sbw_helldiver.common_sample':'普通样本' if cn else 'Common Sample','item.sbw_helldiver.rare_sample':'稀有样本' if cn else 'Rare Sample','item.sbw_helldiver.super_sample':'超级样本' if cn else 'Super Sample','item.sbw_helldiver.bioprocessor_container':'生物处理器集装箱' if cn else 'Bioprocessor Container','item.sbw_helldiver.refinery_container':'精炼厂集装箱' if cn else 'Refinery Container','jei.sbw_helldiver.deployment':'设备部署材料' if cn else 'Equipment Deployment Materials','jei.sbw_helldiver.chance':'概率：%s%%（每批随机一种）' if cn else '%s%% chance (one result per batch)','jei.sbw_helldiver.processing':'%s 秒 · %s RF/t' if cn else '%s seconds · %s RF/t','jei.sbw_helldiver.one_result':'每批随机产出其中一种' if cn else 'One random result per batch','terminal.sbw_helldiver.deployment_blocked':'落点被阻挡，已退还设备集装箱' if cn else 'Landing site blocked; equipment container returned'})
     write(path,data)
 print('Exported 36 processing recipes, accepted meshes and native sample glyphs.')

@@ -30,6 +30,7 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
     val paid get()=phase>=RETRACTING
     val capReleased get()=entityData.get(CAP_RELEASED)
     val deploymentEnd get()=entityData.get(DEPLOYMENT_END)
+    val deploymentAnchor get()=Vec3(x,entityData.get(GROUND).toDouble(),z)
     val screenFacingYaw get()=yRot+EquipmentBeaconGeometry.screenYaw
     var owner:UUID?=null;private set
     private var operator:UUID?=null
@@ -104,6 +105,15 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
         val input=prefix+direction
         val machine=selectedMachine
         if(machine==null) {
+            if(input.all{it==Stratagems.LEFT}) {
+                entityData.set(PREFIX,input.joinToString(""));sound(player,"terminal_input")
+                if(input.size==6) {
+                    entityData.set(PREFIX,"");containerSent=true
+                    val now=level().gameTime;entityData.set(DEPLOYMENT_END,now+60)
+                    transition(RETRACTING,now);closeTerminal()
+                }else sendState(player,true)
+                return true
+            }
             val candidates=MachineDeployment.entries.filter{it.code.take(input.size)==input}
             if(candidates.isEmpty()){entityData.set(PREFIX,"");sound(player,"terminal_error");sendState(player,true);return false}
             entityData.set(PREFIX,input.joinToString(""));sound(player,"terminal_input")
@@ -120,11 +130,12 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
                 val facing=chooseFacing(machine)
                 if(facing==null)entityData.set(ERROR,1)
                 else {
-                    if(!machine.hasMaterials(player.inventory))entityData.set(ERROR,2)
+                    if(!player.isCreative&&!machine.hasMaterials(player.inventory))entityData.set(ERROR,2)
                     else if(!com.example.sbwhelldiver.stratagem.StratagemCooldowns.reserve(player,Stratagems.equipmentDeployment.id,uuid))entityData.set(ERROR,3)
                     else {
                         // Server thread, phase transition and debit are atomic. Replayed inputs cannot pay twice.
-                        check(machine.consumeMaterials(player.inventory));player.containerMenu.broadcastChanges()
+                        if(!player.isCreative)check(machine.consumeMaterials(player.inventory))
+                        player.containerMenu.broadcastChanges()
                         owner=player.uuid
                         reservedFacing=facing;containerSent=false
                         val now=level().gameTime;entityData.set(DEPLOYMENT_END,now+200);transition(COUNTDOWN,now)
@@ -173,7 +184,8 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
             PACKED->if(now>=arrival){setPos(x,groundY+.0956,z);transition(DEPLOYING,now);releaseCap()}
             DEPLOYING->if(now-phaseStart>=53)transition(ACTIVE,now)
             COUNTDOWN->if(now>=deploymentEnd-60)transition(RETRACTING,deploymentEnd-60)
-            RETRACTING->if(now>=deploymentEnd)transition(FINISHED,now)
+            RETRACTING->if(now>=deploymentEnd){transition(FINISHED,now);discard();return}
+            FINISHED->{discard();return}
         }
         val age=(now-phaseStart).toInt()
         if(phase==DEPLOYING && previousSoundTick<0)playWorld("sfx_hellpod_cap_release")

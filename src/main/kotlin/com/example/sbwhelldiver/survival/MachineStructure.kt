@@ -11,6 +11,30 @@ import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.Vec3
 
 object MachineStructure {
+    /** Reconcile previously deployed test machines without losing a reserved batch. */
+    fun upgrade(master:SampleMachineBlockEntity):Boolean {
+        val level=master.level as? ServerLevel?:return false
+        val root=master.blockPos;val target=MachineLayout.shapes(master.machine,master.facing)
+        val positions=BlockPos.betweenClosed(root.offset(-3,0,-3),root.offset(3,7,3)).map{it.immutable()}
+        if(positions.any{!level.hasChunkAt(it)})return false
+        val old=positions.filter{(level.getBlockEntity(it) as? SampleMachineBlockEntity)?.root==root}
+        if(target.keys.any{offset->val pos=root.offset(offset);pos !in old && !level.getBlockState(pos).canBeReplaced()}) {
+            remove(master,true);return false
+        }
+        master.layoutVersion=2;master.setChanged()
+        for(pos in old)if(pos.subtract(root) !in target.keys){
+            (level.getBlockEntity(pos) as? SampleMachineBlockEntity)?.tearingDown=true
+            level.setBlock(pos,Blocks.AIR.defaultBlockState(),3);level.invalidateCapabilities(pos)
+        }
+        for(offset in target.keys) {
+            val pos=root.offset(offset);if(pos in old)continue
+            val port=MachineLayout.Port.entries.firstOrNull{it!=MachineLayout.Port.NONE&&MachineLayout.rotate(MachineLayout.portOffset(master.machine,it),master.facing)==offset}?:MachineLayout.Port.NONE
+            level.setBlock(pos,master.blockState.setValue(SampleMachineBlock.MASTER,false).setValue(SampleMachineBlock.PORT,port),3)
+            (level.getBlockEntity(pos) as SampleMachineBlockEntity).let{it.root=root;it.setChanged();it.sync()}
+            level.invalidateCapabilities(pos)
+        }
+        master.sync();return true
+    }
     private val order=listOf(Direction.EAST,Direction.SOUTH,Direction.WEST,Direction.NORTH)
     fun choose(level:ServerLevel,root:BlockPos,m:MachineDeployment,preferred:Direction,ignore:Entity?=null):Direction? =
         (listOf(preferred)+order).distinct().firstOrNull{space(level,root,m,it,ignore)}
@@ -60,7 +84,8 @@ object MachineStructure {
     fun remove(master:SampleMachineBlockEntity,pack:Boolean) {
         val level=master.level as? ServerLevel?:return
         if(master.tearingDown)return
-        val positions=MachineLayout.shapes(master.machine,master.facing).keys.map{master.blockPos.offset(it)}
+        val positions=BlockPos.betweenClosed(master.blockPos.offset(-3,0,-3),master.blockPos.offset(3,7,3))
+            .map{it.immutable()}.filter{(level.getBlockEntity(it) as? SampleMachineBlockEntity)?.root==master.blockPos}
         val stack=if(pack)MachineContainerItem.stack(master.machine,master.contents())else null
         positions.forEach{(level.getBlockEntity(it) as? SampleMachineBlockEntity)?.tearingDown=true}
         // Remove the root last so callbacks can always see the re-entry guard.

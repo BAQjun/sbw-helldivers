@@ -263,5 +263,6 @@
   "jei.sbw_helldiver.chance": "%s%% chance (one result per batch)",
   "jei.sbw_helldiver.processing": "%s seconds · %s RF/t",
   "terminal.sbw_helldiver.deployment_blocked": "Landing site blocked; equipment container returned",
-  "jei.sbw_helldiver.one_result": "One random result per batch"
+  "jei.sbw_helldiver.one_result": "One random result per batch",
+  "terminal.sbw_helldiver.recall": "Recall beacon"
 }

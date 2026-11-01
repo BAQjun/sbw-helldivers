@@ -10,6 +10,10 @@ object EquipmentBeaconGeometry {
     val center=vector("center");val normal=vector("normal");val up=vector("up");val right=vector("right")
     val width=data["width"].asDouble;val height=data["height"].asDouble
     val screenYaw=Math.toDegrees(kotlin.math.atan2(-normal.x,normal.z)).toFloat()
+    val nozzles=data.getAsJsonArray("nozzles").map{raw->val n=raw.asJsonObject
+        fun v(key:String)=n.getAsJsonArray(key).let{Vec3(it[0].asDouble,it[1].asDouble,it[2].asDouble)}
+        v("position") to v("direction")
+    }
     fun deploymentYaw(throwPoint:Vec3,landing:Vec3,fallbackYaw:Float):Float {
         val toPlayer=throwPoint.subtract(landing)
         val wanted=if(toPlayer.horizontalDistanceSqr()<1e-10)fallbackYaw+180f else Math.toDegrees(kotlin.math.atan2(-toPlayer.x,toPlayer.z)).toFloat()

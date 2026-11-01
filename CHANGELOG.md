@@ -1,5 +1,21 @@
 # 版本记录
 
+## 0.6.0-alpha.4
+
+## 中文
+
+- 补齐设备部署信标与机器集装箱落点旁的图标、名称和抵达倒计时；修正机器图标对应关系及生物处理器图标描边。
+- 修复两种设备空投的喷口喷焰；部署完成后移除信标及空投仓，终端可输入六个左指令收回，创造模式无需提交材料。
+- 机器接口支持各方向管道连接、手持原料右键投入，并自动从输入接口相邻容器抽取有效原料，向输出接口相邻容器输出样本。
+- 按精炼厂模型修正多方块占用与碰撞范围，兼容已有设备的布局更新。
+
+## English
+
+- Added landing-point icons, names and arrival countdowns for equipment beacons and machine containers. Corrected machine icon assignments and preserved the Bioprocessor icon's native outlines.
+- Fixed delivery thruster flames. Completed deliveries remove the beacon and its pod; six left inputs recall a deployed beacon, and Creative players can deploy machines without materials.
+- Machine ports accept pipes from all directions and ingredients by right-click. Input ports pull valid ingredients from adjacent inventories; output ports transfer samples to adjacent inventories.
+- Updated Refinery multiblock occupancy and collision to match its model, including migration for existing machines.
+
 ## 0.6.0-alpha.3
 
 ## 中文

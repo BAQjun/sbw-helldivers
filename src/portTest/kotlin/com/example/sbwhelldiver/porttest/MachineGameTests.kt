@@ -30,7 +30,7 @@ object MachineGameTests {
         val inputPos=root.offset(MachineLayout.portOffset(m,MachineLayout.Port.INPUT));val outputPos=root.offset(MachineLayout.portOffset(m,MachineLayout.Port.OUTPUT))
         val input=h.level.getCapability(Capabilities.ItemHandler.BLOCK,inputPos,Direction.NORTH)!!
         val output=h.level.getCapability(Capabilities.ItemHandler.BLOCK,outputPos,Direction.NORTH)!!
-        h.assertTrue(h.level.getCapability(Capabilities.ItemHandler.BLOCK,inputPos,Direction.SOUTH)==null,"Input capability exposed on wrong face")
+        h.assertTrue(Direction.entries.all{h.level.getCapability(Capabilities.ItemHandler.BLOCK,inputPos,it)!=null},"Pipe cannot access input port from every side")
         h.assertTrue(input.insertItem(0,ItemStack(Items.DIRT),false).count==1,"Invalid input accepted")
         h.assertTrue(input.insertItem(0,ItemStack(Items.DRAGON_EGG),false).isEmpty,"Dragon egg rejected")
         h.assertTrue(input.extractItem(0,1,false).isEmpty,"Input allows extraction")
@@ -138,6 +138,50 @@ object MachineGameTests {
         h.assertTrue(head.outcomes==echo.outcomes,"Dragon head differs from echo shard")
         val refinery=MachineStructure.place(h.level,root,MachineDeployment.REFINERY,Direction.NORTH,CompoundTag(),null)!!
         h.assertTrue(h.level.getBlockEntity(root.offset(2,3,2))==null&&h.level.getBlockEntity(root.offset(0,3,-1))!=null,"Refinery collision is not stepped")
+        h.succeed()
+    }
+    @JvmStatic @GameTest(template="port_test",timeoutTicks=110)
+    fun adjacentInputsAndManualInsertionInEveryOrientation(h:GameTestHelper) {
+        val cases=MachineDeployment.entries.flatMap{m->listOf(Direction.NORTH,Direction.EAST,Direction.SOUTH,Direction.WEST).map{m to it}}
+        cases.forEachIndexed{i,(m,facing)->
+            lateinit var be:SampleMachineBlockEntity
+            lateinit var from:ChestBlockEntity
+            lateinit var below:ChestBlockEntity
+            lateinit var target:ChestBlockEntity
+            val ingredient=if(m==MachineDeployment.BIOPROCESSOR)Items.ROTTEN_FLESH else Items.RAW_IRON
+            h.runAtTickTime(1L+i*12){
+                val root=fixture(h);be=MachineStructure.place(h.level,root,m,facing,CompoundTag(),null)!!;be.readyAt=0
+                val input=root.offset(MachineLayout.rotate(MachineLayout.portOffset(m,MachineLayout.Port.INPUT),facing))
+                val output=root.offset(MachineLayout.rotate(MachineLayout.portOffset(m,MachineLayout.Port.OUTPUT),facing))
+                fun chest(p:BlockPos):ChestBlockEntity {h.level.setBlock(p,Blocks.CHEST.defaultBlockState(),3);return h.level.getBlockEntity(p) as ChestBlockEntity}
+                from=chest(input.relative(facing));below=chest(input.below());target=chest(output.below())
+                from.setItem(0,ItemStack(ingredient,5));from.setItem(1,ItemStack(Items.DIRT,7));below.setItem(0,ItemStack(ingredient,5))
+                be.inventory.setStackInSlot(9,ItemStack(ModItems.COMMON_SAMPLE.get(),5))
+                val p=player(h);p.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);p.setItemInHand(InteractionHand.MAIN_HAND,ItemStack(ingredient,5))
+                val port=h.level.getBlockEntity(input) as SampleMachineBlockEntity
+                h.assertTrue(port.insertFromHand(p,InteractionHand.MAIN_HAND)&&p.mainHandItem.isEmpty,"Manual no-GUI input failed: $m $facing")
+                h.assertTrue(Direction.entries.all{h.level.getCapability(Capabilities.ItemHandler.BLOCK,input,it)?.isItemValid(0,ItemStack(ingredient))==true},"Pipe side rejected valid ingredient")
+            }
+            h.runAtTickTime(8L+i*12){
+                h.assertTrue(from.getItem(0).isEmpty&&below.getItem(0).isEmpty&&from.getItem(1).count==7,"Adjacent input failed or extracted dirt: $m $facing")
+                h.assertTrue((0..8).sumOf{be.inventory.getStackInSlot(it).count}==15,"Input items lost/duplicated")
+                h.assertTrue(target.getItem(0).count==5&&be.inventory.getStackInSlot(9).isEmpty,"Adjacent output failed: $m $facing")
+                MachineStructure.remove(be,false)
+            }
+        }
+        h.runAtTickTime(106){h.succeed()}
+    }
+    @JvmStatic @GameTest(template="port_test",timeoutTicks=20)
+    fun existingMachineCollisionUpgradesWithoutLosingInventory(h:GameTestHelper) {
+        val root=fixture(h);val m=MachineDeployment.REFINERY
+        val be=MachineStructure.place(h.level,root,m,Direction.NORTH,CompoundTag(),null)!!
+        val offset=MachineLayout.shapes(m,Direction.NORTH).keys.first{it.y==3&&it.z>=0}
+        val part=h.level.getBlockEntity(root.offset(offset)) as SampleMachineBlockEntity
+        part.tearingDown=true;h.level.removeBlock(part.blockPos,false)
+        be.layoutVersion=1;be.inventory.setStackInSlot(0,ItemStack(Items.DIAMOND,7))
+        h.assertTrue(MachineStructure.upgrade(be)&&be.layoutVersion==2,"Existing layout did not upgrade")
+        h.assertTrue((h.level.getBlockEntity(root.offset(offset)) as? SampleMachineBlockEntity)?.root==root,"Missing model coverage was not restored")
+        h.assertTrue(be.inventory.getStackInSlot(0).count==7,"Upgrade lost input inventory")
         h.succeed()
     }
 }

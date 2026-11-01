@@ -28,7 +28,7 @@ for m in g['meshes']:
 clips={}
 for a in g['animations']:
  name=a['name'].rsplit('.',1)[-1]
- if name not in ['packed','deploy','deployed','retract']:continue
+ if name not in ['packed','deploy','deployed','retract','retro_ignite','retro_burn']:continue
  channels=[]
  for c in a['channels']:
   s=a['samplers'][c['sampler']];channels.append(dict(node=c['target']['node'],path=c['target']['path'],times=accessor(s['input']).ravel().tolist(),values=rounded(accessor(s['output'])),interpolation=s.get('interpolation','LINEAR')))
@@ -78,6 +78,12 @@ up=edges[0][1]/edges[0][0]
 if up[1]<0:up=-up
 right=np.cross(up,normal);right/=np.linalg.norm(right)
 meta=dict(center=rounded(center),normal=rounded(normal),up=rounded(up),right=rounded(right),width=round(edges[1][0],6),height=round(edges[0][0],6),beam=[0,4.23,0])
+retro=pose('retro_burn',0)
+meta['nozzles']=[]
+for i,node in enumerate(g['nodes']):
+ if node.get('name','').startswith('particle_retro_nozzle_'):
+  transform=retro[i];origin=transform@np.array([0,0,0,1]);direction=transform[:3,:3]@np.array([0,-1,0]);direction/=np.linalg.norm(direction)
+  meta['nozzles'].append(dict(position=rounded(origin[:3]),direction=rounded(direction)))
 (OUT/'helldivers/equipment_beacon.json').write_text(json.dumps(meta,indent=2))
 print('screen frame',meta)
 print('written',out,out.stat().st_size)

@@ -16,6 +16,45 @@ import net.neoforged.neoforge.gametest.*
 @GameTestHolder("sbw_helldiver")
 @PrefixGameTestTemplate(false)
 object EquipmentGameTests {
+    private fun terminalFixture(h:GameTestHelper,ready:(EquipmentDeploymentBeaconEntity,net.minecraft.server.level.ServerPlayer,java.util.UUID,()->Unit)->Unit) {
+        val level=h.level;val at=Vec3.atBottomCenterOf(h.absolutePos(BlockPos(5,4,5)))
+        for(x in -4..4)for(z in -4..4)for(y in -1..7)level.setBlock(BlockPos.containing(at.add(x.toDouble(),y.toDouble(),z.toDouble())),if(y==-1)Blocks.STONE.defaultBlockState()else Blocks.AIR.defaultBlockState(),3)
+        val player=net.neoforged.neoforge.common.util.FakePlayerFactory.get(level,com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(),"TerminalRegression"))
+        player.setGameMode(net.minecraft.world.level.GameType.CREATIVE);player.inventory.clearContent()
+        val field=net.minecraft.server.players.PlayerList::class.java.getDeclaredField("playersByUUID").also{it.isAccessible=true}
+        @Suppress("UNCHECKED_CAST") val players=field.get(level.server.playerList) as MutableMap<java.util.UUID,net.minecraft.server.level.ServerPlayer>
+        players[player.uuid]=player
+        val e=ModEntities.EQUIPMENT_BEACON.get().create(level)!!;e.setPos(at);e.configure(at.y,level.gameTime+1,player.uuid);level.addFreshEntity(e)
+        h.runAfterDelay(60){
+            val eye=e.screenCenter().add(e.screenNormal().scale(1.1));val look=e.screenCenter().subtract(eye)
+            player.moveTo(eye.x,eye.y-player.eyeHeight,eye.z,Math.toDegrees(kotlin.math.atan2(-look.x,look.z)).toFloat(),(-Math.toDegrees(kotlin.math.atan2(look.y,look.horizontalDistance()))).toFloat())
+            h.assertTrue(e.openTerminal(player),"Cannot open test terminal")
+            val token=e.javaClass.getDeclaredField("nonce").also{it.isAccessible=true}.get(e) as java.util.UUID
+            ready(e,player,token,{players.remove(player.uuid)})
+        }
+    }
+    @JvmStatic @GameTest(template="port_test",timeoutTicks=160)
+    fun sixLeftInputsRecallBeaconWithoutContainer(h:GameTestHelper)=terminalFixture(h){e,p,token,cleanup->
+        repeat(6){i->h.runAfterDelay((i+1).toLong()){h.assertTrue(e.acceptInput(p,token,3),"Recall arrow rejected")}}
+        h.runAfterDelay(5){h.assertTrue(e.phase==EquipmentDeploymentBeaconEntity.ACTIVE&&e.prefix.size==5,"Recall happened before sixth left")}
+        h.runAfterDelay(8){h.assertTrue(e.phase==EquipmentDeploymentBeaconEntity.RETRACTING,"Six left inputs did not retract")}
+        h.runAfterDelay(70){h.assertTrue(e.isRemoved,"Recall left hellpod behind");h.assertTrue(h.level.getEntitiesOfClass(MachineContainerEntity::class.java,e.boundingBox.inflate(20.0)).isEmpty(),"Recall spawned unwanted container");cleanup();h.succeed()}
+    }
+    private fun creativeDeployment(h:GameTestHelper,m:MachineDeployment)=terminalFixture(h){e,p,token,cleanup->
+        val code=m.code+List(6){1}
+        code.forEachIndexed{i,d->h.runAfterDelay((i+1).toLong()){h.assertTrue(e.acceptInput(p,token,d),"Creative command rejected")}}
+        h.runAfterDelay(15){h.assertTrue(e.phase==EquipmentDeploymentBeaconEntity.COUNTDOWN&&e.error==0&&p.inventory.isEmpty,"Creative deployment required materials")}
+        h.runAfterDelay(220){
+            h.assertTrue(e.isRemoved,"Completed deployment left its beacon/pod behind")
+            val boxes=h.level.getEntitiesOfClass(MachineContainerEntity::class.java,e.boundingBox.inflate(20.0))
+            h.assertTrue(boxes.size==1&&boxes.single().machine==m&&boxes.single().phase==MachineContainerEntity.CLOSED,"Creative deployment did not deliver correct machine")
+            cleanup();h.succeed()
+        }
+    }
+    @JvmStatic @GameTest(template="port_test",timeoutTicks=310)
+    fun creativeBioprocessorNeedsNoMaterials(h:GameTestHelper)=creativeDeployment(h,MachineDeployment.BIOPROCESSOR)
+    @JvmStatic @GameTest(template="port_test",timeoutTicks=310)
+    fun creativeRefineryNeedsNoMaterials(h:GameTestHelper)=creativeDeployment(h,MachineDeployment.REFINERY)
     @JvmStatic @GameTest(template="port_test",timeoutTicks=20)
     fun recipeTransfersBatteryEnergy(h:GameTestHelper) {
         val battery=ItemStack(com.atsuishio.superbwarfare.init.ModItems.SMALL_BATTERY_PACK.get())

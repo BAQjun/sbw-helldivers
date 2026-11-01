@@ -46,7 +46,7 @@ object EquipmentClientTests {
         val player=mc.player?:return;val server=mc.singleplayerServer?:return;ticks++
         if(ticks==1)server.execute {
             val l=server.overworld();l.gameRules.getRule(GameRules.RULE_DOMOBSPAWNING).set(false,server);l.gameRules.getRule(GameRules.RULE_DAYLIGHT).set(false,server);l.dayTime=6000
-            for(x in -10..10)for(z in -10..10)for(y in 73..79)l.setBlock(BlockPos(x,y,z),if(y==79)Blocks.SMOOTH_STONE.defaultBlockState()else Blocks.STONE.defaultBlockState(),3)
+            for(x in -10..10)for(z in -20..12)for(y in 73..79)l.setBlock(BlockPos(x,y,z),if(y==79)Blocks.SMOOTH_STONE.defaultBlockState()else Blocks.STONE.defaultBlockState(),3)
             for(x in listOf(-8,8))for(z in listOf(-8,8))l.setBlock(BlockPos(x,79,z),Blocks.SEA_LANTERN.defaultBlockState(),3)
             l.setDefaultSpawnPos(BlockPos(5,80,7),145f)
             val p=server.playerList.getPlayer(player.uuid)!!;p.setGameMode(GameType.CREATIVE);p.teleportTo(l,5.0,80.0,7.0,145f,-10f)
@@ -55,7 +55,12 @@ object EquipmentClientTests {
             e.moveTo(.5,80.0,.5,EquipmentBeaconGeometry.deploymentYaw(p.position(),landing,p.yRot),0f);e.configure(80.0,l.gameTime+35,p.uuid);l.addFreshEntity(e);device=e.uuid
             LOGGER.info("EQUIPMENT_FIXTURE_READY")
         }
-        if(ticks==105)capture("equipment-deployed.png")
+        if(ticks==95)server.execute {val p=server.playerList.getPlayer(player.uuid)!!;p.teleportTo(server.overworld(),.5,83.0,-15.0,0f,0f);p.abilities.flying=true;p.onUpdateAbilities()}
+        if(ticks==105){
+            check(com.example.sbwhelldiver.client.DeliveryFlightVisuals.beaconJetFrames>0){"Attached beacon jets never rendered"}
+            check(com.example.sbwhelldiver.client.BeaconCallHud.label?.iconKey==Stratagems.equipmentDeployment.id){"Deployed beacon world HUD missing"}
+            capture("equipment-deployed.png")
+        }
         if(ticks==110)server.execute {
             val e=server.overworld().getEntity(device) as EquipmentDeploymentBeaconEntity
             val p=server.playerList.getPlayer(player.uuid)!!;val eye=e.screenCenter().add(e.screenNormal().scale(1.1));val d=e.screenCenter().subtract(eye)
@@ -72,6 +77,7 @@ object EquipmentClientTests {
             val e=(mc.screen as EquipmentTerminalScreen).beacon()!!;val camera=mc.gameRenderer.mainCamera
             check(net.minecraft.world.phys.Vec3(camera.lookVector).dot(e.screenCenter().subtract(camera.position).normalize())>.999){"Camera is not aimed at the screen centre"}
             capture("equipment-menu.png")
+            server.execute{server.playerList.getPlayer(player.uuid)!!.setGameMode(GameType.SURVIVAL)}
         }
         fun key(d:Int){(mc.screen as? EquipmentTerminalScreen)?.keyPressed(listOf(GLFW.GLFW_KEY_UP,GLFW.GLFW_KEY_RIGHT,GLFW.GLFW_KEY_DOWN,GLFW.GLFW_KEY_LEFT)[d],0,0)?:error("No terminal at $ticks")}
         val bio=MachineDeployment.BIOPROCESSOR.code
@@ -91,8 +97,11 @@ object EquipmentClientTests {
         }
         if(ticks in 250..266&&(ticks-250)%4==0)key(bio[(ticks-250)/4])
         if(ticks in 275..295&&(ticks-275)%4==0)key(1)
-        if(ticks==310){check(mc.screen !is EquipmentTerminalScreen&&mc.cameraEntity===player){"Camera did not return"};capture("equipment-waiting.png")}
+        if(ticks==310){check(mc.screen !is EquipmentTerminalScreen&&mc.cameraEntity===player){"Camera did not return"};server.execute{val p=server.playerList.getPlayer(player.uuid)!!;p.setGameMode(GameType.CREATIVE);p.teleportTo(server.overworld(),.5,83.0,-15.0,0f,0f);p.abilities.flying=true;p.onUpdateAbilities()};capture("equipment-waiting.png")}
         if(ticks==395){
+            val label=com.example.sbwhelldiver.client.BeaconCallHud.label
+            LOGGER.info("EQUIPMENT_DELIVERY_HUD: label={} player={} camera={} entities={}",label,player.position(),mc.gameRenderer.mainCamera.position,mc.level!!.entitiesForRendering().filter{it is MachineContainerEntity||it is EquipmentDeploymentBeaconEntity}.map{e->"${e.type}:${e.position()}:"+when(e){is EquipmentDeploymentBeaconEntity->"${e.phase}:${e.selectedMachine}";is MachineContainerEntity->"${e.phase}:${e.root}";else->""}})
+            check(label?.iconKey==MachineDeployment.BIOPROCESSOR.id){"Container world HUD missing or wrong icon"}
             check(com.example.sbwhelldiver.client.StratagemCooldownClient.displayName(Stratagems.equipmentDeployment).string==net.minecraft.network.chat.Component.translatable(MachineDeployment.BIOPROCESSOR.translation).string){"Arrival HUD still names the beacon"}
             capture("equipment-countdown.png")
         }
@@ -103,6 +112,7 @@ object EquipmentClientTests {
         }
         if(ticks==515)server.execute {
             val l=server.overworld()
+            check(l.getEntity(device)==null){"Beacon/pod remained after machine delivery"}
             val boxes=l.getEntitiesOfClass(MachineContainerEntity::class.java,net.minecraft.world.phys.AABB(-4.0,79.0,-4.0,5.0,85.0,5.0))
             check(boxes.size==1&&boxes.single().phase==MachineContainerEntity.CLOSED){"Paid deployment did not deliver one closed container"}
             check(l.getBlockEntity(BlockPos(0,80,0))==null){"Machine generated before opening the delivered container"}

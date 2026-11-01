@@ -30,6 +30,7 @@ class SampleMachineBlock(properties:Properties):BaseEntityBlock(properties) {
             if(!level.isClientSide) (level.getBlockEntity(pos) as? SampleMachineBlockEntity)?.master()?.let{MachineStructure.remove(it,true)}
             return ItemInteractionResult.sidedSuccess(level.isClientSide)
         }
+        if((level.getBlockEntity(pos) as? SampleMachineBlockEntity)?.insertFromHand(player,hand)==true)return ItemInteractionResult.sidedSuccess(level.isClientSide)
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
     }
     override fun useWithoutItem(state:BlockState,level:Level,pos:BlockPos,player:Player,hit:BlockHitResult):InteractionResult {

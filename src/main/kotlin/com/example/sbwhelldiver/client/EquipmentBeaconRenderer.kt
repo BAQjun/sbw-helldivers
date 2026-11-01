@@ -22,7 +22,8 @@ class EquipmentBeaconRenderer(context:EntityRendererProvider.Context):EntityRend
     override fun shouldRender(e:EquipmentDeploymentBeaconEntity,f:net.minecraft.client.renderer.culling.Frustum,x:Double,y:Double,z:Double)=e.shouldRender(x,y,z)&&f.isVisible(AABB(e.x-3,e.y-6,e.z-3,e.x+3,e.y+256,e.z+3))
     override fun render(e:EquipmentDeploymentBeaconEntity,yaw:Float,partial:Float,p:PoseStack,b:MultiBufferSource,light:Int) {
         val elapsed=((e.level().gameTime-e.phaseStart+partial)/20f).coerceAtLeast(0f)
-        val clip=when(e.phase){0->"packed";1->"deploy";2,4->"deployed";3->"retract";else->"packed"}
+        val braking=e.phase==EquipmentDeploymentBeaconEntity.PACKED&&e.flightBraking
+        val clip=when(e.phase){0->if(braking)"retro_burn" else "packed";1->"deploy";2,4->"deployed";3->"retract";else->"packed"}
         val time=when(e.phase){1->elapsed.coerceAtMost(2.65f);3->(elapsed*3.95f/3f).coerceAtMost(3.95f);else->0f}
         p.pushPose();p.mulPose(Axis.YP.rotationDegrees(-e.yRot))
         val pose=p.last();val v=Vector3f();val n=Vector3f()
@@ -41,7 +42,9 @@ class EquipmentBeaconRenderer(context:EntityRendererProvider.Context):EntityRend
                 };bulk?.flush()
             }
         }
-        if(e.phase==EquipmentDeploymentBeaconEntity.ACTIVE||e.phase==EquipmentDeploymentBeaconEntity.COUNTDOWN){drawTerminal(e,p,b);beam(p,b)}
+        if(braking)DeliveryFlightVisuals.drawJets(e,partial,p,b)
+        if(e.phase==EquipmentDeploymentBeaconEntity.ACTIVE||e.phase==EquipmentDeploymentBeaconEntity.COUNTDOWN)drawTerminal(e,p,b)
+        if(e.phase==EquipmentDeploymentBeaconEntity.ACTIVE||e.selectedMachine!=null&&e.phase in EquipmentDeploymentBeaconEntity.RETRACTING..EquipmentDeploymentBeaconEntity.COUNTDOWN)beam(p,b)
         p.popPose()
     }
     private fun beam(p:PoseStack,b:MultiBufferSource) {
@@ -86,6 +89,8 @@ class EquipmentBeaconRenderer(context:EntityRendererProvider.Context):EntityRend
                 text(Component.translatable(m.translation),59f,y+4)
                 arrows(m.code,59f,y+22,if(m.code.take(e.prefix.size)==e.prefix)e.prefix.size else 0)
             }
+            arrows(List(6){3},10f,119f,if(e.prefix.all{it==3})e.prefix.size else 0)
+            text(Component.translatable("terminal.sbw_helldiver.recall"),110f,119f,maxWidth=138f)
         }else {
             quad(p,b,machine.icon,10f,24f,20f,20f,-1);text(Component.translatable(machine.translation),39f,27f)
             val mc=Minecraft.getInstance()
@@ -96,7 +101,7 @@ class EquipmentBeaconRenderer(context:EntityRendererProvider.Context):EntityRend
                 p.popPose()
                 val have=mc.player?.inventory?.let(material::available)?:0
                 text(Component.translatable("terminal.sbw_helldiver.material_line",Component.translatable(material.item.descriptionId),have,material.count),x+21,y+3,
-                    if(have>=material.count)0xFF65D8A0.toInt() else 0xFFFF8777.toInt(),94f)
+                    if(mc.player?.isCreative==true||have>=material.count)0xFF65D8A0.toInt() else 0xFFFF8777.toInt(),94f)
             }
             arrows(List(6){1},10f,117f,e.prefix.size)
             arrows(listOf(3),174f,117f,0)

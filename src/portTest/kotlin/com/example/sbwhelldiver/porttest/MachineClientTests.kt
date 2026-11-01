@@ -30,6 +30,7 @@ object MachineClientTests {
     private val launched=System.currentTimeMillis()
     private val boxes=mutableListOf<java.util.UUID>()
     private val roots=listOf(BlockPos(-5,80,0),BlockPos(4,80,0))
+    private var capturedJets=false
     @SubscribeEvent fun tick(event:ClientTickEvent.Post) {
         if(!java.lang.Boolean.getBoolean("sbw_helldiver.machineRegression"))return
         val mc=Minecraft.getInstance()
@@ -42,6 +43,9 @@ object MachineClientTests {
             return
         }
         val player=mc.player?:return;val server=mc.singleplayerServer?:return;ticks++
+        if(!capturedJets&&mc.level!!.entitiesForRendering().filterIsInstance<MachineContainerEntity>().any{it.phase==MachineContainerEntity.FALLING&&it.y-it.root.y in 3.0..10.0}) {
+            capturedJets=true;capture("machine-retro-jets.png")
+        }
         if(ticks==1)server.execute {
             val l=server.overworld();l.gameRules.getRule(GameRules.RULE_DOMOBSPAWNING).set(false,server);l.gameRules.getRule(GameRules.RULE_DAYLIGHT).set(false,server);l.dayTime=6000
             for(x in -16..16)for(z in -16..12)for(y in 77..79)l.setBlock(BlockPos(x,y,z),if(y==79)Blocks.SMOOTH_STONE.defaultBlockState()else Blocks.STONE.defaultBlockState(),3)
@@ -54,12 +58,12 @@ object MachineClientTests {
             }
             LOGGER.info("MACHINE_FIXTURE_READY")
         }
-        if(ticks==95)capture("machine-retro-jets.png")
         if(ticks==120){
             check(mc.level!!.getBlockEntity(roots[0])==null){"Machine appeared inside closed container"}
             val audio=com.example.sbwhelldiver.client.SoundTimeline
             check(audio.startedCount("sfx_hellpod_entry_layer_03")>=2&&audio.startedCount("sfx_hellpod_retro_start")>=2&&audio.startedCount("sfx_hellpod_impact")>=2){"Delivery flight audio missing: ${audio.debugReport()}"}
             check(com.example.sbwhelldiver.client.HellpodJetParticle.rendered>0){"Container nozzle flames never rendered"}
+            check(com.example.sbwhelldiver.client.DeliveryFlightVisuals.containerJetFrames>0){"Attached container nozzle flames never rendered"}
             LOGGER.info("MACHINE_FLIGHT_AUDIO_AND_JETS_VERIFIED")
             for(m in MachineDeployment.entries){
                 val model=mc.itemRenderer.getModel(MachineContainerItem.stack(m),mc.level,player,0)

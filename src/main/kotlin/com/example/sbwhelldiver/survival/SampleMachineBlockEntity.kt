@@ -16,6 +16,7 @@ class SampleMachineBlockEntity(pos:BlockPos,state:BlockState):BlockEntity(Machin
     var root:BlockPos=pos
     var tearingDown=false
     var readyAt=0L
+    var layoutVersion=2
     var energy=0;private set
     var progress=0;private set
     var duration=100;private set
@@ -60,8 +61,20 @@ class SampleMachineBlockEntity(pos:BlockPos,state:BlockState):BlockEntity(Machin
         override fun canExtract()=false
         override fun canReceive()=master()!=null
     }
-    fun itemPort(side:Direction?):IItemHandler? = if((side==null||side==facing)&&blockState.getValue(SampleMachineBlock.PORT) in listOf(MachineLayout.Port.INPUT,MachineLayout.Port.OUTPUT))itemWrapper else null
-    fun energyPort(side:Direction?):IEnergyStorage? = if((side==null||side==facing)&&blockState.getValue(SampleMachineBlock.PORT)==MachineLayout.Port.ENERGY)energyWrapper else null
+    // The labelled port block is the connection point. Pipes may approach that
+    // block from above, below or the side, as well as from the front panel.
+    fun itemPort(side:Direction?):IItemHandler? = if(blockState.getValue(SampleMachineBlock.PORT) in listOf(MachineLayout.Port.INPUT,MachineLayout.Port.OUTPUT)&&master()!=null)itemWrapper else null
+    fun energyPort(side:Direction?):IEnergyStorage? = if(blockState.getValue(SampleMachineBlock.PORT)==MachineLayout.Port.ENERGY&&master()!=null)energyWrapper else null
+    fun insertFromHand(player:net.minecraft.world.entity.player.Player,hand:net.minecraft.world.InteractionHand):Boolean {
+        if(blockState.getValue(SampleMachineBlock.PORT)!=MachineLayout.Port.INPUT)return false
+        val stack=player.getItemInHand(hand)
+        if(stack.isEmpty||!itemWrapper.isItemValid(0,stack))return false
+        if(level?.isClientSide==true)return true
+        val rest=ItemHandlerHelper.insertItemStacked(itemWrapper,stack.copy(),false)
+        if(rest.count==stack.count)return false
+        if(!player.isCreative)player.setItemInHand(hand,rest)
+        return true
+    }
     private fun outputFits(stack:ItemStack):Boolean {
         var left=stack.count
         for(i in 9..17){val s=inventory.getStackInSlot(i);if(s.isEmpty)left-=stack.maxStackSize else if(ItemStack.isSameItemSameComponents(s,stack))left-=s.maxStackSize-s.count}
@@ -78,6 +91,7 @@ class SampleMachineBlockEntity(pos:BlockPos,state:BlockState):BlockEntity(Machin
             if(l.gameTime%40L==0L && l.hasChunkAt(root) && master()==null)l.removeBlock(blockPos,false)
             return
         }
+        if(layoutVersion<2 && !MachineStructure.upgrade(this))return
         if(tearingDown || l.gameTime<readyAt)return
         if(l.gameTime%5L==0L)autoItems()
         val before=working;working=false
@@ -101,10 +115,16 @@ class SampleMachineBlockEntity(pos:BlockPos,state:BlockState):BlockEntity(Machin
     }
     private fun autoItems() {
         val l=level?:return
-        fun neighbour(port:MachineLayout.Port):BlockPos=blockPos.offset(MachineLayout.rotate(MachineLayout.portOffset(machine,port),facing)).relative(facing)
-        val inPos=neighbour(MachineLayout.Port.INPUT)
-        if(l.hasChunkAt(inPos))l.getCapability(Capabilities.ItemHandler.BLOCK,inPos,facing.opposite)?.let{source->
-            var budget=32
+        fun neighbours(port:MachineLayout.Port):List<Pair<BlockPos,Direction>> {
+            val anchor=blockPos.offset(MachineLayout.rotate(MachineLayout.portOffset(machine,port),facing))
+            return (listOf(facing)+Direction.entries).distinct().map{anchor.relative(it) to it.opposite}.filter{(pos,_)->
+                l.hasChunkAt(pos) && (l.getBlockEntity(pos) as? SampleMachineBlockEntity)?.root!=blockPos
+            }
+        }
+        var budget=32
+        for((inPos,side)in neighbours(MachineLayout.Port.INPUT)) {
+            if(budget<=0)break
+            val source=l.getCapability(Capabilities.ItemHandler.BLOCK,inPos,side)?:continue
             for(slot in 0 until source.slots) {
                 val probe=source.extractItem(slot,budget,true)
                 if(probe.isEmpty||!SampleRecipe.accepts(l,machine,probe))continue
@@ -121,15 +141,17 @@ class SampleMachineBlockEntity(pos:BlockPos,state:BlockState):BlockEntity(Machin
                 budget-=moved-rest.count;if(budget<=0)break
             }
         }
-        val outPos=neighbour(MachineLayout.Port.OUTPUT)
+        val outPos=blockPos.offset(MachineLayout.rotate(MachineLayout.portOffset(machine,MachineLayout.Port.OUTPUT),facing)).relative(facing)
         if(!l.hasChunkAt(outPos))return
-        val target=l.getCapability(Capabilities.ItemHandler.BLOCK,outPos,facing.opposite)
+        val adjacent=neighbours(MachineLayout.Port.OUTPUT)
+        val targets=adjacent.mapNotNull{(pos,side)->l.getCapability(Capabilities.ItemHandler.BLOCK,pos,side)}
         // A full or non-item block entity is never treated as empty air.
-        val hasContainer=target!=null || l.getBlockEntity(outPos)!=null || !l.getBlockState(outPos).getCollisionShape(l,outPos).isEmpty
+        val hasContainer=targets.isNotEmpty() || adjacent.any{l.getBlockEntity(it.first)!=null} || !l.getBlockState(outPos).getCollisionShape(l,outPos).isEmpty
         for(slot in 9..17) {
             val stack=inventory.getStackInSlot(slot);if(stack.isEmpty)continue
-            if(target!=null) {
-                val copy=stack.copyWithCount(minOf(32,stack.count));val rest=ItemHandlerHelper.insertItemStacked(target,copy,false)
+            if(targets.isNotEmpty()) {
+                val copy=stack.copyWithCount(minOf(32,stack.count));var rest=copy
+                for(target in targets){rest=ItemHandlerHelper.insertItemStacked(target,rest,false);if(rest.isEmpty)break}
                 inventory.extractItem(slot,copy.count-rest.count,false)
             }else if(!hasContainer)drop(inventory.extractItem(slot,minOf(32,stack.count),false),outPos)
             break
@@ -144,8 +166,8 @@ class SampleMachineBlockEntity(pos:BlockPos,state:BlockState):BlockEntity(Machin
         val l=level?:return;inventory.deserializeNBT(l.registryAccess(),n.getCompound("Inventory"));energy=n.getInt("Energy").coerceIn(0,capacity)
         pending=ItemStack.parseOptional(l.registryAccess(),n.getCompound("Pending"));duration=n.getInt("Duration").coerceAtLeast(1);progress=n.getInt("Progress").coerceIn(0,duration-1);workTicks=n.getLong("WorkTicks");setChanged()
     }
-    override fun saveAdditional(n:CompoundTag,r:HolderLookup.Provider){super.saveAdditional(n,r);n.putLong("Root",root.asLong());n.putLong("ReadyAt",readyAt);if(root==blockPos)n.merge(contents(r));n.putBoolean("Working",working)}
-    override fun loadAdditional(n:CompoundTag,r:HolderLookup.Provider){super.loadAdditional(n,r);root=if(n.contains("Root"))BlockPos.of(n.getLong("Root"))else blockPos;readyAt=n.getLong("ReadyAt");inventory.deserializeNBT(r,n.getCompound("Inventory"));energy=n.getInt("Energy").coerceIn(0,capacity);pending=ItemStack.parseOptional(r,n.getCompound("Pending"));duration=n.getInt("Duration").coerceAtLeast(1);progress=n.getInt("Progress").coerceIn(0,duration-1);workTicks=n.getLong("WorkTicks");working=n.getBoolean("Working")}
+    override fun saveAdditional(n:CompoundTag,r:HolderLookup.Provider){super.saveAdditional(n,r);n.putLong("Root",root.asLong());n.putInt("LayoutVersion",layoutVersion);n.putLong("ReadyAt",readyAt);if(root==blockPos)n.merge(contents(r));n.putBoolean("Working",working)}
+    override fun loadAdditional(n:CompoundTag,r:HolderLookup.Provider){super.loadAdditional(n,r);root=if(n.contains("Root"))BlockPos.of(n.getLong("Root"))else blockPos;layoutVersion=n.getInt("LayoutVersion");readyAt=n.getLong("ReadyAt");inventory.deserializeNBT(r,n.getCompound("Inventory"));energy=n.getInt("Energy").coerceIn(0,capacity);pending=ItemStack.parseOptional(r,n.getCompound("Pending"));duration=n.getInt("Duration").coerceAtLeast(1);progress=n.getInt("Progress").coerceIn(0,duration-1);workTicks=n.getLong("WorkTicks");working=n.getBoolean("Working")}
     fun sync(){val l=level?:return;l.sendBlockUpdated(blockPos,blockState,blockState,3)}
     override fun getUpdateTag(r:HolderLookup.Provider)=saveWithoutMetadata(r)
     override fun getUpdatePacket()=ClientboundBlockEntityDataPacket.create(this)

@@ -263,5 +263,6 @@
   "jei.sbw_helldiver.chance": "概率：%s%%（每批随机一种）",
   "jei.sbw_helldiver.processing": "%s 秒 · %s RF/t",
   "terminal.sbw_helldiver.deployment_blocked": "落点被阻挡，已退还设备集装箱",
-  "jei.sbw_helldiver.one_result": "每批随机产出其中一种"
+  "jei.sbw_helldiver.one_result": "每批随机产出其中一种",
+  "terminal.sbw_helldiver.recall": "收回信标"
 }

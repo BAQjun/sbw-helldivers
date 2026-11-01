@@ -16,7 +16,7 @@
   "incorrect_media": 230678024,
   "procedural_nodes": "No embedded media; omitted rather than replaced with beacon-ball audio.",
   "mission_icons": {
-    "bioprocessor": "MissionIconIndustrialcomplex",
-    "refinery": "MissionProcessors"
+    "bioprocessor": "MissionProcessors",
+    "refinery": "MissionIconIndustrialcomplex"
   }
 }

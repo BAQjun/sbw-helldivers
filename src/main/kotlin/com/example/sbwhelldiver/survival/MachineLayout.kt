@@ -16,8 +16,12 @@ object MachineLayout {
         val p=point(b.minX,b.minZ);val q=point(b.maxX,b.maxZ)
         return AABB(minOf(p.first,q.first),b.minY,minOf(p.second,q.second),maxOf(p.first,q.first),b.maxY,maxOf(p.second,q.second))
     }
-    fun boxes(m:MachineDeployment)=if(m==MachineDeployment.BIOPROCESSOR)listOf(AABB(-1.5,0.0,-1.5,1.5,2.74,.5))
-        else listOf(AABB(-2.5,0.0,-2.5,2.5,1.25,2.5),AABB(-.75,1.25,-2.125,1.25,6.25,-.125))
+    private val modelBoxes by lazy {MachineDeployment.entries.associateWith{m->
+        javaClass.classLoader.getResourceAsStream("assets/sbw_helldiver/helldivers/${m.id}_collision.json")!!.reader().use{reader->
+            com.google.gson.JsonParser.parseReader(reader).asJsonArray.map{raw->val a=raw.asJsonArray;AABB(a[0].asDouble,a[1].asDouble,a[2].asDouble,a[3].asDouble,a[4].asDouble,a[5].asDouble)}
+        }
+    }}
+    fun boxes(m:MachineDeployment)=modelBoxes.getValue(m)
     fun containerBounds(m:MachineDeployment)=if(m==MachineDeployment.BIOPROCESSOR)AABB(-2.0,0.0,-2.0,2.0,3.0,1.0)else AABB(-3.0,0.0,-3.0,3.0,7.0,3.0)
     fun portOffset(m:MachineDeployment,p:Port)=BlockPos(when(p){Port.INPUT->if(m==MachineDeployment.BIOPROCESSOR)-1 else -2;Port.ENERGY->if(m==MachineDeployment.BIOPROCESSOR)1 else 2;else->0},0,if(m==MachineDeployment.BIOPROCESSOR)-1 else -2)
     private val cache=HashMap<Pair<MachineDeployment,Direction>,Map<BlockPos,VoxelShape>>()
