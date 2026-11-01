@@ -19,10 +19,7 @@ class SampleMachineBlock(properties:Properties):BaseEntityBlock(properties) {
     override fun createBlockStateDefinition(b:StateDefinition.Builder<Block,BlockState>) { b.add(FACING,KIND,PORT,MASTER) }
     override fun newBlockEntity(pos:BlockPos,state:BlockState)=SampleMachineBlockEntity(pos,state)
     override fun getRenderShape(state:BlockState)=RenderShape.ENTITYBLOCK_ANIMATED
-    override fun getShape(state:BlockState,level:BlockGetter,pos:BlockPos,context:CollisionContext):VoxelShape {
-        val be=level.getBlockEntity(pos) as? SampleMachineBlockEntity ?: return Shapes.block()
-        return MachineLayout.shapes(state.getValue(KIND),state.getValue(FACING))[pos.subtract(be.root)]?:Shapes.block()
-    }
+    override fun getShape(state:BlockState,level:BlockGetter,pos:BlockPos,context:CollisionContext):VoxelShape = Shapes.block()
     override fun <T:BlockEntity> getTicker(level:Level,state:BlockState,type:BlockEntityType<T>):BlockEntityTicker<T>? =
         if(level.isClientSide)null else createTickerHelper(type,MachineRegistry.MACHINE.get(),BlockEntityTicker { l,p,s,be->be.serverTick() })
     override fun useItemOn(stack:ItemStack,state:BlockState,level:Level,pos:BlockPos,player:Player,hand:InteractionHand,hit:BlockHitResult):ItemInteractionResult {

@@ -80,14 +80,4 @@ object DeliveryFlightVisuals {
             }
         }
     }
-    fun beam(p:PoseStack,b:MultiBufferSource,height:Float=1024f) {
-        val vc=b.getBuffer(RenderType.lightning());val mat=p.last().pose()
-        for((radius,alpha)in listOf(.018f to .9f,.045f to .32f,.1f to .1f))for(i in 0..7) {
-            val a=i*Math.PI/4;val c=(i+1)*Math.PI/4
-            val x=(kotlin.math.cos(a)*radius).toFloat();val z=(kotlin.math.sin(a)*radius).toFloat()
-            val xx=(kotlin.math.cos(c)*radius).toFloat();val zz=(kotlin.math.sin(c)*radius).toFloat()
-            for(q in arrayOf(floatArrayOf(x,.2f,z),floatArrayOf(xx,.2f,zz),floatArrayOf(xx,height,zz),floatArrayOf(x,height,z)))
-                vc.vertex(mat,q[0],q[1],q[2]).color(.15f,.65f,1f,alpha).endVertex()
-        }
-    }
 }

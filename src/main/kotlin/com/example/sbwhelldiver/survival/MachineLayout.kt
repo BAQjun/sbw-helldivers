@@ -9,6 +9,7 @@ import net.minecraft.world.phys.shapes.VoxelShape
 
 /** Coordinates match the accepted Blockbench models, with the interface row facing north. */
 object MachineLayout {
+    const val VERSION=3
     enum class Port: StringRepresentable { NONE,INPUT,OUTPUT,ENERGY;override fun getSerializedName()=name.lowercase() }
     fun rotate(p:BlockPos,facing:Direction)=when(facing){Direction.EAST->BlockPos(-p.z,p.y,p.x);Direction.SOUTH->BlockPos(-p.x,p.y,-p.z);Direction.WEST->BlockPos(p.z,p.y,-p.x);else->p}
     fun rotate(b:AABB,facing:Direction):AABB {
@@ -23,7 +24,7 @@ object MachineLayout {
     }}
     fun boxes(m:MachineDeployment)=modelBoxes.getValue(m)
     fun containerBounds(m:MachineDeployment)=if(m==MachineDeployment.BIOPROCESSOR)AABB(-2.0,0.0,-2.0,2.0,3.0,1.0)else AABB(-3.0,0.0,-3.0,3.0,7.0,3.0)
-    fun portOffset(m:MachineDeployment,p:Port)=BlockPos(when(p){Port.INPUT->if(m==MachineDeployment.BIOPROCESSOR)-1 else -2;Port.ENERGY->if(m==MachineDeployment.BIOPROCESSOR)1 else 2;else->0},0,if(m==MachineDeployment.BIOPROCESSOR)-1 else -2)
+    fun portOffset(m:MachineDeployment,p:Port)=BlockPos(when(p){Port.OUTPUT->if(m==MachineDeployment.BIOPROCESSOR)-1 else -2;Port.ENERGY->if(m==MachineDeployment.BIOPROCESSOR)1 else 2;else->0},0,if(m==MachineDeployment.BIOPROCESSOR)-1 else -2)
     private val cache=HashMap<Pair<MachineDeployment,Direction>,Map<BlockPos,VoxelShape>>()
     fun shapes(m:MachineDeployment,f:Direction):Map<BlockPos,VoxelShape> = cache.getOrPut(m to f) {
         val result=LinkedHashMap<BlockPos,VoxelShape>()
@@ -31,7 +32,8 @@ object MachineLayout {
             for(y in kotlin.math.floor(box.minY).toInt() until kotlin.math.ceil(box.maxY).toInt())
                 for(z in kotlin.math.floor(box.minZ+.5).toInt() until kotlin.math.ceil(box.maxZ+.5).toInt()) {
                     val local=box.move(.5-x.toDouble(),-y.toDouble(),.5-z.toDouble()).intersect(AABB(0.0,0.0,0.0,1.0,1.0,1.0))
-                    if(local.xsize>1e-6&&local.ysize>1e-6&&local.zsize>1e-6){val pos=BlockPos(x,y,z);result[pos]=Shapes.or(result[pos]?:Shapes.empty(),Shapes.create(local))}
+                    // The model determines occupied cells; every occupied cell is a full block.
+                    if(local.xsize>1e-6&&local.ysize>1e-6&&local.zsize>1e-6)result[BlockPos(x,y,z)]=Shapes.block()
                 }
         result
     }

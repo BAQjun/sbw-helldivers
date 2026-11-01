@@ -172,16 +172,56 @@ object MachineGameTests {
         h.runAtTickTime(106){h.succeed()}
     }
     @JvmStatic @GameTest(template="port_test",timeoutTicks=20)
+    fun fullBlockCellsAndPanelPorts(h:GameTestHelper) {
+        for(m in MachineDeployment.entries)for(facing in listOf(Direction.NORTH,Direction.EAST,Direction.SOUTH,Direction.WEST)) {
+            val root=fixture(h)
+            val be=MachineStructure.place(h.level,root,m,facing,CompoundTag(),null)!!
+            val radius=if(m==MachineDeployment.BIOPROCESSOR)1 else 2
+            // Panel positions are independent of the implementation's port lookup.
+            val input=root.offset(MachineLayout.rotate(BlockPos(0,0,-radius),facing))
+            val output=root.offset(MachineLayout.rotate(BlockPos(-radius,0,-radius),facing))
+            val power=root.offset(MachineLayout.rotate(BlockPos(radius,0,-radius),facing))
+            val ingredient=ItemStack(if(m==MachineDeployment.BIOPROCESSOR)Items.ROTTEN_FLESH else Items.RAW_IRON)
+            val inputHandler=h.level.getCapability(Capabilities.ItemHandler.BLOCK,input,facing)!!
+            val outputHandler=h.level.getCapability(Capabilities.ItemHandler.BLOCK,output,facing)!!
+            h.assertTrue(inputHandler.insertItem(0,ingredient,false).isEmpty,"Centre input panel rejected ingredients: $m $facing")
+            be.inventory.setStackInSlot(9,ItemStack(ModItems.COMMON_SAMPLE.get(),5))
+            h.assertTrue(outputHandler.extractItem(0,5,false).count==5,"Left output panel cannot extract samples: $m $facing")
+            h.assertTrue(h.level.getCapability(Capabilities.EnergyStorage.BLOCK,power,facing)!=null,"Energy panel moved")
+            for(offset in MachineLayout.shapes(m,facing).keys) {
+                val pos=root.offset(offset);val state=h.level.getBlockState(pos)
+                val full=net.minecraft.world.phys.shapes.Shapes.block()
+                val different=net.minecraft.world.phys.shapes.BooleanOp.NOT_SAME
+                h.assertTrue(!net.minecraft.world.phys.shapes.Shapes.joinIsNotEmpty(full,state.getShape(h.level,pos),different),"Selection is a partial block: $m $facing $offset")
+                h.assertTrue(!net.minecraft.world.phys.shapes.Shapes.joinIsNotEmpty(full,state.getCollisionShape(h.level,pos),different),"Collision is a partial block: $m $facing $offset")
+            }
+            MachineStructure.remove(be,false)
+        }
+        h.succeed()
+    }
+    @JvmStatic @GameTest(template="port_test",timeoutTicks=20)
     fun existingMachineCollisionUpgradesWithoutLosingInventory(h:GameTestHelper) {
         val root=fixture(h);val m=MachineDeployment.REFINERY
         val be=MachineStructure.place(h.level,root,m,Direction.NORTH,CompoundTag(),null)!!
         val offset=MachineLayout.shapes(m,Direction.NORTH).keys.first{it.y==3&&it.z>=0}
         val part=h.level.getBlockEntity(root.offset(offset)) as SampleMachineBlockEntity
         part.tearingDown=true;h.level.removeBlock(part.blockPos,false)
-        be.layoutVersion=1;be.inventory.setStackInSlot(0,ItemStack(Items.DIAMOND,7))
-        h.assertTrue(MachineStructure.upgrade(be)&&be.layoutVersion==2,"Existing layout did not upgrade")
+        be.readyAt=0;be.inventory.setStackInSlot(0,ItemStack(Items.RAW_IRON,64));energy(h,root,m).receiveEnergy(150000,false)
+        repeat(13){be.serverTick()}
+        be.inventory.setStackInSlot(9,ItemStack(ModItems.COMMON_SAMPLE.get(),5))
+        val contents=be.contents()
+        val input=root.offset(0,0,-2);val output=root.offset(-2,0,-2)
+        h.level.setBlock(input,h.level.getBlockState(input).setValue(SampleMachineBlock.PORT,MachineLayout.Port.OUTPUT),3)
+        h.level.setBlock(output,h.level.getBlockState(output).setValue(SampleMachineBlock.PORT,MachineLayout.Port.INPUT),3)
+        be.layoutVersion=2
+        // Exercise the real ticking migration, while pausing processing for this tick.
+        be.readyAt=h.level.gameTime+100;be.serverTick()
+        h.assertTrue(be.layoutVersion==MachineLayout.VERSION,"Existing layout did not upgrade")
         h.assertTrue((h.level.getBlockEntity(root.offset(offset)) as? SampleMachineBlockEntity)?.root==root,"Missing model coverage was not restored")
-        h.assertTrue(be.inventory.getStackInSlot(0).count==7,"Upgrade lost input inventory")
+        h.assertTrue(be.contents()==contents,"Upgrade changed inventory, energy or reserved batch/progress")
+        h.assertTrue(h.level.getBlockEntity(root)===be,"Upgrade replaced the inventory owner")
+        h.assertTrue(h.level.getCapability(Capabilities.ItemHandler.BLOCK,input,Direction.NORTH)!!.isItemValid(0,ItemStack(Items.RAW_IRON)),"Existing centre panel stayed output")
+        h.assertTrue(h.level.getCapability(Capabilities.ItemHandler.BLOCK,output,Direction.NORTH)!!.extractItem(0,5,true).count==5,"Existing output panel stayed input")
         h.succeed()
     }
 }

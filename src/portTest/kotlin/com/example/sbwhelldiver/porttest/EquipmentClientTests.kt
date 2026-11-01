@@ -58,7 +58,7 @@ object EquipmentClientTests {
         if(ticks==95)server.execute {val p=server.playerList.getPlayer(player.uuid)!!;p.teleportTo(server.overworld(),.5,83.0,-15.0,0f,0f);p.abilities.flying=true;p.onUpdateAbilities()}
         if(ticks==105){
             check(com.example.sbwhelldiver.client.DeliveryFlightVisuals.beaconJetFrames>0){"Attached beacon jets never rendered"}
-            check(com.example.sbwhelldiver.client.BeaconCallHud.label?.iconKey==Stratagems.equipmentDeployment.id){"Deployed beacon world HUD missing"}
+            check(com.example.sbwhelldiver.client.BeaconCallHud.label==null){"Deployed beacon still shows an arrived world HUD"}
             capture("equipment-deployed.png")
         }
         if(ticks==110)server.execute {
@@ -101,7 +101,7 @@ object EquipmentClientTests {
         if(ticks==395){
             val label=com.example.sbwhelldiver.client.BeaconCallHud.label
             LOGGER.info("EQUIPMENT_DELIVERY_HUD: label={} player={} camera={} entities={}",label,player.position(),mc.gameRenderer.mainCamera.position,mc.level!!.entitiesForRendering().filter{it is MachineContainerEntity||it is EquipmentDeploymentBeaconEntity}.map{e->"${e.type}:${e.position()}:"+when(e){is EquipmentDeploymentBeaconEntity->"${e.phase}:${e.selectedMachine}";is MachineContainerEntity->"${e.phase}:${e.root}";else->""}})
-            check(label?.iconKey==MachineDeployment.BIOPROCESSOR.id){"Container world HUD missing or wrong icon"}
+            check(label==null){"Container landing world HUD was not removed"}
             check(com.example.sbwhelldiver.client.StratagemCooldownClient.displayName(Stratagems.equipmentDeployment).string==net.minecraft.network.chat.Component.translatable(MachineDeployment.BIOPROCESSOR.translation).string){"Arrival HUD still names the beacon"}
             capture("equipment-countdown.png")
         }

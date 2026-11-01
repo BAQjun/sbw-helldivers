@@ -1,5 +1,19 @@
 # 版本记录
 
+## 0.6.0-alpha.5
+
+## 中文
+
+- 设备部署信标展开后不再持续显示“已抵达”；移除集装箱落点的抬头提示和额外蓝色光柱，保留信标自身蓝光及左上角部署倒计时。
+- 修正生物处理器与精炼厂的输入、输出接口对应关系，已部署设备自动更新并保留储能、物品和加工进度。
+- 机器占据的每一格改为完整方块碰撞与选中范围，保留精炼塔的阶梯式占用布局。
+
+## English
+
+- Removed the persistent “Arrived” label from deployed equipment beacons, along with container landing labels and the extra blue beam. The beacon's own beam and the top-left deployment countdown remain.
+- Corrected the Bioprocessor and Refinery input/output port assignments. Existing machines update automatically while preserving energy, inventory and processing progress.
+- Machine cells now use full-block collision and selection shapes, preserving the Refinery's stepped footprint.
+
 ## 0.6.0-alpha.4
 
 ## 中文

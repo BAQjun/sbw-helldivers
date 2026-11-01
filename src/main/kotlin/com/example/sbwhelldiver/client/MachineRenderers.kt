@@ -28,16 +28,11 @@ class SampleMachineRenderer(context:BlockEntityRendererProvider.Context):BlockEn
 class MachineContainerRenderer(context:EntityRendererProvider.Context):EntityRenderer<MachineContainerEntity>(context) {
     override fun getTextureLocation(e:MachineContainerEntity)=BeaconModel.WHITE
     override fun shouldRender(e:MachineContainerEntity,f:net.minecraft.client.renderer.culling.Frustum,x:Double,y:Double,z:Double)=
-        e.shouldRender(x,y,z)&&f.isVisible(e.boundingBox.minmax(net.minecraft.world.phys.AABB(e.x-.2,e.root.y.toDouble(),e.z-.2,e.x+.2,e.root.y+1024.0,e.z+.2)))
+        e.shouldRender(x,y,z)&&f.isVisible(e.boundingBox)
     override fun render(e:MachineContainerEntity,yaw:Float,partial:Float,p:PoseStack,b:MultiBufferSource,light:Int) {
         val time=if(e.phase==MachineContainerEntity.OPENING)((e.level().gameTime-e.phaseStart+partial)/20f).coerceIn(0f,2.4f)else 0f
         p.pushPose();p.mulPose(Axis.YP.rotationDegrees(180f-e.facing.toYRot()));MachineMesh.draw(e.machine.id+"_container","deploy",time,p,b,light)
         if(e.phase==MachineContainerEntity.FALLING&&e.braking)DeliveryFlightVisuals.drawJets(e,partial,p,b)
         p.popPose()
-        if(e.phase==MachineContainerEntity.FALLING){
-            p.pushPose()
-            val renderY=net.minecraft.util.Mth.lerp(partial.toDouble(),e.yo,e.y)
-            p.translate(0.0,e.root.y-renderY,0.0);DeliveryFlightVisuals.beam(p,b);p.popPose()
-        }
     }
 }

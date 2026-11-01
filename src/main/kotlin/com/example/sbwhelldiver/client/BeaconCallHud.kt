@@ -4,7 +4,6 @@ import com.example.sbwhelldiver.MOD_ID
 import com.example.sbwhelldiver.entity.AbstractHellpodEntity
 import com.example.sbwhelldiver.entity.StratagemMarker
 import com.example.sbwhelldiver.stratagem.Stratagems
-import com.example.sbwhelldiver.survival.*
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.phys.Vec3
 import com.mojang.blaze3d.platform.NativeImage
@@ -47,8 +46,7 @@ object BeaconCallHud : ResourceManagerReloadListener {
         whiteIcons.values.forEach { mc.textureManager.release(it) }
         whiteIcons.clear(); monochromeIconCount = 0
         // Derive a white silhouette only for this label; preserve coloured inventory/loadout cards.
-        val sources=(Stratagems.definitions+Stratagems.equipmentDeployment).map{it.id to it.icon}+
-            MachineDeployment.entries.map{it.id to ResourceLocation.fromNamespaceAndPath(MOD_ID,"textures/gui/machines/${it.id}_marker.png")}
+        val sources=(Stratagems.definitions+Stratagems.equipmentDeployment).map{it.id to it.icon}
         sources.distinctBy{it.first}.forEach { (id,texture) ->
             manager.getResource(texture).orElseThrow().open().use { stream ->
                 NativeImage.read(stream).use { source ->
@@ -107,14 +105,6 @@ object BeaconCallHud : ResourceManagerReloadListener {
                 val ongoing=entity.isSustainedOrbital&&entity.orbitalFiredAt>=0
                 projectCandidate(entity,entity.position(),def.id,def.translation,(if(ongoing)entity.orbitalActivityLeft else entity.ticksLeft).toLong(),entity.hasArrived,ongoing)
             }
-            is EquipmentDeploymentBeaconEntity->when(entity.phase) {
-                EquipmentDeploymentBeaconEntity.ACTIVE->projectCandidate(entity,entity.deploymentAnchor,Stratagems.equipmentDeployment.id,Stratagems.equipmentDeployment.translation,0,true)
-                EquipmentDeploymentBeaconEntity.COUNTDOWN,EquipmentDeploymentBeaconEntity.RETRACTING->entity.selectedMachine?.let{m->
-                    projectCandidate(entity,entity.deploymentAnchor,m.id,m.translation,(entity.deploymentEnd-level.gameTime).coerceAtLeast(0))
-                }
-            }
-            is MachineContainerEntity->if(entity.phase==MachineContainerEntity.FALLING)
-                projectCandidate(entity,Vec3.atBottomCenterOf(entity.root),entity.machine.id,entity.machine.translation,(entity.arrival-level.gameTime).coerceAtLeast(0))
         }
     }
 

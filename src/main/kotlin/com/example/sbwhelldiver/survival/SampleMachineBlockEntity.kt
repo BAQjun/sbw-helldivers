@@ -16,7 +16,7 @@ class SampleMachineBlockEntity(pos:BlockPos,state:BlockState):BlockEntity(Machin
     var root:BlockPos=pos
     var tearingDown=false
     var readyAt=0L
-    var layoutVersion=2
+    var layoutVersion=MachineLayout.VERSION
     var energy=0;private set
     var progress=0;private set
     var duration=100;private set
@@ -91,7 +91,7 @@ class SampleMachineBlockEntity(pos:BlockPos,state:BlockState):BlockEntity(Machin
             if(l.gameTime%40L==0L && l.hasChunkAt(root) && master()==null)l.removeBlock(blockPos,false)
             return
         }
-        if(layoutVersion<2 && !MachineStructure.upgrade(this))return
+        if(layoutVersion<MachineLayout.VERSION && !MachineStructure.upgrade(this))return
         if(tearingDown || l.gameTime<readyAt)return
         if(l.gameTime%5L==0L)autoItems()
         val before=working;working=false

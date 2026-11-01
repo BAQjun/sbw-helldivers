@@ -21,19 +21,19 @@ object MachineStructure {
         if(target.keys.any{offset->val pos=root.offset(offset);pos !in old && !level.getBlockState(pos).canBeReplaced()}) {
             remove(master,true);return false
         }
-        master.layoutVersion=2;master.setChanged()
         for(pos in old)if(pos.subtract(root) !in target.keys){
             (level.getBlockEntity(pos) as? SampleMachineBlockEntity)?.tearingDown=true
             level.setBlock(pos,Blocks.AIR.defaultBlockState(),3);level.invalidateCapabilities(pos)
         }
         for(offset in target.keys) {
-            val pos=root.offset(offset);if(pos in old)continue
+            val pos=root.offset(offset)
             val port=MachineLayout.Port.entries.firstOrNull{it!=MachineLayout.Port.NONE&&MachineLayout.rotate(MachineLayout.portOffset(master.machine,it),master.facing)==offset}?:MachineLayout.Port.NONE
-            level.setBlock(pos,master.blockState.setValue(SampleMachineBlock.MASTER,false).setValue(SampleMachineBlock.PORT,port),3)
+            val state=master.blockState.setValue(SampleMachineBlock.MASTER,offset==BlockPos.ZERO).setValue(SampleMachineBlock.PORT,port)
+            if(level.getBlockState(pos)!=state)level.setBlock(pos,state,3)
             (level.getBlockEntity(pos) as SampleMachineBlockEntity).let{it.root=root;it.setChanged();it.sync()}
             level.invalidateCapabilities(pos)
         }
-        master.sync();return true
+        master.layoutVersion=MachineLayout.VERSION;master.setChanged();master.sync();return true
     }
     private val order=listOf(Direction.EAST,Direction.SOUTH,Direction.WEST,Direction.NORTH)
     fun choose(level:ServerLevel,root:BlockPos,m:MachineDeployment,preferred:Direction,ignore:Entity?=null):Direction? =
