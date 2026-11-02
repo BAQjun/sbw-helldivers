@@ -1,5 +1,15 @@
 # 版本记录
 
+## 0.6.0-alpha.11
+
+## 中文
+
+- 修复设备部署信标的分段碰撞框在调试显示时偏离信标的问题。
+
+## English
+
+- Fixed equipment deployment beacon collision-part debug outlines drifting away from the beacon.
+
 ## 0.6.0-alpha.10
 
 ## 中文

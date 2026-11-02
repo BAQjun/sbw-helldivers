@@ -71,6 +71,9 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
             val points=listOf(box.minX,box.maxX).flatMap{a->listOf(box.minZ,box.maxZ).map{c->Vec3(a,0.0,c).yRot(-yRot*(Math.PI/180).toFloat())}}
             val dy=if(i>=3)moving else 0.0
             part.setPos(origin)
+            // Vanilla interpolates each multipart debug box against the parent's previous position.
+            // Parts are not ticked independently, so their previous coordinates must follow it.
+            part.xOld=xOld;part.yOld=yOld;part.zOld=zOld
             part.boundingBox=net.minecraft.world.phys.AABB(points.minOf{it.x}+x,box.minY+y+dy,points.minOf{it.z}+z,points.maxOf{it.x}+x,box.maxY+y+dy,points.maxOf{it.z}+z)
         }
     }

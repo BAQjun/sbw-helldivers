@@ -79,14 +79,18 @@ object EquipmentClientTests {
             e.moveTo(.5,80.0,.5,EquipmentBeaconGeometry.deploymentYaw(p.position(),landing,p.yRot),0f);e.configure(80.0,l.gameTime+35,p.uuid);l.addFreshEntity(e);device=e.uuid
             LOGGER.info("EQUIPMENT_FIXTURE_READY")
         }
+        val collisionOnly=java.lang.Boolean.getBoolean("sbw_helldiver.equipmentCollisionOnly")
+        if(ticks==154&&collisionOnly)mc.entityRenderDispatcher.setRenderHitBoxes(true)
         if(ticks==155)server.execute {val p=server.playerList.getPlayer(player.uuid)!!;p.teleportTo(server.overworld(),.5,83.0,-15.0,0f,0f);p.abilities.flying=true;p.onUpdateAbilities()}
         if(ticks==166)server.execute {val p=server.playerList.getPlayer(player.uuid)!!;p.teleportTo(server.overworld(),4.0,80.0,5.0,142f,-4f)}
         if(ticks==169)capture("equipment-pedestal-hidden.png")
         if(ticks==165){
             check(com.example.sbwhelldiver.client.DeliveryFlightVisuals.beaconJetFrames>0){"Attached beacon jets never rendered"}
             check(com.example.sbwhelldiver.client.BeaconCallHud.label==null){"Deployed beacon still shows an arrived world HUD"}
-            for(effect in listOf("sfx_hellpod_bolts_layer_a","sfx_hellpod_bolts_layer_b","sfx_hellpod_entry_layer_03","sfx_hellpod_entry_layer_01","sfx_hellpod_entry_layer_02","sfx_hellpod_impact","sfx_hellpod_cap_release"))check(arrivalSounds.count{it==effect}==1){"Missing or repeated pod sound $effect: $arrivalSounds"}
+            if(!collisionOnly)for(effect in listOf("sfx_hellpod_bolts_layer_a","sfx_hellpod_bolts_layer_b","sfx_hellpod_entry_layer_03","sfx_hellpod_entry_layer_01","sfx_hellpod_entry_layer_02","sfx_hellpod_impact","sfx_hellpod_cap_release"))check(arrivalSounds.count{it==effect}==1){"Missing or repeated pod sound $effect: $arrivalSounds"}
             val e=mc.level!!.entitiesForRendering().filterIsInstance<EquipmentDeploymentBeaconEntity>().single()
+            // The renderer interpolates multipart previous coordinates; drifting values render ghost boxes.
+            check(e.parts.all{it.xOld==e.xOld&&it.yOld==e.yOld&&it.zOld==e.zOld}){"Beacon multipart debug positions drifted from the parent"}
             val shapes=mc.level!!.getEntityCollisions(player,net.minecraft.world.phys.AABB(e.x-.1,e.y+.4,e.z-.1,e.x+.1,e.y+1,e.z+.1))
             check(shapes.isNotEmpty()){"Client did not register physical beacon collision"}
             val old=player.position();val flying=player.abilities.flying
@@ -115,6 +119,7 @@ object EquipmentClientTests {
             capture("equipment-menu.png")
             server.execute{server.playerList.getPlayer(player.uuid)!!.setGameMode(GameType.SURVIVAL)}
         }
+        if(ticks==200&&collisionOnly){LOGGER.info("EQUIPMENT_COLLISION_DEBUG_AND_TERMINAL_VERIFIED");mc.stop();return}
         fun key(d:Int){(mc.screen as? EquipmentTerminalScreen)?.keyPressed(listOf(GLFW.GLFW_KEY_UP,GLFW.GLFW_KEY_RIGHT,GLFW.GLFW_KEY_DOWN,GLFW.GLFW_KEY_LEFT)[d],0,0)?:error("No terminal at $ticks")}
         if(ticks==198)key(1) // Invalid selection; subsequent valid arrows remain usable during the feedback.
         if(ticks==227)key(0) // Invalid confirmation command on the material page.
