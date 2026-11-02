@@ -28,7 +28,7 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
     val prefix get()=entityData.get(PREFIX).mapNotNull { it.digitToIntOrNull() }
     val error get()=entityData.get(ERROR)
     val inputErrorAt get()=entityData.get(INPUT_ERROR_AT)
-    val paid get()=phase>=RETRACTING
+    val paid get()=phase==COUNTDOWN||phase==RETRACTING||phase==FINISHED
     val capReleased get()=entityData.get(CAP_RELEASED)
     val deploymentEnd get()=entityData.get(DEPLOYMENT_END)
     val deploymentAnchor get()=Vec3(x,entityData.get(GROUND).toDouble(),z)
@@ -43,7 +43,37 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
     private var born=0L
     private var reservedFacing=net.minecraft.core.Direction.NORTH
     private var containerSent=false
-    init { isNoGravity=true;noPhysics=true }
+    private lateinit var collisionParts:Array<EquipmentBeaconCollisionPart>
+    init {
+        isNoGravity=true;noPhysics=true
+        collisionParts=Array(6){EquipmentBeaconCollisionPart(this)}
+        setId(ENTITY_COUNTER.getAndAdd(collisionParts.size+1)+1)
+    }
+    override fun isMultipartEntity()=true
+    override fun getParts()=collisionParts
+    override fun setId(value:Int){super.setId(value);if(this::collisionParts.isInitialized)collisionParts.forEachIndexed{i,p->p.id=value+i+1}}
+    override fun setPos(x:Double,y:Double,z:Double){super.setPos(x,y,z);if(this::collisionParts.isInitialized)updateCollisionParts()}
+    fun payloadTravelOffset():Double {
+        val age=(level().gameTime-phaseStart).coerceAtLeast(0)/20.0
+        val remaining=when(phase){
+            PACKED,IMPACT->1.0
+            DEPLOYING->1-((age-.45)/.60).coerceIn(0.0,1.0)
+            RETRACTING->((age*3.95/3-1.55)/1.5).coerceIn(0.0,1.0)
+            FINISHED->1.0
+            else->0.0
+        }
+        return -EquipmentBeaconGeometry.liftTravel*remaining
+    }
+    fun updateCollisionParts() {
+        val origin=position();val moving=payloadTravelOffset()
+        for((i,part)in collisionParts.withIndex()){
+            val box=EquipmentBeaconGeometry.collision[i]
+            val points=listOf(box.minX,box.maxX).flatMap{a->listOf(box.minZ,box.maxZ).map{c->Vec3(a,0.0,c).yRot(-yRot*(Math.PI/180).toFloat())}}
+            val dy=if(i>=3)moving else 0.0
+            part.setPos(origin)
+            part.boundingBox=net.minecraft.world.phys.AABB(points.minOf{it.x}+x,box.minY+y+dy,points.minOf{it.z}+z,points.maxOf{it.x}+x,box.maxY+y+dy,points.maxOf{it.z}+z)
+        }
+    }
     override fun defineSynchedData(b:SynchedEntityData.Builder) {
         b.define(PHASE,PACKED);b.define(START,-1L);b.define(MACHINE,-1);b.define(PREFIX,"");b.define(ERROR,0);b.define(INPUT_ERROR_AT,-1L)
         b.define(GROUND,0f);b.define(ARRIVAL,-1L);b.define(BORN,-1L)
@@ -60,9 +90,10 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
         val landing=entityData.get(GROUND)+.0956
         return com.example.sbwhelldiver.entity.HellpodFlight.height(now,entityData.get(BORN),entityData.get(ARRIVAL),landing+com.example.sbwhelldiver.entity.AbstractHellpodEntity.descentSpawnHeight()+5.45,landing,com.example.sbwhelldiver.entity.AbstractHellpodEntity.descentBrakeHeight())
     }
+    val flightLaunch get()=entityData.get(BORN)
     val flightArrival get()=entityData.get(ARRIVAL)
     val flightBraking get()=level().gameTime>=com.example.sbwhelldiver.entity.HellpodFlight.brakeStart(entityData.get(BORN),flightArrival)
-    fun sampleClientFlight(){if(phase==PACKED){xo=x;yo=y;zo=z;setPos(x,heightAt(level().gameTime.toDouble()),z)}}
+    fun sampleClientFlight(){if(phase==PACKED){xo=x;yo=y;zo=z;setPos(x,heightAt(level().gameTime.toDouble()),z)};updateCollisionParts()}
     fun localToWorld(v:Vec3)=v.yRot(-yRot*(Math.PI/180).toFloat()).add(position())
     fun screenCenter()=localToWorld(EquipmentBeaconGeometry.center)
     fun screenNormal()=EquipmentBeaconGeometry.normal.yRot(-yRot*(Math.PI/180).toFloat())
@@ -187,12 +218,14 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
             if(p==null||nonce==null||!valid(p,nonce!!))closeTerminal()
         }
         when(phase) {
-            PACKED->if(now>=arrival){setPos(x,groundY+.0956,z);transition(DEPLOYING,now);releaseCap()}
-            DEPLOYING->if(now-phaseStart>=53)transition(ACTIVE,now)
+            PACKED->if(now>=arrival){setPos(x,groundY+.0956,z);transition(IMPACT,arrival)}
+            IMPACT->if(now-phaseStart>=10){transition(DEPLOYING,arrival+10);releaseCap()}
+            DEPLOYING->if(now-phaseStart>=44)transition(ACTIVE,now)
             COUNTDOWN->if(now>=deploymentEnd-60)transition(RETRACTING,deploymentEnd-60)
             RETRACTING->if(now>=deploymentEnd){transition(FINISHED,now);discard();return}
             FINISHED->{discard();return}
         }
+        updateCollisionParts()
     }
 
     private fun releaseCap(){
@@ -206,9 +239,9 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
         reservedFacing=net.minecraft.core.Direction.from2DDataValue(n.getInt("ReservedFacing"));containerSent=n.getBoolean("ContainerSent")
         owner=if(n.hasUUID("Owner"))n.getUUID("Owner")else null
         entityData.set(GROUND,groundY.toFloat());entityData.set(ARRIVAL,arrival);entityData.set(BORN,born)
-        entityData.set(PHASE,n.getInt("Phase").coerceIn(PACKED,FINISHED));entityData.set(START,n.getLong("Start"));entityData.set(MACHINE,n.getInt("Machine").coerceIn(-1,1))
+        entityData.set(PHASE,n.getInt("Phase").coerceIn(PACKED,IMPACT));entityData.set(START,n.getLong("Start"));entityData.set(MACHINE,n.getInt("Machine").coerceIn(-1,1))
         entityData.set(PREFIX,"");entityData.set(ERROR,0);entityData.set(INPUT_ERROR_AT,-1L)
-        entityData.set(CAP_RELEASED,if(n.contains("CapReleased"))n.getBoolean("CapReleased")else phase>=DEPLOYING)
+        entityData.set(CAP_RELEASED,if(n.contains("CapReleased"))n.getBoolean("CapReleased")else phase!=PACKED&&phase!=IMPACT)
         entityData.set(DEPLOYMENT_END,if(n.contains("DeploymentEnd"))n.getLong("DeploymentEnd") else phaseStart+if(phase==RETRACTING)60 else 200)
     }
     override fun addAdditionalSaveData(n:CompoundTag) {
@@ -219,7 +252,7 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
         n.putInt("ReservedFacing",reservedFacing.get2DDataValue());n.putBoolean("ContainerSent",containerSent)
     }
     companion object {
-        const val PACKED=0;const val DEPLOYING=1;const val ACTIVE=2;const val RETRACTING=3;const val COUNTDOWN=4;const val FINISHED=5
+        const val PACKED=0;const val DEPLOYING=1;const val ACTIVE=2;const val RETRACTING=3;const val COUNTDOWN=4;const val FINISHED=5;const val IMPACT=6
         private val PHASE=SynchedEntityData.defineId(EquipmentDeploymentBeaconEntity::class.java,EntityDataSerializers.INT)
         private val START=SynchedEntityData.defineId(EquipmentDeploymentBeaconEntity::class.java,EntityDataSerializers.LONG)
         private val MACHINE=SynchedEntityData.defineId(EquipmentDeploymentBeaconEntity::class.java,EntityDataSerializers.INT)

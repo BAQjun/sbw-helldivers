@@ -40,10 +40,7 @@ object HellpodAnimations {
         // has not yet been rendered and its animation context is still unavailable.
         if (airborne && !s.entryStarted) {
             s.entryStarted = true
-            SoundTimeline.schedule(entity,
-                if(entity is com.example.sbwhelldiver.entity.PlayerHellpodEntity && PlayerDropClient.belongsToLocalPlayer(entity)) PlayerDropAudio.entryCues
-                else SoundTimeline.cues(entity, "animation.hellpod.retro_landing_preview").filter { it.time <= 0.3 },
-                entity.phaseAge, group = "entry", catchUp = true)
+            HellpodArrivalAudio.incoming(entity,entity.phaseAge)
         }
         if (!airborne && !s.entryStopped) {
             stopDescentAudio(entity)
@@ -53,7 +50,7 @@ object HellpodAnimations {
         // Trigger landing audio at the actual local collision time and never replay it on that packet.
         if (s.entryStarted && entity.scheduledFlight && flightTime >= entity.impactDeadline && !s.impactStarted) {
             s.impactStarted = true
-            SoundTimeline.schedule(entity, "animation.hellpod.impact")
+            HellpodArrivalAudio.impact(entity)
         }
         if(airborne && entity.braking && entity is com.example.sbwhelldiver.entity.PlayerHellpodEntity){
             if(!s.playerRetroStarted){
@@ -73,7 +70,7 @@ object HellpodAnimations {
                 stopDescentAudio(entity)
                 if (s.phase == Phase.FALLING && entity.phase != Phase.IMPACT && !s.impactStarted) {
                     s.impactStarted = true
-                    SoundTimeline.schedule(entity, "animation.hellpod.impact")
+                    HellpodArrivalAudio.impact(entity)
                 }
             }
             stopPod(ctx, entity)
@@ -98,7 +95,7 @@ object HellpodAnimations {
                     stopDescentAudio(entity)
                     if (!s.impactStarted) {
                         s.impactStarted = true
-                        SoundTimeline.schedule(entity, "animation.hellpod.impact", entity.phaseAge, catchUp = !initial)
+                        HellpodArrivalAudio.impact(entity,entity.phaseAge,catchUp=!initial)
                     }
                 }
                 Phase.DEPLOYING -> {
@@ -152,14 +149,7 @@ object HellpodAnimations {
         SoundTimeline.tick(entity)
     }
 
-    private fun stopDescentAudio(entity: AbstractHellpodEntity) {
-        SoundTimeline.cancel(entity, "entry")
-        SoundTimeline.cancel(entity, "player_retro")
-        SoundTimeline.stopMatching(entity,if(entity is com.example.sbwhelldiver.entity.PlayerHellpodEntity) 2 else 0) {
-            it.startsWith("sfx_hellpod_entry_") || it.startsWith("sfx_hellpod_player_") || it.startsWith("sfx_hellpod_retro") ||
-                it.startsWith("sfx_hellpod_thruster")
-        }
-    }
+    private fun stopDescentAudio(entity: AbstractHellpodEntity) = HellpodArrivalAudio.stopDescent(entity)
     private fun stopPod(ctx: VehicleAnimationContext<*>, entity: AbstractHellpodEntity) {
         listOf(entity.packedAnimation, entity.deployAnimation, entity.retractAnimation,
             IGNITE, BURN, SHUTDOWN, "animation.hellpod.impact", DEPLOYED, RETRACTED, DESTROYED,
@@ -213,5 +203,5 @@ object HellpodAnimations {
         s.firing = false
     }
 
-    fun clear() { states.clear(); SoundTimeline.clear();FlameSentryClient.clear();LaserSentryClient.clear();TeslaTowerClient.clear() }
+    fun clear() { states.clear(); HellpodArrivalAudio.clear(); SoundTimeline.clear();FlameSentryClient.clear();LaserSentryClient.clear();TeslaTowerClient.clear() }
 }

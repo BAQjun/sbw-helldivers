@@ -77,7 +77,30 @@ edges=sorted([(np.linalg.norm(q-v[0]),q-v[0])for q in corners if np.linalg.norm(
 up=edges[0][1]/edges[0][0]
 if up[1]<0:up=-up
 right=np.cross(up,normal);right/=np.linalg.norm(right)
-meta=dict(center=rounded(center),normal=rounded(normal),up=rounded(up),right=rounded(right),width=round(edges[1][0],6),height=round(edges[0][0],6),beam=[0,4.23,0])
+meta=dict(center=rounded(center),normal=rounded(normal),up=rounded(up),right=rounded(right),width=round(edges[1][0],6),height=round(edges[0][0],6),beam=[0,0,0])
+# Export physical landmarks from the same posed mesh used by rendering and the terminal.
+def bounds_named(fragment):
+ points=[]
+ for i,node in enumerate(g['nodes']):
+  if fragment in node.get('name','') and nodes[i]['mesh']>=0:
+   for primitive in meshes[nodes[i]['mesh']]:
+    pp=np.array(primitive['p']);points.extend((mats[i]@np.c_[pp,np.ones(len(pp))].T).T[:,:3])
+ assert points,fragment
+ return [rounded(np.min(points,axis=0)),rounded(np.max(points,axis=0))]
+base=bounds_named('boss_底座洁净配色')
+assert base[1][1]+.0956<.001,('Pedestal still protrudes above the landing surface',base)
+body=bounds_named('boss_g_landingzone_beacon_1')
+mid=bounds_named('tier_2_g_landingzone_beacon_1')
+top=bounds_named('tier_3_g_landingzone_beacon_1')
+meta['beam']=[0,top[1][1]-.004,0]
+# Three low strips approximate the round rim without blocking the upper screen area.
+meta['collision']=[
+ [[-1.10,-5.52,-1.10],[1.10,.13,1.10]],
+ [[-1.325,-5.52,-.54],[1.325,.13,.54]],
+ [[-.54,-5.52,-1.325],[.54,.13,1.325]],body,mid,top]
+elevator=next(i for i,n in enumerate(g['nodes'])if n.get('name')=='pod_elevator')
+meta['lift_travel']=round(mats[elevator][1,3]-pose('packed',0)[elevator][1,3],7)
+meta['pedestal_bounds']=base
 retro=pose('retro_burn',0)
 meta['nozzles']=[]
 for i,node in enumerate(g['nodes']):

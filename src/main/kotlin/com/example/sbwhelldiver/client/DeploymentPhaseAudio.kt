@@ -17,7 +17,6 @@ object DeploymentPhaseAudio {
         }
         if(phases.put(entity,phase)==phase)return
         SoundTimeline.cancel(entity,"equipment-motion")
-        SoundTimeline.stopMatching(entity){it.startsWith("sfx_equipment_beacon_")||it=="sfx_emplacement_retract_mechanism"}
         val animation=when(entity) {
             is EquipmentDeploymentBeaconEntity->when(phase.value) {
                 EquipmentDeploymentBeaconEntity.DEPLOYING->"beacon.deploy"
@@ -27,6 +26,7 @@ object DeploymentPhaseAudio {
             is MachineContainerEntity->if(phase.value==MachineContainerEntity.OPENING)"container.deploy" else return
             else->return
         }
+        SoundTimeline.stopMatching(entity){it.startsWith("sfx_equipment_beacon_")||it=="sfx_emplacement_retract_mechanism"}
         val age=(entity.level().gameTime-phase.start).coerceAtLeast(0).coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
         // Joining/tracking midway through an animation must not replay earlier motions.
         val cues=SoundTimeline.cues("equipment_delivery",animation).filter{kotlin.math.ceil(it.time*20-1e-7).toInt()>=age || age<=2}

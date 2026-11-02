@@ -11,7 +11,8 @@
     "SmokeTargetConditionsMixin",
     "ExplosionShakeMixin",
     "StratagemBlockDamageMixin",
-    "StratagemExplosionBuilderMixin"
+    "StratagemExplosionBuilderMixin",
+    "EquipmentBeaconLithiumCollisionMixin"
   ],
   "client": [
     "EagleProjectileRenderMixin",

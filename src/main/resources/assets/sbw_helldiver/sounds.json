@@ -5482,23 +5482,31 @@
   "sfx_equipment_beacon_unfold": {
     "sounds": [
       {
-        "name": "sbw_helldiver:machines/deployment/equipment_beacon_unfold_0",
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/232037740",
         "volume": 0.4168693837564011,
+        "pitch": 1.0,
+        "stream": false,
         "attenuation_distance": 96
       },
       {
-        "name": "sbw_helldiver:machines/deployment/equipment_beacon_unfold_1",
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/450260669",
         "volume": 0.33496543915782767,
+        "pitch": 1.0,
+        "stream": false,
         "attenuation_distance": 96
       },
       {
-        "name": "sbw_helldiver:machines/deployment/equipment_beacon_unfold_2",
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/38073558",
         "volume": 0.29853826189179594,
+        "pitch": 1.0,
+        "stream": false,
         "attenuation_distance": 96
       },
       {
-        "name": "sbw_helldiver:machines/deployment/equipment_beacon_unfold_3",
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/901331668",
         "volume": 0.3981071705534972,
+        "pitch": 1.0,
+        "stream": false,
         "attenuation_distance": 96
       }
     ]
@@ -5506,23 +5514,31 @@
   "sfx_equipment_beacon_fold": {
     "sounds": [
       {
-        "name": "sbw_helldiver:machines/deployment/equipment_beacon_fold_0",
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/670439201",
         "volume": 0.3801893960596662,
+        "pitch": 1.0,
+        "stream": false,
         "attenuation_distance": 96
       },
       {
-        "name": "sbw_helldiver:machines/deployment/equipment_beacon_fold_1",
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/1043580129",
         "volume": 0.33496543915782767,
+        "pitch": 1.0,
+        "stream": false,
         "attenuation_distance": 96
       },
       {
-        "name": "sbw_helldiver:machines/deployment/equipment_beacon_fold_2",
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/239816353",
         "volume": 0.36307805427179574,
+        "pitch": 1.0,
+        "stream": false,
         "attenuation_distance": 96
       },
       {
-        "name": "sbw_helldiver:machines/deployment/equipment_beacon_fold_3",
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/890058738",
         "volume": 0.38459178151752144,
+        "pitch": 1.0,
+        "stream": false,
         "attenuation_distance": 96
       }
     ]

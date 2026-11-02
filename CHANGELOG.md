@@ -1,5 +1,23 @@
 # 版本记录
 
+## 0.6.0-alpha.8
+
+## 中文
+
+- 加快信标本体展开动画，展开与收回机械音效恢复原速播放。
+- 设备部署信标的下落与落地音效改用其他空投仓的共同流程，补齐落地停顿与开仓音效，移除额外叠加的反推音效。
+- 降低信标升起高度，使下部宽底座留在空投仓内；同步调整屏幕交互和顶部蓝光位置。
+- 为设备部署信标补齐空投仓与主体的分段碰撞，并随展开、收回动作同步变化，兼容 Lithium。
+- 信标开始回收时立即关闭顶部蓝色光柱。
+
+## English
+
+- Speed up the beacon unfolding animation and play unfolding/retraction sounds at their original speed.
+- Equipment deployment beacons now share the incoming and impact audio flow used by other hellpods, including the landing pause and opening sounds, without extra retro-thruster layers.
+- Lowered the beacon lift to keep its wide lower pedestal inside the pod, with matching terminal interaction and blue beam positions.
+- Added multipart collision for the pod and beacon body that follows deployment and retraction, including Lithium compatibility.
+- The blue beam now switches off as soon as beacon retraction begins.
+
 ## 0.6.0-alpha.7
 
 ## 中文

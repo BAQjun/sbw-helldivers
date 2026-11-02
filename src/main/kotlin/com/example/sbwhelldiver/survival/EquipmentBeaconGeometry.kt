@@ -9,6 +9,11 @@ object EquipmentBeaconGeometry {
     private fun vector(key:String)=data.getAsJsonArray(key).let { Vec3(it[0].asDouble,it[1].asDouble,it[2].asDouble) }
     val center=vector("center");val normal=vector("normal");val up=vector("up");val right=vector("right")
     val width=data["width"].asDouble;val height=data["height"].asDouble
+    val beam=vector("beam")
+    val liftTravel=data["lift_travel"].asDouble
+    val collision=data.getAsJsonArray("collision").map{raw->val a=raw.asJsonArray;val lo=a[0].asJsonArray;val hi=a[1].asJsonArray
+        net.minecraft.world.phys.AABB(lo[0].asDouble,lo[1].asDouble,lo[2].asDouble,hi[0].asDouble,hi[1].asDouble,hi[2].asDouble)
+    }
     val screenYaw=Math.toDegrees(kotlin.math.atan2(-normal.x,normal.z)).toFloat()
     val nozzles=data.getAsJsonArray("nozzles").map{raw->val n=raw.asJsonObject
         fun v(key:String)=n.getAsJsonArray(key).let{Vec3(it[0].asDouble,it[1].asDouble,it[2].asDouble)}

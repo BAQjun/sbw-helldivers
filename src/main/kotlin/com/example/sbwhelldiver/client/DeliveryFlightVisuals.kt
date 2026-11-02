@@ -19,7 +19,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent
 /** The existing hellpod sound recipes and nozzle sprites also drive equipment delivery. */
 @EventBusSubscriber(modid=com.example.sbwhelldiver.MOD_ID,value=[Dist.CLIENT])
 object DeliveryFlightVisuals {
-    private data class State(var entry:Boolean=false,var brake:Boolean=false,var landed:Boolean=false)
+    private data class State(var entry:Boolean=false,var landed:Boolean=false)
     private val states=WeakHashMap<Entity,State>()
     // Tick-culling mods may suspend an incoming entity while it is above the
     // camera. Its trajectory, sound and exhaust must continue independently.
@@ -33,13 +33,14 @@ object DeliveryFlightVisuals {
     fun tick(entity:Entity,falling:Boolean,braking:Boolean,arrival:Long,machine:MachineDeployment?=null) {
         val s=states.getOrPut(entity){State()};val now=entity.level().gameTime
         val airborne=falling&&now<arrival
-        if(airborne&&!s.entry){s.entry=true;SoundTimeline.schedule(entity,SoundTimeline.cues(entity,"animation.hellpod.retro_landing_preview").filter{it.time<=.3},group="delivery-entry",catchUp=true)}
-        if(airborne&&braking&&!s.brake){s.brake=true;SoundTimeline.schedule(entity,"animation.hellpod.retro_ignite",group="delivery-retro");SoundTimeline.schedule(entity,"animation.hellpod.audio_retro_loop_start",group="delivery-burn")}
-        if(!airborne && s.entry&&!s.landed){
+        if(airborne&&!s.entry){
+            s.entry=true
+            val launch=when(entity){is EquipmentDeploymentBeaconEntity->entity.flightLaunch;is MachineContainerEntity->entity.launch;else->now}
+            HellpodArrivalAudio.incoming(entity,(now-launch).coerceIn(0,Int.MAX_VALUE.toLong()).toInt())
+        }
+        if(!airborne&&!s.landed&&(s.entry||entity is EquipmentDeploymentBeaconEntity&&entity.phase==EquipmentDeploymentBeaconEntity.IMPACT&&now-arrival<=2)){
             s.landed=true
-            SoundTimeline.cancel(entity,"delivery-entry");SoundTimeline.cancel(entity,"delivery-retro");SoundTimeline.cancel(entity,"delivery-burn")
-            SoundTimeline.stopMatching(entity){it.startsWith("sfx_hellpod_entry_")||it.startsWith("sfx_hellpod_retro_")||it.startsWith("sfx_hellpod_thruster")}
-            SoundTimeline.schedule(entity,"animation.hellpod.impact")
+            HellpodArrivalAudio.impact(entity)
             HellpodLandingShake.impact(entity)
         }
         if(airborne&&braking) {

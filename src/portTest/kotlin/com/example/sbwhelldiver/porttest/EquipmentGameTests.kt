@@ -25,12 +25,39 @@ object EquipmentGameTests {
         @Suppress("UNCHECKED_CAST") val players=field.get(level.server.playerList) as MutableMap<java.util.UUID,net.minecraft.server.level.ServerPlayer>
         players[player.uuid]=player
         val e=ModEntities.EQUIPMENT_BEACON.get().create(level)!!;e.setPos(at);e.configure(at.y,level.gameTime+1,player.uuid);level.addFreshEntity(e)
-        h.runAfterDelay(60){
+        h.runAfterDelay(75){
             val eye=e.screenCenter().add(e.screenNormal().scale(1.1));val look=e.screenCenter().subtract(eye)
             player.moveTo(eye.x,eye.y-player.eyeHeight,eye.z,Math.toDegrees(kotlin.math.atan2(-look.x,look.z)).toFloat(),(-Math.toDegrees(kotlin.math.atan2(look.y,look.horizontalDistance()))).toFloat())
             h.assertTrue(e.openTerminal(player),"Cannot open test terminal")
             val token=e.javaClass.getDeclaredField("nonce").also{it.isAccessible=true}.get(e) as java.util.UUID
             ready(e,player,token,{players.remove(player.uuid)})
+        }
+    }
+    @JvmStatic @GameTest(template="port_test",timeoutTicks=140)
+    fun beaconHasPhysicalCollisionAndNoOrphanParts(h:GameTestHelper) {
+        val level=h.level;val at=Vec3.atBottomCenterOf(h.absolutePos(BlockPos(5,12,5)))
+        val e=ModEntities.EQUIPMENT_BEACON.get().create(level)!!
+        e.setPos(at);e.configure(at.y,level.gameTime+2,null);level.addFreshEntity(e)
+        h.runAfterDelay(5){h.assertTrue(e.phase==EquipmentDeploymentBeaconEntity.IMPACT&&!e.capReleased,"Cap opened without the normal landing pause")}
+        h.runAfterDelay(15){h.assertTrue(e.capReleased&&e.phase==EquipmentDeploymentBeaconEntity.DEPLOYING,"Cap did not eject after the landing pause")}
+        h.runAfterDelay(80){
+            h.assertTrue(e.phase==EquipmentDeploymentBeaconEntity.ACTIVE,"Beacon did not finish deploying")
+            val probe=net.minecraft.world.entity.decoration.ArmorStand(level,e.x-2,e.y+.3,e.z)
+            probe.isNoGravity=true
+            probe.move(net.minecraft.world.entity.MoverType.SELF,Vec3(4.0,0.0,0.0))
+            h.assertTrue(probe.x<e.x-.6,"Real entity movement passed through the beacon body")
+            val open=net.minecraft.world.phys.AABB(e.x+.95,e.y+.4,e.z-.05,e.x+1.05,e.y+1.4,e.z+.05)
+            h.assertTrue(level.getEntityCollisions(null,open).isEmpty(),"Oversized body collision blocks the free space above the pod rim")
+            val buried=net.minecraft.world.phys.AABB(e.x-.1,e.y-1,e.z-.1,e.x+.1,e.y-.8,e.z+.1)
+            h.assertTrue(level.getEntityCollisions(null,buried).isNotEmpty(),"Buried pod collision disappeared")
+            val original=e.parts.toList()
+            h.assertTrue(level.partEntities.containsAll(original),"Collision parts were not registered")
+            val saved=net.minecraft.nbt.CompoundTag();e.saveWithoutId(saved)
+            val copy=ModEntities.EQUIPMENT_BEACON.get().create(level)!!;copy.load(saved)
+            h.assertTrue(copy.phase==e.phase&&copy.parts[3].boundingBox==e.parts[3].boundingBox,"Reload changed beacon collision geometry")
+            copy.discard();e.discard()
+            h.assertTrue(original.none{it.canBeCollidedWith()},"Discarded beacon retains solid parts")
+            h.runAfterDelay(2){h.assertTrue(original.none{it in level.partEntities},"Collision parts survived parent removal");h.succeed()}
         }
     }
     @JvmStatic @GameTest(template="port_test",timeoutTicks=160)
@@ -153,7 +180,7 @@ object EquipmentGameTests {
         val playersField=net.minecraft.server.players.PlayerList::class.java.getDeclaredField("playersByUUID").also{it.isAccessible=true}
         @Suppress("UNCHECKED_CAST") val players=playersField.get(level.server.playerList) as MutableMap<java.util.UUID,net.minecraft.server.level.ServerPlayer>
         players[player.uuid]=player
-        h.runAfterDelay(60) {
+        h.runAfterDelay(75) {
             h.assertTrue(e.capReleased&&level.getEntitiesOfClass(com.example.sbwhelldiver.entity.HellpodCapEntity::class.java,e.boundingBox.inflate(20.0)){it.sourcePodUUID==e.uuid}.size==1,"Deployment did not eject exactly one independent cap")
             val eye=e.screenCenter().add(e.screenNormal().scale(1.1));val look=e.screenCenter().subtract(eye)
             player.moveTo(eye.x,eye.y-player.eyeHeight,eye.z,Math.toDegrees(kotlin.math.atan2(-look.x,look.z)).toFloat(),(-Math.toDegrees(kotlin.math.atan2(look.y,kotlin.math.sqrt(look.x*look.x+look.z*look.z)))).toFloat())

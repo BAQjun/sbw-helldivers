@@ -24,7 +24,7 @@ class EquipmentBeaconRenderer(context:EntityRendererProvider.Context):EntityRend
         val elapsed=((e.level().gameTime-e.phaseStart+partial)/20f).coerceAtLeast(0f)
         val braking=e.phase==EquipmentDeploymentBeaconEntity.PACKED&&e.flightBraking
         val clip=when(e.phase){0->if(braking)"retro_burn" else "packed";1->"deploy";2,4->"deployed";3->"retract";else->"packed"}
-        val time=when(e.phase){1->elapsed.coerceAtMost(2.65f);3->(elapsed*3.95f/3f).coerceAtMost(3.95f);else->0f}
+        val time=when(e.phase){1->elapsed.coerceAtMost(2.2f);3->(elapsed*3.95f/3f).coerceAtMost(3.95f);else->0f}
         p.pushPose();p.mulPose(Axis.YP.rotationDegrees(-e.yRot))
         val pose=p.last();val v=Vector3f();val n=Vector3f()
         for((material,triangles)in Model.pose(clip,time,e.capReleased).withIndex()) {
@@ -44,15 +44,16 @@ class EquipmentBeaconRenderer(context:EntityRendererProvider.Context):EntityRend
         }
         if(braking)DeliveryFlightVisuals.drawJets(e,partial,p,b)
         if(e.phase==EquipmentDeploymentBeaconEntity.ACTIVE||e.phase==EquipmentDeploymentBeaconEntity.COUNTDOWN)drawTerminal(e,partial,p,b)
-        if(e.phase==EquipmentDeploymentBeaconEntity.ACTIVE||e.selectedMachine!=null&&e.phase in EquipmentDeploymentBeaconEntity.RETRACTING..EquipmentDeploymentBeaconEntity.COUNTDOWN)beam(p,b)
+        if(e.phase==EquipmentDeploymentBeaconEntity.ACTIVE||e.phase==EquipmentDeploymentBeaconEntity.COUNTDOWN)beam(e,p,b)
         p.popPose()
     }
-    private fun beam(p:PoseStack,b:MultiBufferSource) {
+    private fun beam(e:EquipmentDeploymentBeaconEntity,p:PoseStack,b:MultiBufferSource) {
+        val start=(EquipmentBeaconGeometry.beam.y+e.payloadTravelOffset()).toFloat()
         val v=b.getBuffer(RenderType.lightning());val mat=p.last().pose()
         for((radius,alpha)in listOf(.018f to .9f,.045f to .32f,.1f to .1f))for(i in 0..7) {
             val a=i*Math.PI/4;val c=(i+1)*Math.PI/4
             val x=(kotlin.math.cos(a)*radius).toFloat();val z=(kotlin.math.sin(a)*radius).toFloat();val xx=(kotlin.math.cos(c)*radius).toFloat();val zz=(kotlin.math.sin(c)*radius).toFloat()
-            for(q in arrayOf(floatArrayOf(x,4.23f,z),floatArrayOf(xx,4.23f,zz),floatArrayOf(xx,256f,zz),floatArrayOf(x,256f,z)))v.vertex(mat,q[0],q[1],q[2]).color(.15f,.65f,1f,alpha).endVertex()
+            for(q in arrayOf(floatArrayOf(x,start,z),floatArrayOf(xx,start,zz),floatArrayOf(xx,256f,zz),floatArrayOf(x,256f,z)))v.vertex(mat,q[0],q[1],q[2]).color(.15f,.65f,1f,alpha).endVertex()
         }
     }
     private fun drawTerminal(e:EquipmentDeploymentBeaconEntity,partial:Float,p:PoseStack,b:MultiBufferSource) {
