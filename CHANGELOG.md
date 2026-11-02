@@ -1,5 +1,27 @@
 # 版本记录
 
+## 0.6.0-alpha.6
+
+## 中文
+
+- 修复潜行时使用卓越前线撬棍右键无法打包机器的问题，打包与重新部署保留物品、储能和加工进度。
+- 修复重机枪部署支架、反坦克炮台与掷弹兵榴弹墙无法使用潜行＋撬棍回收的问题，保留剩余弹药，乘员操作中禁止回收。
+- 打包物品以立体集装箱显示，机器使用对应的封闭部署外壳，载人炮台使用卓越前线原生载具集装箱。
+- 新增可关闭的距离 LOD，支持在模组配置界面修改切换距离；炮台、地雷、飞鹰和机器可自动使用远景简化模型。
+- 为生物处理器和精炼厂加入来自原游戏的运作循环音效，随加工状态播放和停止。
+- 为生物处理器蓝色罐体玻璃与精炼厂蓝色部件补充光影发光效果。
+- 优化两种机器及集装箱的模型提交、静态结构缓存与动画计算，保留原有外形和贴图细节。
+
+## English
+
+- Fixed sneaking right-click with the Superb Warfare crowbar failing to pack machines. Inventory, stored energy and processing progress survive packing and redeployment.
+- Fixed crowbar recovery for the HMG Emplacement, Anti-Tank Emplacement and Grenadier Battlement. Remaining ammunition is preserved, and occupied emplacements cannot be packed.
+- Packed items now appear as 3D containers: closed delivery shells for machines and native Superb Warfare vehicle containers for manned emplacements.
+- Added optional distance-based LOD with an adjustable switching distance in the mod configuration screen for emplacements, mines, Eagles and machines.
+- Added original-game operating loops for the Bioprocessor and Refinery, following their processing state.
+- Added shader-compatible emissive rendering for the Bioprocessor's blue tank glass and the Refinery's blue components.
+- Optimized mesh submission, static geometry caching and animation processing for both machines and containers while preserving their appearance and texture detail.
+
 ## 0.6.0-alpha.5
 
 ## 中文

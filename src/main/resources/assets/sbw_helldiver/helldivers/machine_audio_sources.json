@@ -1,0 +1,22 @@
+{
+  "bioprocessor": {
+    "bank": "content/audio/obj_cy_shutdown_grinder",
+    "play_event": 343445948,
+    "stop_event": 2610515472,
+    "loop_node": 640549576,
+    "stream_media": 217124450,
+    "gain_db": -4,
+    "verified": "Bank Play/Seek actions reference this continuous loop; the listed Stop action targets the same node. The original models reference the grinder/refinery entities.",
+    "adaptation": "Loop follows sample processing, including power pauses; original objective state transitions and RTPC curves are not reproduced. No invented startup/shutdown clips."
+  },
+  "refinery": {
+    "bank": "content/audio/obj_cy_lava_hack_refinery",
+    "play_event": 3974959357,
+    "stop_event": 1832582421,
+    "loop_node": 145983370,
+    "stream_media": 806688412,
+    "gain_db": 0,
+    "verified": "Bank Play/Seek actions reference this continuous loop; the listed Stop action targets the same node. The original models reference the grinder/refinery entities.",
+    "adaptation": "Loop follows sample processing, including power pauses; original objective state transitions and RTPC curves are not reproduced. No invented startup/shutdown clips."
+  }
+}

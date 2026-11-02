@@ -264,5 +264,13 @@
   "jei.sbw_helldiver.processing": "%s 秒 · %s RF/t",
   "terminal.sbw_helldiver.deployment_blocked": "落点被阻挡，已退还设备集装箱",
   "jei.sbw_helldiver.one_result": "每批随机产出其中一种",
-  "terminal.sbw_helldiver.recall": "收回信标"
+  "terminal.sbw_helldiver.recall": "收回信标",
+  "subtitles.sbw_helldiver.machine_bioprocessor_loop": "生物处理器运转",
+  "subtitles.sbw_helldiver.machine_refinery_loop": "精炼厂运转",
+  "config.sbw_helldiver.model_lod": "距离 LOD",
+  "config.sbw_helldiver.model_lod.value": "距离 LOD：%s",
+  "config.sbw_helldiver.model_lod.tooltip": "超过设定距离时使用低面数模型；关闭后保留所选模型质量。操作中的炮台保持精细模型。",
+  "config.sbw_helldiver.model_lod_distance": "LOD 距离（格）",
+  "config.sbw_helldiver.model_lod_distance.tooltip": "8–256 格，默认 32。地雷维持较近的两级切换距离，并随此数值同比调整。保存后立即生效。",
+  "config.sbw_helldiver.model_lod_distance.invalid": "请输入 8–256 格之间的 LOD 距离。"
 }

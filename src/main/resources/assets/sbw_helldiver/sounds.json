@@ -5436,5 +5436,23 @@
         "attenuation_distance": 64
       }
     ]
+  },
+  "machine_bioprocessor_loop": {
+    "subtitle": "subtitles.sbw_helldiver.machine_bioprocessor_loop",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:machines/bioprocessor_loop",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "machine_refinery_loop": {
+    "subtitle": "subtitles.sbw_helldiver.machine_refinery_loop",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:machines/refinery_loop",
+        "attenuation_distance": 64
+      }
+    ]
   }
 }

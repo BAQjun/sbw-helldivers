@@ -21,7 +21,9 @@ class SampleMachineBlock(properties:Properties):BaseEntityBlock(properties) {
     override fun getRenderShape(state:BlockState)=RenderShape.ENTITYBLOCK_ANIMATED
     override fun getShape(state:BlockState,level:BlockGetter,pos:BlockPos,context:CollisionContext):VoxelShape = Shapes.block()
     override fun <T:BlockEntity> getTicker(level:Level,state:BlockState,type:BlockEntityType<T>):BlockEntityTicker<T>? =
-        if(level.isClientSide)null else createTickerHelper(type,MachineRegistry.MACHINE.get(),BlockEntityTicker { l,p,s,be->be.serverTick() })
+        if(level.isClientSide) {
+            if(!state.getValue(MASTER))null else createTickerHelper(type,MachineRegistry.MACHINE.get(),BlockEntityTicker { _,_,_,be->MachineRegistry.clientTick?.invoke(be) })
+        }else createTickerHelper(type,MachineRegistry.MACHINE.get(),BlockEntityTicker { _,_,_,be->be.serverTick() })
     override fun useItemOn(stack:ItemStack,state:BlockState,level:Level,pos:BlockPos,player:Player,hand:InteractionHand,hit:BlockHitResult):ItemInteractionResult {
         if(stack.`is`(com.atsuishio.superbwarfare.init.ModItems.CROWBAR.get()) && player.isShiftKeyDown) {
             if(!level.isClientSide) (level.getBlockEntity(pos) as? SampleMachineBlockEntity)?.master()?.let{MachineStructure.remove(it,true)}

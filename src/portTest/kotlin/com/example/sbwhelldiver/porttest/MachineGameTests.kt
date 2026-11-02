@@ -16,6 +16,31 @@ import net.neoforged.neoforge.gametest.*
 @GameTestHolder("sbw_helldiver")
 @PrefixGameTestTemplate(false)
 object MachineGameTests {
+    @JvmStatic @GameTest(template="port_test",timeoutTicks=30)
+    fun allMannedEmplacementsPackWithEitherCrowbarHand(h:GameTestHelper) {
+        // A local Player can ride without joining a fake network connection.
+        val rider=object:net.minecraft.world.entity.player.Player(h.level,h.absolutePos(BlockPos(5,8,5)),0f,com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(),"RiderQA")) {
+            override fun isSpectator()=false
+            override fun isCreative()=false
+        }
+        for(type in listOf(ModEntities.HMG_EMPLACEMENT,ModEntities.ANTI_TANK_EMPLACEMENT,ModEntities.GRENADIER_BATTLEMENT))for(hand in InteractionHand.entries) {
+            val p=player(h);val e=type.get().create(h.level)!!
+            e.setPos(net.minecraft.world.phys.Vec3.atBottomCenterOf(h.absolutePos(BlockPos(5,8,5))))
+            val saved=CompoundTag();e.saveWithoutId(saved);saved.putInt("HellpodPhase",com.example.sbwhelldiver.entity.AbstractHellpodEntity.Phase.ACTIVE.ordinal);saved.putInt("HmgAmmo",17);e.load(saved);h.level.addFreshEntity(e)
+            p.setItemInHand(hand,ItemStack(com.atsuishio.superbwarfare.init.ModItems.CROWBAR.get()));p.isShiftKeyDown=true
+            h.assertTrue(rider.startRiding(e,true),"Could not mount emplacement fixture")
+            p.interactOn(e,hand);h.assertTrue(!e.isRemoved,"Occupied emplacement packed under its operator")
+            e.ejectPassengers()
+            h.assertTrue(p.interactOn(e,hand).consumesAction()&&e.isRemoved,"Sneaking crowbar failed to pack ${e.type} from $hand")
+            val boxes=(0 until p.inventory.containerSize).map{p.inventory.getItem(it)}.filter{it.`is`(com.atsuishio.superbwarfare.init.ModBlocks.CONTAINER.get().asItem())}
+            h.assertTrue(boxes.size==1,"Emplacement did not return exactly one container")
+            val packed=boxes.single().get(net.minecraft.core.component.DataComponents.BLOCK_ENTITY_DATA)!!.copyTag().getCompound("Entity")
+            val restored=type.get().create(h.level)!!;restored.load(packed)
+            h.assertTrue(restored.ammoRemaining==17&&restored.phase==com.example.sbwhelldiver.entity.AbstractHellpodEntity.Phase.ACTIVE,"Packed emplacement lost ammunition or deployment state")
+            restored.discard()
+        }
+        rider.discard();h.succeed()
+    }
     private fun fixture(h:GameTestHelper):BlockPos {
         val root=h.absolutePos(BlockPos(5,4,5))
         for(x in -5..5)for(z in -5..5)for(y in -1..7)h.level.setBlock(root.offset(x,y,z),if(y==-1)Blocks.STONE.defaultBlockState()else Blocks.AIR.defaultBlockState(),3)
@@ -23,6 +48,37 @@ object MachineGameTests {
     }
     private fun player(h:GameTestHelper)=net.neoforged.neoforge.common.util.FakePlayerFactory.get(h.level,com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(),"MachineQA"))
     private fun energy(h:GameTestHelper,root:BlockPos,m:MachineDeployment)=h.level.getCapability(Capabilities.EnergyStorage.BLOCK,root.offset(MachineLayout.portOffset(m,MachineLayout.Port.ENERGY)),Direction.NORTH)!!
+    @JvmStatic @GameTest(template="port_test",timeoutTicks=20)
+    fun sneakingCrowbarPacksThroughRealBlockInteraction(h:GameTestHelper) {
+        for(m in MachineDeployment.entries)for(hand in InteractionHand.entries) {
+            val root=fixture(h)
+            val be=MachineStructure.place(h.level,root,m,Direction.NORTH,CompoundTag(),null)!!;be.readyAt=0
+            be.inventory.setStackInSlot(0,ItemStack(if(m==MachineDeployment.BIOPROCESSOR)Items.ROTTEN_FLESH else Items.RAW_IRON,64))
+            energy(h,root,m).receiveEnergy(150000,false);repeat(13){be.serverTick()}
+            be.inventory.setStackInSlot(9,ItemStack(ModItems.COMMON_SAMPLE.get(),7))
+            val saved=be.contents();val parts=MachineLayout.shapes(m,Direction.NORTH).keys
+            val hitPos=root.offset(parts.first{it!=BlockPos.ZERO})
+            val hit=net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(hitPos),Direction.NORTH,hitPos,false)
+            val p=player(h);p.setGameMode(net.minecraft.world.level.GameType.SURVIVAL)
+            val crowbar=ItemStack(com.atsuishio.superbwarfare.init.ModItems.CROWBAR.get());p.setItemInHand(hand,crowbar)
+            p.isShiftKeyDown=false
+            h.assertTrue(!p.gameMode.useItemOn(p,h.level,crowbar,hand,hit).consumesAction() && !be.isRemoved,"Ordinary crowbar click packed machine")
+            p.isShiftKeyDown=true
+            h.assertTrue(p.gameMode.useItemOn(p,h.level,crowbar,hand,hit).consumesAction(),"Sneaking block interaction was skipped: $m $hand")
+            h.assertTrue(parts.none{h.level.getBlockState(root.offset(it)).`is`(ModBlocks.SAMPLE_MACHINE.get())},"Packing left machine parts")
+            val drop=h.level.getEntitiesOfClass(ItemEntity::class.java,be.bounds()).single()
+            h.assertTrue(drop.item.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA)!!.copyTag()==saved,"Packing lost inventory, energy, pending output or progress")
+            val packed=drop.item.copy();drop.discard();p.isShiftKeyDown=false;p.setItemInHand(hand,packed)
+            val ground=root.below();val placeHit=net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(ground),Direction.UP,ground,false)
+            h.assertTrue(p.gameMode.useItemOn(p,h.level,packed,hand,placeHit).consumesAction()&&packed.isEmpty,"Packed container cannot be placed")
+            val box=h.level.getEntitiesOfClass(MachineContainerEntity::class.java,be.bounds()).single()
+            p.setItemInHand(hand,crowbar);box.interact(p,hand)
+            val restored=h.level.getBlockEntity(root) as SampleMachineBlockEntity
+            h.assertTrue(restored.contents()==saved,"Reopening packed machine changed its contents")
+            box.discard();MachineStructure.remove(restored,false)
+        }
+        h.succeed()
+    }
     @JvmStatic @GameTest(template="port_test",timeoutTicks=20)
     fun portsAndFiveSecondEnergyBatch(h:GameTestHelper) {
         val root=fixture(h);val m=MachineDeployment.BIOPROCESSOR

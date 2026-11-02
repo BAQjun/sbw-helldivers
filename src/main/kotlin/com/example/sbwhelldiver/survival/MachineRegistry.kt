@@ -9,6 +9,7 @@ import net.neoforged.neoforge.registries.DeferredRegister
 import com.example.sbwhelldiver.init.ModBlocks
 
 object MachineRegistry {
+    var clientTick:((SampleMachineBlockEntity)->Unit)?=null
     val BLOCK_ENTITIES=DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE,MOD_ID)
     val MACHINE=BLOCK_ENTITIES.register("sample_machine"){_->BlockEntityType.Builder.of(::SampleMachineBlockEntity,ModBlocks.SAMPLE_MACHINE.get()).build(null)}
     fun capabilities(event:RegisterCapabilitiesEvent) {

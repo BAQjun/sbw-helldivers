@@ -18,7 +18,7 @@ class SampleMachineRenderer(context:BlockEntityRendererProvider.Context):BlockEn
         if(c.ticks!=e.workTicks){c.ticks=e.workTicks;c.at=now}
         val time=((c.ticks+if(e.working)(now-c.at).coerceIn(0,10)+partial else 0f)/20f%4).toFloat()
         p.pushPose();p.translate(.5,0.0,.5);p.mulPose(Axis.YP.rotationDegrees(180f-e.facing.toYRot()))
-        MachineMesh.draw(e.machine.id,"working",time,p,b,light);p.popPose()
+        MachineMesh.draw(e.machine.id,"working",time,p,b,light,e.bounds().distanceToSqr(net.minecraft.client.Minecraft.getInstance().gameRenderer.mainCamera.position));p.popPose()
     }
     override fun getViewDistance()=128
     override fun shouldRenderOffScreen(e:SampleMachineBlockEntity)=true
@@ -31,7 +31,7 @@ class MachineContainerRenderer(context:EntityRendererProvider.Context):EntityRen
         e.shouldRender(x,y,z)&&f.isVisible(e.boundingBox)
     override fun render(e:MachineContainerEntity,yaw:Float,partial:Float,p:PoseStack,b:MultiBufferSource,light:Int) {
         val time=if(e.phase==MachineContainerEntity.OPENING)((e.level().gameTime-e.phaseStart+partial)/20f).coerceIn(0f,2.4f)else 0f
-        p.pushPose();p.mulPose(Axis.YP.rotationDegrees(180f-e.facing.toYRot()));MachineMesh.draw(e.machine.id+"_container","deploy",time,p,b,light)
+        p.pushPose();p.mulPose(Axis.YP.rotationDegrees(180f-e.facing.toYRot()));MachineMesh.draw(e.machine.id+"_container","deploy",time,p,b,light,e.boundingBox.distanceToSqr(net.minecraft.client.Minecraft.getInstance().gameRenderer.mainCamera.position))
         if(e.phase==MachineContainerEntity.FALLING&&e.braking)DeliveryFlightVisuals.drawJets(e,partial,p,b)
         p.popPose()
     }

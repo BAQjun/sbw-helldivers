@@ -23,7 +23,7 @@ class AntiPersonnelMineRenderer(context: EntityRendererProvider.Context): Entity
     override fun getTextureLocation(entity: AntiPersonnelMineEntity)=Model.textures.getValue(entity.kind)
     override fun render(entity: AntiPersonnelMineEntity,yaw: Float,partial: Float,pose: PoseStack,buffers: MultiBufferSource,light: Int) {
         val distance=entity.position().distanceToSqr(net.minecraft.client.Minecraft.getInstance().gameRenderer.mainCamera.position)
-        val tier=if(distance>196.0)2 else if(distance>36.0)1 else 0
+        val tier=ModelLod.mineTier(distance)
         val mesh=Model.meshes[Triple(entity.kind,tier,entity.armed)]?:return
         val texture=getTextureLocation(entity)
         pose.pushPose();pose.mulPose(Axis.YP.rotationDegrees(180f-Mth.rotLerp(partial,entity.yRotO,entity.yRot)));pose.scale(.62f,.62f,.62f)

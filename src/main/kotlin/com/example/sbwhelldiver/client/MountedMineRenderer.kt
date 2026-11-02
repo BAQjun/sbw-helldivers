@@ -64,7 +64,7 @@ object MountedMineRenderer {
             }
         }
         val distance=pod.position().distanceToSqr(Minecraft.getInstance().gameRenderer.mainCamera.position)
-        val mesh=AntiPersonnelMineRenderer.Model.meshes[Triple(kind,if(distance>196)2 else if(distance>36)1 else 0,false)]?:return
+        val mesh=AntiPersonnelMineRenderer.Model.meshes[Triple(kind,ModelLod.mineTier(distance),false)]?:return
         val texture=AntiPersonnelMineRenderer.Model.textures.getValue(kind)
         val out=buffers.getBuffer(RenderType.entityCutoutNoCull(texture))
         for(panel in 0 until 6){

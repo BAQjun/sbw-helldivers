@@ -35,8 +35,10 @@ object EquipmentGameTests {
     }
     @JvmStatic @GameTest(template="port_test",timeoutTicks=160)
     fun sixLeftInputsRecallBeaconWithoutContainer(h:GameTestHelper)=terminalFixture(h){e,p,token,cleanup->
-        repeat(6){i->h.runAfterDelay((i+1).toLong()){h.assertTrue(e.acceptInput(p,token,3),"Recall arrow rejected")}}
-        h.runAfterDelay(5){h.assertTrue(e.phase==EquipmentDeploymentBeaconEntity.ACTIVE&&e.prefix.size==5,"Recall happened before sixth left")}
+        repeat(6){i->h.runAfterDelay((i+1).toLong()){
+            h.assertTrue(e.phase==EquipmentDeploymentBeaconEntity.ACTIVE&&e.prefix.size==i,"Recall happened before sixth left")
+            h.assertTrue(e.acceptInput(p,token,3),"Recall arrow rejected")
+        }}
         h.runAfterDelay(8){h.assertTrue(e.phase==EquipmentDeploymentBeaconEntity.RETRACTING,"Six left inputs did not retract")}
         h.runAfterDelay(70){h.assertTrue(e.isRemoved,"Recall left hellpod behind");h.assertTrue(h.level.getEntitiesOfClass(MachineContainerEntity::class.java,e.boundingBox.inflate(20.0)).isEmpty(),"Recall spawned unwanted container");cleanup();h.succeed()}
     }

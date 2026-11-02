@@ -91,6 +91,9 @@ def export(name,path):
             boxes.append([float(lo[0]),float(low),float(lo[2]),float(hi[0]),float(min(high,hi[1])),float(hi[2])])
         (OUT/f'helldivers/{name}_collision.json').write_text(json.dumps(boxes,separators=(',',':'))+'\n')
     target=OUT/f'models/mesh/{name}.mesh.json.gz';target.parent.mkdir(parents=True,exist_ok=True)
+    from optimize_machine_meshes import optimize
+    for mesh in meshes:
+        for primitive in mesh:optimize(primitive)
     target.write_bytes(gzip.compress(json.dumps(dict(nodes=nodes,meshes=meshes,clips=clips,nozzles=nozzles),separators=(',',':')).encode(),mtime=0))
     for i,m in enumerate(g['materials']):
         ti=m['pbrMetallicRoughness']['baseColorTexture']['index'];img=g['images'][g['textures'][ti]['source']];v=g['bufferViews'][img['bufferView']]

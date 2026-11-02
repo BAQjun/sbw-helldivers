@@ -264,5 +264,13 @@
   "jei.sbw_helldiver.processing": "%s seconds · %s RF/t",
   "terminal.sbw_helldiver.deployment_blocked": "Landing site blocked; equipment container returned",
   "jei.sbw_helldiver.one_result": "One random result per batch",
-  "terminal.sbw_helldiver.recall": "Recall beacon"
+  "terminal.sbw_helldiver.recall": "Recall beacon",
+  "subtitles.sbw_helldiver.machine_bioprocessor_loop": "Bioprocessor running",
+  "subtitles.sbw_helldiver.machine_refinery_loop": "Refinery running",
+  "config.sbw_helldiver.model_lod": "Distance LOD",
+  "config.sbw_helldiver.model_lod.value": "Distance LOD: %s",
+  "config.sbw_helldiver.model_lod.tooltip": "Use reduced models beyond the chosen distance. Disable to retain the selected model quality. Occupied emplacements retain their detailed models.",
+  "config.sbw_helldiver.model_lod_distance": "LOD distance (blocks)",
+  "config.sbw_helldiver.model_lod_distance.tooltip": "8–256 blocks, default 32. Mines retain closer LOD thresholds, scaled with this distance. Applies immediately on save.",
+  "config.sbw_helldiver.model_lod_distance.invalid": "Enter an LOD distance between 8 and 256 blocks."
 }

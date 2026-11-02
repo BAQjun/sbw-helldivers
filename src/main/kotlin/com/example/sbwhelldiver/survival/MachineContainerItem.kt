@@ -11,6 +11,11 @@ import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.server.level.ServerLevel
 
 class MachineContainerItem(val machine:MachineDeployment,properties:Properties):Item(properties) {
+    override fun initializeClient(consumer:java.util.function.Consumer<net.neoforged.neoforge.client.extensions.common.IClientItemExtensions>) {
+        consumer.accept(object:net.neoforged.neoforge.client.extensions.common.IClientItemExtensions {
+            override fun getCustomRenderer()=com.example.sbwhelldiver.client.MachineContainerItemRenderer.INSTANCE
+        })
+    }
     override fun useOn(c:UseOnContext):InteractionResult {
         val player=c.player?:return InteractionResult.FAIL
         val root=c.clickedPos.relative(c.clickedFace)
