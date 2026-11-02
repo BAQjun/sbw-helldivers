@@ -1,5 +1,17 @@
 # 版本记录
 
+## 0.6.0-alpha.9
+
+## 中文
+
+- 放大设备部署信标，底座上沿与空投仓口齐平，并补齐封闭面以遮住仓内空隙。
+- 同步调整屏幕交互、碰撞与顶部蓝光位置，保留原有展开、收回和音效时序。
+
+## English
+
+- Enlarged the equipment deployment beacon and aligned its pedestal with the pod opening, adding a sealing surface to cover the interior gap.
+- Updated terminal interaction, collision and blue beam placement to match, preserving deployment, retraction and sound timing.
+
 ## 0.6.0-alpha.8
 
 ## 中文

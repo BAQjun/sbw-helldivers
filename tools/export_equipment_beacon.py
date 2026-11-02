@@ -88,16 +88,21 @@ def bounds_named(fragment):
  assert points,fragment
  return [rounded(np.min(points,axis=0)),rounded(np.max(points,axis=0))]
 base=bounds_named('boss_底座洁净配色')
-assert base[1][1]+.0956<.001,('Pedestal still protrudes above the landing surface',base)
+seal=bounds_named('boss_仓口封闭上沿')
+mouth=bounds_named('pod_mouth')
+assert abs(seal[1][1]-mouth[1][1])<.002,('Pedestal must be flush with the pod mouth',seal,mouth)
+assert min(seal[1][0],seal[1][2],-seal[0][0],-seal[0][2])>.74,('Pedestal seal must cover the mouth',seal)
+meta['pedestal_seal_bounds']=seal
+meta['mouth_bounds']=mouth
 body=bounds_named('boss_g_landingzone_beacon_1')
 mid=bounds_named('tier_2_g_landingzone_beacon_1')
 top=bounds_named('tier_3_g_landingzone_beacon_1')
 meta['beam']=[0,top[1][1]-.004,0]
 # Three low strips approximate the round rim without blocking the upper screen area.
 meta['collision']=[
- [[-1.10,-5.52,-1.10],[1.10,.13,1.10]],
- [[-1.325,-5.52,-.54],[1.325,.13,.54]],
- [[-.54,-5.52,-1.325],[.54,.13,1.325]],body,mid,top]
+ [[-1.10,-5.52,-1.10],[1.10,.242,1.10]],
+ [[-1.325,-5.52,-.54],[1.325,.242,.54]],
+ [[-.54,-5.52,-1.325],[.54,.242,1.325]],body,mid,top]
 elevator=next(i for i,n in enumerate(g['nodes'])if n.get('name')=='pod_elevator')
 meta['lift_travel']=round(mats[elevator][1,3]-pose('packed',0)[elevator][1,3],7)
 meta['pedestal_bounds']=base
