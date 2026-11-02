@@ -81,7 +81,7 @@ object EquipmentClientTests {
         }
         val collisionOnly=java.lang.Boolean.getBoolean("sbw_helldiver.equipmentCollisionOnly")
         if(ticks==154&&collisionOnly)mc.entityRenderDispatcher.setRenderHitBoxes(true)
-        if(ticks==155)server.execute {val p=server.playerList.getPlayer(player.uuid)!!;p.teleportTo(server.overworld(),.5,83.0,-15.0,0f,0f);p.abilities.flying=true;p.onUpdateAbilities()}
+        if(ticks==155)server.execute {val p=server.playerList.getPlayer(player.uuid)!!;p.teleportTo(server.overworld(),.5,87.0,-4.5,0f,40f);p.abilities.flying=true;p.onUpdateAbilities()}
         if(ticks==166)server.execute {val p=server.playerList.getPlayer(player.uuid)!!;p.teleportTo(server.overworld(),4.0,80.0,5.0,142f,-4f)}
         if(ticks==169)capture("equipment-pedestal-hidden.png")
         if(ticks==165){

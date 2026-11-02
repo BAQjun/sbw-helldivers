@@ -33,6 +33,14 @@ for a in g['animations']:
  for c in a['channels']:
   s=a['samplers'][c['sampler']];channels.append(dict(node=c['target']['node'],path=c['target']['path'],times=accessor(s['input']).ravel().tolist(),values=rounded(accessor(s['output'])),interpolation=s.get('interpolation','LINEAR')))
  clips[name]=channels
+# Scientific-notation strings in Blockbench keyframes may be misread as expressions.
+# A deployed blade must return to its authored pivot; reject exports with a jump.
+for blade in ("arm_Xneg_03", "arm_Xpos_03", "arm_Y_03"):
+ i=next(i for i,n in enumerate(g["nodes"]) if n.get("name")==blade)
+ for clip,endpoint in (("deployed",0),("deploy",-1),("retract",0)):
+  channel=next(c for c in clips[clip] if c["node"]==i and c["path"]=="translation")
+  delta=np.linalg.norm(np.array(channel["values"][endpoint])-np.array(nodes[i]["t"]))
+  assert delta < .002, ("Beacon blade animation is displaced",blade,clip,delta)
 root=dict(nodes=nodes,meshes=meshes,clips=clips)
 out=OUT/'models/mesh/equipment_beacon.mesh.json.gz';out.parent.mkdir(parents=True,exist_ok=True);out.write_bytes(gzip.compress(json.dumps(root,separators=(',',':')).encode(),mtime=0))
 texdir=OUT/'textures/mesh';texdir.mkdir(exist_ok=True)

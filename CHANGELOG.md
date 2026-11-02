@@ -1,5 +1,15 @@
 # 版本记录
 
+## 0.6.0-alpha.12
+
+## 中文
+
+- 修复设备部署信标顶部叶片展开后错位的问题。
+
+## English
+
+- Fixed the equipment deployment beacon’s top blades becoming misaligned when deployed.
+
 ## 0.6.0-alpha.11
 
 ## 中文
