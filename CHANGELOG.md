@@ -1,5 +1,15 @@
 # 版本记录
 
+## 0.6.0-alpha.10
+
+## 中文
+
+- 恢复设备部署信标主体的原有大小，保留加宽的底座与仓口齐平的遮挡面。
+
+## English
+
+- Restored the equipment deployment beacon body to its original size while retaining the widened pedestal and flush pod-opening cover.
+
 ## 0.6.0-alpha.9
 
 ## 中文
