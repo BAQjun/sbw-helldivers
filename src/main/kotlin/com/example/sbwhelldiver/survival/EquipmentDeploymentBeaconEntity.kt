@@ -46,7 +46,7 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
     private lateinit var collisionParts:Array<EquipmentBeaconCollisionPart>
     init {
         isNoGravity=true;noPhysics=true
-        collisionParts=Array(6){EquipmentBeaconCollisionPart(this)}
+        collisionParts=Array(2){EquipmentBeaconCollisionPart(this)}
         setId(ENTITY_COUNTER.getAndAdd(collisionParts.size+1)+1)
     }
     override fun isMultipartEntity()=true
@@ -66,15 +66,22 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
     }
     fun updateCollisionParts() {
         val origin=position();val moving=payloadTravelOffset()
+        // Two stable axis-aligned volumes replace overlapping rotated fragments.
+        // The low pod base remains separate from the raised, retractable beacon body.
+        val authored=EquipmentBeaconGeometry.collision
+        val base=authored[0]
+        val body=authored[3]
+        val top=authored[5]
+        val radius=maxOf(kotlin.math.abs(body.minX),kotlin.math.abs(body.maxX),kotlin.math.abs(body.minZ),kotlin.math.abs(body.maxZ))
+        val boxes=listOf(
+            net.minecraft.world.phys.AABB(base.minX,base.minY,base.minZ,base.maxX,base.maxY,base.maxZ),
+            net.minecraft.world.phys.AABB(-radius,body.minY+moving,-radius,radius,top.maxY+moving,radius)
+        )
         for((i,part)in collisionParts.withIndex()){
-            val box=EquipmentBeaconGeometry.collision[i]
-            val points=listOf(box.minX,box.maxX).flatMap{a->listOf(box.minZ,box.maxZ).map{c->Vec3(a,0.0,c).yRot(-yRot*(Math.PI/180).toFloat())}}
-            val dy=if(i>=3)moving else 0.0
             part.setPos(origin)
-            // Vanilla interpolates each multipart debug box against the parent's previous position.
-            // Parts are not ticked independently, so their previous coordinates must follow it.
+            // Multipart debug rendering interpolates against the parent's previous position.
             part.xOld=xOld;part.yOld=yOld;part.zOld=zOld
-            part.boundingBox=net.minecraft.world.phys.AABB(points.minOf{it.x}+x,box.minY+y+dy,points.minOf{it.z}+z,points.maxOf{it.x}+x,box.maxY+y+dy,points.maxOf{it.z}+z)
+            part.boundingBox=boxes[i].move(origin)
         }
     }
     override fun defineSynchedData(b:SynchedEntityData.Builder) {

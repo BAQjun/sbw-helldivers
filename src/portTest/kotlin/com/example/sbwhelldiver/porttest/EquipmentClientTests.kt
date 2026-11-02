@@ -30,6 +30,12 @@ object EquipmentClientTests {
     private val arrivalSounds=mutableListOf<String>()
     private val mechanicalSounds=mutableListOf<String>()
     private val flashRuns=mutableMapOf<Long,Int>()
+    private var hiddenPlayerFrames=0
+    @net.neoforged.bus.api.SubscribeEvent(priority=net.neoforged.bus.api.EventPriority.LOWEST,receiveCanceled=true)
+    fun renderedPlayer(e:net.neoforged.neoforge.client.event.RenderPlayerEvent.Pre) {
+        val mc=Minecraft.getInstance()
+        if(mc.screen is EquipmentTerminalScreen && e.entity===mc.player && e.isCanceled)hiddenPlayerFrames++
+    }
     private var flashWasRed=false
     private var flashAt=-1L
     private var flashCaptureAt=-1
@@ -39,8 +45,8 @@ object EquipmentClientTests {
             val e=Minecraft.getInstance().level?.entitiesForRendering()?.filterIsInstance<EquipmentDeploymentBeaconEntity>()?.firstOrNull{b->b.uuid==device}
             if(e!=null&&e.phase in listOf(EquipmentDeploymentBeaconEntity.PACKED,EquipmentDeploymentBeaconEntity.IMPACT,EquipmentDeploymentBeaconEntity.DEPLOYING)&&it.startsWith("sfx_hellpod_")){
                 arrivalSounds.add(it)
-                if(it=="sfx_hellpod_impact")check(kotlin.math.abs(e.level().gameTime-e.flightArrival)<=2){"Landing sound missed contact: age=${e.level().gameTime-e.flightArrival}, phase=${e.phase}"}
-                if(it=="sfx_hellpod_cap_release")check(e.level().gameTime-e.flightArrival>=10){"Cap sound precedes the impact pause"}
+                if(it=="sfx_hellpod_impact"&&!java.lang.Boolean.getBoolean("sbw_helldiver.equipmentCollisionOnly"))check(kotlin.math.abs(e.level().gameTime-e.flightArrival)<=2){"Landing sound missed contact: age=${e.level().gameTime-e.flightArrival}, phase=${e.phase}"}
+                if(it=="sfx_hellpod_cap_release"&&!java.lang.Boolean.getBoolean("sbw_helldiver.equipmentCollisionOnly"))check(e.level().gameTime-e.flightArrival>=10){"Cap sound precedes the impact pause"}
                 check(!it.startsWith("sfx_hellpod_retro")&&!it.startsWith("sfx_hellpod_thruster")){"Equipment entry layers extra player retro audio"}
                 LOGGER.info("EQUIPMENT_SHARED_POD_AUDIO {} phase={} arrivalAge={}",it,e.phase,e.level().gameTime-e.flightArrival)
             }
@@ -49,7 +55,7 @@ object EquipmentClientTests {
                 check(e!=null)
                 val age=(e.level().gameTime-e.phaseStart).toInt()
                 val expected=mapOf("sfx_equipment_beacon_unfold" to 22,"sfx_equipment_beacon_fold" to 1).getValue(it)
-                check(kotlin.math.abs(age-expected)<=1){"Mechanical cue out of sync: $it at $age, expected $expected"}
+                if(!java.lang.Boolean.getBoolean("sbw_helldiver.equipmentCollisionOnly"))check(kotlin.math.abs(age-expected)<=1){"Mechanical cue out of sync: $it at $age, expected $expected"}
                 LOGGER.info("EQUIPMENT_ALIGNED_AUDIO {} age={}",it,age)
             }
         }
@@ -97,13 +103,20 @@ object EquipmentClientTests {
             player.abilities.flying=false;player.setPos(e.x-2,e.y+.3,e.z)
             player.move(net.minecraft.world.entity.MoverType.SELF,net.minecraft.world.phys.Vec3(4.0,0.0,0.0))
             check(player.x<e.x-.6){"Client movement passed through the beacon"}
+            // Press into a side while sliding along it: a wall should not push the player back or snag.
+            check(e.parts.size==2){"Beacon collision should consist of a base and body"}
+            player.setPos(e.x-1.2,e.y+.4,e.z-.4)
+            player.move(net.minecraft.world.entity.MoverType.SELF,net.minecraft.world.phys.Vec3(.6,0.0,0.0))
+            val wallX=player.x;val startZ=player.z
+            repeat(8){player.move(net.minecraft.world.entity.MoverType.SELF,net.minecraft.world.phys.Vec3(.08,0.0,.06))}
+            check(kotlin.math.abs(player.x-wallX)<.001 && player.z-startZ>.45){"Beacon wall pushed back or snagged the player: x=${player.x-wallX}, z=${player.z-startZ}"}
             player.setPos(old);player.abilities.flying=flying
             LOGGER.info("EQUIPMENT_CLIENT_COLLISION_AND_SHARED_AUDIO_VERIFIED")
             capture("equipment-deployed.png")
         }
         if(ticks==170)server.execute {
             val e=server.overworld().getEntity(device) as EquipmentDeploymentBeaconEntity
-            val p=server.playerList.getPlayer(player.uuid)!!;val eye=e.screenCenter().add(e.screenNormal().scale(1.1));val d=e.screenCenter().subtract(eye)
+            val p=server.playerList.getPlayer(player.uuid)!!;val eye=e.screenCenter().add(e.screenNormal().scale(.48));val d=e.screenCenter().subtract(eye)
             p.abilities.flying=true;p.onUpdateAbilities()
             p.teleportTo(server.overworld(),eye.x,eye.y-p.eyeHeight,eye.z,Math.toDegrees(kotlin.math.atan2(-d.x,d.z)).toFloat(),(-Math.toDegrees(kotlin.math.atan2(d.y,kotlin.math.sqrt(d.x*d.x+d.z*d.z)))).toFloat())
         }
@@ -116,6 +129,8 @@ object EquipmentClientTests {
             check(mc.screen is EquipmentTerminalScreen){"Terminal did not open"}
             val e=(mc.screen as EquipmentTerminalScreen).beacon()!!;val camera=mc.gameRenderer.mainCamera
             check(net.minecraft.world.phys.Vec3(camera.lookVector).dot(e.screenCenter().subtract(camera.position).normalize())>.999){"Camera is not aimed at the screen centre"}
+            check(hiddenPlayerFrames>0){"Local player was not hidden during close-up terminal view"}
+            LOGGER.info("EQUIPMENT_CLOSE_VIEW_PLAYER_HIDDEN frames={}",hiddenPlayerFrames)
             capture("equipment-menu.png")
             server.execute{server.playerList.getPlayer(player.uuid)!!.setGameMode(GameType.SURVIVAL)}
         }

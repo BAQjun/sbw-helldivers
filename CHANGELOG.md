@@ -1,5 +1,17 @@
 # 版本记录
 
+## 0.6.0-alpha.13
+
+## 中文
+
+- 修复近距离使用设备部署信标终端时玩家模型遮挡屏幕的问题。
+- 简化设备部署信标碰撞，改善贴近时的移动体验。
+
+## English
+
+- Fixed the local player model obstructing the equipment deployment terminal when interacting at close range.
+- Simplified equipment deployment beacon collision to improve movement alongside it.
+
 ## 0.6.0-alpha.12
 
 ## 中文
