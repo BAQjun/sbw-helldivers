@@ -27,6 +27,7 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
     val selectedMachine get()=MachineDeployment.entries.getOrNull(entityData.get(MACHINE))
     val prefix get()=entityData.get(PREFIX).mapNotNull { it.digitToIntOrNull() }
     val error get()=entityData.get(ERROR)
+    val inputErrorAt get()=entityData.get(INPUT_ERROR_AT)
     val paid get()=phase>=RETRACTING
     val capReleased get()=entityData.get(CAP_RELEASED)
     val deploymentEnd get()=entityData.get(DEPLOYMENT_END)
@@ -40,12 +41,11 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
     private var groundY=0.0
     private var arrival=0L
     private var born=0L
-    private var previousSoundTick=-1
     private var reservedFacing=net.minecraft.core.Direction.NORTH
     private var containerSent=false
     init { isNoGravity=true;noPhysics=true }
     override fun defineSynchedData(b:SynchedEntityData.Builder) {
-        b.define(PHASE,PACKED);b.define(START,-1L);b.define(MACHINE,-1);b.define(PREFIX,"");b.define(ERROR,0)
+        b.define(PHASE,PACKED);b.define(START,-1L);b.define(MACHINE,-1);b.define(PREFIX,"");b.define(ERROR,0);b.define(INPUT_ERROR_AT,-1L)
         b.define(GROUND,0f);b.define(ARRIVAL,-1L);b.define(BORN,-1L)
         b.define(CAP_RELEASED,false)
         b.define(DEPLOYMENT_END,-1L)
@@ -90,7 +90,7 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
         if(!screenHit(player)||player.isSpectator||player.isPassenger||player.containerMenu!==player.inventoryMenu)return false
         if(operator!=null && operator!=player.uuid) { player.displayClientMessage(Component.translatable("terminal.sbw_helldiver.busy"),true);return false }
         operator=player.uuid;nonce=UUID.randomUUID();sessionUntil=level().gameTime+600;lastInput=-1
-        entityData.set(MACHINE,-1);entityData.set(PREFIX,"");entityData.set(ERROR,0)
+        entityData.set(MACHINE,-1);entityData.set(PREFIX,"");entityData.set(ERROR,0);entityData.set(INPUT_ERROR_AT,-1L)
         sendState(player,true);return true
     }
     private fun valid(player:ServerPlayer,token:UUID)=phase==ACTIVE && operator==player.uuid && nonce==token && player.level()===level() && player.isAlive && !player.isSpectator && !player.isPassenger && player.containerMenu===player.inventoryMenu && distanceToSqr(player)<36 && level().gameTime<=sessionUntil
@@ -115,7 +115,7 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
                 return true
             }
             val candidates=MachineDeployment.entries.filter{it.code.take(input.size)==input}
-            if(candidates.isEmpty()){entityData.set(PREFIX,"");sound(player,"terminal_error");sendState(player,true);return false}
+            if(candidates.isEmpty())return rejectInput(player)
             entityData.set(PREFIX,input.joinToString(""));sound(player,"terminal_input")
             candidates.firstOrNull{it.code.size==input.size}?.let{
                 entityData.set(PREFIX,"")
@@ -123,7 +123,7 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
                 else entityData.set(MACHINE,it.ordinal)
             }
         }else {
-            if(direction!=Stratagems.RIGHT){entityData.set(PREFIX,"");sound(player,"terminal_error");sendState(player,true);return false}
+            if(direction!=Stratagems.RIGHT)return rejectInput(player)
             entityData.set(PREFIX,input.joinToString(""));sound(player,"terminal_input")
             if(input.size==6) {
                 entityData.set(PREFIX,"")
@@ -148,6 +148,12 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
         if(error>0)sound(player,"terminal_error")
         sendState(player,true);return true
     }
+    private fun rejectInput(player:ServerPlayer):Boolean {
+        entityData.set(PREFIX,"")
+        entityData.set(INPUT_ERROR_AT,level().gameTime)
+        sound(player,"terminal_error");sendState(player,true)
+        return false
+    }
     private fun deploymentPoint()=Vec3(x,groundY,z)
     private fun deploymentRoot()=net.minecraft.core.BlockPos.containing(deploymentPoint())
     private fun chooseFacing(m:MachineDeployment)=MachineStructure.choose(level() as ServerLevel,deploymentRoot(),m,net.minecraft.core.Direction.fromYRot(screenFacingYaw.toDouble()),this)
@@ -167,7 +173,7 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
         operator?.let{(level() as? ServerLevel)?.server?.playerList?.getPlayer(it)}?.let{sendState(it,false)}
         operator=null;nonce=null
     }
-    private fun transition(value:Int,start:Long){entityData.set(PHASE,value);entityData.set(START,start);previousSoundTick=-1}
+    private fun transition(value:Int,start:Long){entityData.set(PHASE,value);entityData.set(START,start)}
     override fun tick() {
         super.tick()
         if(phaseStart<0)return
@@ -187,32 +193,21 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
             RETRACTING->if(now>=deploymentEnd){transition(FINISHED,now);discard();return}
             FINISHED->{discard();return}
         }
-        val age=(now-phaseStart).toInt()
-        if(phase==DEPLOYING && previousSoundTick<0)playWorld("sfx_hellpod_cap_release")
-        // Shared native mechanical samples accompany the lift and folding motions.
-        // The authored lift markers themselves have no playable media in the sound bank.
-        val cues=when(phase){
-            DEPLOYING->listOf(9 to "sfx_native_machine_gun_sentry_deploy_81997979_0")
-            RETRACTING->listOf(0 to "sfx_emplacement_retract_mechanism",24 to "sfx_emplacement_retract_mechanism")
-            else->emptyList()
-        }
-        for((tick,effect)in cues)if(previousSoundTick<tick && age>=tick)playWorld(effect)
-        previousSoundTick=age
     }
+
     private fun releaseCap(){
         if(capReleased)return
         val cap=com.example.sbwhelldiver.init.ModEntities.HELLPOD_CAP.get().create(level())?:return
         cap.ejectFrom(this)
         if(level().addFreshEntity(cap))entityData.set(CAP_RELEASED,true)
     }
-    private fun playWorld(name:String){ModSounds.EVENTS[name]?.get()?.let{level().playSound(null,x,y,z,it,SoundSource.BLOCKS,1f,1f)}}
     override fun readAdditionalSaveData(n:CompoundTag) {
         groundY=n.getDouble("Ground");arrival=n.getLong("Arrival");born=n.getLong("Born")
         reservedFacing=net.minecraft.core.Direction.from2DDataValue(n.getInt("ReservedFacing"));containerSent=n.getBoolean("ContainerSent")
         owner=if(n.hasUUID("Owner"))n.getUUID("Owner")else null
         entityData.set(GROUND,groundY.toFloat());entityData.set(ARRIVAL,arrival);entityData.set(BORN,born)
         entityData.set(PHASE,n.getInt("Phase").coerceIn(PACKED,FINISHED));entityData.set(START,n.getLong("Start"));entityData.set(MACHINE,n.getInt("Machine").coerceIn(-1,1))
-        entityData.set(PREFIX,"");entityData.set(ERROR,0);previousSoundTick=Int.MAX_VALUE
+        entityData.set(PREFIX,"");entityData.set(ERROR,0);entityData.set(INPUT_ERROR_AT,-1L)
         entityData.set(CAP_RELEASED,if(n.contains("CapReleased"))n.getBoolean("CapReleased")else phase>=DEPLOYING)
         entityData.set(DEPLOYMENT_END,if(n.contains("DeploymentEnd"))n.getLong("DeploymentEnd") else phaseStart+if(phase==RETRACTING)60 else 200)
     }
@@ -230,6 +225,7 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
         private val MACHINE=SynchedEntityData.defineId(EquipmentDeploymentBeaconEntity::class.java,EntityDataSerializers.INT)
         private val PREFIX=SynchedEntityData.defineId(EquipmentDeploymentBeaconEntity::class.java,EntityDataSerializers.STRING)
         private val ERROR=SynchedEntityData.defineId(EquipmentDeploymentBeaconEntity::class.java,EntityDataSerializers.INT)
+        private val INPUT_ERROR_AT=SynchedEntityData.defineId(EquipmentDeploymentBeaconEntity::class.java,EntityDataSerializers.LONG)
         private val GROUND=SynchedEntityData.defineId(EquipmentDeploymentBeaconEntity::class.java,EntityDataSerializers.FLOAT)
         private val ARRIVAL=SynchedEntityData.defineId(EquipmentDeploymentBeaconEntity::class.java,EntityDataSerializers.LONG)
         private val BORN=SynchedEntityData.defineId(EquipmentDeploymentBeaconEntity::class.java,EntityDataSerializers.LONG)

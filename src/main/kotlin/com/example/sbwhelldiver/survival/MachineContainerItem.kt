@@ -25,6 +25,8 @@ class MachineContainerItem(val machine:MachineDeployment,properties:Properties):
             val box=ModEntities.MACHINE_CONTAINER.get().create(l)?:return InteractionResult.FAIL
             box.configure(machine,root,facing,c.itemInHand.get(DataComponents.CUSTOM_DATA)?.copyTag()?:CompoundTag(),false)
             if(!l.addFreshEntity(box))return InteractionResult.FAIL
+            val sound=net.minecraft.world.level.block.Blocks.IRON_BLOCK.defaultBlockState().getSoundType(l,root,player)
+            l.playSound(null,root,sound.placeSound,net.minecraft.sounds.SoundSource.BLOCKS,(sound.volume+1f)/2f,sound.pitch*.8f)
             if(!player.abilities.instabuild)c.itemInHand.shrink(1)
         }
         return InteractionResult.sidedSuccess(l.isClientSide)

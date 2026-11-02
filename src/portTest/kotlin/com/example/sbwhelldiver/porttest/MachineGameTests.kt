@@ -169,8 +169,8 @@ object MachineGameTests {
             box.interact(p,InteractionHand.MAIN_HAND)
             h.assertTrue(box.phase==MachineContainerEntity.OPENING&&!box.isRemoved&&h.level.getBlockEntity(root) is SampleMachineBlockEntity,"Crowbar did not create machine/open shell")
         }
-        h.runAtTickTime(54){h.assertTrue(!box.isRemoved,"Shell disappeared before animation completed")}
-        h.runAtTickTime(59){h.assertTrue(box.isRemoved,"Shell remained after animation");h.succeed()}
+        h.runAtTickTime(46){h.assertTrue(!box.isRemoved,"Shell disappeared before the two-second opening completed")}
+        h.runAtTickTime(51){h.assertTrue(box.isRemoved,"Shell remained after the two-second opening");h.succeed()}
     }
     @JvmStatic @GameTest(template="port_test",timeoutTicks=20)
     fun orientationFallbackAndDestructiveRemoval(h:GameTestHelper) {

@@ -43,7 +43,7 @@ class EquipmentBeaconRenderer(context:EntityRendererProvider.Context):EntityRend
             }
         }
         if(braking)DeliveryFlightVisuals.drawJets(e,partial,p,b)
-        if(e.phase==EquipmentDeploymentBeaconEntity.ACTIVE||e.phase==EquipmentDeploymentBeaconEntity.COUNTDOWN)drawTerminal(e,p,b)
+        if(e.phase==EquipmentDeploymentBeaconEntity.ACTIVE||e.phase==EquipmentDeploymentBeaconEntity.COUNTDOWN)drawTerminal(e,partial,p,b)
         if(e.phase==EquipmentDeploymentBeaconEntity.ACTIVE||e.selectedMachine!=null&&e.phase in EquipmentDeploymentBeaconEntity.RETRACTING..EquipmentDeploymentBeaconEntity.COUNTDOWN)beam(p,b)
         p.popPose()
     }
@@ -55,7 +55,7 @@ class EquipmentBeaconRenderer(context:EntityRendererProvider.Context):EntityRend
             for(q in arrayOf(floatArrayOf(x,4.23f,z),floatArrayOf(xx,4.23f,zz),floatArrayOf(xx,256f,zz),floatArrayOf(x,256f,z)))v.vertex(mat,q[0],q[1],q[2]).color(.15f,.65f,1f,alpha).endVertex()
         }
     }
-    private fun drawTerminal(e:EquipmentDeploymentBeaconEntity,p:PoseStack,b:MultiBufferSource) {
+    private fun drawTerminal(e:EquipmentDeploymentBeaconEntity,partial:Float,p:PoseStack,b:MultiBufferSource) {
         val g=EquipmentBeaconGeometry;val tl=g.center.subtract(g.right.scale(g.width*.5)).add(g.up.scale(g.height*.5)).add(g.normal.scale(.002))
         val frame=Matrix4f().setColumn(0,Vector4f(g.right.x.toFloat(),g.right.y.toFloat(),g.right.z.toFloat(),0f)).setColumn(1,Vector4f(-g.up.x.toFloat(),-g.up.y.toFloat(),-g.up.z.toFloat(),0f)).setColumn(2,Vector4f(g.normal.x.toFloat(),g.normal.y.toFloat(),g.normal.z.toFloat(),0f)).setColumn(3,Vector4f(tl.x.toFloat(),tl.y.toFloat(),tl.z.toFloat(),1f))
         p.pushPose();p.mulPose(frame);val scale=(g.width/256).toFloat();p.scale(scale,scale,scale)
@@ -68,9 +68,10 @@ class EquipmentBeaconRenderer(context:EntityRendererProvider.Context):EntityRend
             font.drawInBatch(bold,0f,0f,color,false,p.last().pose(),b,Font.DisplayMode.NORMAL,0,LightTexture.FULL_BRIGHT)
             p.popPose()
         }
+        val inputError=EquipmentTerminalFeedback.flashing(e,partial)
         fun arrows(code:List<Int>,x:Float,y:Float,progress:Int) {
             code.forEachIndexed{i,d->
-                val color=if(i<progress)0xFF65D8A0.toInt()else 0xFFEFECDD.toInt()
+                val color=if(inputError)0xFFFF554D.toInt()else if(i<progress)0xFF65D8A0.toInt()else 0xFFEFECDD.toInt()
                 ArrowGlyph.forEachPixel(d){dx,dy->
                     quad(p,b,BeaconModel.WHITE,x+i*14+dx*1.5f,y+dy*1.5f,1.5f,1.5f,color)
                 }

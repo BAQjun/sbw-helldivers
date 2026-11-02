@@ -1,5 +1,21 @@
 # 版本记录
 
+## 0.6.0-alpha.7
+
+## 中文
+
+- 调整机器集装箱和设备部署信标的机械音效，使其与开门、升起、展开及收回动作同步。
+- 集装箱开门由 2.4 秒加快至 2 秒，保留原机械音效的正常播放时长。
+- 手动放置机器集装箱时播放铁块放置音效。
+- 设备部署终端的设备选择页和材料提交页输错指令时，所有指令箭头同步闪红一次。
+
+## English
+
+- Synchronized mechanical audio with the opening, lifting, unfolding and retraction of machine containers and equipment deployment beacons.
+- Sped up container opening from 2.4 to 2 seconds while retaining the original mechanical sound duration.
+- Added iron block placement sounds when placing machine containers by hand.
+- All command arrows now flash red once after an incorrect input on both the device selection and material submission pages.
+
 ## 0.6.0-alpha.6
 
 ## 中文

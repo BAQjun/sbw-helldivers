@@ -34,6 +34,14 @@ object EquipmentGameTests {
         }
     }
     @JvmStatic @GameTest(template="port_test",timeoutTicks=160)
+    fun incorrectTerminalInputResetsProgressWithoutDeploying(h:GameTestHelper)=terminalFixture(h){e,p,token,cleanup->
+        h.assertTrue(!e.acceptInput(p,token,1)&&e.inputErrorAt==h.level.gameTime&&e.prefix.isEmpty(),"Invalid selection did not signal/reset input")
+        MachineDeployment.BIOPROCESSOR.code.forEachIndexed{i,d->h.runAfterDelay((i+1).toLong()*2){h.assertTrue(e.acceptInput(p,token,d),"Valid command blocked after wrong input")}}
+        h.runAfterDelay(12){h.assertTrue(e.selectedMachine==MachineDeployment.BIOPROCESSOR,"Recovery from error failed");h.assertTrue(e.acceptInput(p,token,1),"Confirmation prefix rejected")}
+        h.runAfterDelay(14){h.assertTrue(!e.acceptInput(p,token,0)&&e.prefix.isEmpty()&&e.inputErrorAt==h.level.gameTime&&!e.paid,"Wrong confirmation did not reset/signal safely")}
+        h.runAfterDelay(16){h.assertTrue(e.acceptInput(p,token,3)&&e.selectedMachine==null,"Back navigation broken");cleanup();h.succeed()}
+    }
+    @JvmStatic @GameTest(template="port_test",timeoutTicks=160)
     fun sixLeftInputsRecallBeaconWithoutContainer(h:GameTestHelper)=terminalFixture(h){e,p,token,cleanup->
         repeat(6){i->h.runAfterDelay((i+1).toLong()){
             h.assertTrue(e.phase==EquipmentDeploymentBeaconEntity.ACTIVE&&e.prefix.size==i,"Recall happened before sixth left")

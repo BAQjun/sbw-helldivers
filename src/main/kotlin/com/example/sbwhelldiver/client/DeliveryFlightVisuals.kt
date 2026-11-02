@@ -50,6 +50,7 @@ object DeliveryFlightVisuals {
                 HellpodJetParticle.emit(entity,offset,sample,if(machine!=null)direction.yRot(Math.PI.toFloat())else direction)
             }
         }
+        DeploymentPhaseAudio.tick(entity)
         SoundTimeline.tick(entity)
     }
     private val flame=ResourceLocation.withDefaultNamespace("textures/particle/flame.png")

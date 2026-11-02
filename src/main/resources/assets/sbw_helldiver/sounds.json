@@ -5454,5 +5454,125 @@
         "attenuation_distance": 64
       }
     ]
+  },
+  "sfx_equipment_beacon_lift": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_lift_0",
+        "volume": 0.4168693837564011,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_lift_1",
+        "volume": 0.33496543915782767,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_lift_2",
+        "volume": 0.29853826189179594,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_lift_3",
+        "volume": 0.3981071705534972,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_equipment_beacon_unfold": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_unfold_0",
+        "volume": 0.4168693837564011,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_unfold_1",
+        "volume": 0.33496543915782767,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_unfold_2",
+        "volume": 0.29853826189179594,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_unfold_3",
+        "volume": 0.3981071705534972,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_equipment_beacon_fold": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_fold_0",
+        "volume": 0.3801893960596662,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_fold_1",
+        "volume": 0.33496543915782767,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_fold_2",
+        "volume": 0.36307805427179574,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_fold_3",
+        "volume": 0.38459178151752144,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_equipment_beacon_lower": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_lower_0",
+        "volume": 0.3801893960596662,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_lower_1",
+        "volume": 0.33496543915782767,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_lower_2",
+        "volume": 0.36307805427179574,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_lower_3",
+        "volume": 0.38459178151752144,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_equipment_beacon_iris": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_iris_0",
+        "volume": 0.3801893960596662,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_iris_1",
+        "volume": 0.33496543915782767,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_iris_2",
+        "volume": 0.36307805427179574,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_iris_3",
+        "volume": 0.38459178151752144,
+        "attenuation_distance": 96
+      }
+    ]
   }
 }

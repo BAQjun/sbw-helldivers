@@ -43,7 +43,7 @@ class MachineContainerEntity(type:EntityType<out MachineContainerEntity>,level:L
             if(!MachineStructure.space(level() as ServerLevel,root,machine,facing,this)){spawnAtLocation(MachineContainerItem.stack(machine,payload));discard();return}
             entityData.set(PHASE,CLOSED);entityData.set(START,level().gameTime)
         }
-        if(phase==OPENING&&level().gameTime-phaseStart>=48)discard()
+        if(phase==OPENING&&level().gameTime-phaseStart>=OPENING_TICKS)discard()
     }
     override fun isPickable()=phase!=OPENING
     override fun isPushable()=false
@@ -57,7 +57,6 @@ class MachineContainerEntity(type:EntityType<out MachineContainerEntity>,level:L
                 val be=MachineStructure.place(level() as ServerLevel,root,machine,facing,payload,this)
                 if(be==null){player.displayClientMessage(net.minecraft.network.chat.Component.translatable("terminal.sbw_helldiver.no_space"),true);return InteractionResult.FAIL}
                 payload=CompoundTag();entityData.set(PHASE,OPENING);entityData.set(START,level().gameTime)
-                com.example.sbwhelldiver.init.ModSounds.EVENTS["sfx_emplacement_retract_mechanism"]?.get()?.let{level().playSound(null,x,y,z,it,net.minecraft.sounds.SoundSource.BLOCKS,1f,1f)}
             }
         }
         return InteractionResult.sidedSuccess(level().isClientSide)
@@ -65,6 +64,8 @@ class MachineContainerEntity(type:EntityType<out MachineContainerEntity>,level:L
     override fun readAdditionalSaveData(n:CompoundTag){entityData.set(KIND,n.getInt("Kind").coerceIn(0,1));entityData.set(FACING,n.getInt("Facing"));entityData.set(PHASE,n.getInt("Phase").coerceIn(0,2));entityData.set(ROOT,BlockPos.of(n.getLong("Root")));entityData.set(START,n.getLong("Start"));entityData.set(LAUNCH,n.getLong("Launch"));entityData.set(ARRIVAL,n.getLong("Arrival"));payload=n.getCompound("Contents").copy()}
     override fun addAdditionalSaveData(n:CompoundTag){n.putInt("Kind",machine.ordinal);n.putInt("Facing",facing.get2DDataValue());n.putInt("Phase",phase);n.putLong("Root",root.asLong());n.putLong("Start",phaseStart);n.putLong("Launch",launch);n.putLong("Arrival",arrival);n.put("Contents",payload.copy())}
     companion object {
+        const val OPENING_TICKS=40
+        const val OPENING_CLIP_SECONDS=2.4f
         const val FALLING=0;const val CLOSED=1;const val OPENING=2
         private val KIND=SynchedEntityData.defineId(MachineContainerEntity::class.java,EntityDataSerializers.INT)
         private val FACING=SynchedEntityData.defineId(MachineContainerEntity::class.java,EntityDataSerializers.INT)

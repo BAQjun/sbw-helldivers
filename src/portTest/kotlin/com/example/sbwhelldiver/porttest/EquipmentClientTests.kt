@@ -28,9 +28,21 @@ object EquipmentClientTests {
     private var started=false;private var ticks=0;private val launched=System.currentTimeMillis()
     private var device=java.util.UUID(0,0)
     private val mechanicalSounds=mutableListOf<String>()
+    private val flashRuns=mutableMapOf<Long,Int>()
+    private var flashWasRed=false
+    private var flashAt=-1L
+    private var flashCaptureAt=-1
+    private var flashCaptureName=""
     @SubscribeEvent fun sound(event:net.neoforged.neoforge.client.event.sound.PlaySoundEvent) {
         if(java.lang.Boolean.getBoolean("sbw_helldiver.equipmentRegression"))event.sound?.location?.path?.let {
-            if(it=="sfx_native_machine_gun_sentry_deploy_81997979_0" || it=="sfx_emplacement_retract_mechanism")mechanicalSounds.add(it)
+            if(it.startsWith("sfx_equipment_beacon_")) {
+                mechanicalSounds.add(it)
+                val e=Minecraft.getInstance().level!!.entitiesForRendering().filterIsInstance<EquipmentDeploymentBeaconEntity>().first{b->b.uuid==device}
+                val age=(e.level().gameTime-e.phaseStart).toInt()
+                val expected=mapOf("sfx_equipment_beacon_lift" to 9,"sfx_equipment_beacon_unfold" to 22,"sfx_equipment_beacon_fold" to 1,"sfx_equipment_beacon_lower" to 24,"sfx_equipment_beacon_iris" to 50).getValue(it)
+                check(kotlin.math.abs(age-expected)<=1){"Mechanical cue out of sync: $it at $age, expected $expected"}
+                LOGGER.info("EQUIPMENT_ALIGNED_AUDIO {} age={}",it,age)
+            }
         }
     }
     @SubscribeEvent fun tick(event:ClientTickEvent.Post) {
@@ -80,6 +92,17 @@ object EquipmentClientTests {
             server.execute{server.playerList.getPlayer(player.uuid)!!.setGameMode(GameType.SURVIVAL)}
         }
         fun key(d:Int){(mc.screen as? EquipmentTerminalScreen)?.keyPressed(listOf(GLFW.GLFW_KEY_UP,GLFW.GLFW_KEY_RIGHT,GLFW.GLFW_KEY_DOWN,GLFW.GLFW_KEY_LEFT)[d],0,0)?:error("No terminal at $ticks")}
+        if(ticks==138)key(1) // Invalid selection; subsequent valid arrows remain usable during the feedback.
+        if(ticks==167)key(0) // Invalid confirmation command on the material page.
+        val observed=mc.level!!.entitiesForRendering().filterIsInstance<EquipmentDeploymentBeaconEntity>().firstOrNull{it.uuid==device}
+        if(observed!=null&&observed.inputErrorAt>=0) {
+            if(flashAt!=observed.inputErrorAt){flashAt=observed.inputErrorAt;flashWasRed=false}
+            val red=com.example.sbwhelldiver.client.EquipmentTerminalFeedback.flashing(observed)
+            if(red&&!flashWasRed){flashRuns.merge(flashAt,1,Int::plus);flashCaptureAt=ticks+2;flashCaptureName="equipment-input-error-${flashRuns.size}-${flashRuns[flashAt]}.png"}
+            if(ticks==flashCaptureAt)capture(flashCaptureName)
+            flashWasRed=red
+        }
+        if(ticks==200){check(flashRuns.size==2&&flashRuns.values.all{it==1}){"Incorrect input did not produce one red flash on both menus: $flashRuns"};LOGGER.info("EQUIPMENT_ALL_PAGES_ERROR_FLASH_VERIFIED {}",flashRuns)}
         val bio=MachineDeployment.BIOPROCESSOR.code
         if(ticks in 140..156&&(ticks-140)%4==0)key(bio[(ticks-140)/4])
         if(ticks==165)capture("equipment-material.png")
@@ -106,9 +129,8 @@ object EquipmentClientTests {
             capture("equipment-countdown.png")
         }
         if(ticks==450)capture("equipment-retract.png")
-        if(ticks==480) {
-            check(mechanicalSounds.count{it=="sfx_native_machine_gun_sentry_deploy_81997979_0"}==1){"Extension sound not played exactly once: $mechanicalSounds"}
-            check(mechanicalSounds.count{it=="sfx_emplacement_retract_mechanism"}==2){"Folding/lowering sound missing or duplicated: $mechanicalSounds"}
+        if(ticks==505) {
+            for(effect in listOf("lift","unfold","fold","lower","iris"))check(mechanicalSounds.count{it=="sfx_equipment_beacon_$effect"}==1){"Missing/duplicate mechanical stage: $mechanicalSounds"}
         }
         if(ticks==515)server.execute {
             val l=server.overworld()

@@ -70,6 +70,8 @@ object SoundTimeline : ResourceManagerReloadListener {
     fun cues(entity: net.minecraft.world.entity.Entity, animation: String): List<Cue> =
         models[(entity as? AbstractHellpodEntity)?.profile?.model ?: "hellpod_v3"]?.get(animation).orEmpty()
 
+    fun cues(model:String,animation:String):List<Cue> = models[model]?.get(animation).orEmpty()
+
     fun schedule(entity: net.minecraft.world.entity.Entity, animation: String, age: Int = 0, group: String = animation, catchUp: Boolean = false) {
         schedule(entity, cues(entity, animation), age, group, catchUp)
     }

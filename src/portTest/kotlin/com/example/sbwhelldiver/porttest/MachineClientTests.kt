@@ -33,6 +33,19 @@ object MachineClientTests {
     private var capturedJets=false
     private var lodPod:java.util.UUID?=null
     private var configParent:net.minecraft.client.gui.screens.Screen?=null
+    private val openingAudio=mutableListOf<Pair<java.util.UUID,Int>>()
+    private var placements=0
+    @SubscribeEvent fun sound(event:net.neoforged.neoforge.client.event.sound.PlaySoundEvent) {
+        if(!java.lang.Boolean.getBoolean("sbw_helldiver.machineRegression"))return
+        val sound=event.sound?:return
+        if(sound.location==net.minecraft.sounds.SoundEvents.METAL_PLACE.location)placements++
+        if(sound.location.path=="sfx_emplacement_retract_mechanism") {
+            val e=Minecraft.getInstance().level!!.entitiesForRendering().filterIsInstance<MachineContainerEntity>().minBy{it.position().distanceToSqr(net.minecraft.world.phys.Vec3(sound.x,sound.y,sound.z))}
+            val age=(e.level().gameTime-e.phaseStart).toInt()
+            check(age in 8..9){"Container mechanical audio outside door movement start: $age"}
+            openingAudio.add(e.uuid to age)
+        }
+    }
     @SubscribeEvent fun tick(event:ClientTickEvent.Post) {
         if(!java.lang.Boolean.getBoolean("sbw_helldiver.machineRegression"))return
         val mc=Minecraft.getInstance()
@@ -85,6 +98,8 @@ object MachineClientTests {
             for(id in boxes)(server.overworld().getEntity(id) as MachineContainerEntity).interact(p,InteractionHand.MAIN_HAND)
         }
         if(ticks==150)capture("machine-shell-opening.png")
+        if(ticks==175)server.execute{check(boxes.all{server.overworld().getEntity(it)==null}){"Container opening still takes more than two seconds"}}
+        if(ticks==185){check(openingAudio.size==2&&openingAudio.map{it.first}.toSet()==boxes.toSet()){"Missing or duplicate container opening audio: $openingAudio"};LOGGER.info("MACHINE_OPENING_AUDIO_ALIGNED {}",openingAudio)}
         if(ticks==195)server.execute {
             val l=server.overworld()
             for((i,m)in MachineDeployment.entries.withIndex()){
@@ -214,7 +229,13 @@ object MachineClientTests {
         if(ticks==540)capture("packed-refinery-item.png")
         if(ticks==545)mc.setScreen(net.minecraft.client.gui.screens.inventory.InventoryScreen(player))
         if(ticks==555)capture("packed-containers-inventory.png")
-        if(ticks==565){LOGGER.info("MACHINE_CLIENT_COMPLETED");mc.stop()}
+        if(ticks==565){mc.setScreen(null);player.inventory.selected=0;server.execute{val p=server.playerList.getPlayer(player.uuid)!!;p.inventory.selected=0;p.setItemInHand(InteractionHand.MAIN_HAND,MachineContainerItem.stack(MachineDeployment.BIOPROCESSOR));p.teleportTo(server.overworld(),-10.5,80.0,-10.5,0f,20f)}}
+        if(ticks==580){
+            val pos=BlockPos(-10,79,-10);val hit=net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos).add(0.0,.5,0.0),Direction.UP,pos,false)
+            check(mc.gameMode!!.useItemOn(player,InteractionHand.MAIN_HAND,hit).consumesAction())
+        }
+        if(ticks==590){check(placements==1){"Expected one iron block placement sound: $placements"};val pos=BlockPos(-10,79,-10);val hit=net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos).add(0.0,.5,0.0),Direction.UP,pos,false);mc.gameMode!!.useItemOn(player,InteractionHand.MAIN_HAND,hit)}
+        if(ticks==600){check(placements==1){"Failed placement also played iron sound: $placements"};LOGGER.info("MACHINE_PLACEMENT_SOUND_VERIFIED");LOGGER.info("MACHINE_CLIENT_COMPLETED");mc.stop()}
     }
     private fun capture(name:String){val mc=Minecraft.getInstance();Screenshot.grab(mc.gameDirectory,name,mc.mainRenderTarget){LOGGER.info("MACHINE_SCREENSHOT {} {}",name,it.string)}}
 }
