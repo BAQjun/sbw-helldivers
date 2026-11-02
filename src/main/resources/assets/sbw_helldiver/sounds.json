@@ -5590,5 +5590,24 @@
         "attenuation_distance": 96
       }
     ]
+  },
+  "tactical_select": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:ui/select_0",
+        "volume": 0.5,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:ui/select_1",
+        "volume": 0.5,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:ui/select_2",
+        "volume": 0.5,
+        "attenuation_distance": 64
+      }
+    ]
   }
 }

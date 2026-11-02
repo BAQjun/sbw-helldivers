@@ -107,16 +107,17 @@ class TacticalTerminalScreen(private val state:TacticalTerminalOpenPacket):Scree
         if(x !in 10.0..(widthUi-10).toDouble())return true
         if(category==null){
             if(y in 28.0..54.0){start("destroyer_call");return true}
-            for((i,c)in TerminalCategory.entries.withIndex())if(y>=57+i*25 && y<79+i*25){category=c;scroll=0;return true}
+            for((i,c)in TerminalCategory.entries.withIndex())if(y>=57+i*25 && y<79+i*25){selectSound();category=c;scroll=0;return true}
         }else{
-            if(y in 24.0..41.0){cancel();category=null;scroll=0;return true}
+            if(y in 24.0..41.0){selectSound();cancel();category=null;scroll=0;return true}
             if(y>=38 && y<154){val index=((y-38)/29).toInt()+scroll;entries().getOrNull(index)?.let{start(it.id)}}
         }
         return true
     }
     override fun mouseReleased(x:Double,y:Double,button:Int):Boolean {if(button==0)cancel();return true}
     override fun mouseScrolled(x:Double,y:Double,horizontal:Double,vertical:Double):Boolean {if(category!=null){scroll=(scroll-if(vertical>0)1 else if(vertical<0)-1 else 0).coerceIn(0,(entries().size-4).coerceAtLeast(0));cancel()};return true}
-    private fun start(id:String){cancel();held=id;heldTicks=0;send(0,id)}
+    private fun start(id:String){selectSound();cancel();held=id;heldTicks=0;send(0,id)}
+    private fun selectSound(){minecraft?.soundManager?.play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(com.example.sbwhelldiver.init.ModSounds.EVENTS.getValue("tactical_select").get(),1f))}
     private fun cancel(){held?.let{send(-1,it)};held=null;heldTicks=0}
     private fun send(action:Int,id:String=""){BeaconNetwork.CHANNEL.sendToServer(TacticalTerminalActionPacket(state.pos,state.token,action,id))}
     override fun keyPressed(key:Int,scan:Int,mods:Int):Boolean {if(key==GLFW.GLFW_KEY_ESCAPE){onClose();return true};return super.keyPressed(key,scan,mods)}
