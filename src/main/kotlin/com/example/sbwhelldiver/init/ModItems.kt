@@ -17,6 +17,7 @@ import net.neoforged.neoforge.registries.DeferredHolder
 object ModItems {
 
     val ITEMS: DeferredRegister<Item> = DeferredRegister.create(BuiltInRegistries.ITEM, MOD_ID)
+    val TACTICAL_TERMINAL=ITEMS.register("tactical_terminal"){_->com.example.sbwhelldiver.survival.TacticalTerminalItem(ModBlocks.TACTICAL_TERMINAL.get(),Item.Properties())}
     val COMMON_SAMPLE=ITEMS.register("common_sample"){_->Item(Item.Properties())}
     val RARE_SAMPLE=ITEMS.register("rare_sample"){_->Item(Item.Properties())}
     val SUPER_SAMPLE=ITEMS.register("super_sample"){_->Item(Item.Properties())}

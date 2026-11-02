@@ -80,10 +80,10 @@ class EquipmentTerminalScreen(var state:EquipmentTerminalStatePacket):Screen(Com
 object EquipmentTerminalView {
     @net.neoforged.bus.api.SubscribeEvent fun player(e:net.neoforged.neoforge.client.event.RenderPlayerEvent.Pre){
         val mc=Minecraft.getInstance()
-        if(mc.screen is EquipmentTerminalScreen && e.entity===mc.player)e.isCanceled=true
+        if((mc.screen is EquipmentTerminalScreen || mc.screen is TacticalTerminalScreen) && e.entity===mc.player)e.isCanceled=true
     }
-    @net.neoforged.bus.api.SubscribeEvent fun hand(e:net.neoforged.neoforge.client.event.RenderHandEvent){if(Minecraft.getInstance().screen is EquipmentTerminalScreen)e.isCanceled=true}
+    @net.neoforged.bus.api.SubscribeEvent fun hand(e:net.neoforged.neoforge.client.event.RenderHandEvent){if(Minecraft.getInstance().screen is EquipmentTerminalScreen || Minecraft.getInstance().screen is TacticalTerminalScreen)e.isCanceled=true}
     @net.neoforged.bus.api.SubscribeEvent fun overlay(e:net.neoforged.neoforge.client.event.RenderGuiLayerEvent.Pre){
-        if(Minecraft.getInstance().screen is EquipmentTerminalScreen && (e.name.namespace in setOf("superbwarfare","tacz")||e.name==net.neoforged.neoforge.client.gui.VanillaGuiLayers.CROSSHAIR))e.isCanceled=true
+        if((Minecraft.getInstance().screen is EquipmentTerminalScreen || Minecraft.getInstance().screen is TacticalTerminalScreen) && (e.name.namespace in setOf("superbwarfare","tacz")||e.name==net.neoforged.neoforge.client.gui.VanillaGuiLayers.CROSSHAIR))e.isCanceled=true
     }
 }

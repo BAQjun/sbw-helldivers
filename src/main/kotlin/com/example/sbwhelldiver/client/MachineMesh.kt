@@ -73,7 +73,7 @@ object MachineMesh:ResourceManagerReloadListener {
     }
     private var models=emptyMap<String,Model>()
     override fun onResourceManagerReload(manager:ResourceManager) {
-        models=listOf("bioprocessor","refinery","bioprocessor_container","refinery_container").flatMap{listOf(it,it+"_lod")}.associateWith{name->
+        models=(listOf("bioprocessor","refinery","bioprocessor_container","refinery_container").flatMap{listOf(it,it+"_lod")}+listOf("tactical_terminal")).associateWith{name->
             val json=manager.open(ResourceLocation.fromNamespaceAndPath(MOD_ID,"models/mesh/$name.mesh.json.gz")).use{GZIPInputStream(it).reader().use(JsonParser::parseReader)}.asJsonObject
             fun floats(a:JsonArray)=a.map{it.asFloat}.toFloatArray()
             fun vector(a:JsonArray)=floats(a).let{Vector3f(it[0],it[1],it[2])}
@@ -101,8 +101,10 @@ object MachineMesh:ResourceManagerReloadListener {
         draw(model,animation,time,p,b,light)
     }
     fun drawContainerItem(name:String,p:PoseStack,b:MultiBufferSource,light:Int) {
-        // Retain complete panels when a packed crate is inspected up close.
-        val model=models[name+"_container"]?:return
+        drawModelItem(name+"_container",p,b,light)
+    }
+    fun drawModelItem(name:String,p:PoseStack,b:MultiBufferSource,light:Int) {
+        val model=models[name]?:return
         val (center,scale)=model.itemFit
         p.pushPose();p.translate(.5,.5,.5);p.scale(scale,scale,scale);p.translate(-center.x,-center.y,-center.z)
         draw(model,"deploy",0f,p,b,light);p.popPose()

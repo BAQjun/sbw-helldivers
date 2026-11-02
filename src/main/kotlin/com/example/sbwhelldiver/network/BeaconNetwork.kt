@@ -61,6 +61,9 @@ data class BeaconFailurePacket(val stratagemId: String, val loadoutIds: List<Str
 object BeaconNetwork {
     val CHANNEL = PacketChannel()
     fun register() {
+        CHANNEL.registerMessage(28,TacticalTerminalResultPacket::class.java,{p,b->p.encode(b)},TacticalTerminalResultPacket::decode,TacticalTerminalResultPacket::handle,Optional.of(PacketDirection.PLAY_TO_CLIENT))
+        CHANNEL.registerMessage(26,TacticalTerminalOpenPacket::class.java,{p,b->p.encode(b)},TacticalTerminalOpenPacket::decode,TacticalTerminalOpenPacket::handle,Optional.of(PacketDirection.PLAY_TO_CLIENT))
+        CHANNEL.registerMessage(27,TacticalTerminalActionPacket::class.java,{p,b->p.encode(b)},TacticalTerminalActionPacket::decode,TacticalTerminalActionPacket::handle,Optional.of(PacketDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(24,EquipmentTerminalInputPacket::class.java,{p,b->p.encode(b)},EquipmentTerminalInputPacket::decode,EquipmentTerminalInputPacket::handle,Optional.of(PacketDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(25,EquipmentTerminalStatePacket::class.java,{p,b->p.encode(b)},EquipmentTerminalStatePacket::decode,EquipmentTerminalStatePacket::handle,Optional.of(PacketDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(23,RocketTrailPacket::class.java,{p,b->p.encode(b)},RocketTrailPacket::decode,RocketTrailPacket::handle,Optional.of(PacketDirection.PLAY_TO_CLIENT))

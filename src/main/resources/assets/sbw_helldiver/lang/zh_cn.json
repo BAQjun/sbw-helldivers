@@ -272,5 +272,17 @@
   "config.sbw_helldiver.model_lod.tooltip": "超过设定距离时使用低面数模型；关闭后保留所选模型质量。操作中的炮台保持精细模型。",
   "config.sbw_helldiver.model_lod_distance": "LOD 距离（格）",
   "config.sbw_helldiver.model_lod_distance.tooltip": "8–256 格，默认 32。地雷维持较近的两级切换距离，并随此数值同比调整。保存后立即生效。",
-  "config.sbw_helldiver.model_lod_distance.invalid": "请输入 8–256 格之间的 LOD 距离。"
+  "config.sbw_helldiver.model_lod_distance.invalid": "请输入 8–256 格之间的 LOD 距离。",
+  "hud.sbw_helldiver.destroyer_residence": "驱逐舰驻场时间：%s",
+  "block.sbw_helldiver.tactical_terminal": "战术终端",
+  "gui.sbw_helldiver.destroyer_uses": "驱逐舰次数：%s / 5",
+  "gui.sbw_helldiver.replenish": "补充驱逐舰呼叫次数",
+  "gui.sbw_helldiver.back": "< 返回",
+  "gui.sbw_helldiver.category.orbital": "轨道类",
+  "gui.sbw_helldiver.category.eagle": "飞鹰类",
+  "gui.sbw_helldiver.category.sentry": "哨戒炮类",
+  "gui.sbw_helldiver.category.defense": "防御类",
+  "message.sbw_helldiver.terminal_full": "驱逐舰呼叫次数已满",
+  "message.sbw_helldiver.terminal_insufficient": "样本不足",
+  "message.sbw_helldiver.terminal_success": "获取成功"
 }

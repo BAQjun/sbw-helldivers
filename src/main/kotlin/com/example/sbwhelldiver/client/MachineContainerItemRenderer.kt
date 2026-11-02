@@ -16,3 +16,10 @@ class MachineContainerItemRenderer:BlockEntityWithoutLevelRenderer(Minecraft.get
     }
     companion object {val INSTANCE by lazy{MachineContainerItemRenderer()}}
 }
+
+class TacticalTerminalItemRenderer:BlockEntityWithoutLevelRenderer(Minecraft.getInstance().blockEntityRenderDispatcher,Minecraft.getInstance().entityModels) {
+    override fun renderByItem(stack:ItemStack,context:ItemDisplayContext,pose:PoseStack,buffers:MultiBufferSource,light:Int,overlay:Int) {
+        MachineMesh.drawModelItem("tactical_terminal",pose,buffers,light)
+    }
+    companion object {val INSTANCE by lazy{TacticalTerminalItemRenderer()}}
+}

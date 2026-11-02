@@ -11,8 +11,10 @@ import com.example.sbwhelldiver.init.ModBlocks
 object MachineRegistry {
     var clientTick:((SampleMachineBlockEntity)->Unit)?=null
     val BLOCK_ENTITIES=DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE,MOD_ID)
+    val TACTICAL_TERMINAL=BLOCK_ENTITIES.register("tactical_terminal"){_->BlockEntityType.Builder.of(::TacticalTerminalBlockEntity,ModBlocks.TACTICAL_TERMINAL.get()).build(null)}
     val MACHINE=BLOCK_ENTITIES.register("sample_machine"){_->BlockEntityType.Builder.of(::SampleMachineBlockEntity,ModBlocks.SAMPLE_MACHINE.get()).build(null)}
     fun capabilities(event:RegisterCapabilitiesEvent) {
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,TACTICAL_TERMINAL.get()){be,side->be.energyPort(side)}
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,MACHINE.get()){be,side->be.itemPort(side)}
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,MACHINE.get()){be,side->be.energyPort(side)}
     }

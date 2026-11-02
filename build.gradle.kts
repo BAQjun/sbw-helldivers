@@ -34,6 +34,7 @@ neoForge {
             if (providers.gradleProperty("mineTests").isPresent) systemProperty("sbw_helldiver.mineRegression", "true")
             if (providers.gradleProperty("equipmentTests").isPresent) systemProperty("sbw_helldiver.equipmentRegression", "true")
             if (providers.gradleProperty("equipmentCollisionOnly").isPresent) systemProperty("sbw_helldiver.equipmentCollisionOnly", "true")
+            if (providers.gradleProperty("tacticalTests").isPresent) systemProperty("sbw_helldiver.tacticalRegression", "true")
             if (providers.gradleProperty("machineTests").isPresent) systemProperty("sbw_helldiver.machineRegression", "true")
             if (providers.gradleProperty("hudTests").isPresent) {
                 systemProperty("sbw_helldiver.hudRegression", "true")

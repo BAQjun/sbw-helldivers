@@ -92,6 +92,7 @@ object ClientSetup {
     @SubscribeEvent
     fun registerRenderers(event: EntityRenderersEvent.RegisterRenderers) {
         event.registerBlockEntityRenderer(com.example.sbwhelldiver.survival.MachineRegistry.MACHINE.get(),::SampleMachineRenderer)
+        event.registerBlockEntityRenderer(com.example.sbwhelldiver.survival.MachineRegistry.TACTICAL_TERMINAL.get(),::TacticalTerminalRenderer)
         event.registerEntityRenderer(ModEntities.MACHINE_CONTAINER.get(),::MachineContainerRenderer)
         event.registerEntityRenderer(ModEntities.EQUIPMENT_BEACON.get(),::EquipmentBeaconRenderer)
         event.registerEntityRenderer<AutoAimableEntity>(ModEntities.PLAYER_HELLPOD.get(),::HellpodRenderer)

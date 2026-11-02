@@ -287,7 +287,8 @@ object StratagemClient {
         val panelX = 0
         val panelY = 0
         val rowHeight = 32
-        val panelHeight = 25 + rowHeight * loadout.size + 6 + if (selected != null) 20 else 0
+        val residence = DestroyerClient.remainingResidence(partial)
+        val panelHeight = 25 + rowHeight * loadout.size + 6 + (if (residence != null) 20 else 0) + if (selected != null) 20 else 0
         val textX = 32
         lastHudLayout = HudLayout(screenX, screenY, panelWidth * scale, panelHeight * scale)
         gui.pose().pushPose()
@@ -303,9 +304,13 @@ object StratagemClient {
             if (def == null) { drawHudText(gui, Component.translatable("hud.sbw_helldiver.empty_slot", equipmentSlot), textX, y + 6, 0x9DAFA3); continue }
             drawRow(gui, def, y, selected, visiblePrefix, candidates, contents.inputError, i in lastFailureRows, partial)
         }
+        if (residence != null) {
+            val duration = "%02d:%02d".format(residence / 60, residence % 60)
+            gui.drawString(mc.font, Component.translatable("hud.sbw_helldiver.destroyer_residence", duration), panelX + 8, panelY + 25 + rowHeight * loadout.size, 0xE8E4CC, true)
+        }
         if (selected != null) {
             val ready = Component.translatable("hud.sbw_helldiver.ready").string
-            drawHudText(gui, Component.literal(mc.font.plainSubstrByWidth(ready, ((panelWidth - 16) / 1.5f).toInt())), panelX + 8, panelY + 25 + rowHeight * loadout.size, 0x83E4FF)
+            drawHudText(gui, Component.literal(mc.font.plainSubstrByWidth(ready, ((panelWidth - 16) / 1.5f).toInt())), panelX + 8, panelY + 25 + rowHeight * loadout.size + (if (residence != null) 20 else 0), 0x83E4FF)
         }
         gui.pose().popPose()
     }
@@ -340,6 +345,16 @@ object StratagemClient {
             drawRow(gui,row.definition,rowY,if(row.selected)row.definition else null,emptyList(),emptyList(),false,false,partial,true)
             gui.pose().popPose()
             rows[id]=HudLayout(screenX,y+(rowY-2)*scale,158*scale,32*scale)
+        }
+        val residence=DestroyerClient.remainingResidence(partial)
+        if(residence!=null){
+            val rowY=25+32*automaticLoadout.size
+            gui.pose().pushPose();gui.pose().translate(x.toDouble(),y.toDouble(),0.0);gui.pose().scale(scale,scale,1f)
+            gui.fill(0,rowY-2,158,rowY+30,0x70101C18)
+            StratagemCooldownClient.drawIcon(gui,Stratagems.destroyerCall,3,rowY+2,partial)
+            gui.drawString(mc.font,Component.translatable("hud.sbw_helldiver.destroyer_residence","%02d:%02d".format(residence/60,residence%60)),32,rowY+10,0xE8E4CC,true)
+            gui.pose().popPose()
+            rows["destroyer_residence"]=HudLayout(x,y+(rowY-2)*scale,158*scale,32*scale)
         }
         lastAutomaticRows = rows
     }

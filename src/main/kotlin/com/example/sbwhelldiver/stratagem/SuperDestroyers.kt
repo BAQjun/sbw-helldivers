@@ -39,6 +39,10 @@ class DestroyerState {
  var destination:DestroyerAnchor?=null;private set
  var transitionEnd=0L;private set
  var appearedAt=0L;private set
+ var residentSince=0L;private set
+ var callsRemaining=3;private set
+ fun canCall()=callsRemaining>0
+ fun addCall():Boolean { if(callsRemaining>=5)return false;callsRemaining++;return true }
  private var resupplyPending=false
  fun transitioning(now:Long)=transitionEnd>now
  fun schedule(destination:DestroyerAnchor?,now:Long):Boolean {
@@ -49,16 +53,23 @@ class DestroyerState {
   if(transitionEnd==0L||now<transitionEnd)return false
   val returning=anchor==null && destination!=null && resupplyPending
   if(anchor!=null && destination==null)resupplyPending=true
-  anchor=destination;destination=null;appearedAt=transitionEnd;transitionEnd=0
+  val arriving=anchor==null && destination!=null
+  val departing=anchor!=null && destination==null
+  anchor=destination;destination=null;appearedAt=transitionEnd
+  if(arriving)residentSince=transitionEnd
+  if(departing)residentSince=0
+  transitionEnd=0
   if(returning){resupplyPending=false;onResupply()}
   return true
  }
+ fun spendCall():Boolean { if(!canCall())return false;callsRemaining--;return true }
+ fun expired(now:Long)=anchor!=null && !transitioning(now) && now-residentSince>=6000L
  fun available(dimension:String,point:Vec3,radius:Double,now:Long)=Stratagems.dimensionAllowed(dimension)&&!transitioning(now)&&anchor?.covers(dimension,point,radius)==true
- fun save()=CompoundTag().also{t->anchor?.let{t.put("Anchor",it.save())};destination?.let{t.put("Destination",it.save())};t.putLong("TransitionEnd",transitionEnd);t.putLong("AppearedAt",appearedAt);t.putBoolean("ResupplyPending",resupplyPending)}
+ fun save()=CompoundTag().also{t->anchor?.let{t.put("Anchor",it.save())};destination?.let{t.put("Destination",it.save())};t.putLong("TransitionEnd",transitionEnd);t.putLong("AppearedAt",appearedAt);t.putLong("ResidentSince",residentSince);t.putInt("CallsRemaining",callsRemaining);t.putBoolean("ResupplyPending",resupplyPending)}
  companion object{fun load(t:CompoundTag)=DestroyerState().apply{
   anchor=if(t.contains("Anchor"))DestroyerAnchor.load(t.getCompound("Anchor")) else null
   destination=if(t.contains("Destination"))DestroyerAnchor.load(t.getCompound("Destination")) else null
-  transitionEnd=t.getLong("TransitionEnd");appearedAt=t.getLong("AppearedAt");resupplyPending=t.getBoolean("ResupplyPending")
+  transitionEnd=t.getLong("TransitionEnd");appearedAt=t.getLong("AppearedAt");residentSince=if(t.contains("ResidentSince"))t.getLong("ResidentSince") else appearedAt;callsRemaining=if(t.contains("CallsRemaining"))t.getInt("CallsRemaining").coerceIn(0,5) else 3;resupplyPending=t.getBoolean("ResupplyPending")
  }}
 }
 @EventBusSubscriber(modid=MOD_ID)
@@ -78,13 +89,22 @@ object SuperDestroyers {
   return s.anchor!!.position.add(0.0,-15.0,0.0)
  }
  fun move(p:ServerPlayer,direction:Int):Boolean {
-  if(!Stratagems.dimensionAllowed(p.level().dimension().location().toString())||!hasOrbital(p)||direction !in 0..3)return false
-  val destination=DestroyerAnchor.at(p.level().dimension().location().toString(),p.position(),direction,OrbitalConfig.offset.get(),OrbitalConfig.altitude.get())
-  if(!state(p).schedule(destination,StratagemCooldowns.now(p.server)))return false
+  val dimension=p.level().dimension().location().toString()
+  if(!Stratagems.dimensionAllowed(dimension)||direction !in 0..3)return false
+  val ship=state(p);val previous=ship.anchor
+  if(previous!=null && previous.dimension!=dimension)return false
+  if(previous==null && !ship.canCall())return false
+  val destination=DestroyerAnchor.at(dimension,previous?.center?:p.position(),direction,OrbitalConfig.offset.get(),OrbitalConfig.altitude.get())
+  if(!ship.schedule(destination,StratagemCooldowns.now(p.server)))return false
+  if(previous==null)ship.spendCall()
   fleet(p.server).setDirty();syncAll(p.server);return true
  }
+ fun refillCall(p:ServerPlayer):Boolean {
+  if(!state(p).addCall())return false
+  fleet(p.server).setDirty();sync(p);return true
+ }
  fun depart(p:ServerPlayer):Boolean {
-  if(!hasOrbital(p)||!state(p).schedule(null,StratagemCooldowns.now(p.server)))return false
+  if(!state(p).schedule(null,StratagemCooldowns.now(p.server)))return false
   fleet(p.server).setDirty();syncAll(p.server);return true
  }
  fun sync(p:ServerPlayer){
@@ -112,6 +132,7 @@ object SuperDestroyers {
   val server=net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer()?:return
   val now=StratagemCooldowns.now(server);val f=fleet(server);var changed=false
   for((owner,s) in f.ships){
+   if(s.expired(now) && s.schedule(null,now))changed=true
    if(s.transitionEnd>0){
     if(now==DestroyerWarp.departureStart(s))cue(server,s.anchor,"super_destroyer_warp_out")
     if(now==DestroyerWarp.arrivalStart(s))cue(server,s.destination,"super_destroyer_warp_in")

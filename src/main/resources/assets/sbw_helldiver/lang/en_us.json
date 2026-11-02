@@ -272,5 +272,17 @@
   "config.sbw_helldiver.model_lod.tooltip": "Use reduced models beyond the chosen distance. Disable to retain the selected model quality. Occupied emplacements retain their detailed models.",
   "config.sbw_helldiver.model_lod_distance": "LOD distance (blocks)",
   "config.sbw_helldiver.model_lod_distance.tooltip": "8–256 blocks, default 32. Mines retain closer LOD thresholds, scaled with this distance. Applies immediately on save.",
-  "config.sbw_helldiver.model_lod_distance.invalid": "Enter an LOD distance between 8 and 256 blocks."
+  "config.sbw_helldiver.model_lod_distance.invalid": "Enter an LOD distance between 8 and 256 blocks.",
+  "hud.sbw_helldiver.destroyer_residence": "Destroyer on station: %s",
+  "block.sbw_helldiver.tactical_terminal": "Tactical Terminal",
+  "gui.sbw_helldiver.destroyer_uses": "Destroyer calls: %s / 5",
+  "gui.sbw_helldiver.replenish": "Resupply destroyer call",
+  "gui.sbw_helldiver.back": "< Back",
+  "gui.sbw_helldiver.category.orbital": "Orbital",
+  "gui.sbw_helldiver.category.eagle": "Eagle",
+  "gui.sbw_helldiver.category.sentry": "Sentries",
+  "gui.sbw_helldiver.category.defense": "Defenses",
+  "message.sbw_helldiver.terminal_full": "Destroyer calls are full",
+  "message.sbw_helldiver.terminal_insufficient": "Not enough samples",
+  "message.sbw_helldiver.terminal_success": "Purchase complete"
 }

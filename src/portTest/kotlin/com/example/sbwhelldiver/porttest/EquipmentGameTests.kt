@@ -54,7 +54,7 @@ object EquipmentGameTests {
             h.assertTrue(level.partEntities.containsAll(original),"Collision parts were not registered")
             val saved=net.minecraft.nbt.CompoundTag();e.saveWithoutId(saved)
             val copy=ModEntities.EQUIPMENT_BEACON.get().create(level)!!;copy.load(saved)
-            h.assertTrue(copy.phase==e.phase&&copy.parts[3].boundingBox==e.parts[3].boundingBox,"Reload changed beacon collision geometry")
+            h.assertTrue(copy.phase==e.phase&&copy.parts.size==e.parts.size&&copy.parts.indices.all{copy.parts[it].boundingBox==e.parts[it].boundingBox},"Reload changed beacon collision geometry")
             copy.discard();e.discard()
             h.assertTrue(original.none{it.canBeCollidedWith()},"Discarded beacon retains solid parts")
             h.runAfterDelay(2){h.assertTrue(original.none{it in level.partEntities},"Collision parts survived parent removal");h.succeed()}

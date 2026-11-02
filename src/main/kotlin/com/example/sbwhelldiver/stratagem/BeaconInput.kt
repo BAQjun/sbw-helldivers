@@ -65,8 +65,6 @@ object BeaconInput {
         if (++session.countAtTick > 8) return false
         session.lastTick = tick
         if(session.stage!=0){
-            val heldOrbital=SuperDestroyers.hasOrbital(player)
-            if(!heldOrbital){reset(player.uuid);return false}
             val chooseBearing=session.stage==2&&direction==Stratagems.RIGHT
             val accepted=when(session.stage){
                 1->SuperDestroyers.move(player,direction)

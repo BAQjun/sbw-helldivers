@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "sbw_helldiver:sample_machine"
+    "sbw_helldiver:sample_machine",
+    "sbw_helldiver:tactical_terminal"
   ]
 }
