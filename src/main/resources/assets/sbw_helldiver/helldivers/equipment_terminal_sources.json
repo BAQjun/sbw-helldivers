@@ -1,0 +1,22 @@
+{
+  "bank": "content/audio/obj_generic_terminal",
+  "component": "InteractableMinigameComponentData.audio",
+  "correct_event": 4105722653,
+  "incorrect_event": 304927172,
+  "key_random_container": 102604740,
+  "key_media": [
+    394284415,
+    720879876,
+    491416012,
+    166576578,
+    623733073,
+    793799307,
+    305174497
+  ],
+  "incorrect_media": 230678024,
+  "procedural_nodes": "No embedded media; omitted rather than replaced with beacon-ball audio.",
+  "mission_icons": {
+    "bioprocessor": "MissionProcessors",
+    "refinery": "MissionIconIndustrialcomplex"
+  }
+}

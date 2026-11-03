@@ -33,6 +33,11 @@ val combatTest = sourceSets.create("combatTest") {
     runtimeClasspath += output + sourceSets.main.get().output + sourceSets.main.get().runtimeClasspath
 }
 
+val survivalTest = sourceSets.create("survivalTest") {
+    compileClasspath += sourceSets.main.get().output + sourceSets.main.get().compileClasspath
+    runtimeClasspath += output + sourceSets.main.get().output + sourceSets.main.get().runtimeClasspath
+}
+
 minecraft {
     // 使用官方映射（Mojang），避免依赖连不上的 parchmentmc 仓库
     mappings("official", "1.20.1")
@@ -85,13 +90,23 @@ minecraft {
                 workingDirectory(project.file("run-gametest-turrets0386"))
                 property("forge.enabledGameTestNamespaces", "sbw_helldiver,sbw_helldiver_laser,sbw_helldiver_flame,sbw_helldiver_tesla,sbw_helldiver_hmg,sbw_helldiver_grenadier")
             }
+            if(project.hasProperty("survivalTests")) {
+                workingDirectory(project.file(".codex/survival-alpha14/server"))
+                property("forge.enabledGameTestNamespaces", "sbw_helldiver")
+            }
             property("mixin.env.remapRefMap", "true")
             property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
             mods {
-                create(project.property("mod_id").toString()) { source(sourceSets.main.get()); if(project.hasProperty("taczCompatTests"))source(taczTest) }
+                create(project.property("mod_id").toString()) { source(sourceSets.main.get()); if(project.hasProperty("survivalTests"))source(survivalTest); if(project.hasProperty("taczCompatTests"))source(taczTest) }
             }
         }
         create("client") {
+            if(project.hasProperty("survivalClientTests")) {
+                workingDirectory(project.file(".codex/survival-alpha14/client"))
+                property("sbw_helldiver.tacticalRegression","true")
+                jvmArgs("-Xms512m","-Xmx3G","-XX:ActiveProcessorCount=4")
+                args("--width","1280","--height","720")
+            }
             workingDirectory(project.file("run"))
             if (project.hasProperty("cooldownSmokeTest")) {
                 workingDirectory(project.file("run-client-test"))
@@ -198,9 +213,10 @@ minecraft {
             property("mixin.env.remapRefMap", "true")
             property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
 
+            if(project.hasProperty("survivalClientTests"))workingDirectory(project.file(".codex/survival-alpha14/client"))
             mods {
                 create(project.property("mod_id").toString()) {
-                    source(sourceSets.main.get())
+                    source(sourceSets.main.get());if(project.hasProperty("survivalClientTests"))source(survivalTest)
                     if(project.hasProperty("taczCompatTests"))source(taczTest)
                     if(project.hasProperty("combatFixClientTests"))source(combatTest)
                 }
@@ -275,6 +291,8 @@ tasks.named<Jar>("jar") { archiveClassifier.set("slim") }
 tasks.named<Jar>("jarJar") { archiveClassifier.set("") }
 
 dependencies {
+    compileOnly(fg.deobf("maven.modrinth:jei:6E4ps2ER"))
+    if(project.hasProperty("survivalClientTests"))runtimeOnly(fg.deobf("maven.modrinth:jei:6E4ps2ER"))
     compileOnly("io.github.llamalad7:mixinextras-common:0.3.6")
     jarJar("io.github.llamalad7:mixinextras-forge:0.3.6") {
         jarJar.ranged(this, "[0.3.6,)")

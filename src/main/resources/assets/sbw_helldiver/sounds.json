@@ -5394,5 +5394,258 @@
         "attenuation_distance": 96
       }
     ]
+  },
+  "terminal_input": {
+    "subtitle": "subtitles.sbw_helldiver.terminal_input",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:terminal/key_0",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:terminal/key_1",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:terminal/key_2",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:terminal/key_3",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:terminal/key_4",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:terminal/key_5",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:terminal/key_6",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "terminal_error": {
+    "subtitle": "subtitles.sbw_helldiver.terminal_error",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:terminal/error",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "machine_bioprocessor_loop": {
+    "subtitle": "subtitles.sbw_helldiver.machine_bioprocessor_loop",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:machines/bioprocessor_loop",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "machine_refinery_loop": {
+    "subtitle": "subtitles.sbw_helldiver.machine_refinery_loop",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:machines/refinery_loop",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_equipment_beacon_lift": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_lift_0",
+        "volume": 0.4168693837564011,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_lift_1",
+        "volume": 0.33496543915782767,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_lift_2",
+        "volume": 0.29853826189179594,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_lift_3",
+        "volume": 0.3981071705534972,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_equipment_beacon_unfold": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/232037740",
+        "volume": 0.4168693837564011,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/450260669",
+        "volume": 0.33496543915782767,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/38073558",
+        "volume": 0.29853826189179594,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/901331668",
+        "volume": 0.3981071705534972,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_equipment_beacon_fold": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/670439201",
+        "volume": 0.3801893960596662,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/1043580129",
+        "volume": 0.33496543915782767,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/239816353",
+        "volume": 0.36307805427179574,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/890058738",
+        "volume": 0.38459178151752144,
+        "pitch": 1.0,
+        "stream": false,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_equipment_beacon_lower": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_lower_0",
+        "volume": 0.3801893960596662,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_lower_1",
+        "volume": 0.33496543915782767,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_lower_2",
+        "volume": 0.36307805427179574,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_lower_3",
+        "volume": 0.38459178151752144,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "sfx_equipment_beacon_iris": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_iris_0",
+        "volume": 0.3801893960596662,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_iris_1",
+        "volume": 0.33496543915782767,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_iris_2",
+        "volume": 0.36307805427179574,
+        "attenuation_distance": 96
+      },
+      {
+        "name": "sbw_helldiver:machines/deployment/equipment_beacon_iris_3",
+        "volume": 0.38459178151752144,
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "tactical_select": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:ui/select_0",
+        "volume": 0.5,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:ui/select_1",
+        "volume": 0.5,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:ui/select_2",
+        "volume": 0.5,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "tactical_purchase_hold": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:ui/purchase_hold_0",
+        "volume": 0.5,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:ui/purchase_hold_1",
+        "volume": 0.5,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:ui/purchase_hold_2",
+        "volume": 0.5,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "tactical_purchase_complete": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:ui/purchase_complete_0",
+        "volume": 0.5,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:ui/purchase_complete_1",
+        "volume": 0.5,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:ui/purchase_complete_2",
+        "volume": 0.5,
+        "attenuation_distance": 64
+      }
+    ]
   }
 }

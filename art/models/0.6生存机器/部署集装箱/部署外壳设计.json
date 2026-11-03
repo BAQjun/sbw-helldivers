@@ -1,0 +1,118 @@
+{
+  "source": "Superb Warfare 0.8.9.2 / models/bedrock/block/container.geo.json",
+  "texture": "部署集装箱_共用贴图.png",
+  "model_units_per_block": 16,
+  "status": "model_design_only",
+  "containers": [
+    {
+      "id": "bio",
+      "name": "生物处理器_部署集装箱",
+      "machine": "生物处理器_潜兵改编",
+      "width": 64,
+      "depth": 48,
+      "height": 48,
+      "center_z": -8,
+      "machine_bounds": [
+        [
+          -24,
+          0,
+          -24.04
+        ],
+        [
+          24,
+          43.7581,
+          8
+        ]
+      ],
+      "original_shell_cubes_retained": 84,
+      "removed_original_cargo_cubes": 9,
+      "final_element_count": 186,
+      "cube_count": 174,
+      "mesh_count": 12,
+      "underside_thrusters": 4,
+      "inner_clearance_units_xyz": [
+        [
+          6.0,
+          6.0
+        ],
+        [
+          0,
+          2.3957
+        ],
+        [
+          6.46,
+          6.5
+        ]
+      ],
+      "closed_inner_bounds": [
+        [
+          -30.0,
+          0,
+          -30.5
+        ],
+        [
+          30.0,
+          46.15384615384615,
+          14.5
+        ]
+      ],
+      "deploy_clip": "animation.helldiver_container.deploy",
+      "deploy_seconds": 2.4
+    },
+    {
+      "id": "ref",
+      "name": "精炼厂_部署集装箱",
+      "machine": "精炼厂_潜兵改编",
+      "width": 96,
+      "depth": 96,
+      "height": 112,
+      "center_z": 0,
+      "machine_bounds": [
+        [
+          -40,
+          0,
+          -40.04
+        ],
+        [
+          40,
+          99.11373,
+          40
+        ]
+      ],
+      "original_shell_cubes_retained": 84,
+      "removed_original_cargo_cubes": 9,
+      "final_element_count": 192,
+      "cube_count": 180,
+      "mesh_count": 12,
+      "underside_thrusters": 4,
+      "inner_clearance_units_xyz": [
+        [
+          5.0,
+          5.0
+        ],
+        [
+          0,
+          8.5786
+        ],
+        [
+          4.96,
+          5.0
+        ]
+      ],
+      "closed_inner_bounds": [
+        [
+          -45.0,
+          0,
+          -45.0
+        ],
+        [
+          45.0,
+          107.6923076923077,
+          45.0
+        ]
+      ],
+      "deploy_clip": "animation.helldiver_container.deploy",
+      "deploy_seconds": 2.4
+    }
+  ]
+}

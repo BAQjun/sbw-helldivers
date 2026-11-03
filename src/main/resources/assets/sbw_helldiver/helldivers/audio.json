@@ -2406,6 +2406,120 @@
       "fade_out": 0,
       "duration": 2.494666666666667,
       "stop_effects": []
+    },
+    "sfx_equipment_beacon_lift": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 0.6,
+      "stop_effects": [],
+      "adaptation": {
+        "source_effect": "sfx_native_machine_gun_sentry_deploy_81997979_0",
+        "method": "Pitch-preserving tempo fit and short release fade to authored mod animation; native trigger unconfirmed.",
+        "variants": [
+          {
+            "source": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/232037740",
+            "sha256": "a4021cf0f78886e1c4c2af924dc554d8c0549057816ad97b6fe910f0e1f1990c"
+          },
+          {
+            "source": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/450260669",
+            "sha256": "f2f86d8388c7a9cdb500632474f4c23a5362196d40be99d5bd5dcec465e8e438"
+          },
+          {
+            "source": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/38073558",
+            "sha256": "cde7244685a857b3e93ad399351eb1a84411d4538ef83c6dcb87ec3543b3282f"
+          },
+          {
+            "source": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/901331668",
+            "sha256": "a86edcbfbb49d8f88fadbbc04ba61443c329320f994663625352b2f1c8c274ac"
+          }
+        ]
+      }
+    },
+    "sfx_equipment_beacon_unfold": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0.0,
+      "fade_out": 0,
+      "duration": 1.453125,
+      "stop_effects": [],
+      "adaptation": {
+        "source_effect": "sfx_native_machine_gun_sentry_deploy_81997979_0",
+        "method": "Unmodified processed sound variants at original playback speed; the mod animation is timed to the sound. Native beacon trigger unconfirmed."
+      }
+    },
+    "sfx_equipment_beacon_fold": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0.0,
+      "fade_out": 0,
+      "duration": 1.4918541666666667,
+      "stop_effects": [],
+      "adaptation": {
+        "source_effect": "sfx_emplacement_retract_mechanism",
+        "method": "Unmodified processed sound variants at original playback speed; the mod animation is timed to the sound. Native beacon trigger unconfirmed."
+      }
+    },
+    "sfx_equipment_beacon_lower": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 1.14,
+      "stop_effects": [],
+      "adaptation": {
+        "source_effect": "sfx_emplacement_retract_mechanism",
+        "method": "Pitch-preserving tempo fit and short release fade to authored mod animation; native trigger unconfirmed.",
+        "variants": [
+          {
+            "source": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/670439201",
+            "sha256": "386d11e3eb69d26401b01fd3b9e82bfcf73dd187cdfade85b7619c123ad301df"
+          },
+          {
+            "source": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/1043580129",
+            "sha256": "aab8ae87260689757484b21c9a1b912a5f099492e6038a32eb8083d089fbac30"
+          },
+          {
+            "source": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/239816353",
+            "sha256": "3b796a398391349c1fc38bc670942a065bfc405e48da66d5e694988865f5844f"
+          },
+          {
+            "source": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/890058738",
+            "sha256": "828d90f961b9591dfc50fe2f735fec51985c480af36aa51cf5f892a044c4444f"
+          }
+        ]
+      }
+    },
+    "sfx_equipment_beacon_iris": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 0.5,
+      "stop_effects": [],
+      "adaptation": {
+        "source_effect": "sfx_emplacement_retract_mechanism",
+        "method": "Pitch-preserving tempo fit and short release fade to authored mod animation; native trigger unconfirmed.",
+        "variants": [
+          {
+            "source": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/670439201",
+            "sha256": "386d11e3eb69d26401b01fd3b9e82bfcf73dd187cdfade85b7619c123ad301df"
+          },
+          {
+            "source": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/1043580129",
+            "sha256": "aab8ae87260689757484b21c9a1b912a5f099492e6038a32eb8083d089fbac30"
+          },
+          {
+            "source": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/239816353",
+            "sha256": "3b796a398391349c1fc38bc670942a065bfc405e48da66d5e694988865f5844f"
+          },
+          {
+            "source": "sbw_helldiver:original/deploy0316/stratagems_sentry_machine_gun/890058738",
+            "sha256": "828d90f961b9591dfc50fe2f735fec51985c480af36aa51cf5f892a044c4444f"
+          }
+        ]
+      }
     }
   },
   "models": {
@@ -14762,6 +14876,93 @@
             "time": 0,
             "effect": "sfx_shield_break",
             "locator": "emitter"
+          }
+        ]
+      }
+    },
+    "equipment_delivery": {
+      "container.deploy": {
+        "length": 2.0,
+        "events": [
+          {
+            "time": 0.3666666666666667,
+            "effect": "sfx_emplacement_retract_mechanism",
+            "locator": "equipment_motion"
+          }
+        ]
+      },
+      "beacon.deploy": {
+        "length": 2.2,
+        "events": [
+          {
+            "time": 0,
+            "effect": "sfx_hellpod_bolts",
+            "locator": "sfx_pod_lid"
+          },
+          {
+            "time": 0,
+            "effect": "sfx_hellpod_bolts_layer_a",
+            "locator": "sfx_pod_lid"
+          },
+          {
+            "time": 0,
+            "effect": "sfx_hellpod_bolts_layer_b",
+            "locator": "sfx_pod_lid"
+          },
+          {
+            "time": 0,
+            "effect": "sfx_hellpod_cap_release",
+            "locator": "sfx_cap_eject"
+          },
+          {
+            "time": 0.07,
+            "effect": "sfx_hellpod_iris_unlock",
+            "locator": "sfx_pod_lid"
+          },
+          {
+            "time": 0.14,
+            "effect": "sfx_hellpod_iris_motor",
+            "locator": "sfx_pod_lid"
+          },
+          {
+            "time": 0.45,
+            "effect": "sfx_hellpod_lift_start",
+            "locator": "sfx_pod_lift"
+          },
+          {
+            "time": 1.05,
+            "effect": "sfx_hellpod_lift_stop",
+            "locator": "sfx_pod_lift"
+          },
+          {
+            "time": 1.1,
+            "effect": "sfx_equipment_beacon_unfold",
+            "locator": "equipment_motion"
+          }
+        ]
+      },
+      "beacon.retract": {
+        "length": 3,
+        "events": [
+          {
+            "time": 0.05,
+            "effect": "sfx_equipment_beacon_fold",
+            "locator": "equipment_motion"
+          },
+          {
+            "time": 1.1772151898734178,
+            "effect": "sfx_hellpod_lift_down",
+            "locator": "sfx_pod_lift"
+          },
+          {
+            "time": 2.316455696202531,
+            "effect": "sfx_hellpod_lift_stop",
+            "locator": "sfx_pod_lift"
+          },
+          {
+            "time": 2.582278481012658,
+            "effect": "sfx_hellpod_iris_close",
+            "locator": "sfx_pod_lid"
           }
         ]
       }

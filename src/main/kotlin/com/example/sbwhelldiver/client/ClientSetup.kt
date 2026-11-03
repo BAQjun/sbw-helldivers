@@ -36,6 +36,7 @@ object ClientSetup {
             net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory::class.java
         ) { net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory { _, parent -> HelldiversConfigScreen(parent) } }
         event.enqueueWork {
+            com.example.sbwhelldiver.survival.MachineRegistry.clientTick=MachineAudio::observe
             net.minecraft.client.renderer.ItemBlockRenderTypes.setRenderLayer(com.example.sbwhelldiver.init.ModBlocks.SENTRY_FIRE.get(),net.minecraft.client.renderer.RenderType.cutout())
             net.minecraft.client.Minecraft.getInstance().mainRenderTarget.enableStencil()
             net.minecraft.client.gui.screens.MenuScreens.register(com.example.sbwhelldiver.init.ModMenus.BEACON_LOADOUT.get(), ::BeaconLoadoutScreen)
@@ -60,6 +61,10 @@ object ClientSetup {
         event.registerReloadListener(EagleRenderer.Model)
         event.registerReloadListener(DestroyerClient)
         event.registerReloadListener(BeaconModel)
+        event.registerReloadListener(EquipmentBeaconRenderer.Model)
+        event.registerReloadListener(MachineMesh)
+        event.registerReloadListener(MachineAudio)
+        event.registerReloadListener(ModelLod)
         event.registerReloadListener(MortarShellRenderer.Model)
         event.registerReloadListener(HmgFeedRenderer)
         event.registerReloadListener(LaserPostVisual)
@@ -81,6 +86,10 @@ object ClientSetup {
 
     @SubscribeEvent
     fun registerRenderers(event: EntityRenderersEvent.RegisterRenderers) {
+        event.registerBlockEntityRenderer(com.example.sbwhelldiver.survival.MachineRegistry.MACHINE.get(),::SampleMachineRenderer)
+        event.registerBlockEntityRenderer(com.example.sbwhelldiver.survival.MachineRegistry.TACTICAL_TERMINAL.get(),::TacticalTerminalRenderer)
+        event.registerEntityRenderer(ModEntities.MACHINE_CONTAINER.get(),::MachineContainerRenderer)
+        event.registerEntityRenderer(ModEntities.EQUIPMENT_BEACON.get(),::EquipmentBeaconRenderer)
         event.registerEntityRenderer<AutoAimableEntity>(ModEntities.PLAYER_HELLPOD.get(),::HellpodRenderer)
         event.registerEntityRenderer(ModEntities.EAGLE.get(),::EagleRenderer)
         event.registerEntityRenderer(ModEntities.ORBITAL_FIELD_SHELL.get(),{net.minecraft.client.renderer.entity.NoopRenderer(it)})

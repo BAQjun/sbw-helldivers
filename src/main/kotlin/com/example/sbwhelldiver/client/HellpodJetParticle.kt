@@ -16,7 +16,7 @@ import net.minecraft.world.phys.Vec3
 /** Full-bright exhaust following each nozzle's outward/downward axis. */
 class HellpodJetParticle(level: ClientLevel, x: Double, y: Double, z: Double,
     vx: Double, vy: Double, vz: Double, sprites: SpriteSet,
-    private val anchor: AbstractHellpodEntity? = null, private val offset: Vec3 = Vec3.ZERO,
+    private val anchor: net.minecraft.world.entity.Entity? = null, private val offset: Vec3 = Vec3.ZERO,
     private val sample: Int = 0, private val direction: Vec3 = Vec3(0.0, -1.0, 0.0)) : TextureSheetParticle(level, x, y, z) {
     init {
         xd = vx; yd = vy; zd = vz
@@ -29,7 +29,7 @@ class HellpodJetParticle(level: ClientLevel, x: Double, y: Double, z: Double,
     }
     override fun tick() {
         if (anchor != null) {
-            if (anchor.isRemoved || anchor.phase != AbstractHellpodEntity.Phase.FALLING || age++ >= lifetime) { remove(); return }
+            if (anchor.isRemoved || (anchor is AbstractHellpodEntity && anchor.phase != AbstractHellpodEntity.Phase.FALLING) || age++ >= lifetime) { remove(); return }
             val local = offset.yRot(-anchor.yRot * Mth.DEG_TO_RAD)
             // Keep the flame root attached to the outlet; only the outer plume travels.
             val travel = if (sample == 0) 0.005 else sample * 0.25 + age * 0.10
@@ -71,7 +71,7 @@ class HellpodJetParticle(level: ClientLevel, x: Double, y: Double, z: Double,
     }
     companion object {
         private var registeredSprites: SpriteSet? = null
-        fun emit(pod: AbstractHellpodEntity, offset: Vec3, sample: Int, direction: Vec3) {
+        fun emit(pod: net.minecraft.world.entity.Entity, offset: Vec3, sample: Int, direction: Vec3) {
             val sprites = registeredSprites ?: return
             val level = pod.level() as? ClientLevel ?: return
             val p = pod.position().add(offset.yRot(-pod.yRot * Mth.DEG_TO_RAD))

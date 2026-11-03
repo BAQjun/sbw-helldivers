@@ -1,0 +1,16 @@
+{
+  "type": "sbw_helldiver:sample_processing",
+  "machine": "bioprocessor",
+  "ingredient": {
+    "item": "minecraft:dragon_egg"
+  },
+  "count": 1,
+  "ticks": 100,
+  "outcomes": [
+    {
+      "tier": 2,
+      "chance": 100,
+      "count": 50
+    }
+  ]
+}

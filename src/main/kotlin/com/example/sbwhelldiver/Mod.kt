@@ -52,6 +52,11 @@ class Mod {
         com.example.sbwhelldiver.init.ModEffects.EFFECTS.register(bus)
         ModCreativeTabs.TABS.register(bus)
         com.example.sbwhelldiver.init.ModMenus.MENUS.register(bus)
+        com.example.sbwhelldiver.survival.BeaconCraftingRecipe.SERIALIZERS.register(bus)
+        com.example.sbwhelldiver.survival.SampleRecipe.TYPES.register(bus)
+        com.example.sbwhelldiver.survival.SampleRecipe.SERIALIZERS.register(bus)
+        com.example.sbwhelldiver.survival.MachineRegistry.BLOCK_ENTITIES.register(bus)
+        com.example.sbwhelldiver.survival.MachineDeployment.checkCodes()
         com.example.sbwhelldiver.network.BeaconNetwork.register()
         // Retire only the removed standalone call; old saves can load without a missing-item prompt.
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener<net.minecraftforge.registries.MissingMappingsEvent> { event ->

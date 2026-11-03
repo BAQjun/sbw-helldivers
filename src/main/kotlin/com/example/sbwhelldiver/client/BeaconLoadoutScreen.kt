@@ -40,9 +40,14 @@ class BeaconLoadoutScreen(menu: BeaconLoadoutMenu, inventory: Inventory, title: 
 object ArrowGlyph {
     private val pixels = listOf("...#...", "..###..", ".#####.", "#######", "..###..", "..###..", "..###..")
     fun draw(gui: GuiGraphics, x: Int, y: Int, direction: Int, color: Int, scale: Int = 1) {
+        forEachPixel(direction) { dx, dy ->
+            gui.fill(x + dx * scale, y + dy * scale, x + (dx + 1) * scale, y + (dy + 1) * scale, color)
+        }
+    }
+    fun forEachPixel(direction: Int, draw: (Int, Int) -> Unit) {
         for (row in 0..6) for (col in 0..6) if (pixels[row][col] == '#') {
             val (dx, dy) = when (direction) { 1 -> 6 - row to col; 2 -> 6 - col to 6 - row; 3 -> row to 6 - col; else -> col to row }
-            gui.fill(x + dx * scale, y + dy * scale, x + (dx + 1) * scale, y + (dy + 1) * scale, color)
+            draw(dx, dy)
         }
     }
 }

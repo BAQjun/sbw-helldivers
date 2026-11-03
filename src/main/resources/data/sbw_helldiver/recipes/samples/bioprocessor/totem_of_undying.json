@@ -1,0 +1,26 @@
+{
+  "type": "sbw_helldiver:sample_processing",
+  "machine": "bioprocessor",
+  "ingredient": {
+    "item": "minecraft:totem_of_undying"
+  },
+  "count": 1,
+  "ticks": 100,
+  "outcomes": [
+    {
+      "tier": 0,
+      "chance": 25,
+      "count": 32
+    },
+    {
+      "tier": 1,
+      "chance": 60,
+      "count": 12
+    },
+    {
+      "tier": 2,
+      "chance": 15,
+      "count": 3
+    }
+  ]
+}

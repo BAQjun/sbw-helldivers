@@ -1,0 +1,26 @@
+{
+  "type": "sbw_helldiver:sample_processing",
+  "machine": "refinery",
+  "ingredient": {
+    "item": "minecraft:flint"
+  },
+  "count": 8,
+  "ticks": 100,
+  "outcomes": [
+    {
+      "tier": 0,
+      "chance": 75,
+      "count": 5
+    },
+    {
+      "tier": 1,
+      "chance": 24,
+      "count": 1
+    },
+    {
+      "tier": 2,
+      "chance": 1,
+      "count": 1
+    }
+  ]
+}

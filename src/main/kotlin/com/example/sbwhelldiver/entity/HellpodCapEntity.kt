@@ -50,7 +50,7 @@ class HellpodCapEntity(type: EntityType<HellpodCapEntity>, level: Level) : Entit
         entityData.define(DATA_ROLL, 0f)
     }
 
-    fun ejectFrom(pod: AbstractHellpodEntity) {
+    fun ejectFrom(pod: Entity) {
         sourcePodUUID = pod.uuid
         groundLifetimeTicks = HelldiversConfig.capLifetimeTicks.get()
         pitchSpeed = 10f + random.nextFloat() * 14f

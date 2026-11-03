@@ -111,6 +111,12 @@ open class HmgEmplacementEntity(type: EntityType<*>, level: Level): AbstractHell
     override fun canAddPassenger(passenger: Entity) = passenger is Player && !passenger.isSpectator &&
         phase == Phase.ACTIVE && !isWreck && ammoRemaining > 0 && passengers.isEmpty()
     override fun interact(player: Player,hand: InteractionHand): InteractionResult {
+        val held=player.getItemInHand(hand)
+        if(player.isShiftKeyDown && held.`is`(com.atsuishio.superbwarfare.init.ModTags.Items.TOOLS_CROWBAR)) {
+            if(isRemoved || isWreck || passengers.isNotEmpty())return InteractionResult.FAIL
+            if(!level().isClientSide)onCrowbarInteract(held,player,hand)
+            return InteractionResult.sidedSuccess(level().isClientSide)
+        }
         if(hand!=InteractionHand.MAIN_HAND || !canAddPassenger(player))return InteractionResult.PASS
         if(!level().isClientSide) {
             trigger=false;operatorId=player.id;requestedYaw=weaponYaw;requestedPitch=weaponPitch

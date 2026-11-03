@@ -1,0 +1,26 @@
+{
+  "type": "sbw_helldiver:sample_processing",
+  "machine": "refinery",
+  "ingredient": {
+    "item": "minecraft:raw_iron"
+  },
+  "count": 5,
+  "ticks": 100,
+  "outcomes": [
+    {
+      "tier": 0,
+      "chance": 65,
+      "count": 6
+    },
+    {
+      "tier": 1,
+      "chance": 33,
+      "count": 2
+    },
+    {
+      "tier": 2,
+      "chance": 2,
+      "count": 1
+    }
+  ]
+}

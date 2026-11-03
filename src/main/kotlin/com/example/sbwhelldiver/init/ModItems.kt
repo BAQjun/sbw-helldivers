@@ -16,7 +16,13 @@ import net.minecraftforge.registries.RegistryObject
  */
 object ModItems {
 
-    val ITEMS: DeferredRegister<Item> = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID)
+    val ITEMS: DeferredRegister<Item> = DeferredRegister.create(net.minecraftforge.registries.ForgeRegistries.ITEMS, MOD_ID)
+    val TACTICAL_TERMINAL=ITEMS.register("tactical_terminal"){com.example.sbwhelldiver.survival.TacticalTerminalItem(ModBlocks.TACTICAL_TERMINAL.get(),Item.Properties())}
+    val COMMON_SAMPLE=ITEMS.register("common_sample"){Item(Item.Properties())}
+    val RARE_SAMPLE=ITEMS.register("rare_sample"){Item(Item.Properties())}
+    val SUPER_SAMPLE=ITEMS.register("super_sample"){Item(Item.Properties())}
+    val BIOPROCESSOR_CONTAINER=ITEMS.register("bioprocessor_container"){com.example.sbwhelldiver.survival.MachineContainerItem(com.example.sbwhelldiver.survival.MachineDeployment.BIOPROCESSOR,Item.Properties().stacksTo(1))}
+    val REFINERY_CONTAINER=ITEMS.register("refinery_container"){com.example.sbwhelldiver.survival.MachineContainerItem(com.example.sbwhelldiver.survival.MachineDeployment.REFINERY,Item.Properties().stacksTo(1))}
 
     val ORBITAL_GAS_STRIKE=ITEMS.register("orbital_gas_strike_stratagem"){StratagemItem(Item.Properties().stacksTo(16),dropId("orbital_gas_strike"))}
     val ORBITAL_EMS_STRIKE=ITEMS.register("orbital_ems_strike_stratagem"){StratagemItem(Item.Properties().stacksTo(16),dropId("orbital_ems_strike"))}

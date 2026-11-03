@@ -10,6 +10,8 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider
 
 /** Preserve authored lift/fold/reload transforms; the native renderer replaces barrel rotation. */
 class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimableRenderer(context) {
+    override fun getCurrentModelEntry(poseStack:PoseStack,entity:AutoAimableEntity):com.atsuishio.superbwarfare.entity.vehicle.VehicleModelEntry? =
+        (entity as? AbstractHellpodEntity)?.let(ModelLod::entry) ?: super.getCurrentModelEntry(poseStack,entity)
     override fun shouldRender(entity: AutoAimableEntity, frustum: net.minecraft.client.renderer.culling.Frustum,
         x: Double, y: Double, z: Double): Boolean {
         if(super.shouldRender(entity,frustum,x,y,z))return true

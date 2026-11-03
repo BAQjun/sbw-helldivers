@@ -376,7 +376,7 @@ object BeaconClientSmokeTest {
         }
         if (ticks == 665 || ticks == 690) {
             val label = BeaconCallHud.label ?: error("Aiming at the beam did not show the call HUD")
-            check(label.marker.stratagem?.id == "gatling_sentry" && label.y == mc.window.guiScaledHeight / 2)
+            check(label.iconKey == "gatling_sentry" && label.y == mc.window.guiScaledHeight / 2)
             check(kotlin.math.abs(label.x - mc.window.guiScaledWidth / 2) <= 2) { "Camera did not aim at the beam: x=${label.x}, centre=${mc.window.guiScaledWidth / 2}, yaw=${player.yRot}" }
             check(BeaconCallHud.monochromeIconCount == Stratagems.definitions.size && BeaconCallHud.TITLE_COLOR == 0xFFDB4A)
             check(kotlin.math.abs(label.distance - if (ticks == 665) 10.0 else 80.0) < .1) { "HUD distance did not follow the player's position: ${label.distance}" }

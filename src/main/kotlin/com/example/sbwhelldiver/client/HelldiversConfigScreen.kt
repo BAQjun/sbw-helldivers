@@ -16,6 +16,9 @@ import net.minecraft.network.chat.Component
 
 class HelldiversConfigScreen(private val parent: Screen) : Screen(Component.translatable("config.sbw_helldiver.title")) {
     private var lowQuality = ClientModelConfig.lowQualityModels.get()
+    private var lod = ClientModelConfig.modelLod.get()
+    private var lodDistance = ClientModelConfig.modelLodDistance.get().toString()
+    private var invalidDistance=false
     private var autoRetract = if(HelldiversConfig.SPEC.isLoaded)HelldiversConfig.autoRetract.get() else true
     private var originalAutoRetract = autoRetract
     private var autoRetractEditable = false
@@ -36,20 +39,27 @@ class HelldiversConfigScreen(private val parent: Screen) : Screen(Component.tran
         addRenderableWidget(Button.builder(qualityLabel()) { button ->
             lowQuality = !lowQuality
             button.message = qualityLabel()
-        }.bounds(left, height / 2 - 60, 300, 20)
+        }.bounds(left, height / 2 - 88, 300, 20)
             .tooltip(Tooltip.create(Component.translatable("config.sbw_helldiver.low_quality_models.tooltip"))).build())
+        addRenderableWidget(Button.builder(lodLabel()){button->lod=!lod;button.message=lodLabel()}
+            .bounds(left,height/2-64,300,20).tooltip(Tooltip.create(Component.translatable("config.sbw_helldiver.model_lod.tooltip"))).build())
+        addRenderableWidget(net.minecraft.client.gui.components.EditBox(font,left+224,height/2-40,76,20,Component.translatable("config.sbw_helldiver.model_lod_distance"))).also {
+            it.setFilter{value->value.length<=3&&value.all(Char::isDigit)}
+            it.value=lodDistance;it.setResponder{value->lodDistance=value;invalidDistance=false}
+            it.setTooltip(Tooltip.create(Component.translatable("config.sbw_helldiver.model_lod_distance.tooltip")))
+        }
         autoRetractButton=addRenderableWidget(Button.builder(autoRetractLabel()) { button ->
             autoRetract=!autoRetract;button.message=autoRetractLabel()
-        }.bounds(left,height/2-30,300,20)
+        }.bounds(left,height/2-16,300,20)
             .tooltip(Tooltip.create(Component.translatable(if(minecraft?.level==null) "config.sbw_helldiver.auto_retract.enter_world" else "config.sbw_helldiver.auto_retract.tooltip"))).build()).also{it.active=autoRetractEditable}
         infiniteAmmoButton = addRenderableWidget(Button.builder(infiniteAmmoLabel()) { button ->
             infiniteAmmo = !infiniteAmmo; button.message = infiniteAmmoLabel()
-        }.bounds(left,height/2,300,20)
+        }.bounds(left,height/2+8,300,20)
             .tooltip(Tooltip.create(Component.translatable(if(minecraft?.level==null) "config.sbw_helldiver.infinite_turret_ammo.enter_world" else "config.sbw_helldiver.infinite_turret_ammo.tooltip")))
             .build()).also { it.active = infiniteAmmoEditable }
         blockDamageButton = addRenderableWidget(Button.builder(blockDamageLabel()) { button ->
             blockDamage = !blockDamage; button.message = blockDamageLabel()
-        }.bounds(left,height/2+30,300,20)
+        }.bounds(left,height/2+32,300,20)
             .tooltip(Tooltip.create(Component.translatable(if(minecraft?.level==null) "config.sbw_helldiver.explosion_block_damage.enter_world" else "config.sbw_helldiver.explosion_block_damage.tooltip")))
             .build()).also { it.active = blockDamageEditable }
         if (minecraft?.level != null) {
@@ -91,9 +101,15 @@ class HelldiversConfigScreen(private val parent: Screen) : Screen(Component.tran
 
     private fun qualityLabel() = Component.translatable("config.sbw_helldiver.low_quality_models.value",
         Component.translatable(if (lowQuality) "options.on" else "options.off"))
+    private fun lodLabel()=Component.translatable("config.sbw_helldiver.model_lod.value",Component.translatable(if(lod)"options.on"else"options.off"))
 
     private fun apply() {
         if (applying) return
+        val distance=lodDistance.toIntOrNull()
+        if(distance==null || distance !in 8..256){invalidDistance=true;return}
+        ClientModelConfig.modelLod.set(lod)
+        ClientModelConfig.modelLodDistance.set(distance)
+        ClientModelConfig.SPEC.save()
         if(autoRetractEditable && autoRetract!=originalAutoRetract)
             BeaconNetwork.CHANNEL.sendToServer(AutoRetractRequestPacket(autoRetract))
         if (infiniteAmmoEditable && infiniteAmmo != originalInfiniteAmmo)
@@ -129,8 +145,10 @@ class HelldiversConfigScreen(private val parent: Screen) : Screen(Component.tran
     override fun render(gui: GuiGraphics, mouseX: Int, mouseY: Int, partial: Float) {
         renderBackground(gui)
         super.render(gui, mouseX, mouseY, partial)
-        gui.drawCenteredString(font, title, width / 2, height / 2 - 95, 0xFFFFFF)
+        gui.drawCenteredString(font, title, width / 2, height / 2 - 110, 0xFFFFFF)
+        gui.drawString(font,Component.translatable("config.sbw_helldiver.model_lod_distance"),width/2-150,height/2-34,0xFFFFFF)
         val message = when {
+            invalidDistance -> "config.sbw_helldiver.model_lod_distance.invalid"
             applying -> "config.sbw_helldiver.applying"
             failed -> "config.sbw_helldiver.failed"
             else -> "config.sbw_helldiver.hint"

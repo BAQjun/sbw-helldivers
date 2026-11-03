@@ -32,7 +32,7 @@ class EagleRenderer(context:EntityRendererProvider.Context):EntityRenderer<Eagle
   p.mulPose(Axis.YP.rotationDegrees(180-e.yRot));p.mulPose(Axis.XP.rotationDegrees(-EagleFlight.pitch(t,e.attack,e.flightHeight)))
   val tr=p.last()
   val transformedPosition=Vector3f();val transformedNormal=Vector3f()
-  Model.parts.forEachIndexed { i,triangles ->
+  (if(ModelLod.reduced(exact.distanceToSqr(net.minecraft.client.Minecraft.getInstance().gameRenderer.mainCamera.position)))Model.lodParts else Model.parts).forEachIndexed { i,triangles ->
    val vc=b.getBuffer(RenderType.entityCutoutNoCull(Model.textures[i]))
    val bulk=PackedEntityVertices.create(vc)
    for(a in triangles){
@@ -63,14 +63,19 @@ class EagleRenderer(context:EntityRendererProvider.Context):EntityRenderer<Eagle
   data class Tri(val p:Array<Vector3f>,val uv:Array<FloatArray>,val n:Vector3f)
   val textures=List(4){ResourceLocation(MOD_ID,"textures/mesh/eagle_$it.png")}
   var parts=List(4){emptyList<Tri>()};private set
+  var lodParts=List(4){emptyList<Tri>()};private set
   override fun onResourceManagerReload(r:ResourceManager) {
+   fun load(reader:java.io.Reader):List<List<Tri>> {
    val lists=List(4){mutableListOf<Tri>()}
-   r.openAsReader(ResourceLocation(MOD_ID,"models/mesh/eagle.mesh.json")).use {reader ->
     JsonParser.parseReader(reader).asJsonObject.getAsJsonArray("triangles").forEach {row ->
      val a=row.asJsonArray;val vv=a[1].asJsonArray.map {it.asJsonArray};val pp=vv.map {Vector3f(it[0].asFloat,it[1].asFloat,it[2].asFloat)}.toTypedArray();val n=Vector3f(pp[1]).sub(pp[0]).cross(Vector3f(pp[2]).sub(pp[0]))
      if(n.lengthSquared()>1e-15f){n.normalize();lists[a[0].asInt].add(Tri(pp,vv.map {floatArrayOf(it[3].asFloat,it[4].asFloat)}.toTypedArray(),n))}
     }
-   };parts=lists
+    return lists
+   }
+   parts=r.openAsReader(ResourceLocation(MOD_ID,"models/mesh/eagle.mesh.json")).use(::load)
+   val low=net.minecraftforge.fml.ModList.get().getModFileById(MOD_ID).file.findResource("resourcepacks/low_quality_models/assets/$MOD_ID/models/mesh/eagle.mesh.json")
+   lodParts=java.nio.file.Files.newBufferedReader(low).use(::load)
   }
  }
 }

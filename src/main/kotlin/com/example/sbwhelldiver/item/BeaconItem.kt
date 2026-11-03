@@ -23,6 +23,11 @@ import java.util.function.Consumer
 
 /** Reusable beacon: equipped stratagem cards remain stored after a successful throw. */
 class BeaconItem(properties: Properties) : Item(properties) {
+    fun getMaxEnergy(stack: ItemStack) = com.example.sbwhelldiver.survival.BeaconEnergy.capacity()
+    override fun initCapabilities(stack:ItemStack,nbt:net.minecraft.nbt.CompoundTag?):net.minecraftforge.common.capabilities.ICapabilityProvider = com.example.sbwhelldiver.survival.BeaconEnergyProvider(stack)
+    override fun isBarVisible(stack:ItemStack) = true
+    override fun getBarWidth(stack:ItemStack) = (13.0 * com.example.sbwhelldiver.survival.BeaconEnergy.stored(stack) / getMaxEnergy(stack)).toInt().coerceIn(0,13)
+    override fun getBarColor(stack:ItemStack) = 0x35C9FF
     override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slot: Int, selected: Boolean) {
         if (!level.isClientSide) {
             BeaconData.ensureIdentity(stack)
@@ -57,6 +62,10 @@ class BeaconItem(properties: Properties) : Item(properties) {
         if (stack.item !== this || BeaconData.identity(stack) != identity || player.isSpectator || player.isPassenger ||
             player.containerMenu !== player.inventoryMenu || player.cooldowns.isOnCooldown(this)) return false
         val selected = BeaconData.selected(stack) ?: return false
+        if (com.example.sbwhelldiver.survival.BeaconEnergy.stored(stack) < com.example.sbwhelldiver.survival.BeaconEnergy.THROW_COST) {
+            player.displayClientMessage(Component.translatable("message.sbw_helldiver.beacon_no_energy"),true)
+            return false
+        }
         if (!com.example.sbwhelldiver.stratagem.StratagemCooldowns.available(player, selected.id)) return false
         val level = player.level()
         val projectile = StratagemBeacon(ModEntities.STRATAGEM_BEACON.get(), player, level)
@@ -69,6 +78,7 @@ class BeaconItem(properties: Properties) : Item(properties) {
             cooldowns.cancel(player.server, player.uuid, selected.id, projectile.uuid)
             return false
         }
+        com.example.sbwhelldiver.survival.BeaconEnergy.set(stack,com.example.sbwhelldiver.survival.BeaconEnergy.stored(stack)-com.example.sbwhelldiver.survival.BeaconEnergy.THROW_COST)
         BeaconData.clear(stack)
         BeaconInput.reset(player.uuid)
         player.cooldowns.addCooldown(this, 4)
@@ -79,6 +89,7 @@ class BeaconItem(properties: Properties) : Item(properties) {
     }
 
     override fun appendHoverText(stack: ItemStack, level: Level?, tooltip: MutableList<Component>, flag: TooltipFlag) {
+        tooltip.add(Component.translatable("tooltip.sbw_helldiver.beacon_energy",com.example.sbwhelldiver.survival.BeaconEnergy.stored(stack),getMaxEnergy(stack)))
         tooltip.add(Component.translatable("tooltip.sbw_helldiver.beacon_controls"))
         for (def in BeaconData.loadout(stack).filterNotNull()) tooltip.add(Component.translatable(def.translation))
         BeaconData.selected(stack)?.let { tooltip.add(Component.translatable("tooltip.sbw_helldiver.beacon_ready", Component.translatable(it.translation))) }

@@ -1,0 +1,44 @@
+package com.example.sbwhelldiver.survival
+
+import net.minecraft.core.BlockPos
+import net.minecraft.world.*
+import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.*
+import net.minecraft.world.level.block.*
+import net.minecraft.world.level.block.entity.*
+import net.minecraft.world.level.block.state.*
+import net.minecraft.world.level.block.state.properties.*
+import net.minecraft.world.phys.BlockHitResult
+import net.minecraft.world.phys.shapes.*
+
+class SampleMachineBlock(properties:Properties):BaseEntityBlock(properties) {
+    init { registerDefaultState(stateDefinition.any().setValue(FACING,net.minecraft.core.Direction.NORTH).setValue(KIND,MachineDeployment.BIOPROCESSOR).setValue(PORT,MachineLayout.Port.NONE).setValue(MASTER,false)) }
+    override fun createBlockStateDefinition(b:StateDefinition.Builder<Block,BlockState>) { b.add(FACING,KIND,PORT,MASTER) }
+    override fun newBlockEntity(pos:BlockPos,state:BlockState)=SampleMachineBlockEntity(pos,state)
+    override fun getRenderShape(state:BlockState)=RenderShape.ENTITYBLOCK_ANIMATED
+    override fun getShape(state:BlockState,level:BlockGetter,pos:BlockPos,context:CollisionContext):VoxelShape = Shapes.block()
+    override fun <T:BlockEntity> getTicker(level:Level,state:BlockState,type:BlockEntityType<T>):BlockEntityTicker<T>? =
+        if(level.isClientSide) {
+            if(!state.getValue(MASTER))null else createTickerHelper(type,MachineRegistry.MACHINE.get(),BlockEntityTicker { _,_,_,be->MachineRegistry.clientTick?.invoke(be) })
+        }else createTickerHelper(type,MachineRegistry.MACHINE.get(),BlockEntityTicker { _,_,_,be->be.serverTick() })
+    override fun use(state:BlockState,level:Level,pos:BlockPos,player:Player,hand:InteractionHand,hit:BlockHitResult):InteractionResult {
+        val stack=player.getItemInHand(hand)
+        if(stack.`is`(com.atsuishio.superbwarfare.init.ModItems.CROWBAR.get()) && player.isShiftKeyDown) {
+            if(!level.isClientSide) (level.getBlockEntity(pos) as? SampleMachineBlockEntity)?.master()?.let{MachineStructure.remove(it,true)}
+            return InteractionResult.sidedSuccess(level.isClientSide)
+        }
+        if((level.getBlockEntity(pos) as? SampleMachineBlockEntity)?.insertFromHand(player,hand)==true)return InteractionResult.sidedSuccess(level.isClientSide)
+        return InteractionResult.PASS
+    }
+    override fun onRemove(state:BlockState,level:Level,pos:BlockPos,next:BlockState,moved:Boolean) {
+        if(!next.`is`(this) && !level.isClientSide)(level.getBlockEntity(pos) as? SampleMachineBlockEntity)?.master()?.let{MachineStructure.remove(it,false)}
+        super.onRemove(state,level,pos,next,moved)
+    }
+    companion object {
+        val FACING=BlockStateProperties.HORIZONTAL_FACING
+        val KIND=EnumProperty.create("machine",MachineDeployment::class.java)
+        val PORT=EnumProperty.create("port",MachineLayout.Port::class.java)
+        val MASTER=BooleanProperty.create("master")
+    }
+}

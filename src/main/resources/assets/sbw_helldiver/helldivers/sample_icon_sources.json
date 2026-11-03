@@ -1,0 +1,8 @@
+{
+  "source": "content/ui/shared/resources/generated_icons/sample_icons.xaml",
+  "templates": [
+    "DataTemplate.Icon.SampleGroupType.Common",
+    "DataTemplate.Icon.SampleGroupType.Rare",
+    "DataTemplate.Icon.SampleGroupType.Super"
+  ]
+}

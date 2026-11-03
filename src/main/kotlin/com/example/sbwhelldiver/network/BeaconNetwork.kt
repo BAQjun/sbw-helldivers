@@ -62,6 +62,11 @@ data class BeaconFailurePacket(val stratagemId: String, val loadoutIds: List<Str
 object BeaconNetwork {
     val CHANNEL = NetworkRegistry.newSimpleChannel(ResourceLocation(MOD_ID, "beacon"), { "14" }, { it == "14" }, { it == "14" })
     fun register() {
+        CHANNEL.registerMessage(28,TacticalTerminalResultPacket::class.java,{p,b->p.encode(b)},TacticalTerminalResultPacket::decode,TacticalTerminalResultPacket::handle,Optional.of(NetworkDirection.PLAY_TO_CLIENT))
+        CHANNEL.registerMessage(26,TacticalTerminalOpenPacket::class.java,{p,b->p.encode(b)},TacticalTerminalOpenPacket::decode,TacticalTerminalOpenPacket::handle,Optional.of(NetworkDirection.PLAY_TO_CLIENT))
+        CHANNEL.registerMessage(27,TacticalTerminalActionPacket::class.java,{p,b->p.encode(b)},TacticalTerminalActionPacket::decode,TacticalTerminalActionPacket::handle,Optional.of(NetworkDirection.PLAY_TO_SERVER))
+        CHANNEL.registerMessage(24,EquipmentTerminalInputPacket::class.java,{p,b->p.encode(b)},EquipmentTerminalInputPacket::decode,EquipmentTerminalInputPacket::handle,Optional.of(NetworkDirection.PLAY_TO_SERVER))
+        CHANNEL.registerMessage(25,EquipmentTerminalStatePacket::class.java,{p,b->p.encode(b)},EquipmentTerminalStatePacket::decode,EquipmentTerminalStatePacket::handle,Optional.of(NetworkDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(21,ExplosionBlockDamageRequestPacket::class.java,{p,b->p.encode(b)},ExplosionBlockDamageRequestPacket::decode,ExplosionBlockDamageRequestPacket::handle,Optional.of(NetworkDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(22,ExplosionBlockDamageStatePacket::class.java,{p,b->p.encode(b)},ExplosionBlockDamageStatePacket::decode,ExplosionBlockDamageStatePacket::handle,Optional.of(NetworkDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(19,InfiniteAmmoRequestPacket::class.java,{p,b->p.encode(b)},InfiniteAmmoRequestPacket::decode,InfiniteAmmoRequestPacket::handle,Optional.of(NetworkDirection.PLAY_TO_SERVER))

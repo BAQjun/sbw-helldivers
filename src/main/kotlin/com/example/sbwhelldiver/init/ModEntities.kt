@@ -17,7 +17,9 @@ import net.minecraftforge.registries.RegistryObject
 object ModEntities {
 
     val ENTITIES: DeferredRegister<EntityType<*>> =
-        DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MOD_ID)
+        DeferredRegister.create(net.minecraftforge.registries.ForgeRegistries.ENTITY_TYPES, MOD_ID)
+    val MACHINE_CONTAINER=ENTITIES.register("machine_container"){EntityType.Builder.of({t,l->com.example.sbwhelldiver.survival.MachineContainerEntity(t,l)},MobCategory.MISC).sized(4f,3f).clientTrackingRange(32).updateInterval(1).fireImmune().build("machine_container")}
+    val EQUIPMENT_BEACON=ENTITIES.register("machine_deployment_beacon"){EntityType.Builder.of({t,l->com.example.sbwhelldiver.survival.EquipmentDeploymentBeaconEntity(t,l)},MobCategory.MISC).sized(2.65f,4.4f).clientTrackingRange(32).updateInterval(1).fireImmune().build("machine_deployment_beacon")}
 
     val PLAYER_HELLPOD=ENTITIES.register("player_hellpod"){vehicle{t,l->com.example.sbwhelldiver.entity.PlayerHellpodEntity(t,l)}.sized(2.65f,.2f).build("player_hellpod")}
 

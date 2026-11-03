@@ -1,0 +1,121 @@
+{
+  "status": "design_only_not_runtime",
+  "model_units_per_block": 16,
+  "anchor": "机器中心底层方块；该方块底面 Y=0，水平中心 X=Z=0",
+  "render_face_offset": 0.04,
+  "生物处理器": {
+    "footprint_blocks": [
+      3,
+      2
+    ],
+    "front_face_normal": [
+      0,
+      0,
+      -1
+    ],
+    "ports": [
+      {
+        "name": "完整输入接口面",
+        "block_offset": [
+          -1,
+          0,
+          -1
+        ],
+        "face_center_model_units": [
+          -16.0,
+          8.0,
+          -24.04
+        ]
+      },
+      {
+        "name": "完整输出接口面",
+        "block_offset": [
+          0,
+          0,
+          -1
+        ],
+        "face_center_model_units": [
+          0.0,
+          8.0,
+          -24.04
+        ]
+      },
+      {
+        "name": "完整供电接口面",
+        "block_offset": [
+          1,
+          0,
+          -1
+        ],
+        "face_center_model_units": [
+          16.0,
+          8.0,
+          -24.04
+        ]
+      }
+    ],
+    "footprint_model_bounds_xz": [
+      [
+        -24,
+        -24
+      ],
+      [
+        24,
+        8
+      ]
+    ],
+    "anchor_note": "锚点位于后排中间方块的水平中心；正面接口位于前排三个方块的北面中心。"
+  },
+  "精炼厂": {
+    "footprint_blocks": [
+      5,
+      5
+    ],
+    "front_face_normal": [
+      0,
+      0,
+      -1
+    ],
+    "ports": [
+      {
+        "name": "正面物品输出接口",
+        "block_offset": [
+          0,
+          0,
+          -2
+        ],
+        "face_center_model_units": [
+          0,
+          8,
+          -40.04
+        ]
+      },
+      {
+        "name": "正面能量接口",
+        "block_offset": [
+          2,
+          0,
+          -2
+        ],
+        "face_center_model_units": [
+          32,
+          8,
+          -40.04
+        ]
+      },
+      {
+        "name": "正面物品输入接口",
+        "block_offset": [
+          -2,
+          0,
+          -2
+        ],
+        "face_center_model_units": [
+          -32,
+          8,
+          -40.04
+        ]
+      }
+    ]
+  }
+}

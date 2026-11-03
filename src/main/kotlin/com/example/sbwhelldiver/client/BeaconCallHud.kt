@@ -4,6 +4,8 @@ import com.example.sbwhelldiver.MOD_ID
 import com.example.sbwhelldiver.entity.AbstractHellpodEntity
 import com.example.sbwhelldiver.entity.StratagemMarker
 import com.example.sbwhelldiver.stratagem.Stratagems
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.phys.Vec3
 import com.mojang.blaze3d.platform.NativeImage
 import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.Minecraft
@@ -31,7 +33,8 @@ object BeaconCallHud : ResourceManagerReloadListener {
     const val ICON_SIZE = 12
     const val AIM_MARGIN = 32
     const val TITLE_COLOR = 0xFFDB4A
-    data class Label(val marker: StratagemMarker, val x: Int, val y: Int, val iconSize: Int, val distance: Double)
+    data class Label(val entity: Entity, val iconKey: String, val translation: String, val ticks: Long, val arrived: Boolean, val ongoing: Boolean,
+                     val x: Int, val y: Int, val iconSize: Int, val distance: Double)
     var label: Label? = null
         private set
     private var projectionDiagnostics = 0
@@ -44,8 +47,9 @@ object BeaconCallHud : ResourceManagerReloadListener {
         whiteIcons.values.forEach { mc.textureManager.release(it) }
         whiteIcons.clear(); monochromeIconCount = 0
         // Derive a white silhouette only for this label; preserve coloured inventory/loadout cards.
-        Stratagems.definitions.forEach { def ->
-            manager.getResource(def.icon).orElseThrow().open().use { stream ->
+        val sources=(Stratagems.definitions+Stratagems.equipmentDeployment).map{it.id to it.icon}
+        sources.distinctBy{it.first}.forEach { (id,texture) ->
+            manager.getResource(texture).orElseThrow().open().use { stream ->
                 NativeImage.read(stream).use { source ->
                     val mask = NativeImage(source.width, source.height, false)
                     for (y in 0 until source.height) for (x in 0 until source.width) {
@@ -54,9 +58,9 @@ object BeaconCallHud : ResourceManagerReloadListener {
                         val lit = max(max(pixel and 255, (pixel ushr 8) and 255), (pixel ushr 16) and 255) >= 80
                         mask.setPixelRGBA(x, y, if (lit) (alpha shl 24) or 0xDADADA else 0)
                     }
-                    val location = ResourceLocation(MOD_ID, "dynamic/call_icon/${def.id}")
+                    val location = ResourceLocation(MOD_ID, "dynamic/call_icon/$id")
                     mc.textureManager.register(location, DynamicTexture(mask))
-                    whiteIcons[def.id] = location
+                    whiteIcons[id] = location
                     monochromeIconCount++
                 }
             }
@@ -77,53 +81,57 @@ object BeaconCallHud : ResourceManagerReloadListener {
         val height = mc.window.guiScaledHeight
         val beamHeight = AbstractHellpodEntity.descentSpawnHeight().toFloat()
         var closest = Double.POSITIVE_INFINITY
-        level.entitiesForRendering().filterIsInstance<StratagemMarker>().forEach { marker ->
-            if (!marker.hasBeaconBeam || marker.isRemoved || marker.stratagem == null || marker.elapsedTicks == 0) return@forEach
-            val x = (marker.x - camera.x).toFloat()
-            val z = (marker.z - camera.z).toFloat()
-            val bottom = matrix.transform(Vector4f(x, (marker.y + .2 - camera.y).toFloat(), z, 1f))
-            val top = matrix.transform(Vector4f(x, (marker.y + beamHeight - camera.y).toFloat(), z, 1f))
+        fun projectCandidate(entity:Entity,anchor:Vec3,key:String,translation:String,ticks:Long,arrived:Boolean=false,ongoing:Boolean=false) {
+            if(entity.isRemoved)return
+            val x = (anchor.x - camera.x).toFloat()
+            val z = (anchor.z - camera.z).toFloat()
+            val bottom = matrix.transform(Vector4f(x, (anchor.y + .2 - camera.y).toFloat(), z, 1f))
+            val top = matrix.transform(Vector4f(x, (anchor.y + beamHeight - camera.y).toFloat(), z, 1f))
             // At screen-centre Y, clip-space Y is zero. Intersect the entire visible beam, not its base.
-            if (java.lang.Boolean.getBoolean("sbw_helldiver.beaconSmokeTest") && marker.x > 590 && projectionDiagnostics++ < 3) {
-                com.example.sbwhelldiver.LOGGER.info("CALL_HUD_PROJECTION: camera={} marker={} rotation={} bottom={} top={}", camera, marker.position(), event.camera.rotation(), bottom, top)
+            if (java.lang.Boolean.getBoolean("sbw_helldiver.beaconSmokeTest") && entity.x > 590 && projectionDiagnostics++ < 3) {
+                com.example.sbwhelldiver.LOGGER.info("CALL_HUD_PROJECTION: camera={} marker={} rotation={} bottom={} top={}", camera, anchor, event.camera.rotation(), bottom, top)
             }
             val dy = top.y - bottom.y
-            if (abs(dy) < 1e-6) return@forEach
+            if (abs(dy) < 1e-6) return
             val fraction = -bottom.y / dy
-            if (fraction !in 0f..1f) return@forEach
+            if (fraction !in 0f..1f) return
             val point = bottom.lerp(top, fraction)
-            if (point.w <= 1e-5f || point.z < -point.w || point.z > point.w) return@forEach
+            if (point.w <= 1e-5f || point.z < -point.w || point.z > point.w) return
             val screenX = (point.x / point.w * .5f + .5f) * width
             val miss = abs(screenX - width / 2.0)
-            if (miss > AIM_MARGIN || miss >= closest) return@forEach
+            if (miss > AIM_MARGIN || miss >= closest) return
             closest = miss
-            label = Label(marker, screenX.roundToInt(), height / 2, ICON_SIZE, marker.position().distanceTo(mc.player?.position() ?: camera))
+            label = Label(entity,key,translation,ticks,arrived,ongoing,screenX.roundToInt(),height/2,ICON_SIZE,anchor.distanceTo(mc.player?.position()?:camera))
+        }
+        for(entity in level.entitiesForRendering())when(entity) {
+            is StratagemMarker->if(entity.hasBeaconBeam && entity.elapsedTicks>0)entity.stratagem?.let{def->
+                val ongoing=entity.isSustainedOrbital&&entity.orbitalFiredAt>=0
+                projectCandidate(entity,entity.position(),def.id,def.translation,(if(ongoing)entity.orbitalActivityLeft else entity.ticksLeft).toLong(),entity.hasArrived,ongoing)
+            }
         }
     }
 
     fun draw(gui: GuiGraphics, partial: Float) {
         val mc = Minecraft.getInstance()
         val current = label ?: return
-        if (mc.options.hideGui || mc.screen != null || current.marker.isRemoved || !current.marker.hasBeaconBeam) return
-        val def = current.marker.stratagem ?: return
-        val icon = whiteIcons[def.id] ?: return
+        if (mc.options.hideGui || mc.screen != null || current.entity.isRemoved) return
+        val icon = whiteIcons[current.iconKey] ?: return
         val x = current.x + 10
         val y = current.y - ICON_SIZE / 2
         gui.fill(x - 1, y - 1, x + ICON_SIZE + 1, y + ICON_SIZE + 1, 0x50000000)
         gui.flush()
         RenderSystem.enableBlend()
         RenderSystem.defaultBlendFunc()
-        gui.blit(icon, x, y, ICON_SIZE, ICON_SIZE, 0f, 0f, 64, 64, 64, 64)
+        gui.blit(icon, x, y, ICON_SIZE, ICON_SIZE, 0f, 0f, 1, 1, 1, 1)
         RenderSystem.disableBlend()
         val distance = "${current.distance.roundToInt()}m"
         gui.drawString(mc.font, distance, x + ICON_SIZE / 2 - mc.font.width(distance) / 2, y + ICON_SIZE + 3, 0xFFFFFF, true)
         val textX = x + ICON_SIZE + 5
-        val name = Component.translatable(def.translation)
-        val countingTicks=if(current.marker.isSustainedOrbital && current.marker.orbitalFiredAt>=0)current.marker.orbitalActivityLeft else current.marker.ticksLeft
-        val remaining = ceil((countingTicks - partial).coerceAtLeast(0f) / 20f).toInt()
+        val name = Component.translatable(current.translation)
+        val remaining = ceil((current.ticks - partial).coerceAtLeast(0f) / 20f).toInt()
         val time = "%02d:%02d".format(java.util.Locale.ROOT, remaining / 60, remaining % 60)
         gui.drawString(mc.font, name, textX, current.y - 10, TITLE_COLOR, true)
-        val status=if(current.marker.hasArrived)Component.translatable("hud.$MOD_ID.arrived") else if(current.marker.isSustainedOrbital && current.marker.orbitalFiredAt>=0)Component.translatable("hud.$MOD_ID.in_progress",time) else Component.translatable("hud.$MOD_ID.arrival_countdown", time)
+        val status=if(current.arrived)Component.translatable("hud.$MOD_ID.arrived") else if(current.ongoing)Component.translatable("hud.$MOD_ID.in_progress",time) else Component.translatable("hud.$MOD_ID.arrival_countdown", time)
         gui.drawString(mc.font, status, textX, current.y + 2, 0xDDE1E5, true)
     }
 

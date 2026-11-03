@@ -88,17 +88,25 @@ object BeaconGameTests {
     fun codesRequireLoadedCardAndIdentity(helper: GameTestHelper) {
         val player = FakePlayerFactory.get(helper.level, GameProfile(UUID.randomUUID(), "InputTest"))
         val stack = ItemStack(ModItems.BEACON.get())
+        com.example.sbwhelldiver.stratagem.SuperDestroyers.state(player).let { ship ->
+            val now=com.example.sbwhelldiver.stratagem.StratagemCooldowns.now(player.server)
+            ship.schedule(com.example.sbwhelldiver.stratagem.DestroyerAnchor.at(player.level().dimension().location().toString(),player.position(),0,240.0,180.0),now)
+            ship.advance(now+60)
+        }
+        com.example.sbwhelldiver.survival.BeaconEnergy.set(stack,10000)
         player.setItemInHand(InteractionHand.MAIN_HAND, stack)
         val identity = BeaconData.ensureIdentity(stack)
         BeaconData.setItems(stack, cards())
         helper.assertTrue(!ModItems.BEACON.get().use(helper.level, player, InteractionHand.MAIN_HAND).result.consumesAction(), "Uncharged beacon may be thrown")
         for (def in Stratagems.definitions) {
+            BeaconInput.reset(player.uuid)
             val card = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(def.itemId)!!
             BeaconData.setItems(stack, listOf(ItemStack(card)))
             def.code.forEach { BeaconInput.accept(player, InteractionHand.MAIN_HAND, UUID.randomUUID(), it) }
             helper.assertTrue(BeaconData.selected(stack) == null, "Forged identity activated a beacon")
             BeaconInput.accept(player, InteractionHand.MAIN_HAND, identity, (def.code.first()+1)%4)
             helper.assertTrue(BeaconData.selected(stack) == null, "Invalid prefix activated a beacon")
+            BeaconInput.reset(player.uuid)
             def.code.forEach { BeaconInput.accept(player, InteractionHand.MAIN_HAND, identity, it) }
             helper.assertTrue(BeaconData.selected(stack) == def, "Original ${def.id} code failed")
             BeaconData.clear(stack)
@@ -114,6 +122,12 @@ object BeaconGameTests {
         val player = FakePlayerFactory.get(helper.level, GameProfile(UUID.randomUUID(), "ReselectTest"))
         val stack = ItemStack(ModItems.BEACON.get())
         val item = stack.item as com.example.sbwhelldiver.item.BeaconItem
+        com.example.sbwhelldiver.stratagem.SuperDestroyers.state(player).let { ship ->
+            val now=com.example.sbwhelldiver.stratagem.StratagemCooldowns.now(player.server)
+            ship.schedule(com.example.sbwhelldiver.stratagem.DestroyerAnchor.at(player.level().dimension().location().toString(),player.position(),0,240.0,180.0),now)
+            ship.advance(now+60)
+        }
+        com.example.sbwhelldiver.survival.BeaconEnergy.set(stack,10000)
         player.setItemInHand(InteractionHand.MAIN_HAND, stack)
         val id = BeaconData.ensureIdentity(stack)
         BeaconData.setItems(stack, cards())

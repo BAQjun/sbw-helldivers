@@ -290,6 +290,12 @@ object SentryGameTests {
         val stack = ItemStack(ModItems.BEACON.get())
         com.example.sbwhelldiver.stratagem.BeaconData.setItems(stack, listOf(ItemStack(ModItems.ROCKET_SENTRY.get())))
         val identity = com.example.sbwhelldiver.stratagem.BeaconData.ensureIdentity(stack)
+        com.example.sbwhelldiver.stratagem.SuperDestroyers.state(player).let { ship ->
+            val now=com.example.sbwhelldiver.stratagem.StratagemCooldowns.now(player.server)
+            ship.schedule(com.example.sbwhelldiver.stratagem.DestroyerAnchor.at(player.level().dimension().location().toString(),player.position(),0,240.0,180.0),now)
+            ship.advance(now+60)
+        }
+        com.example.sbwhelldiver.survival.BeaconEnergy.set(stack,10000)
         player.setItemInHand(InteractionHand.MAIN_HAND, stack)
         com.example.sbwhelldiver.stratagem.Stratagems.get("rocket_sentry")!!.code.forEach {
             com.example.sbwhelldiver.stratagem.BeaconInput.accept(player, InteractionHand.MAIN_HAND, identity, it)

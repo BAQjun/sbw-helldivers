@@ -11,7 +11,7 @@ enum class CallPhase { READY, THROWN, ARRIVING, COOLDOWN, ACTIVE, ARRIVED }
 data class CallStatus(val id: String, var phase: CallPhase = CallPhase.READY,
     var start: Long = 0, var end: Long = 0, var remaining: Int = -1, var request: UUID? = null,
     var activityStart: Long = -1, var activityEnd: Long = -1, var activityFinished: Long = -1,
-    var activityToken: UUID? = null) {
+    var activityToken: UUID? = null, var equipmentMachine:String = "") {
     /** Presentation overlays the existing cooldown; it never resets or delays that cooldown. */
     fun activity(now: Double): CallPhase? = activityPhase(activityStart, activityFinished, now)
     companion object {
@@ -80,7 +80,7 @@ class StratagemCooldownState {
     fun reserve(id: String, token: UUID, now: Long): Boolean {
         if (!available(id, now)) return false
         if (!enabled) return true
-        entry(id).apply { activityStart = -1; activityEnd = -1; activityFinished = -1; activityToken = null; phase = CallPhase.THROWN; start = now; end = now + 1200; request = token }
+        entry(id).apply { activityStart = -1; activityEnd = -1; activityFinished = -1; activityToken = null; equipmentMachine=""; phase = CallPhase.THROWN; start = now; end = now + 1200; request = token }
         changed(); return true
     }
     fun beginArrival(id: String, token: UUID, now: Long, arrival: Long): Boolean {
@@ -103,6 +103,15 @@ class StratagemCooldownState {
         entry(id).apply {
             activityStart = start; activityEnd = end; activityFinished = -1; activityToken = token
         }
+        changed()
+    }
+    /** The device reservation is still timed when ordinary stratagem cooldowns are disabled. */
+    fun beginEquipmentDeployment(token:UUID,now:Long,arrival:Long,machine:String) {
+        val id=Stratagems.equipmentDeployment.id
+        val e=entry(id)
+        if(enabled && e.request!=token)return
+        require(com.example.sbwhelldiver.survival.MachineDeployment.entries.any{it.id==machine})
+        e.apply{phase=CallPhase.ARRIVING;start=now;end=arrival;request=token;equipmentMachine=machine}
         changed()
     }
     fun finishActivity(id: String, token: UUID, now: Long) {
@@ -161,6 +170,7 @@ class StratagemCooldownState {
         n.putLong("TurnaroundStart", turnaroundStart); n.putLong("TurnaroundEnd", turnaroundEnd)
         n.put("Entries", ListTag().also { list -> entries.values.forEach { e -> list.add(CompoundTag().also {
             it.putString("Id", e.id); it.putInt("Phase", e.phase.ordinal); it.putLong("Start", e.start); it.putLong("End", e.end)
+            it.putString("EquipmentMachine",e.equipmentMachine)
             it.putLong("ActivityStart", e.activityStart); it.putLong("ActivityEnd", e.activityEnd); it.putLong("ActivityFinished", e.activityFinished)
             e.activityToken?.let { token -> it.putUUID("ActivityToken", token) }
             it.putInt("Remaining", e.remaining); e.request?.let { token -> it.putUUID("Request", token) }
@@ -180,7 +190,7 @@ class StratagemCooldownState {
                     if(e.contains("ActivityStart")) e.getLong("ActivityStart") else -1,
                     if(e.contains("ActivityEnd")) e.getLong("ActivityEnd") else -1,
                     if(e.contains("ActivityFinished")) e.getLong("ActivityFinished") else -1,
-                    if(e.hasUUID("ActivityToken")) e.getUUID("ActivityToken") else null)
+                    if(e.hasUUID("ActivityToken")) e.getUUID("ActivityToken") else null,e.getString("EquipmentMachine"))
             }
             s.equippedEagles = n.getList("EquippedEagles", Tag.TAG_STRING.toInt()).map { it.asString }.filter { it in StratagemCooldownConfig.baseSeconds && it.startsWith("eagle_") }.toSet()
         }

@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SGS",
+    "SCS",
+    "IBI"
+  ],
+  "key": {
+    "S": {
+      "item": "superbwarfare:steel_plate"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "C": {
+      "item": "superbwarfare:ancient_cpu"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "B": {
+      "item": "superbwarfare:small_battery_pack"
+    }
+  },
+  "result": {
+    "count": 1,
+    "item": "sbw_helldiver:tactical_terminal"
+  }
+}
