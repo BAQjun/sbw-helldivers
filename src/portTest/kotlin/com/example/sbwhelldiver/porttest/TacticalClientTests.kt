@@ -25,6 +25,7 @@ import net.neoforged.neoforge.capabilities.Capabilities
 object TacticalClientTests {
     private var started=false;private var ticks=0;private val launched=System.currentTimeMillis()
     private val root=BlockPos(0,80,0)
+    private var cancelledSound:net.minecraft.client.resources.sounds.SoundInstance?=null
     @SubscribeEvent fun tick(e:ClientTickEvent.Post){
         if(!java.lang.Boolean.getBoolean("sbw_helldiver.tacticalRegression"))return
         val mc=Minecraft.getInstance()
@@ -51,7 +52,20 @@ object TacticalClientTests {
         if(ticks==140)click(100.0,65.0)
         if(ticks==150)capture("tactical-orbital.png")
         if(ticks==160)click(100.0,50.0)
-        if(ticks==185)capture("tactical-hold.png")
+        if(ticks==164){
+            val f=TacticalTerminalScreen::class.java.getDeclaredField("holdSound").apply{isAccessible=true}
+            cancelledSound=f.get(mc.screen) as net.minecraft.client.resources.sounds.SoundInstance
+            check(mc.soundManager.isActive(cancelledSound!!)){"Purchase hold sound did not start"}
+        }
+        if(ticks==165)(mc.screen as TacticalTerminalScreen).mouseReleased(0.0,0.0,0)
+        if(ticks==169){
+            server.execute{val player=server.playerList.getPlayer(p.uuid)!!;check(player.inventory.getItem(0).count==50);check(player.inventory.getItem(1).count==5);LOGGER.info("TACTICAL_CANCEL_AUDIO_VERIFIED")}
+        }
+        // SoundEngine retains stopped channels for at least 20 ticks; check after that grace period,
+        // before this 1.83 s sample could have finished naturally.
+        if(ticks==190)check(!mc.soundManager.isActive(cancelledSound!!)){"Released purchase sound kept playing"}
+        if(ticks==195)click(100.0,50.0)
+        if(ticks==210)capture("tactical-hold.png")
         if(ticks==235){
             (mc.screen as TacticalTerminalScreen).mouseReleased(0.0,0.0,0)
             server.execute{val player=server.playerList.getPlayer(p.uuid)!!;check((0 until player.inventory.containerSize).any{player.inventory.getItem(it).`is`(ModItems.ORBITAL_PRECISION_STRIKE.get())});LOGGER.info("TACTICAL_CLIENT_PURCHASE_VERIFIED")}

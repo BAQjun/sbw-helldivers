@@ -54,7 +54,8 @@ object TacticalTerminalOffers {
 
 /** Visual easing only; purchase authorization must still use the full server-side duration. */
 object TacticalTerminalHold {
-    const val DURATION_TICKS = 60L
+    // Original shop recording: hold starts at 7.550 s, completion at 8.873 s.
+    const val DURATION_TICKS = 27L
     fun maskProgress(elapsedTicks:Double):Double {
         val t = (elapsedTicks / DURATION_TICKS).coerceIn(0.0, 1.0)
         return 1.0 - (1.0 - t) * (1.0 - t) * (1.0 - t)

@@ -2,6 +2,7 @@ package com.example.sbwhelldiver.client
 
 import com.example.sbwhelldiver.MOD_ID
 import com.example.sbwhelldiver.init.ModItems
+import com.example.sbwhelldiver.init.ModSounds
 import com.example.sbwhelldiver.network.*
 import com.example.sbwhelldiver.stratagem.Stratagems
 import com.example.sbwhelldiver.survival.*
@@ -9,6 +10,8 @@ import net.minecraft.client.CameraType
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.resources.sounds.SimpleSoundInstance
+import net.minecraft.client.resources.sounds.SoundInstance
 import net.minecraft.core.Direction
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
@@ -26,6 +29,7 @@ class TacticalTerminalScreen(private val state:TacticalTerminalOpenPacket):Scree
     private var scroll=0
     private var held:String?=null
     private var heldTicks=0
+    private var holdSound:SoundInstance?=null
     private var feedback:String?=null
     private var feedbackTicks=0
     private val widthUi=340;private val heightUi=156
@@ -59,8 +63,10 @@ class TacticalTerminalScreen(private val state:TacticalTerminalOpenPacket):Scree
         held?.let { id->
             heldTicks++
             if(heldTicks%5==0)send(1,id)
-            if(heldTicks in 60..70 && heldTicks%2==0)send(2,id)
-            if(heldTicks>=70){held=null;heldTicks=0}
+            val duration=TacticalTerminalHold.DURATION_TICKS.toInt()
+            if(heldTicks==duration)stopHoldSound()
+            if(heldTicks in duration..duration+10 && (heldTicks-duration)%2==0)send(2,id)
+            if(heldTicks>=duration+10)cancel()
         }
     }
     override fun renderBackground(g:GuiGraphics,x:Int,y:Int,partial:Float){}
@@ -116,9 +122,11 @@ class TacticalTerminalScreen(private val state:TacticalTerminalOpenPacket):Scree
     }
     override fun mouseReleased(x:Double,y:Double,button:Int):Boolean {if(button==0)cancel();return true}
     override fun mouseScrolled(x:Double,y:Double,horizontal:Double,vertical:Double):Boolean {if(category!=null){scroll=(scroll-if(vertical>0)1 else if(vertical<0)-1 else 0).coerceIn(0,(entries().size-4).coerceAtLeast(0));cancel()};return true}
-    private fun start(id:String){selectSound();cancel();held=id;heldTicks=0;send(0,id)}
-    private fun selectSound(){minecraft?.soundManager?.play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(com.example.sbwhelldiver.init.ModSounds.EVENTS.getValue("tactical_select").get(),1f))}
-    private fun cancel(){held?.let{send(-1,it)};held=null;heldTicks=0}
+    private fun start(id:String){cancel();selectSound();held=id;heldTicks=0;holdSound=uiSound("tactical_purchase_hold");send(0,id)}
+    private fun uiSound(event:String):SoundInstance = SimpleSoundInstance.forUI(ModSounds.EVENTS.getValue(event).get(),1f).also{minecraft?.soundManager?.play(it)}
+    private fun selectSound(){uiSound("tactical_select")}
+    private fun stopHoldSound(){holdSound?.let{minecraft?.soundManager?.stop(it)};holdSound=null}
+    private fun cancel(){stopHoldSound();held?.let{send(-1,it)};held=null;heldTicks=0}
     private fun send(action:Int,id:String=""){BeaconNetwork.CHANNEL.sendToServer(TacticalTerminalActionPacket(state.pos,state.token,action,id))}
     override fun keyPressed(key:Int,scan:Int,mods:Int):Boolean {if(key==GLFW.GLFW_KEY_ESCAPE){onClose();return true};return super.keyPressed(key,scan,mods)}
     override fun onClose(){minecraft?.setScreen(null)}
@@ -127,6 +135,6 @@ class TacticalTerminalScreen(private val state:TacticalTerminalOpenPacket):Scree
         val mc=minecraft?:return;mc.cameraEntity=savedCamera?.takeIf{!it.isRemoved}?:mc.player;mc.options.cameraType=savedType;camera=null
     }
     companion object {
-        fun result(p:TacticalTerminalResultPacket){val s=Minecraft.getInstance().screen as? TacticalTerminalScreen?:return;if(s.state.token!=p.token)return;s.cancel();s.feedback=p.key;s.feedbackTicks=60}
+        fun result(p:TacticalTerminalResultPacket){val s=Minecraft.getInstance().screen as? TacticalTerminalScreen?:return;if(s.state.token!=p.token)return;s.cancel();if(p.key=="message.sbw_helldiver.terminal_success")s.uiSound("tactical_purchase_complete");s.feedback=p.key;s.feedbackTicks=60}
         fun open(p:TacticalTerminalOpenPacket){val mc=Minecraft.getInstance();if(mc.level?.getBlockEntity(p.pos) is TacticalTerminalBlockEntity)mc.setScreen(TacticalTerminalScreen(p))}}
 }

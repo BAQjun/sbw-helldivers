@@ -5609,5 +5609,43 @@
         "attenuation_distance": 64
       }
     ]
+  },
+  "tactical_purchase_hold": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:ui/purchase_hold_0",
+        "volume": 0.5,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:ui/purchase_hold_1",
+        "volume": 0.5,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:ui/purchase_hold_2",
+        "volume": 0.5,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "tactical_purchase_complete": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:ui/purchase_complete_0",
+        "volume": 0.5,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:ui/purchase_complete_1",
+        "volume": 0.5,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:ui/purchase_complete_2",
+        "volume": 0.5,
+        "attenuation_distance": 64
+      }
+    ]
   }
 }

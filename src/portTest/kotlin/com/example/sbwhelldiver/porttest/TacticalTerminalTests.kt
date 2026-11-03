@@ -33,12 +33,12 @@ object TacticalTerminalTests {
         p.inventory.setItem(0,ItemStack(ModItems.COMMON_SAMPLE.get(),50));p.inventory.setItem(1,ItemStack(ModItems.RARE_SAMPLE.get(),5))
         TacticalTerminalSessions.open(p,be);val token=TacticalTerminalSessions.token(p)!!;val id="orbital_precision_strike"
         TacticalTerminalSessions.accept(p,root,token,0,id)
-        for(t in 5..55 step 5)h.runAfterDelay(t.toLong()){TacticalTerminalSessions.accept(p,root,token,1,id)}
-        h.runAfterDelay(59){
+        for(t in 5 until TacticalTerminalHold.DURATION_TICKS.toInt() step 5)h.runAfterDelay(t.toLong()){TacticalTerminalSessions.accept(p,root,token,1,id)}
+        h.runAfterDelay(TacticalTerminalHold.DURATION_TICKS-1){
             TacticalTerminalSessions.accept(p,root,token,2,id)
             h.assertTrue(p.inventory.getItem(0).count==50,"Premature hold spent samples")
         }
-        h.runAfterDelay(61){
+        h.runAfterDelay(TacticalTerminalHold.DURATION_TICKS+1){
             TacticalTerminalSessions.accept(p,root,token,2,id)
             h.assertTrue((0 until p.inventory.containerSize).none{p.inventory.getItem(it).`is`(ModItems.COMMON_SAMPLE.get()) || p.inventory.getItem(it).`is`(ModItems.RARE_SAMPLE.get())},"Completed purchase did not spend samples")
             h.assertTrue((0 until p.inventory.containerSize).any{p.inventory.getItem(it).`is`(ModItems.ORBITAL_PRECISION_STRIKE.get())},"Completed purchase did not grant its card")
