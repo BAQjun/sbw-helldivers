@@ -18,16 +18,14 @@ import java.util.UUID
 @PrefixGameTestTemplate(false)
 object TacticalTerminalTests {
     @JvmStatic @GameTest(template="port_test",timeoutTicks=100)
-    fun powerAndHoldPurchase(h:GameTestHelper){
+    fun screenAndHoldPurchase(h:GameTestHelper){
         val root=h.absolutePos(BlockPos(5,4,5));val level=h.level
         val state=ModBlocks.TACTICAL_TERMINAL.get().defaultBlockState().setValue(TacticalTerminalBlock.FACING,Direction.NORTH)
         for(i in 0..3)level.setBlock(TacticalTerminalBlock.position(root,Direction.NORTH,i),state.setValue(TacticalTerminalBlock.PART,i),3)
         val be=level.getBlockEntity(root) as TacticalTerminalBlockEntity
         val upper=TacticalTerminalBlock.position(root,Direction.NORTH,3)
-        val energy=level.getCapability(Capabilities.EnergyStorage.BLOCK,upper,Direction.UP)!!
-        h.assertTrue(energy.maxEnergyStored==BeaconEnergy.capacity(),"Terminal capacity must match the small battery")
-        h.assertTrue(energy.receiveEnergy(20000,false)==20000,"Energy insertion through a terminal part failed")
-        be.tickServer();h.assertTrue(be.powered && energy.energyStored==19900,"Terminal must consume exactly 100 RF/t")
+        h.assertTrue(be.screenOn,"Terminal should light without a power supply")
+        h.assertTrue(state.setValue(TacticalTerminalBlock.PART,3).getCollisionShape(level,upper).bounds().maxY==.5,"Upper terminal collision must be half a block")
         val p=net.neoforged.neoforge.common.util.FakePlayerFactory.get(level,com.mojang.authlib.GameProfile(UUID.randomUUID(),"TerminalQA"))
         p.setGameMode(GameType.SURVIVAL);p.setPos(root.x+.5,root.y.toDouble(),root.z+1.5)
         p.inventory.setItem(0,ItemStack(ModItems.COMMON_SAMPLE.get(),50));p.inventory.setItem(1,ItemStack(ModItems.RARE_SAMPLE.get(),15))
@@ -44,6 +42,8 @@ object TacticalTerminalTests {
             h.assertTrue((0 until p.inventory.containerSize).any{p.inventory.getItem(it).`is`(ModItems.ORBITAL_PRECISION_STRIKE.get())},"Completed purchase did not grant its card")
             TacticalTerminalSessions.accept(p,root,token,2,id)
             h.assertTrue((0 until p.inventory.containerSize).sumOf{if(p.inventory.getItem(it).`is`(ModItems.ORBITAL_PRECISION_STRIKE.get()))p.inventory.getItem(it).count else 0}==1,"Repeated completion granted another card")
+            TacticalTerminalSessions.accept(p,root,token,TacticalTerminalSessions.SCREEN_OFF,"")
+            h.assertTrue(!be.screenOn && TacticalTerminalSessions.token(p)==null,"Switching off the screen must close the session")
             val pick=ItemStack(net.minecraft.world.item.Items.IRON_PICKAXE)
             h.assertTrue(pick.isCorrectToolForDrops(state),"Terminal must be mineable with an iron pickaxe")
             p.mainHandItem.let{p.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,pick)}

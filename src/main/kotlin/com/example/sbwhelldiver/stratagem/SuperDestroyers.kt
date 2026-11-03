@@ -40,7 +40,7 @@ class DestroyerState {
  var transitionEnd=0L;private set
  var appearedAt=0L;private set
  var residentSince=0L;private set
- var callsRemaining=3;private set
+ var callsRemaining=0;private set
  fun canCall()=callsRemaining>0
  fun addCall():Boolean { if(callsRemaining>=5)return false;callsRemaining++;return true }
  private var resupplyPending=false
@@ -70,7 +70,7 @@ class DestroyerState {
  companion object{fun load(t:CompoundTag)=DestroyerState().apply{
   anchor=if(t.contains("Anchor"))DestroyerAnchor.load(t.getCompound("Anchor")) else null
   destination=if(t.contains("Destination"))DestroyerAnchor.load(t.getCompound("Destination")) else null
-  transitionEnd=t.getLong("TransitionEnd");appearedAt=t.getLong("AppearedAt");residentSince=if(t.contains("ResidentSince"))t.getLong("ResidentSince") else appearedAt;callsRemaining=if(t.contains("CallsRemaining"))t.getInt("CallsRemaining").coerceIn(0,5) else 3;resupplyPending=t.getBoolean("ResupplyPending")
+  transitionEnd=t.getLong("TransitionEnd");appearedAt=t.getLong("AppearedAt");residentSince=if(t.contains("ResidentSince"))t.getLong("ResidentSince") else appearedAt;callsRemaining=if(t.contains("CallsRemaining"))t.getInt("CallsRemaining").coerceIn(0,5) else 0;resupplyPending=t.getBoolean("ResupplyPending")
  }}
 }
 @EventBusSubscriber(modid=MOD_ID)

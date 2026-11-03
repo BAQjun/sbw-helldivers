@@ -13,6 +13,7 @@ import java.util.UUID
 
 /** Server decides both the hold duration and the atomic sample transaction. */
 object TacticalTerminalSessions {
+    const val SCREEN_OFF = 3
     private data class Session(val pos:BlockPos,val dimension:String,val token:UUID,var offer:String="",var started:Long=0,var heartbeat:Long=0)
     private val sessions=mutableMapOf<UUID,Session>()
     fun open(player:ServerPlayer,be:TacticalTerminalBlockEntity) {
@@ -26,7 +27,12 @@ object TacticalTerminalSessions {
         if(s.pos!=pos||s.token!=token)return
         if(action == -2){sessions.remove(player.uuid);return}
         val l=player.serverLevel();val be=l.getBlockEntity(pos) as? TacticalTerminalBlockEntity
-        if(l.dimension().location().toString()!=s.dimension || player.isSpectator || !player.isAlive || player.distanceToSqr(pos.x+.5,pos.y+.5,pos.z+.5)>36 || be?.powered!=true){sessions.remove(player.uuid);return}
+        if(l.dimension().location().toString()!=s.dimension || player.isSpectator || !player.isAlive || player.distanceToSqr(pos.x+.5,pos.y+.5,pos.z+.5)>36 || be?.screenOn!=true){sessions.remove(player.uuid);return}
+        if (action == SCREEN_OFF) {
+            be.setScreenEnabled(false)
+            sessions.values.removeIf { it.pos == pos && it.dimension == s.dimension }
+            return
+        }
         val now=l.gameTime
         if(action == -1){s.offer="";return}
         if(action==0){

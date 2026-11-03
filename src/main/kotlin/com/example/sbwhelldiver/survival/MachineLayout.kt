@@ -9,7 +9,7 @@ import net.minecraft.world.phys.shapes.VoxelShape
 
 /** Coordinates match the accepted Blockbench models, with the interface row facing north. */
 object MachineLayout {
-    const val VERSION=3
+    const val VERSION=4
     enum class Port: StringRepresentable { NONE,INPUT,OUTPUT,ENERGY;override fun getSerializedName()=name.lowercase() }
     fun rotate(p:BlockPos,facing:Direction)=when(facing){Direction.EAST->BlockPos(-p.z,p.y,p.x);Direction.SOUTH->BlockPos(-p.x,p.y,-p.z);Direction.WEST->BlockPos(p.z,p.y,-p.x);else->p}
     fun rotate(b:AABB,facing:Direction):AABB {

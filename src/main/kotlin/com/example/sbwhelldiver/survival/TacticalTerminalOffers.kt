@@ -48,7 +48,7 @@ object TacticalTerminalOffers {
         offer(TerminalCategory.DEFENSE,"anti_tank_minefield",70,15),
         offer(TerminalCategory.DEFENSE,"anti_tank_emplacement",150,20,5),
         offer(TerminalCategory.DEFENSE,"grenadier_battlement",110,15,5),
-    )
+    ).sortedWith(compareBy({ it.cost.superSample }, { it.cost.rare }, { it.cost.common }))
     val byId = all.associateBy { it.id }
 }
 

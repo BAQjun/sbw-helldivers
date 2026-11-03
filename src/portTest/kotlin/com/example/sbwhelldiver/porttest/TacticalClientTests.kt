@@ -46,9 +46,8 @@ object TacticalClientTests {
             player.inventory.setItem(8,ItemStack(ModItems.TACTICAL_TERMINAL.get()));player.inventory.setItem(0,ItemStack(ModItems.COMMON_SAMPLE.get(),50));player.inventory.setItem(1,ItemStack(ModItems.RARE_SAMPLE.get(),15))
             LOGGER.info("TACTICAL_FIXTURE_READY")
         }
-        if(ticks==60)capture("tactical-unpowered.png")
-        if(ticks==65)server.execute{server.overworld().getCapability(Capabilities.EnergyStorage.BLOCK,root,Direction.DOWN)!!.receiveEnergy(1000000,false)}
-        if(ticks==80)capture("tactical-powered.png")
+        if(ticks==60)capture("tactical-idle.png")
+        if(ticks==80)capture("tactical-lit.png")
         if(ticks==90){mc.gameMode!!.useItemOn(p,InteractionHand.MAIN_HAND,net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3(1.0,80.95,0.0),Direction.NORTH,root,false))}
         if(ticks==120){check(mc.screen is TacticalTerminalScreen);capture("tactical-menu.png")}
         if(ticks==140)click(100.0,65.0)

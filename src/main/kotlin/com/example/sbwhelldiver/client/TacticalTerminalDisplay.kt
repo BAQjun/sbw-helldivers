@@ -24,6 +24,13 @@ import kotlin.math.sqrt
 object TacticalTerminalDisplay {
     const val WIDTH=340
     const val HEIGHT=156
+    private const val OFF_X = 310
+    private const val OFF_Y = 7
+    private const val OFF_WIDTH = 22
+    private const val OFF_HEIGHT = 15
+
+    fun isScreenOffButton(x: Double, y: Double) =
+        x >= OFF_X && x < OFF_X + OFF_WIDTH && y >= OFF_Y && y < OFF_Y + OFF_HEIGHT
     private const val SCALE=1.25f/WIDTH
     private val diagonal=1.0/sqrt(2.0)
     private var projection:Matrix4f?=null
@@ -83,6 +90,8 @@ object TacticalTerminalDisplay {
             c.fill(0,0,WIDTH,4,0xFFE2C122.toInt())
             c.text(Component.translatable("block.sbw_helldiver.tactical_terminal"),12,10,0xFFF3ECCE.toInt())
             c.text(Component.translatable("gui.sbw_helldiver.destroyer_uses",DestroyerClient.callsRemaining),180,10,0xFFFFDD55.toInt())
+            c.fill(OFF_X, OFF_Y, OFF_WIDTH, OFF_HEIGHT, background(view, OFF_X, OFF_Y, OFF_WIDTH, OFF_HEIGHT))
+            c.text(Component.literal("X"), OFF_X + 8, OFF_Y + 4, 0xFFFFDD55.toInt())
             val category=view?.category
             if(category==null){
                 row(c,10,28,320,26,"destroyer_call",Component.translatable("gui.sbw_helldiver.replenish"),TacticalTerminalOffers.destroyerCall,null,view,partial)

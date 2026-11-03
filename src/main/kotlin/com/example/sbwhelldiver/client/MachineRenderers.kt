@@ -45,7 +45,7 @@ class TacticalTerminalRenderer(context:BlockEntityRendererProvider.Context):Bloc
         p.mulPose(Axis.YP.rotationDegrees(180f-facing.toYRot()))
         p.pushPose();p.translate(0.0,0.0,.2345)
         MachineMesh.draw("tactical_terminal","",0f,p,b,light);p.popPose()
-        if(e.powered)TacticalTerminalDisplay.draw(e,partial,p,b)
+        if(e.screenOn)TacticalTerminalDisplay.draw(e,partial,p,b)
         p.popPose()
     }
     override fun shouldRenderOffScreen(e:TacticalTerminalBlockEntity)=true

@@ -45,7 +45,7 @@ class TacticalTerminalScreen(private val state:TacticalTerminalOpenPacket):Scree
     }
     override fun tick(){
         val mc=minecraft?:return;val be=block()
-        if(be==null||!be.powered||mc.player?.isAlive!=true||mc.player!!.distanceToSqr(state.pos.x+.5,state.pos.y+.5,state.pos.z+.5)>36){onClose();return}
+        if(be==null||!be.screenOn||mc.player?.isAlive!=true||mc.player!!.distanceToSqr(state.pos.x+.5,state.pos.y+.5,state.pos.z+.5)>36){onClose();return}
         updateCamera(be)
         if(feedbackTicks>0 && --feedbackTicks==0)feedback=null
         held?.let { id->
@@ -68,6 +68,12 @@ class TacticalTerminalScreen(private val state:TacticalTerminalOpenPacket):Scree
         if(button!=0)return super.mouseClicked(mouseX,mouseY,button)
         val point=block()?.let{TacticalTerminalDisplay.pointer(it,mouseX,mouseY)}?:return true
         val (x,y)=point
+        if (TacticalTerminalDisplay.isScreenOffButton(x, y)) {
+            selectSound()
+            send(TacticalTerminalSessions.SCREEN_OFF)
+            onClose()
+            return true
+        }
         if(x !in 10.0..330.0)return true
         if(category==null){
             if(y in 28.0..54.0){start("destroyer_call");return true}
