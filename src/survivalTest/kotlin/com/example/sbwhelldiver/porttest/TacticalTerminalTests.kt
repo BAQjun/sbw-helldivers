@@ -17,7 +17,7 @@ import java.util.UUID
 @GameTestHolder("sbw_helldiver")
 @PrefixGameTestTemplate(false)
 object TacticalTerminalTests {
-    @JvmStatic @GameTest(template="port_test",timeoutTicks=100)
+    @JvmStatic @GameTest(template="port_test",timeoutTicks=100,batch="tactical_terminal")
     fun screenAndHoldPurchase(h:GameTestHelper){
         val root=h.absolutePos(BlockPos(5,4,5));val level=h.level
         val state=ModBlocks.TACTICAL_TERMINAL.get().defaultBlockState().setValue(TacticalTerminalBlock.FACING,Direction.NORTH)
