@@ -91,7 +91,11 @@ object TacticalTerminalDisplay {
             c.text(Component.translatable("block.sbw_helldiver.tactical_terminal"),12,10,0xFFF3ECCE.toInt())
             c.text(Component.translatable("gui.sbw_helldiver.destroyer_uses",DestroyerClient.callsRemaining),180,10,0xFFFFDD55.toInt())
             c.fill(OFF_X, OFF_Y, OFF_WIDTH, OFF_HEIGHT, background(view, OFF_X, OFF_Y, OFF_WIDTH, OFF_HEIGHT))
-            c.text(Component.literal("X"), OFF_X + 8, OFF_Y + 4, 0xFFFFDD55.toInt())
+            val powerColor = 0xFFFFDD55.toInt()
+            c.fill(OFF_X + 10, OFF_Y + 2, 2, 6, powerColor)
+            c.fill(OFF_X + 7, OFF_Y + 5, 2, 5, powerColor)
+            c.fill(OFF_X + 13, OFF_Y + 5, 2, 5, powerColor)
+            c.fill(OFF_X + 9, OFF_Y + 10, 4, 2, powerColor)
             val category=view?.category
             if(category==null){
                 row(c,10,28,320,26,"destroyer_call",Component.translatable("gui.sbw_helldiver.replenish"),TacticalTerminalOffers.destroyerCall,null,view,partial)

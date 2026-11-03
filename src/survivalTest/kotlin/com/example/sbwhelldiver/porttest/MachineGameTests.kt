@@ -259,7 +259,7 @@ object MachineGameTests {
     fun existingMachineCollisionUpgradesWithoutLosingInventory(h:GameTestHelper) {
         val root=fixture(h);val m=MachineDeployment.REFINERY
         val be=MachineStructure.place(h.level,root,m,Direction.NORTH,CompoundTag(),null)!!
-        val offset=MachineLayout.shapes(m,Direction.NORTH).keys.first{it.y==2&&it.z==0}
+        val offset=MachineLayout.shapes(m,Direction.NORTH).keys.first{it.y==2&&it.z==-2}
         val part=h.level.getBlockEntity(root.offset(offset)) as SampleMachineBlockEntity
         part.tearingDown=true;h.level.removeBlock(part.blockPos,false)
         be.readyAt=0;be.inventory.setStackInSlot(0,ItemStack(Items.RAW_IRON,64));energy(h,root,m).receiveEnergy(150000,false)
@@ -269,16 +269,16 @@ object MachineGameTests {
         val input=root.offset(0,0,-2);val output=root.offset(-2,0,-2)
         h.level.setBlock(input,h.level.getBlockState(input).setValue(SampleMachineBlock.PORT,MachineLayout.Port.OUTPUT),3)
         h.level.setBlock(output,h.level.getBlockState(output).setValue(SampleMachineBlock.PORT,MachineLayout.Port.INPUT),3)
-        val oldDeck=root.offset(2,1,2)
+        val oldDeck=root.offset(2,3,2)
         val oldPart=be.blockState.setValue(SampleMachineBlock.MASTER,false)
         h.level.setBlock(oldDeck,oldPart,3)
         (h.level.getBlockEntity(oldDeck) as SampleMachineBlockEntity).root=root
-        be.layoutVersion=3
+        be.layoutVersion=4
         // Exercise the real ticking migration, while pausing processing for this tick.
         be.readyAt=h.level.gameTime+100;be.serverTick()
         h.assertTrue(be.layoutVersion==MachineLayout.VERSION,"Existing layout did not upgrade")
         h.assertTrue((h.level.getBlockEntity(root.offset(offset)) as? SampleMachineBlockEntity)?.root==root,"Missing model coverage was not restored")
-        h.assertTrue(h.level.isEmptyBlock(oldDeck),"Upgrade retained the old second-layer base")
+        h.assertTrue(h.level.isEmptyBlock(oldDeck),"Upgrade retained an obsolete machine block")
         h.assertTrue(be.contents()==contents,"Upgrade changed inventory, energy or reserved batch/progress")
         h.assertTrue(h.level.getBlockEntity(root)===be,"Upgrade replaced the inventory owner")
         h.assertTrue(h.level.getBlockEntity(input)?.getCapability(ForgeCapabilities.ITEM_HANDLER,Direction.NORTH)?.resolve()?.orElse(null)!!.isItemValid(0,ItemStack(Items.RAW_IRON)),"Existing centre panel stayed output")
