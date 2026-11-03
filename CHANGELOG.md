@@ -1,5 +1,21 @@
 # 版本记录
 
+## 0.6.0-beta.2
+
+### 中文
+
+- 战术终端菜单改为直接显示在实体屏幕上；通电后无需交互即可看到菜单，保留锁定视角、鼠标点击、滚轮翻页及长按购买。
+- 修复呼叫超级驱逐舰等战备图标遮挡剩余次数的问题。
+- 调整轨道120mm、轨道炮攻击、飞鹰110mm、飞鹰凝固汽油弹、飞鹰毒气、多种哨戒炮及防御战备的样本价格。
+- 所有需要稀有样本的购买最低消耗15个，需要超级样本的购买最低消耗5个；补充一次驱逐舰呼叫需50个普通样本和15个稀有样本。
+
+### English
+
+- Tactical terminal menus now appear directly on the in-world display whenever powered, retaining the focused camera, mouse selection, scrolling and hold-to-purchase controls.
+- Fixed stratagem icons, including Call Super Destroyer, covering their remaining-use counters.
+- Rebalanced sample prices for the Orbital 120mm HE Barrage, Orbital Railcannon Strike, Eagle 110mm Rocket Pods, Eagle Napalm Airstrike, Eagle Gas Strike, and several sentry and defensive stratagems.
+- Purchases requiring rare samples now cost at least 15; those requiring super samples cost at least 5. Replenishing one Super Destroyer call costs 50 common and 15 rare samples.
+
 ## 0.6.0-beta.1
 
 ### 中文

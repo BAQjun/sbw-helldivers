@@ -372,8 +372,11 @@ object StratagemClient {
             val textWidth = mc.font.width(uses) - 1
             val boxWidth = maxOf(9, textWidth + 3)
             val boxX = panelX + 31 - boxWidth
+            // Item-card blits are queued at a higher depth than ordinary HUD fills.
+            gui.pose().pushPose();gui.pose().translate(0.0,0.0,200.0)
             gui.fill(boxX, y + 20, panelX + 31, y + 31, 0xFFFFFFFF.toInt())
             gui.drawString(mc.font, uses, boxX + (boxWidth - textWidth) / 2, y + 22, 0xFF202020.toInt(), false)
+            gui.pose().popPose()
         }
         val enabled = StratagemCooldownClient.available(def.id) && (visiblePrefix.isEmpty() || def in candidates || selected == def)
         val label = StratagemCooldownClient.displayName(def).string
