@@ -40,7 +40,7 @@ neoForge {
                 systemProperty("sbw_helldiver.hudRegression", "true")
             } }
         create("server") { server(); programArgument("--nogui"); gameDirectory = file(".codex/neoforge1211/runtime-server") }
-        create("gameTestServer") { type = "gameTestServer"; gameDirectory = file(".codex/neoforge1211/runtime-gametest"); systemProperty("neoforge.enabledGameTestNamespaces", "sbw_helldiver") }
+        create("gameTestServer") { type = "gameTestServer"; gameDirectory = file(".codex/neoforge1211/runtime-gametest"); systemProperty("neoforge.enabledGameTestNamespaces", if (providers.gradleProperty("destroyerPersistenceTests").isPresent) "sbw_helldiver_destroyer" else "sbw_helldiver") }
     }
     mods { create("sbw_helldiver") { sourceSet(sourceSets.main.get()); if (providers.gradleProperty("portTests").isPresent) sourceSet(portTest) } }
 }
