@@ -30,7 +30,7 @@ object TacticalTerminalTests {
         be.tickServer();h.assertTrue(be.powered && energy.energyStored==19900,"Terminal must consume exactly 100 RF/t")
         val p=net.neoforged.neoforge.common.util.FakePlayerFactory.get(level,com.mojang.authlib.GameProfile(UUID.randomUUID(),"TerminalQA"))
         p.setGameMode(GameType.SURVIVAL);p.setPos(root.x+.5,root.y.toDouble(),root.z+1.5)
-        p.inventory.setItem(0,ItemStack(ModItems.COMMON_SAMPLE.get(),50));p.inventory.setItem(1,ItemStack(ModItems.RARE_SAMPLE.get(),5))
+        p.inventory.setItem(0,ItemStack(ModItems.COMMON_SAMPLE.get(),50));p.inventory.setItem(1,ItemStack(ModItems.RARE_SAMPLE.get(),15))
         TacticalTerminalSessions.open(p,be);val token=TacticalTerminalSessions.token(p)!!;val id="orbital_precision_strike"
         TacticalTerminalSessions.accept(p,root,token,0,id)
         for(t in 5 until TacticalTerminalHold.DURATION_TICKS.toInt() step 5)h.runAfterDelay(t.toLong()){TacticalTerminalSessions.accept(p,root,token,1,id)}
