@@ -46,7 +46,8 @@ class DestroyerState {
  private var resupplyPending=false
  fun transitioning(now:Long)=transitionEnd>now
  fun schedule(destination:DestroyerAnchor?,now:Long):Boolean {
-  if(transitioning(now)||destination==null&&anchor==null)return false
+  // A due transition is still pending until advance commits it.
+  if(transitionEnd!=0L||destination==null&&anchor==null)return false
   this.destination=destination;transitionEnd=now+60;return true
  }
  fun advance(now:Long,onResupply:()->Unit={}):Boolean {
@@ -63,7 +64,7 @@ class DestroyerState {
   return true
  }
  fun spendCall():Boolean { if(!canCall())return false;callsRemaining--;return true }
- fun expired(now:Long)=anchor!=null && !transitioning(now) && now-residentSince>=6000L
+ fun expired(now:Long)=anchor!=null && transitionEnd==0L && now-residentSince>=6000L
  fun available(dimension:String,point:Vec3,radius:Double,now:Long)=Stratagems.dimensionAllowed(dimension)&&!transitioning(now)&&anchor?.covers(dimension,point,radius)==true
  fun save()=CompoundTag().also{t->anchor?.let{t.put("Anchor",it.save())};destination?.let{t.put("Destination",it.save())};t.putLong("TransitionEnd",transitionEnd);t.putLong("AppearedAt",appearedAt);t.putLong("ResidentSince",residentSince);t.putInt("CallsRemaining",callsRemaining);t.putBoolean("ResupplyPending",resupplyPending)}
  companion object{fun load(t:CompoundTag)=DestroyerState().apply{

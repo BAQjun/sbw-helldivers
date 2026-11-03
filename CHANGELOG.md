@@ -1,5 +1,17 @@
 # 版本记录
 
+## 0.6.0-beta.1
+
+### 中文
+
+- 修复超级驱逐舰驻场到期后反复重新开始跃迁、无法完成撤离的问题，包括读取已有存档中的撤离状态。
+- 防止新指令覆盖正在完成的跃迁；保留五分钟驻场限制、原有呼叫次数及调整方位不延长驻场时间的设定。
+
+### English
+
+- Fixed Super Destroyers repeatedly restarting their warp countdown instead of departing after their residence expires, including departures restored from existing saves.
+- Prevented new commands from overwriting a transition awaiting completion, preserving the five-minute residence limit, remaining calls and the original residence deadline when repositioning.
+
 ## 0.6.0-beta
 
 ### 中文

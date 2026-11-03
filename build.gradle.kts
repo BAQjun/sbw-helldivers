@@ -92,7 +92,7 @@ minecraft {
             }
             if(project.hasProperty("survivalTests")) {
                 workingDirectory(project.file(".codex/survival-alpha14/server"))
-                property("forge.enabledGameTestNamespaces", "sbw_helldiver")
+                property("forge.enabledGameTestNamespaces", if(project.hasProperty("destroyerPersistenceTests")) "sbw_helldiver_destroyer" else "sbw_helldiver")
             }
             property("mixin.env.remapRefMap", "true")
             property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
