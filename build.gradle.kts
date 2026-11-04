@@ -250,6 +250,7 @@ minecraft {
 }
 
 repositories {
+    maven("https://maven.createmod.net") { content { includeGroup("net.createmod.ponder") } }
     // 国内镜像：替代被墙的 libraries.minecraft.net
     maven {
         name = "BMCLAPI"
@@ -291,6 +292,8 @@ tasks.named<Jar>("jar") { archiveClassifier.set("slim") }
 tasks.named<Jar>("jarJar") { archiveClassifier.set("") }
 
 dependencies {
+    compileOnly(fg.deobf("net.createmod.ponder:Ponder-Forge-1.20.1:1.0.91",
+        closureOf<ExternalModuleDependency> { isTransitive = false }))
     compileOnly(fg.deobf("maven.modrinth:jei:6E4ps2ER"))
     if(project.hasProperty("survivalClientTests"))runtimeOnly(fg.deobf("maven.modrinth:jei:6E4ps2ER"))
     compileOnly("io.github.llamalad7:mixinextras-common:0.3.6")

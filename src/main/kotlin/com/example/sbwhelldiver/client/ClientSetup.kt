@@ -36,6 +36,7 @@ object ClientSetup {
             net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory::class.java
         ) { net.minecraftforge.client.ConfigScreenHandler.ConfigScreenFactory { _, parent -> HelldiversConfigScreen(parent) } }
         event.enqueueWork {
+            if (net.minecraftforge.fml.ModList.get().isLoaded("ponder")) com.example.sbwhelldiver.client.ponder.HelldiverPonder.register()
             com.example.sbwhelldiver.survival.MachineRegistry.clientTick=MachineAudio::observe
             net.minecraft.client.renderer.ItemBlockRenderTypes.setRenderLayer(com.example.sbwhelldiver.init.ModBlocks.SENTRY_FIRE.get(),net.minecraft.client.renderer.RenderType.cutout())
             net.minecraft.client.Minecraft.getInstance().mainRenderTarget.enableStencil()
