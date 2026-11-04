@@ -1,5 +1,53 @@
 # 版本记录
 
+## 0.6.2
+
+### 中文
+
+- 为战备信标球、两种机器集装箱和战术终端新增 Create 思索教程，演示部署、接线、处理样本、打包与兑换。
+- 修复火焰炮台在部分 OpenGL 渲染环境中开火可能导致客户端崩溃的问题。
+
+### English
+
+- Added Create Ponder tutorials for the stratagem beacon, both machine containers, and the Tactical Terminal. They cover deployment, connections, sample processing, packing, and purchases.
+- Fixed a client crash that could occur when the Flame Sentry fired in some OpenGL rendering environments.
+
+## 0.6.1
+
+### 中文
+
+- 修复战术终端在低 TPS 环境下长按兑换可能失败的问题。
+- 修复集装箱底部材质闪烁，调整精炼厂平台和接口。
+- 改善击退逻辑与其他模组的兼容性，包括 Create: Liberate。
+
+### English
+
+- Fixed Tactical Terminal purchases sometimes failing on low-TPS servers.
+- Fixed flickering at the bottom of machine containers and adjusted the Refinery platform and ports.
+- Improved compatibility with other mods that modify knockback, including Create: Liberate.
+
+## 0.6.0 — 生存更新 / Survival Update
+
+### 中文
+
+- 新增普通、稀有与超级样本。使用生物处理器处理怪物掉落物，或使用精炼厂处理矿物，以不同概率获得样本。
+- 新增设备部署信标，可提交材料呼叫机器集装箱；使用卓越前线撬棍打开集装箱，潜行右键可将机器重新打包。
+- 两种机器工作时消耗 1,500 RF/t，支持能量和物品接口、自动输入输出及科技模组管道，并可通过 JEI 查看处理配方和产出概率。
+- 新增战术终端，可用样本获取战备和补充超级驱逐舰呼叫次数；战备获取后可重复使用。
+- 重新设计超级驱逐舰支援：呼叫指令常驻信标球，初始呼叫次数为 0，最多储存 5 次，每次驻场 5 分钟。除设备部署信标外，战备需要在驱逐舰支援范围内使用。
+- 信标球新增合成配方和能量消耗，每次投掷消耗 1,000 RF。
+- 增加可配置模型 LOD，优化机器模型与渲染性能，并修复部署、碰撞、音效和界面等问题。
+
+### English
+
+- Added common, rare, and super samples. Process monster drops in the Bioprocessor or ores in the Refinery for a chance to obtain samples.
+- Added the Equipment Deployment Beacon, which calls down machine containers in exchange for materials. Open containers with the Superb Warfare crowbar, and sneak-right-click machines to pack them back up.
+- Both machines consume 1,500 RF/t while operating and support energy and item ports, automatic input and output, and tech mod pipes. JEI can display processing recipes and output probabilities.
+- Added the Tactical Terminal, where samples can be spent on reusable stratagems and additional Super Destroyer calls.
+- Reworked Super Destroyer support: the call command is always available on the stratagem beacon, players start with zero calls and can store up to five, and each deployment lasts five minutes. Stratagems other than the Equipment Deployment Beacon require destroyer coverage.
+- Added a crafting recipe and energy consumption to the stratagem beacon. Each throw uses 1,000 RF.
+- Added configurable model LOD, optimized machine models and rendering, and fixed deployment, collision, audio, and interface issues.
+
 ## 0.6.0-beta.2
 
 ### 中文

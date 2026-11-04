@@ -56,6 +56,9 @@ object TacticalTerminalOffers {
 object TacticalTerminalHold {
     // Original shop recording: hold starts at 7.550 s, completion at 8.873 s.
     const val DURATION_TICKS = 27L
+    // A slow server can take much longer than real time to advance its ticks.
+    fun serverDurationReached(ticks:Long,elapsedNanos:Long) =
+        ticks >= DURATION_TICKS || elapsedNanos >= DURATION_TICKS * 50_000_000L
     fun maskProgress(elapsedTicks:Double):Double {
         val t = (elapsedTicks / DURATION_TICKS).coerceIn(0.0, 1.0)
         return 1.0 - (1.0 - t) * (1.0 - t) * (1.0 - t)

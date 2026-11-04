@@ -53,8 +53,8 @@ class TacticalTerminalScreen(private val state:TacticalTerminalOpenPacket):Scree
             if(heldTicks%5==0)send(1,id)
             val duration=TacticalTerminalHold.DURATION_TICKS.toInt()
             if(heldTicks==duration)stopHoldSound()
-            if(heldTicks in duration..duration+10 && (heldTicks-duration)%2==0)send(2,id)
-            if(heldTicks>=duration+10)cancel()
+            // Keep waiting for the server after the progress completes, even on a slow connection.
+            if(heldTicks>=duration && (heldTicks-duration)%5==0)send(2,id)
         }
     }
     override fun renderBackground(g:GuiGraphics,x:Int,y:Int,partial:Float){}
@@ -84,7 +84,7 @@ class TacticalTerminalScreen(private val state:TacticalTerminalOpenPacket):Scree
         }
         return true
     }
-    override fun mouseReleased(x:Double,y:Double,button:Int):Boolean {if(button==0)cancel();return true}
+    override fun mouseReleased(x:Double,y:Double,button:Int):Boolean {if(button==0 && heldTicks<TacticalTerminalHold.DURATION_TICKS)cancel();return true}
     override fun mouseScrolled(x:Double,y:Double,horizontal:Double,vertical:Double):Boolean {if(category!=null){scroll=(scroll-if(vertical>0)1 else if(vertical<0)-1 else 0).coerceIn(0,(entries().size-4).coerceAtLeast(0));cancel()};return true}
     private fun start(id:String){cancel();selectSound();held=id;heldTicks=0;holdSound=uiSound("tactical_purchase_hold");send(0,id)}
     private fun uiSound(event:String):SoundInstance = SimpleSoundInstance.forUI(ModSounds.EVENTS.getValue(event).get(),1f).also{minecraft?.soundManager?.play(it)}

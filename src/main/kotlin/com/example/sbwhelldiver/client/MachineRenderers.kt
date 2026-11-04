@@ -31,7 +31,7 @@ class MachineContainerRenderer(context:EntityRendererProvider.Context):EntityRen
         e.shouldRender(x,y,z)&&f.isVisible(e.boundingBox)
     override fun render(e:MachineContainerEntity,yaw:Float,partial:Float,p:PoseStack,b:MultiBufferSource,light:Int) {
         val time=if(e.phase==MachineContainerEntity.OPENING)((e.level().gameTime-e.phaseStart+partial)*MachineContainerEntity.OPENING_CLIP_SECONDS/MachineContainerEntity.OPENING_TICKS).coerceIn(0f,MachineContainerEntity.OPENING_CLIP_SECONDS)else 0f
-        p.pushPose();p.mulPose(Axis.YP.rotationDegrees(180f-e.facing.toYRot()));MachineMesh.draw(e.machine.id+"_container","deploy",time,p,b,light,e.boundingBox.distanceToSqr(net.minecraft.client.Minecraft.getInstance().gameRenderer.mainCamera.position))
+        p.pushPose();p.translate(0.0,0.015625,0.0);p.mulPose(Axis.YP.rotationDegrees(180f-e.facing.toYRot()));MachineMesh.draw(e.machine.id+"_container","deploy",time,p,b,light,e.boundingBox.distanceToSqr(net.minecraft.client.Minecraft.getInstance().gameRenderer.mainCamera.position))
         if(e.phase==MachineContainerEntity.FALLING&&e.braking)DeliveryFlightVisuals.drawJets(e,partial,p,b)
         p.popPose()
     }

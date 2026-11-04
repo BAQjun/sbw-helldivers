@@ -9,7 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 
 /** Heat has no mechanical impulse; preserve all unrelated hit and blast impulses. */
 @Mixin(LivingEntity.class)
@@ -18,10 +18,10 @@ public abstract class ThermalKnockbackMixin {
     private static final TagKey<DamageType> HELLDIVERS_NO_KNOCKBACK = TagKey.create(
         Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath("sbw_helldiver", "no_knockback"));
 
-    @Redirect(method = "hurt", at = @At(value = "INVOKE",
+    @WrapWithCondition(method = "hurt", at = @At(value = "INVOKE",
         target = "Lnet/minecraft/world/entity/LivingEntity;knockback(DDD)V"))
-    private void helldivers$thermalImpact(LivingEntity victim, double strength, double x, double z,
+    private boolean helldivers$allowDamageKnockback(LivingEntity victim, double strength, double x, double z,
                                          DamageSource source, float amount) {
-        if (!source.is(HELLDIVERS_NO_KNOCKBACK)) victim.knockback(strength, x, z);
+        return !source.is(HELLDIVERS_NO_KNOCKBACK);
     }
 }
