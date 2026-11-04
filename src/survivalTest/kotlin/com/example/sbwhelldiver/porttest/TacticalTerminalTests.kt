@@ -30,17 +30,17 @@ object TacticalTerminalTests {
         p.setGameMode(GameType.SURVIVAL);p.setPos(root.x+.5,root.y.toDouble(),root.z+1.5)
         p.inventory.setItem(0,ItemStack(ModItems.COMMON_SAMPLE.get(),50));p.inventory.setItem(1,ItemStack(ModItems.RARE_SAMPLE.get(),15))
         TacticalTerminalSessions.open(p,be);val token=TacticalTerminalSessions.token(p)!!;val id="orbital_precision_strike"
-        TacticalTerminalSessions.accept(p,root,token,0,id)
+        TacticalTerminalSessions.accept(p,root,token,0,id,10_000_000_000L)
         for(t in 5 until TacticalTerminalHold.DURATION_TICKS.toInt() step 5)h.runAfterDelay(t.toLong()){TacticalTerminalSessions.accept(p,root,token,1,id)}
         h.runAfterDelay(TacticalTerminalHold.DURATION_TICKS-1){
-            TacticalTerminalSessions.accept(p,root,token,2,id)
+            TacticalTerminalSessions.accept(p,root,token,2,id,10_000_000_000L)
             h.assertTrue(p.inventory.getItem(0).count==50,"Premature hold spent samples")
         }
         h.runAfterDelay(TacticalTerminalHold.DURATION_TICKS+1){
-            TacticalTerminalSessions.accept(p,root,token,2,id)
+            TacticalTerminalSessions.accept(p,root,token,2,id,10_000_000_000L)
             h.assertTrue((0 until p.inventory.containerSize).none{p.inventory.getItem(it).`is`(ModItems.COMMON_SAMPLE.get()) || p.inventory.getItem(it).`is`(ModItems.RARE_SAMPLE.get())},"Completed purchase did not spend samples")
             h.assertTrue((0 until p.inventory.containerSize).any{p.inventory.getItem(it).`is`(ModItems.ORBITAL_PRECISION_STRIKE.get())},"Completed purchase did not grant its card")
-            TacticalTerminalSessions.accept(p,root,token,2,id)
+            TacticalTerminalSessions.accept(p,root,token,2,id,10_000_000_000L)
             h.assertTrue((0 until p.inventory.containerSize).sumOf{if(p.inventory.getItem(it).`is`(ModItems.ORBITAL_PRECISION_STRIKE.get()))p.inventory.getItem(it).count else 0}==1,"Repeated completion granted another card")
             TacticalTerminalSessions.accept(p,root,token,TacticalTerminalSessions.SCREEN_OFF,"")
             h.assertTrue(!be.screenOn && TacticalTerminalSessions.token(p)==null,"Switching off the screen must close the session")
@@ -54,4 +54,25 @@ object TacticalTerminalTests {
             h.succeed()
         }
     }
+    @JvmStatic @GameTest(template="port_test",timeoutTicks=40,batch="tactical_terminal")
+    fun lowTpsPurchaseCompletesOnce(h:GameTestHelper) {
+        val root=h.absolutePos(BlockPos(5,4,5)); val level=h.level
+        val state=ModBlocks.TACTICAL_TERMINAL.get().defaultBlockState().setValue(TacticalTerminalBlock.FACING,Direction.NORTH)
+        for(i in 0..3)level.setBlock(TacticalTerminalBlock.position(root,Direction.NORTH,i),state.setValue(TacticalTerminalBlock.PART,i),3)
+        val be=level.getBlockEntity(root) as TacticalTerminalBlockEntity
+        val player=net.minecraftforge.common.util.FakePlayerFactory.get(level,com.mojang.authlib.GameProfile(UUID.randomUUID(),"SlowTerminalQA"))
+        player.setGameMode(GameType.SURVIVAL);player.setPos(root.x+.5,root.y.toDouble(),root.z+1.5)
+        player.inventory.setItem(0,ItemStack(ModItems.COMMON_SAMPLE.get(),50));player.inventory.setItem(1,ItemStack(ModItems.RARE_SAMPLE.get(),15))
+        TacticalTerminalSessions.open(player,be);val token=TacticalTerminalSessions.token(player)!!;val id="orbital_precision_strike"
+        val start=10_000_000_000L;val duration=TacticalTerminalHold.DURATION_TICKS*50_000_000L
+        TacticalTerminalSessions.accept(player,root,token,0,id,start)
+        TacticalTerminalSessions.accept(player,root,token,2,id,start+duration-1)
+        h.assertTrue(player.inventory.getItem(0).count==50,"Early completion spent samples")
+        TacticalTerminalSessions.accept(player,root,token,2,id,start+duration)
+        TacticalTerminalSessions.accept(player,root,token,2,id,start+duration+1)
+        h.assertTrue((0 until player.inventory.containerSize).sumOf{if(player.inventory.getItem(it).`is`(ModItems.ORBITAL_PRECISION_STRIKE.get()))player.inventory.getItem(it).count else 0}==1,"Slow server did not grant exactly one card")
+        h.assertTrue((0 until player.inventory.containerSize).none{player.inventory.getItem(it).`is`(ModItems.COMMON_SAMPLE.get()) || player.inventory.getItem(it).`is`(ModItems.RARE_SAMPLE.get())},"Slow server did not spend the samples")
+        h.succeed()
+    }
+
 }

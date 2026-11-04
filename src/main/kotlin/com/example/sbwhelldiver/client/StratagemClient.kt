@@ -297,17 +297,18 @@ object StratagemClient {
         gui.pose().scale(scale, scale, 1f)
         gui.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, 0x70101C18)
         drawHudText(gui, Component.translatable("hud.sbw_helldiver.stratagems"), panelX + 8, panelY + 6, 0xEAF0EB)
+        if (residence != null) {
+            val duration = "%02d:%02d".format(residence / 60, residence % 60)
+            gui.drawString(mc.font, Component.translatable("hud.sbw_helldiver.destroyer_residence", duration), panelX + 8, panelY + 25, 0xE8E4CC, true)
+        }
+        val residenceHeight = if (residence != null) 20 else 0
         var equipmentSlot = 0
         for (i in loadout.indices) {
             val def = loadout[i]
             if (def == null || def in Stratagems.definitions) equipmentSlot++
-            val y = panelY + 25 + rowHeight * i
+            val y = panelY + 25 + residenceHeight + rowHeight * i
             if (def == null) { drawHudText(gui, Component.translatable("hud.sbw_helldiver.empty_slot", equipmentSlot), textX, y + 6, 0x9DAFA3); continue }
             drawRow(gui, def, y, selected, visiblePrefix, candidates, contents.inputError, i in lastFailureRows, partial)
-        }
-        if (residence != null) {
-            val duration = "%02d:%02d".format(residence / 60, residence % 60)
-            gui.drawString(mc.font, Component.translatable("hud.sbw_helldiver.destroyer_residence", duration), panelX + 8, panelY + 25 + rowHeight * loadout.size, 0xE8E4CC, true)
         }
         if (selected != null) {
             val ready = Component.translatable("hud.sbw_helldiver.ready").string
@@ -323,6 +324,7 @@ object StratagemClient {
         val y = mc.window.guiScaledHeight * .028f
         val rows = linkedMapOf<String, HudLayout>()
         val nanos=System.nanoTime()
+        val residence=DestroyerClient.remainingResidence(partial)
         val wanted=mutableSetOf<String>()
         for((index,def) in automaticLoadout.withIndex()) {
             if(def==null || def!=automaticSelected && !StratagemNotifications.visible(def,partial))continue
@@ -337,7 +339,7 @@ object StratagemClient {
             if(id !in wanted)row.slide.target(false,nanos)
             val visibility=row.slide.value(nanos)
             if(visibility<=0.0 && id !in wanted){iterator.remove();continue}
-            val rowY=25+32*row.index
+            val rowY=25+32*row.index+(if(residence!=null)32 else 0)
             val screenX=(x-(158*scale+x)*(1.0-visibility)).toFloat()
             gui.pose().pushPose()
             gui.pose().translate(screenX.toDouble(),y.toDouble(),0.0)
@@ -347,9 +349,8 @@ object StratagemClient {
             gui.pose().popPose()
             rows[id]=HudLayout(screenX,y+(rowY-2)*scale,158*scale,32*scale)
         }
-        val residence=DestroyerClient.remainingResidence(partial)
         if(residence!=null){
-            val rowY=25+32*automaticLoadout.size
+            val rowY=25
             gui.pose().pushPose();gui.pose().translate(x.toDouble(),y.toDouble(),0.0);gui.pose().scale(scale,scale,1f)
             gui.fill(0,rowY-2,158,rowY+30,0x70101C18)
             StratagemCooldownClient.drawIcon(gui,Stratagems.destroyerCall,3,rowY+2,partial)

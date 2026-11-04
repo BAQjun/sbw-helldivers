@@ -14,7 +14,7 @@ import java.util.UUID
 /** Server decides both the hold duration and the atomic sample transaction. */
 object TacticalTerminalSessions {
     const val SCREEN_OFF = 3
-    private data class Session(val pos:BlockPos,val dimension:String,val token:UUID,var offer:String="",var started:Long=0,var heartbeat:Long=0)
+    private data class Session(val pos:BlockPos,val dimension:String,val token:UUID,var offer:String="",var started:Long=0,var startedNanos:Long=0,var heartbeat:Long=0)
     private val sessions=mutableMapOf<UUID,Session>()
     fun open(player:ServerPlayer,be:TacticalTerminalBlockEntity) {
         val s=Session(be.blockPos,player.level().dimension().location().toString(),UUID.randomUUID())
@@ -22,7 +22,7 @@ object TacticalTerminalSessions {
         if(player !is net.minecraftforge.common.util.FakePlayer) BeaconNetwork.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with{player},TacticalTerminalOpenPacket(s.pos,s.token))
     }
     fun token(player:ServerPlayer)=sessions[player.uuid]?.token
-    fun accept(player:ServerPlayer,pos:BlockPos,token:UUID,action:Int,id:String) {
+    fun accept(player:ServerPlayer,pos:BlockPos,token:UUID,action:Int,id:String,monotonicNanos:Long=System.nanoTime()) {
         val s=sessions[player.uuid]?:return
         if(s.pos!=pos||s.token!=token)return
         if(action == -2){sessions.remove(player.uuid);return}
@@ -37,12 +37,12 @@ object TacticalTerminalSessions {
         if(action == -1){s.offer="";return}
         if(action==0){
             if(id!="destroyer_call" && id !in TacticalTerminalOffers.byId)return
-            s.offer=id;s.started=now;s.heartbeat=now;return
+            s.offer=id;s.started=now;s.startedNanos=monotonicNanos;s.heartbeat=now;return
         }
         if(s.offer!=id||id.isEmpty())return
-        if(now-s.heartbeat>12){s.offer="";return}
+        if(now-s.heartbeat>1200){s.offer="";return}
         if(action==1){s.heartbeat=now;return}
-        if(action!=2||now-s.started<TacticalTerminalHold.DURATION_TICKS)return
+        if(action!=2||!TacticalTerminalHold.serverDurationReached(now-s.started,monotonicNanos-s.startedNanos))return
         s.offer=""
         val cost=if(id=="destroyer_call")TacticalTerminalOffers.destroyerCall else TacticalTerminalOffers.byId[id]?.cost?:return
         if(id=="destroyer_call"&&SuperDestroyers.state(player).callsRemaining>=5){feedback(player,"message.sbw_helldiver.terminal_full");return}

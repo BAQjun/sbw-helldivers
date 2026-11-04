@@ -269,11 +269,11 @@ object MachineGameTests {
         val input=root.offset(0,0,-2);val output=root.offset(-2,0,-2)
         h.level.setBlock(input,h.level.getBlockState(input).setValue(SampleMachineBlock.PORT,MachineLayout.Port.OUTPUT),3)
         h.level.setBlock(output,h.level.getBlockState(output).setValue(SampleMachineBlock.PORT,MachineLayout.Port.INPUT),3)
-        val oldDeck=root.offset(2,3,2)
+        val oldDeck=root.offset(2,1,2)
         val oldPart=be.blockState.setValue(SampleMachineBlock.MASTER,false)
         h.level.setBlock(oldDeck,oldPart,3)
         (h.level.getBlockEntity(oldDeck) as SampleMachineBlockEntity).root=root
-        be.layoutVersion=4
+        be.layoutVersion=5
         // Exercise the real ticking migration, while pausing processing for this tick.
         be.readyAt=h.level.gameTime+100;be.serverTick()
         h.assertTrue(be.layoutVersion==MachineLayout.VERSION,"Existing layout did not upgrade")
