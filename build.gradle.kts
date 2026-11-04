@@ -11,6 +11,7 @@ base { archivesName.set(property("mod_id") as String) }
 java { toolchain.languageVersion.set(JavaLanguageVersion.of(21)) }
 kotlin { jvmToolchain(21) }
 repositories {
+    maven("https://maven.createmod.net") { content { includeGroup("net.createmod.ponder") } }
     mavenCentral()
     maven("https://thedarkcolour.github.io/KotlinForForge/") { content { includeGroup("thedarkcolour") } }
     maven("https://api.modrinth.com/maven") { content { includeGroup("maven.modrinth") } }
@@ -55,6 +56,7 @@ val extractSbwApis = tasks.register<Copy>("extractSbwApis") {
 val embeddedSbwApis = files(provider { fileTree(layout.buildDirectory.dir("generated/sbw-api")) { include("*.jar") } }).builtBy(extractSbwApis)
 
 dependencies {
+    compileOnly("net.createmod.ponder:ponder-neoforge:1.0.87+mc1.21.1") { isTransitive = false }
     compileOnly("maven.modrinth:jei:UJRXzDfp") { isTransitive = false }
     add("sbwApiSource", "maven.modrinth:superb-warfare:bl7W8fjU")
     implementation("thedarkcolour:kotlinforforge-neoforge:5.10.0")

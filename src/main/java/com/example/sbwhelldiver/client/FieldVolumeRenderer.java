@@ -12,6 +12,9 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GLCapabilities;
 import org.lwjgl.system.MemoryStack;
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -115,6 +118,16 @@ public final class FieldVolumeRenderer {
         glScissor(x,y,Math.max(0,right-x),Math.max(0,top-y));
     }
     private static int uniform(String name){return uniforms.computeIfAbsent(name,n->glGetUniformLocation(program,n));}
+    private static GLCapabilities currentCapabilities() {
+        // A render event alone does not guarantee a current native context.
+        if(GLFW.glfwGetCurrentContext()==0L)return null;
+        try {
+            return GL.getCapabilities();
+        } catch(IllegalStateException noCapabilities) {
+            return null;
+        }
+    }
+
     public static void render(RenderLevelStageEvent event) {
         if(event.getStage()==RenderLevelStageEvent.Stage.AFTER_SKY&&!ShaderPackCompat.INSTANCE.shadowPass())MineGlowGeometry.beginFrame();
         if(event.getStage()!=RenderLevelStageEvent.Stage.AFTER_LEVEL||ShaderPackCompat.INSTANCE.shadowPass())return;
@@ -136,6 +149,9 @@ public final class FieldVolumeRenderer {
         var orbitalBeams=OrbitalBeamGeometry.collect(event.getPartialTick().getGameTimeDeltaPartialTick(false),camera);
         float[] lasers=LaserPostVisual.INSTANCE.collect(event.getPartialTick().getGameTimeDeltaPartialTick(false),camera,event.getFrustum());
         if((fields.isEmpty()&&flames.length==0&&lasers.length==0&&orbitalBeams.isEmpty()&&energy.isEmpty()&&MineGlowGeometry.vertexCount()==0)||(failed&&!reload))return;
+        var capabilities=currentCapabilities();
+        if(capabilities==null||!capabilities.OpenGL32)return;
+        boolean samplerObjects=capabilities.OpenGL33||capabilities.GL_ARB_sampler_objects;
         fields.sort(Comparator.comparingDouble((MortarFieldEntity f)->f.distanceToSqr(camera)).reversed());
         try(var stack=MemoryStack.stackPush()) {
             // Raw GL calls are paired with exact restoration, leaving Mojang's
@@ -143,7 +159,9 @@ public final class FieldVolumeRenderer {
             int oldProgram=glGetInteger(GL_CURRENT_PROGRAM),oldVao=glGetInteger(GL_VERTEX_ARRAY_BINDING),oldBuffer=glGetInteger(GL_ARRAY_BUFFER_BINDING);
             int oldDraw=glGetInteger(GL_DRAW_FRAMEBUFFER_BINDING),oldRead=glGetInteger(GL_READ_FRAMEBUFFER_BINDING);
             int oldActive=glGetInteger(GL_ACTIVE_TEXTURE);
-            int oldSampler0=glGetIntegeri(GL_SAMPLER_BINDING,0),oldSampler1=glGetIntegeri(GL_SAMPLER_BINDING,1),oldSampler2=glGetIntegeri(GL_SAMPLER_BINDING,2);
+            int oldSampler0=samplerObjects?glGetIntegeri(GL_SAMPLER_BINDING,0):0;
+            int oldSampler1=samplerObjects?glGetIntegeri(GL_SAMPLER_BINDING,1):0;
+            int oldSampler2=samplerObjects?glGetIntegeri(GL_SAMPLER_BINDING,2):0;
             glActiveTexture(GL_TEXTURE0);int old2D=glGetInteger(GL_TEXTURE_BINDING_2D),old3D=glGetInteger(GL_TEXTURE_BINDING_3D);
             glActiveTexture(GL_TEXTURE1);int old1=glGetInteger(GL_TEXTURE_BINDING_3D),old12D=glGetInteger(GL_TEXTURE_BINDING_2D);
             glActiveTexture(GL_TEXTURE2);int old22D=glGetInteger(GL_TEXTURE_BINDING_2D),old23D=glGetInteger(GL_TEXTURE_BINDING_3D);
@@ -157,7 +175,7 @@ public final class FieldVolumeRenderer {
             try {
                 if(Boolean.getBoolean("sbw_helldiver.energyShaderSmokeTest")||Boolean.getBoolean("sbw_helldiver.shaderFieldSmokeTest")||Boolean.getBoolean("sbw_helldiver.flameVolumeSmokeTest")||Boolean.getBoolean("sbw_helldiver.laserShaderSmokeTest"))glGetError();
                 if(reload)release();
-                glBindSampler(0,0);glBindSampler(1,0);glBindSampler(2,0);
+                if(samplerObjects){glBindSampler(0,0);glBindSampler(1,0);glBindSampler(2,0);}
                 glActiveTexture(GL_TEXTURE0);initialize();
                 var target=mc.getMainRenderTarget();int w=target.width,h=target.height;
                 glBindTexture(GL_TEXTURE_2D,target.getDepthTextureId());
@@ -250,7 +268,7 @@ public final class FieldVolumeRenderer {
                 glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,old2D);glBindTexture(GL_TEXTURE_3D,old3D);
                 glActiveTexture(GL_TEXTURE1);glBindTexture(GL_TEXTURE_3D,old1);glBindTexture(GL_TEXTURE_2D,old12D);
                 glActiveTexture(GL_TEXTURE2);glBindTexture(GL_TEXTURE_2D,old22D);glBindTexture(GL_TEXTURE_3D,old23D);glActiveTexture(oldActive);
-                glBindSampler(0,oldSampler0);glBindSampler(1,oldSampler1);glBindSampler(2,oldSampler2);
+                if(samplerObjects){glBindSampler(0,oldSampler0);glBindSampler(1,oldSampler1);glBindSampler(2,oldSampler2);}
                 glScissor(scissorBox.get(0),scissorBox.get(1),scissorBox.get(2),scissorBox.get(3));
                 set(GL_DEPTH_TEST,test);set(GL_BLEND,blend);set(GL_CULL_FACE,cull);set(GL_SCISSOR_TEST,scissor);glDepthMask(writeDepth);
                 glBlendFuncSeparate(src,dst,srcA,dstA);glBlendEquationSeparate(eq,eqA);
