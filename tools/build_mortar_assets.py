@@ -107,7 +107,13 @@ A['animation.Main.fire']={'animation_length':.92,'loop':False,'bones':{
  'ammunition_column':{'position':{'0.0':[0,0,0],'.4':[0,0,0],'.56':[0,0,-1.35],'.68':[0,0,-1.35],'.70':[0,0,0]}}}}
 A['animation.Main.idle']={'loop':True,'animation_length':1,'bones':{}}
 exec((ROOT/'tools/recover_mortar_cycle.py').read_text('utf-8-sig'),globals()); recover_cycle(A,bones,arm,rot,pivot,lift)
-save(RES/f'animations/bedrock/vehicle/{model}.animation.json',anim)
+runtime_anim=copy.deepcopy(anim)
+# Encode recovered Euler angles for the reflected game model and animation loader.
+for name in ('feed_cradle', 'feed_arm', 'feed_slider', 'feed_cup', 'feed_round', 'ammunition_column'):
+    rotations=runtime_anim['animations']['animation.Main.fire']['bones'][name]['rotation']
+    for stamp, (x, y, z) in rotations.items():
+        rotations[stamp]=[-x, y, -z]
+save(RES/f'animations/bedrock/vehicle/{model}.animation.json',runtime_anim)
 # Standalone: same real parts/bones, restoring the shared first-layer base height.
 stand=copy.deepcopy(doc);sg=stand['minecraft:geometry'][0];sg['description']['identifier']='geometry.mortar_sentry_v1';sg['bones']=[b for b in sg['bones'] if not b['name'].startswith('pod') and b['name']!='hellpod_flight'];sg['bones'][0].pop('parent',None)
 for b in sg['bones']:
@@ -117,7 +123,7 @@ for b in sg['bones']:
   if 'pivot' in c:c['pivot'][1]+=3.85
  for p in b.get('poly_mesh',{}).get('positions',[]):p[1]+=3.85
  for p in b.get('locators',{}).values():p[1]+=3.85
-save(RES/'models/bedrock/vehicle/mortar_sentry_v1.geo.json',stand);save(RES/'animations/bedrock/vehicle/mortar_sentry_v1.animation.json',{'format_version':'1.8.0','animations':{k:v for k,v in A.items() if k in ['animation.Main.fire','animation.Main.idle']}})
+save(RES/'models/bedrock/vehicle/mortar_sentry_v1.geo.json',stand);save(RES/'animations/bedrock/vehicle/mortar_sentry_v1.animation.json',{'format_version':'1.8.0','animations':{k:v for k,v in runtime_anim['animations'].items() if k in ['animation.Main.fire','animation.Main.idle']}})
 # Blockbench meshes remain grouped into the source's major solid moving components.
 def make_bb(doc,name):
  geo=doc['minecraft:geometry'][0];elements=[];groups={};order=[];uids={b['name']:str(uuid.uuid4()) for b in geo['bones']}
