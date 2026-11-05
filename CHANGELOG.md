@@ -1,5 +1,15 @@
 # 版本记录
 
+## 0.6.3
+
+### 中文
+
+- 修复普通、电磁和毒气迫击炮的供弹动画方向，供弹机构现在会转向炮口。
+
+### English
+
+- Fixed the feed animation on the standard, EMS, and gas mortar sentries so the feed mechanism rotates toward the muzzle.
+
 ## 0.6.2
 
 ### 中文
