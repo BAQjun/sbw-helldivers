@@ -103,7 +103,12 @@ minecraft {
         create("client") {
             if(project.hasProperty("survivalClientTests")) {
                 workingDirectory(project.file(".codex/survival-alpha14/client"))
-                property("sbw_helldiver.tacticalRegression","true")
+                if(project.hasProperty("equipmentTests")) {
+                    property("sbw_helldiver.equipmentRegression","true")
+                    if(project.hasProperty("equipmentTickOnly"))property("sbw_helldiver.equipmentTickOnly","true")
+                }
+                else if(project.hasProperty("destroyerTests"))property("sbw_helldiver.destroyerRegression","true")
+                else property("sbw_helldiver.tacticalRegression","true")
                 jvmArgs("-Xms512m","-Xmx3G","-XX:ActiveProcessorCount=4")
                 args("--width","1280","--height","720")
             }
@@ -407,4 +412,12 @@ tasks.named<Jar>("jar") {
         )
     }
     finalizedBy("reobfJar")
+}
+
+// Only the disposable equipment-compatibility fixture is reset and removed.
+if (providers.gradleProperty("equipmentTests").isPresent || providers.gradleProperty("destroyerTests").isPresent) {
+    val save = layout.projectDirectory.dir(".codex/survival-alpha14/client/saves/port-client-test")
+    val reset = tasks.register<Delete>("resetEquipmentClientWorld") { delete(save) }
+    val cleanup = tasks.register<Delete>("cleanEquipmentClientWorld") { delete(save) }
+    tasks.matching { it.name == "runClient" }.configureEach { dependsOn(reset); finalizedBy(cleanup) }
 }

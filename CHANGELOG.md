@@ -1,5 +1,19 @@
 # 版本记录
 
+## 0.6.4
+
+### 中文
+
+- 修复与 DoesPotatoTick 共存时，设备部署信标及机器集装箱可能停止更新或无法显示的问题。
+- 修复部分光影下超级驱逐舰不可见的问题。
+- 哨戒炮现在根据生物对部署者当前的敌意主动索敌，兼容中立生物的仇恨变化和模组阵营的索敌条件。
+
+### English
+
+- Fixed equipment deployment beacons and machine containers freezing or becoming invisible when DoesPotatoTick is installed.
+- Fixed the Super Destroyer disappearing with some shader packs.
+- Sentries now proactively detect mobs that would attack their deployer, respecting neutral mob anger and targeting conditions used by modded factions.
+
 ## 0.6.3
 
 ### 中文

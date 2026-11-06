@@ -8,9 +8,11 @@ import com.example.sbwhelldiver.init.ModSounds
 import com.example.sbwhelldiver.init.ModParticles
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import net.minecraft.world.entity.EntityType
 import net.minecraftforge.fml.ModLoadingContext
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.config.ModConfig
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import thedarkcolour.kotlinforforge.forge.MOD_BUS
 
 /**
@@ -47,6 +49,9 @@ class Mod {
         com.example.sbwhelldiver.init.ModBlocks.BLOCKS.register(bus)
         ModItems.ITEMS.register(bus)
         ModEntities.ENTITIES.register(bus)
+        bus.addListener<FMLCommonSetupEvent> { event ->
+            event.enqueueWork { registerLegacyDeliveryTickExemptions() }
+        }
         ModSounds.SOUNDS.register(bus)
         ModParticles.PARTICLES.register(bus)
         com.example.sbwhelldiver.init.ModEffects.EFFECTS.register(bus)
@@ -74,6 +79,21 @@ class Mod {
         }
         bus.addListener<net.minecraftforge.fml.event.config.ModConfigEvent.Reloading> { event ->
             if (event.config.modId == MOD_ID && event.config.type == ModConfig.Type.SERVER) com.example.sbwhelldiver.config.TurretConfigs.changed()
+        }
+    }
+
+    private fun registerLegacyDeliveryTickExemptions() {
+        // Older DoesPotatoTick releases check their own per-type flag during entity ticking.
+        val allowTick = try {
+            EntityType::class.java.getMethod("doespotatotick\$setShouldAlwaysTick")
+        } catch (_: NoSuchMethodException) {
+            return
+        }
+        try {
+            allowTick.invoke(ModEntities.EQUIPMENT_BEACON.get())
+            allowTick.invoke(ModEntities.MACHINE_CONTAINER.get())
+        } catch (exception: ReflectiveOperationException) {
+            LOGGER.warn("Could not register legacy delivery tick exemptions", exception)
         }
     }
 }

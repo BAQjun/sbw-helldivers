@@ -6,6 +6,8 @@
   "mixins": [
     "tacz.TaczEntityUtilMixin",
     "tacz.TaczBulletMixin",
+    "AttackGoalAccess",
+    "MobTargetSelectorAccess",
     "ThermalKnockbackMixin",
     "SmokeSightMixin",
     "SmokeNavigationAccess",

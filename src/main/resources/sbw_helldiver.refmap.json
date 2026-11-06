@@ -4,6 +4,13 @@
       "hurt": "Lnet/minecraft/world/entity/LivingEntity;m_6469_(Lnet/minecraft/world/damagesource/DamageSource;F)Z",
       "Lnet/minecraft/world/entity/LivingEntity;knockback(DDD)V": "Lnet/minecraft/world/entity/LivingEntity;m_147240_(DDD)V"
     },
+    "com/example/sbwhelldiver/mixin/AttackGoalAccess": {
+      "targetType": "Lnet/minecraft/world/entity/ai/goal/target/NearestAttackableTargetGoal;f_26048_:Ljava/lang/Class;",
+      "targetConditions": "Lnet/minecraft/world/entity/ai/goal/target/NearestAttackableTargetGoal;f_26051_:Lnet/minecraft/world/entity/ai/targeting/TargetingConditions;"
+    },
+    "com/example/sbwhelldiver/mixin/MobTargetSelectorAccess": {
+      "targetSelector": "Lnet/minecraft/world/entity/Mob;f_21346_:Lnet/minecraft/world/entity/ai/goal/GoalSelector;"
+    },
     "com/example/sbwhelldiver/mixin/SmokeNavigationAccess": {
       "mob": "Lnet/minecraft/world/entity/ai/navigation/PathNavigation;f_26494_:Lnet/minecraft/world/entity/Mob;",
       "speedModifier": "Lnet/minecraft/world/entity/ai/navigation/PathNavigation;f_26497_:D"
@@ -25,6 +32,13 @@
       "com/example/sbwhelldiver/mixin/ThermalKnockbackMixin": {
         "hurt": "Lnet/minecraft/world/entity/LivingEntity;m_6469_(Lnet/minecraft/world/damagesource/DamageSource;F)Z",
         "Lnet/minecraft/world/entity/LivingEntity;knockback(DDD)V": "Lnet/minecraft/world/entity/LivingEntity;m_147240_(DDD)V"
+      },
+      "com/example/sbwhelldiver/mixin/AttackGoalAccess": {
+        "targetType": "Lnet/minecraft/world/entity/ai/goal/target/NearestAttackableTargetGoal;f_26048_:Ljava/lang/Class;",
+        "targetConditions": "Lnet/minecraft/world/entity/ai/goal/target/NearestAttackableTargetGoal;f_26051_:Lnet/minecraft/world/entity/ai/targeting/TargetingConditions;"
+      },
+      "com/example/sbwhelldiver/mixin/MobTargetSelectorAccess": {
+        "targetSelector": "Lnet/minecraft/world/entity/Mob;f_21346_:Lnet/minecraft/world/entity/ai/goal/GoalSelector;"
       },
       "com/example/sbwhelldiver/mixin/SmokeNavigationAccess": {
         "mob": "Lnet/minecraft/world/entity/ai/navigation/PathNavigation;f_26494_:Lnet/minecraft/world/entity/Mob;",

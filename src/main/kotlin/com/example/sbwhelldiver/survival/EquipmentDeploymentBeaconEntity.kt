@@ -22,6 +22,9 @@ import kotlin.math.abs
 
 /** Terminal session, payment and the saved ten-second equipment delivery reservation. */
 class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBeaconEntity>,level:Level):Entity(type,level) {
+    // Deployment deadlines must keep advancing while the delivery is above a player's activation range.
+    // Use the vanilla contract also respected by entity-tick optimizers, without a mod-specific dependency.
+    override fun isAlwaysTicking()=true
     val phase get()=entityData.get(PHASE)
     val phaseStart get()=entityData.get(START)
     val selectedMachine get()=MachineDeployment.entries.getOrNull(entityData.get(MACHINE))
