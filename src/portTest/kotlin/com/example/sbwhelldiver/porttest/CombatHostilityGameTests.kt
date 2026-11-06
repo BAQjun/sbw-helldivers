@@ -67,7 +67,7 @@ object CombatHostilityGameTests {
         piglin.targetSelector.availableGoals.map { it.goal }.forEach(piglin.targetSelector::removeGoal)
         h.assertTrue(CombatHostility.isHostileTo(piglin, owner), "Piglin without gold on the player was missed")
         owner.setItemSlot(EquipmentSlot.HEAD, ItemStack(Items.GOLDEN_HELMET))
-        h.assertTrue(!CombatHostility.isHostileTo(piglin, owner), "Piglin ignored the player's gold helmet")
+        h.assertTrue(CombatHostility.isHostileTo(piglin, owner), "The legacy enemy rule must still recognize piglins when the player wears gold")
         owner.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY)
 
         cow.target = owner
@@ -129,8 +129,11 @@ object CombatHostilityGameTests {
             h.assertTrue(CombatHostility.isHostileTo(bandit, owner), "Restoring the attack order did not restore eligibility")
 
             owner.setGameMode(GameType.CREATIVE)
-            h.assertTrue(!CombatHostility.isHostileTo(bandit, owner), "Bandit should not see a creative player as hostile")
-            owner.setGameMode(GameType.SURVIVAL)
+            h.assertTrue(!bandit.canAttack(owner), "Creative must still be immune to ordinary mob targeting")
+            h.assertTrue(CombatHostility.isHostileTo(bandit, owner), "Sentry should see the hostile faction in Creative")
+            changeStrategy.invoke(bandit, ceaseFire)
+            h.assertTrue(!CombatHostility.isHostileTo(bandit, owner), "Creative mode overrode the faction's cease-fire")
+            changeStrategy.invoke(bandit, strategy)
             com.example.sbwhelldiver.LOGGER.info("HUNDRED_YEARS_WARFARE_PROACTIVE_TARGET_PASSED entity={}", bandit.type)
         } catch (e: Exception) {
             bandit.discard()

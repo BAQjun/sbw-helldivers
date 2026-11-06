@@ -1,5 +1,17 @@
 # 版本记录
 
+## 0.6.5
+
+### 中文
+
+- 哨戒炮同时使用旧版敌对生物分类和新版部署者敌意判断，符合任一规则即可自动锁定。
+- 修复创造模式下的哨戒炮索敌，监守者也会在发现部署者之前被锁定。
+
+### English
+
+- Sentries now use both the original enemy classification and deployer-specific hostility. Either rule can qualify a target.
+- Fixed sentry targeting for Creative players. Sentries can also acquire Wardens before they detect the deployer.
+
 ## 0.6.4
 
 ### 中文
