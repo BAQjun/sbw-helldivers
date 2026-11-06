@@ -7,6 +7,8 @@
     "tacz.TaczEntityUtilMixin",
     "tacz.TaczBulletMixin",
     "AttackGoalAccess",
+    "CreativeHostilityPlayerMixin",
+    "CreativeHostilityServerPlayerMixin",
     "MobTargetSelectorAccess",
     "ThermalKnockbackMixin",
     "SmokeSightMixin",
