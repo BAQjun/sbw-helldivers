@@ -11,6 +11,9 @@ import net.minecraft.world.level.Level
 import net.minecraft.server.level.ServerLevel
 
 class MachineContainerEntity(type:EntityType<out MachineContainerEntity>,level:Level):Entity(type,level) {
+    // Deployment deadlines must keep advancing while the delivery is above a player's activation range.
+    // Use the vanilla contract also respected by entity-tick optimizers, without a mod-specific dependency.
+    override fun isAlwaysTicking()=true
     val machine get()=MachineDeployment.entries[entityData.get(KIND).coerceIn(0,1)]
     val facing get()=Direction.from2DDataValue(entityData.get(FACING))
     val phase get()=entityData.get(PHASE)

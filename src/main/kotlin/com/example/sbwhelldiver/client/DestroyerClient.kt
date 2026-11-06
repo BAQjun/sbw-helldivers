@@ -57,6 +57,7 @@ object DestroyerClient:ResourceManagerReloadListener {
     if(n.lengthSquared()>1e-15f)out.add(Tri(pp,vv.map{floatArrayOf(it[3].asFloat,it[4].asFloat)}.toTypedArray(),n.normalize(),a[0].asInt==1))
    }
   };mesh=out
+  DestroyerPostRenderer.setMesh(out.flatMap{t->(0..2).flatMap{k->val p=t.points[k];val uv=t.uv[k];listOf(p.x,p.y,p.z,uv[0],uv[1],if(t.emissive)1f else .72f)}}.toFloatArray())
  }
  private val corners=intArrayOf(0,1,2,2)
  private val buffers=MultiBufferSource.immediate(ByteBufferBuilder(1048576))
@@ -81,6 +82,13 @@ object DestroyerClient:ResourceManagerReloadListener {
   if(ShaderPackCompat.shadowPass())return
   if(Minecraft.getInstance().level?.dimension()==net.minecraft.world.level.Level.NETHER)return
   val mc=Minecraft.getInstance();val level=mc.level?:return
+  if(ShaderPackCompat.active()){
+   if(e.stage==RenderLevelStageEvent.Stage.AFTER_LEVEL){
+    val dimension=level.dimension().location().toString()
+    DestroyerPostRenderer.render(e.projectionMatrix,e.modelViewMatrix,ships.flatMap{DestroyerWarp.poses(it,dimension,now(e.partialTick.getGameTimeDeltaPartialTick(false)))},e.camera.position)
+   }
+   return
+  }
   if(e.stage==RenderLevelStageEvent.Stage.AFTER_SKY){
    val fogStart=RenderSystem.getShaderFogStart();val fogEnd=RenderSystem.getShaderFogEnd()
    RenderSystem.setShaderFogStart(4096f);RenderSystem.setShaderFogEnd(8192f)

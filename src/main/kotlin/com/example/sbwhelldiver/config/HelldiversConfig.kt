@@ -43,7 +43,7 @@ object HelldiversConfig {
         .defineInRange("capLifetimeTicks", 600, 20, 12000)
     val attackPlayers = builder.comment("兼容旧存档的选项；当前炮台始终不对玩家索敌，但子弹和爆炸可以误伤玩家。")
         .define("attackPlayers", false)
-    val attackNeutralMobs = builder.comment("是否攻击其他 Mob。默认只攻击 Enemy；始终排除已驯服宠物。")
+    val attackNeutralMobs = builder.comment("是否允许自动索敌选中非敌对生物。哨戒炮按部署者的敌对关系判断，并排除已驯服宠物。")
         .define("attackNeutralMobs", false)
     init { TurretConfigs.register(builder); StratagemCooldownConfig.register(builder); EagleConfig.register(builder); OrbitalConfig.register(builder) }
     val SPEC: ModConfigSpec = builder.build()

@@ -19,9 +19,7 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.entity.Mob
 import net.minecraft.world.entity.TamableAnimal
-import net.minecraft.world.entity.monster.Enemy
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.Level
@@ -554,7 +552,7 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
         if (profile.isTesla && !TeslaArc.eligible(candidate)) return false
         if (!candidate.isAlive || candidate.isRemoved || candidate is Player || candidate === owner || candidate.isAlliedTo(this)) return false
         if (candidate is TamableAnimal && candidate.isTame) return false
-        if (!marked && candidate !is Enemy && !(candidate is Mob && HelldiversConfig.attackNeutralMobs.get())) return false
+        if (!marked && !CombatHostility.isHostileTo(candidate, owner as? LivingEntity, HelldiversConfig.attackNeutralMobs.get())) return false
         if (!marked && profile.isGasMortar && candidate.hasEffect(com.example.sbwhelldiver.init.ModEffects.GAS)) return false
         val distance = distanceToSqr(candidate)
         if (!marked && profile.isLaser && candidate === target) return distance <= LaserClock.BEAM_RANGE.pow(2)

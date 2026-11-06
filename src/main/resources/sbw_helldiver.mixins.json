@@ -4,6 +4,7 @@
   "package": "com.example.sbwhelldiver.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "AttackGoalAccess",
     "ThermalKnockbackMixin",
     "SmokeSightMixin",
     "SmokeNavigationAccess",

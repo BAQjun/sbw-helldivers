@@ -34,9 +34,11 @@ object PortDestroyerTests {
  private val writes=mutableMapOf<Int,Int>()
  private val samples=mutableMapOf<Int,Int>()
  private var query=0
+ private var strike:com.example.sbwhelldiver.entity.StratagemMarker?=null
  private fun active()=java.lang.Boolean.getBoolean("sbw_helldiver.destroyerRegression")
  private fun view()=((ticks-5)/120).coerceIn(0,3)
- private fun sample()=ticks in 85..480 && (ticks-5)%120 in 80..115
+ private fun stage()=if(ShaderPackCompat.active())RenderLevelStageEvent.Stage.AFTER_LEVEL else RenderLevelStageEvent.Stage.AFTER_SKY
+ private fun sample()=ticks in 85..600 && (ticks-5)%120 in 80..115
  @SubscribeEvent fun tick(e:ClientTickEvent.Post){
   if(!active())return
   val mc=Minecraft.getInstance()
@@ -53,19 +55,33 @@ object PortDestroyerTests {
    level.setBlock(BlockPos(0,79,0),Blocks.SEA_LANTERN.defaultBlockState(),3);level.setDefaultSpawnPos(BlockPos(0,80,0),180f)
    val p=server.playerList.getPlayer(player.uuid)!!;p.setGameMode(GameType.CREATIVE);p.teleportTo(level,0.0,80.0,0.0,180f,-52f);p.abilities.flying=true;p.onUpdateAbilities()
    val beacon=ItemStack(ModItems.BEACON.get());BeaconData.setItems(beacon,listOf(ItemStack(ModItems.ORBITAL_PRECISION_STRIKE.get())));p.inventory.setItem(0,beacon)
+   check(SuperDestroyers.refillCall(p)){"Could not prepare one destroyer call"}
    LOGGER.info("DESTROYER_FIXTURE_READY")
   }
-  if(ticks in 5..480){
+  if(ticks in 5..600){
    val view=view();player.setPos(0.0,80.0,0.0);player.yRot=180f+view*90f;player.yRotO=player.yRot;player.xRot=-52f;player.xRotO=-52f;player.abilities.flying=true
-   if((ticks-5)%120==0)server.execute{val p=server.playerList.getPlayer(player.uuid)!!;check(SuperDestroyers.move(p,view)){"Destroyer call failed"};LOGGER.info("DESTROYER_CALL direction={}",view)}
+   if(ticks<=480&&(ticks-5)%120==0)server.execute{val p=server.playerList.getPlayer(player.uuid)!!;check(SuperDestroyers.move(p,view)){"Destroyer call failed"};LOGGER.info("DESTROYER_CALL direction={}",view)}
    if((ticks-5)%120==100){check(DestroyerClient.available()){"Destroyer snapshot unavailable"};Screenshot.grab(mc.gameDirectory,"destroyer-heading-$view.png",mc.mainRenderTarget){LOGGER.info("DESTROYER_SCREENSHOT {}",it.string)}}
   }
-  if(ticks==485)server.execute{check(SuperDestroyers.depart(server.playerList.getPlayer(player.uuid)!!));LOGGER.info("DESTROYER_DEPART")}
-  if(ticks==560){
+  if(ticks==425)server.execute {
+   val l=server.overworld();val p=server.playerList.getPlayer(player.uuid)!!
+   strike=com.example.sbwhelldiver.init.ModEntities.STRATAGEM_MARKER.get().create(l)!!.also {
+    it.setPos(0.0,80.02,8.0)
+    it.configure(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(MOD_ID,"orbital_precision_strike"),60,p.uuid,groundY=80.0)
+    l.addFreshEntity(it)
+   }
+  }
+  if(ticks==580)server.execute {
+   check(strike?.orbitalFiredAt?.let{it>=0}==true){"Orbital fire did not advance with DoesPotatoTick"}
+   check(SuperDestroyers.available(server.playerList.getPlayer(player.uuid)!!)){"Ship unavailable during bombardment"}
+   LOGGER.info("DESTROYER_DPT_ORBITAL_FIRE_VERIFIED")
+  }
+  if(ticks==605)server.execute{check(SuperDestroyers.depart(server.playerList.getPlayer(player.uuid)!!));LOGGER.info("DESTROYER_DEPART")}
+  if(ticks==680){
    check(!DestroyerClient.available()){"Departure was not synchronized"}
    LOGGER.info("DESTROYER_REGRESSION_WRITES {} shaders={}",writes,ShaderPackCompat.active())
    LOGGER.info("DESTROYER_REGRESSION_SAMPLES {}",samples)
-   if(System.getenv("DESTROYER_BASELINE")!="1")check((0..3).all{((if(ShaderPackCompat.active())samples else writes)[it]?:0)>100}){"Sky ship invisible: writes=$writes samples=$samples"}
+   if(System.getenv("DESTROYER_BASELINE")!="1")check((0..3).all{(writes[it]?:0)>100}){"Sky ship invisible: writes=$writes samples=$samples"}
    LOGGER.info("DESTROYER_REGRESSION_COMPLETED");mc.stop()
   }
  }
@@ -75,15 +91,14 @@ object PortDestroyerTests {
   glBindFramebuffer(GL_READ_FRAMEBUFFER,draw);glReadPixels(0,0,target.width,target.height,GL_RGBA,GL_UNSIGNED_BYTE,result);glBindFramebuffer(GL_READ_FRAMEBUFFER,old);return result
  }
  @SubscribeEvent(priority=EventPriority.HIGHEST) fun before(e:RenderLevelStageEvent){
-  if(active()&&e.stage==RenderLevelStageEvent.Stage.AFTER_SKY&&sample()&&!ShaderPackCompat.shadowPass()&&frame++%10==0){
+  if(active()&&e.stage==stage()&&sample()&&!ShaderPackCompat.shadowPass()&&frame++%10==0){
    before=read()
-   // Iris writes its G-buffer attachments rather than the vanilla color attachment.
-   // Count depth-passing fragments as well, then inspect the composed screenshots.
+   // Inspect writes in the final scene when shaders are active, not intermediate G-buffer samples.
    if(glGetQueryi(GL_SAMPLES_PASSED,GL_CURRENT_QUERY)==0){query=glGenQueries();glBeginQuery(GL_SAMPLES_PASSED,query)}
   }
  }
  @SubscribeEvent(priority=EventPriority.LOWEST) fun after(e:RenderLevelStageEvent){
-  if(!active()||e.stage!=RenderLevelStageEvent.Stage.AFTER_SKY||ShaderPackCompat.shadowPass())return
+  if(!active()||e.stage!=stage()||ShaderPackCompat.shadowPass())return
   val first=before?:return;before=null
   if(query!=0){glEndQuery(GL_SAMPLES_PASSED);val count=glGetQueryObjectui(query,GL_QUERY_RESULT);glDeleteQueries(query);query=0;samples[view()]=maxOf(samples[view()]?:0,count)}
   val last=read();var changed=0

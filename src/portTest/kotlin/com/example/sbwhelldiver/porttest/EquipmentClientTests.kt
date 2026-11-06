@@ -83,6 +83,7 @@ object EquipmentClientTests {
             val l=server.overworld();val p=server.playerList.getPlayer(player.uuid)!!
             val e=ModEntities.EQUIPMENT_BEACON.get().create(l)!!;val landing=net.minecraft.world.phys.Vec3(.5,80.0,.5)
             e.moveTo(.5,80.0,.5,EquipmentBeaconGeometry.deploymentYaw(p.position(),landing,p.yRot),0f);e.configure(80.0,l.gameTime+35,p.uuid);l.addFreshEntity(e);device=e.uuid
+            checkTickOptimizer(e,"server/high-altitude")
             LOGGER.info("EQUIPMENT_FIXTURE_READY")
         }
         val collisionOnly=java.lang.Boolean.getBoolean("sbw_helldiver.equipmentCollisionOnly")
@@ -90,11 +91,17 @@ object EquipmentClientTests {
         if(ticks==155)server.execute {val p=server.playerList.getPlayer(player.uuid)!!;p.teleportTo(server.overworld(),.5,87.0,-4.5,0f,40f);p.abilities.flying=true;p.onUpdateAbilities()}
         if(ticks==166)server.execute {val p=server.playerList.getPlayer(player.uuid)!!;p.teleportTo(server.overworld(),4.0,80.0,5.0,142f,-4f)}
         if(ticks==169)capture("equipment-pedestal-hidden.png")
+        if(ticks==160)server.execute {
+            val e=server.overworld().getEntity(device) as EquipmentDeploymentBeaconEntity
+            check(e.phase==EquipmentDeploymentBeaconEntity.ACTIVE){"Beacon deployment froze: phase=${e.phase}, y=${e.y}"}
+            checkTickOptimizer(e,"server/deployed")
+        }
         if(ticks==165){
             check(com.example.sbwhelldiver.client.DeliveryFlightVisuals.beaconJetFrames>0){"Attached beacon jets never rendered"}
             check(com.example.sbwhelldiver.client.BeaconCallHud.label==null){"Deployed beacon still shows an arrived world HUD"}
             if(!collisionOnly)for(effect in listOf("sfx_hellpod_bolts_layer_a","sfx_hellpod_bolts_layer_b","sfx_hellpod_entry_layer_03","sfx_hellpod_entry_layer_01","sfx_hellpod_entry_layer_02","sfx_hellpod_impact","sfx_hellpod_cap_release"))check(arrivalSounds.count{it==effect}==1){"Missing or repeated pod sound $effect: $arrivalSounds"}
             val e=mc.level!!.entitiesForRendering().filterIsInstance<EquipmentDeploymentBeaconEntity>().single()
+            checkTickOptimizer(e,"client/deployed")
             // The renderer interpolates multipart previous coordinates; drifting values render ghost boxes.
             check(e.parts.all{it.xOld==e.xOld&&it.yOld==e.yOld&&it.zOld==e.zOld}){"Beacon multipart debug positions drifted from the parent"}
             val shapes=mc.level!!.getEntityCollisions(player,net.minecraft.world.phys.AABB(e.x-.1,e.y+.4,e.z-.1,e.x+.1,e.y+1,e.z+.1))
@@ -181,11 +188,15 @@ object EquipmentClientTests {
             check(l.getEntity(device)==null){"Beacon/pod remained after machine delivery"}
             val boxes=l.getEntitiesOfClass(MachineContainerEntity::class.java,net.minecraft.world.phys.AABB(-4.0,79.0,-4.0,5.0,85.0,5.0))
             check(boxes.size==1&&boxes.single().phase==MachineContainerEntity.CLOSED){"Paid deployment did not deliver one closed container"}
+            checkTickOptimizer(boxes.single(),"server/container-arrived")
             check(l.getBlockEntity(BlockPos(0,80,0))==null){"Machine generated before opening the delivered container"}
             server.playerList.getPlayer(player.uuid)!!.teleportTo(l,5.0,80.0,7.0,145f,-10f)
             LOGGER.info("EQUIPMENT_REAL_CONTAINER_DELIVERED")
         }
-        if(ticks==585)capture("equipment-container-arrived.png")
+        if(ticks==585){
+            checkTickOptimizer(mc.level!!.entitiesForRendering().filterIsInstance<MachineContainerEntity>().single(),"client/container-arrived")
+            capture("equipment-container-arrived.png")
+        }
         if(ticks==590)server.execute {
             val l=server.overworld();val p=server.playerList.getPlayer(player.uuid)!!
             p.setItemInHand(InteractionHand.MAIN_HAND,ItemStack(com.atsuishio.superbwarfare.init.ModItems.CROWBAR.get()))
@@ -196,6 +207,11 @@ object EquipmentClientTests {
             capture("equipment-machine-deployed.png")
         }
         if(ticks==660){LOGGER.info("EQUIPMENT_CLIENT_COMPLETED");mc.stop()}
+    }
+    private fun checkTickOptimizer(entity:net.minecraft.world.entity.Entity,stage:String) {
+        val contract=runCatching{Class.forName("me.kall.doespotatotick.ext.Tickable")}.getOrNull()?:return
+        for(method in listOf("dpt\$alwaysTick","dpt\$tickable"))check(contract.getMethod(method).invoke(entity)==true){"$stage ${entity.type}: $method=false"}
+        LOGGER.info("DPT_COMPAT_VERIFIED {} type={} y={} phase={}",stage,entity.type,entity.y,when(entity){is EquipmentDeploymentBeaconEntity->entity.phase;is MachineContainerEntity->entity.phase;else->-1})
     }
     private fun capture(name:String){val mc=Minecraft.getInstance();Screenshot.grab(mc.gameDirectory,name,mc.mainRenderTarget){LOGGER.info("EQUIPMENT_SCREENSHOT {} {}",name,it.string)}}
 }
