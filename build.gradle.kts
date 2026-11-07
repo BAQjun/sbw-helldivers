@@ -322,9 +322,9 @@ dependencies {
         )
     )
 
-    compileOnly(fg.deobf("maven.modrinth:timeless-and-classics-zero:1.1.8-hotfix2"))
+    compileOnly(fg.deobf("maven.modrinth:timeless-and-classics-zero:1.2.0"))
     if (project.hasProperty("taczCompatTests")) {
-        runtimeOnly(fg.deobf("maven.modrinth:timeless-and-classics-zero:1.1.8-hotfix2"))
+        runtimeOnly(fg.deobf("maven.modrinth:timeless-and-classics-zero:1.2.0"))
     }
 
     // ---- 以下三个库都不打进我们的 jar，只为了让编译与开发运行能跑起来 ----

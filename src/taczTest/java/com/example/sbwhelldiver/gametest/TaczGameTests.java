@@ -48,7 +48,7 @@ public final class TaczGameTests {
         final FakePlayer owner;
         Scene(GameTestHelper h, int slot) {
             this.h = h;
-            BlockPos at = new BlockPos((slot % 4) * 80 - 120, 300, (slot / 4) * 80 - 80);
+            BlockPos at = h.absolutePos(new BlockPos(8, 200, 8));
             h.getLevel().getChunk(at);
             origin = Vec3.atBottomCenterOf(at);
             // Each scene has its own isolated volume, and cleans saved entities first.
@@ -206,8 +206,8 @@ public final class TaczGameTests {
                 if (id == null || !id.getNamespace().equals("sbw_helldiver")) continue;
                 Entity entity=type.create(h.getLevel());
                 if (!(entity instanceof AbstractHellpodEntity body)) { if(entity!=null) entity.discard(); continue; }
-                // Legacy supply pods are not deployable defences and keep SBW's own armour rules.
-                if (body instanceof SupplyHellpodEntity) { body.discard(); continue; }
+                // Supply and player transport pods intentionally retain their own damage rules.
+                if (body instanceof SupplyHellpodEntity || body instanceof PlayerHellpodEntity) { body.discard(); continue; }
                 s.active(body); float before=body.getHealth();
                 EntityKineticBullet b=s.bullet(s.origin.add(-4,.2,0),new Vec3(8,0,0),10,1);
                 try {
