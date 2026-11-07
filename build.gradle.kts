@@ -20,15 +20,24 @@ val portTest by sourceSets.creating {
     compileClasspath += sourceSets.main.get().output
     runtimeClasspath += sourceSets.main.get().output
 }
+val taczCompatTest by sourceSets.creating {
+    compileClasspath += sourceSets.main.get().output
+    runtimeClasspath += sourceSets.main.get().output
+}
+configurations[taczCompatTest.implementationConfigurationName].extendsFrom(configurations.implementation.get())
+configurations[taczCompatTest.compileOnlyConfigurationName].extendsFrom(configurations.compileOnly.get())
+configurations[taczCompatTest.runtimeOnlyConfigurationName].extendsFrom(configurations.runtimeOnly.get())
 configurations[portTest.implementationConfigurationName].extendsFrom(configurations.implementation.get())
 configurations[portTest.compileOnlyConfigurationName].extendsFrom(configurations.compileOnly.get())
 configurations[portTest.runtimeOnlyConfigurationName].extendsFrom(configurations.runtimeOnly.get())
 neoForge {
     version = property("neo_version") as String
     addModdingDependenciesTo(portTest)
+    addModdingDependenciesTo(taczCompatTest)
     runs {
         create("client") { client(); gameDirectory = file(".codex/neoforge1211/runtime-client")
             if (providers.gradleProperty("portTests").isPresent) systemProperty("sbw_helldiver.portClientTests", "true")
+            if (providers.gradleProperty("taczCompatTests").isPresent) systemProperty("sbw_helldiver.taczCompatTests", "true")
             if (providers.gradleProperty("rocketTests").isPresent) systemProperty("sbw_helldiver.rocketRegression", "true")
             if (providers.gradleProperty("explosionTests").isPresent) systemProperty("sbw_helldiver.explosionRegression", "true")
             if (providers.gradleProperty("destroyerTests").isPresent) systemProperty("sbw_helldiver.destroyerRegression", "true")
@@ -41,9 +50,9 @@ neoForge {
                 systemProperty("sbw_helldiver.hudRegression", "true")
             } }
         create("server") { server(); programArgument("--nogui"); gameDirectory = file(".codex/neoforge1211/runtime-server") }
-        create("gameTestServer") { type = "gameTestServer"; gameDirectory = file(".codex/neoforge1211/runtime-gametest"); systemProperty("neoforge.enabledGameTestNamespaces", if (providers.gradleProperty("destroyerPersistenceTests").isPresent) "sbw_helldiver_destroyer" else "sbw_helldiver") }
+        create("gameTestServer") { type = "gameTestServer"; gameDirectory = file(".codex/neoforge1211/runtime-gametest"); systemProperty("neoforge.enabledGameTestNamespaces", if (providers.gradleProperty("taczCompatTests").isPresent) "sbw_helldiver_tacz" else if (providers.gradleProperty("destroyerPersistenceTests").isPresent) "sbw_helldiver_destroyer" else "sbw_helldiver") }
     }
-    mods { create("sbw_helldiver") { sourceSet(sourceSets.main.get()); if (providers.gradleProperty("portTests").isPresent) sourceSet(portTest) } }
+    mods { create("sbw_helldiver") { sourceSet(sourceSets.main.get()); if (providers.gradleProperty("portTests").isPresent) sourceSet(portTest); if (providers.gradleProperty("taczCompatTests").isPresent) sourceSet(taczCompatTest) } }
 }
 val sbwApiSource = configurations.create("sbwApiSource") { isTransitive = false }
 val extractSbwApis = tasks.register<Copy>("extractSbwApis") {
@@ -56,6 +65,9 @@ val extractSbwApis = tasks.register<Copy>("extractSbwApis") {
 val embeddedSbwApis = files(provider { fileTree(layout.buildDirectory.dir("generated/sbw-api")) { include("*.jar") } }).builtBy(extractSbwApis)
 
 dependencies {
+    // Official TaCZ 1.2.0 NeoForge artifact, pinned independently of the Forge upload.
+    compileOnly("maven.modrinth:timeless-and-classics-zero:O2Pfsh6w")
+    if (providers.gradleProperty("taczCompatTests").isPresent) runtimeOnly("maven.modrinth:timeless-and-classics-zero:O2Pfsh6w")
     compileOnly("net.createmod.ponder:ponder-neoforge:1.0.87+mc1.21.1") { isTransitive = false }
     compileOnly("maven.modrinth:jei:UJRXzDfp") { isTransitive = false }
     add("sbwApiSource", "maven.modrinth:superb-warfare:bl7W8fjU")

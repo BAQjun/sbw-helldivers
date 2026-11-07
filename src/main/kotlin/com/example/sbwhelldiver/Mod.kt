@@ -43,6 +43,7 @@ class Mod(container: net.neoforged.fml.ModContainer) {
 
     init {
         val bus = MOD_BUS
+        com.example.sbwhelldiver.compat.TaczBootstrap.register()
 
         com.example.sbwhelldiver.init.ModBlocks.BLOCKS.register(bus)
         ModItems.ITEMS.register(bus)

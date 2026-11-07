@@ -4,6 +4,8 @@
   "package": "com.example.sbwhelldiver.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "tacz.TaczEntityUtilMixin",
+    "tacz.TaczBulletMixin",
     "AttackGoalAccess",
     "CreativeHostilityPlayerMixin",
     "CreativeHostilityServerPlayerMixin",
@@ -21,7 +23,10 @@
     "EagleProjectileRenderMixin",
     "HellpodMeshRenderMixin",
     "ModListSearchMixin",
-    "ExplosionSmokeRenderMixin"
+    "ExplosionSmokeRenderMixin",
+    "tacz.TaczInputMixin",
+    "tacz.TaczCameraMixin",
+    "tacz.TaczCrosshairMixin"
   ],
   "injectors": {
     "defaultRequire": 1
