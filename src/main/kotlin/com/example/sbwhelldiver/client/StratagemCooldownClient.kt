@@ -45,18 +45,26 @@ object StratagemCooldownClient : ResourceManagerReloadListener {
         val base=Stratagems.commands(loadout,
         !data.getList("EquippedEagles", Tag.TAG_STRING.toInt()).isEmpty() || loadout.any { it?.id?.startsWith("eagle_") == true })
         val all=if(DestroyerClient.equipped && Stratagems.destroyerCall !in base)listOf(Stratagems.destroyerCall)+base else base
+        if(stage==3)return all.flatMap{if(it==Stratagems.destroyerCall)Stratagems.destroyerDurations else listOf(it)}
         return if(task==null)all else all.map{if(it==Stratagems.destroyerCall)task else it}
     }
     fun now(partial: Float = 0f) = serverTime + ((Minecraft.getInstance().level?.gameTime ?: localTime) - localTime).toDouble() + partial
     private fun equipmentMachine(def:StratagemDefinition)=if(def==Stratagems.equipmentDeployment && visual(def.id).phase==CallPhase.ARRIVING)
         com.example.sbwhelldiver.survival.MachineDeployment.entries.firstOrNull{it.id==entries[def.id]?.getString("EquipmentMachine")} else null
-    fun displayName(def:StratagemDefinition)=Component.translatable(equipmentMachine(def)?.translation?:def.translation)
+    fun displayName(def:StratagemDefinition):Component {
+        if(def.id.startsWith("destroyer_duration_")){
+            val minutes=def.id.substringAfterLast('_').toInt()
+            return Component.translatable("hud.sbw_helldiver.destroyer_duration",minutes,DestroyerClient.calls(minutes))
+        }
+        return Component.translatable(equipmentMachine(def)?.translation?:def.translation)
+    }
     fun visual(id: String, partial: Float = 0f): Visual {
         if(Minecraft.getInstance().level?.let{!Stratagems.dimensionAllowed(it.dimension().location().toString())}==true)
             return Visual(blocked=true,reason="dimension_unavailable")
         if((id == "eagle_rearm" || Stratagems.definitions.any { it.id == id }) && !DestroyerClient.available())return Visual(blocked=true,reason="destroyer_unavailable")
         if(id=="call_super_destroyer"&&DestroyerClient.transitionEnd>DestroyerClient.now(partial))return Visual(CallPhase.ARRIVING,DestroyerClient.transitionEnd-60,DestroyerClient.transitionEnd,blocked=true,reason="destroyer_warping")
-        if(id=="call_super_destroyer")return Visual(remaining=DestroyerClient.callsRemaining,blocked=DestroyerClient.callsRemaining==0 && !DestroyerClient.hasShip)
+        if(id=="call_super_destroyer")return Visual(blocked=!DestroyerClient.canCall() && !DestroyerClient.hasShip)
+        if(id.startsWith("destroyer_duration_"))return Visual(blocked=DestroyerClient.calls(id.substringAfterLast('_').toInt())==0)
         if(id.startsWith("destroyer_"))return Visual()
         val time = now(partial)
         val e = entries[id]
@@ -124,7 +132,7 @@ object StratagemCooldownClient : ResourceManagerReloadListener {
     override fun onResourceManagerReload(manager: ResourceManager) {
         val textures = Minecraft.getInstance().textureManager
         grey.values.forEach(textures::release); grey.clear()
-        for (def in Stratagems.definitions + listOf(Stratagems.equipmentDeployment,Stratagems.eagleRearm,Stratagems.destroyerCall,Stratagems.destroyerDirection,Stratagems.destroyerManage)) {
+        for (def in Stratagems.definitions + listOf(Stratagems.equipmentDeployment,Stratagems.eagleRearm,Stratagems.destroyerCall,Stratagems.destroyerDirection,Stratagems.destroyerManage)+Stratagems.destroyerDurations) {
             val resource = manager.getResource(def.icon).orElse(null) ?: continue
             val pixels = resource.open().use(NativeImage::read)
             // Native icons encode category and ammunition as two independent masks.

@@ -23,7 +23,9 @@ class MachineContainerItem(val machine:MachineDeployment,properties:Properties):
         if(l is ServerLevel) {
             val facing=MachineStructure.choose(l,root,machine,player.direction.opposite)?:run{player.displayClientMessage(net.minecraft.network.chat.Component.translatable("terminal.sbw_helldiver.no_space"),true);return InteractionResult.FAIL}
             val box=ModEntities.MACHINE_CONTAINER.get().create(l)?:return InteractionResult.FAIL
-            box.configure(machine,root,facing,c.itemInHand.get(DataComponents.CUSTOM_DATA)?.copyTag()?:CompoundTag(),false)
+            val contents=c.itemInHand.get(DataComponents.CUSTOM_DATA)?.copyTag()?:CompoundTag()
+            if(!contents.hasUUID("MachineOwner")||contents.getUUID("MachineOwner")!=player.uuid){contents.putUUID("MachineOwner",player.uuid);contents.remove("BoundSampleContainer")}
+            box.configure(machine,root,facing,contents,false)
             if(!l.addFreshEntity(box))return InteractionResult.FAIL
             val sound=net.minecraft.world.level.block.Blocks.IRON_BLOCK.defaultBlockState().getSoundType(l,root,player)
             l.playSound(null,root,sound.placeSound,net.minecraft.sounds.SoundSource.BLOCKS,(sound.volume+1f)/2f,sound.pitch*.8f)

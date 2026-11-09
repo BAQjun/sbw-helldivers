@@ -21,6 +21,7 @@ object ModItems {
     val COMMON_SAMPLE=ITEMS.register("common_sample"){_->Item(Item.Properties())}
     val RARE_SAMPLE=ITEMS.register("rare_sample"){_->Item(Item.Properties())}
     val SUPER_SAMPLE=ITEMS.register("super_sample"){_->Item(Item.Properties())}
+    val SAMPLE_CONTAINER=ITEMS.register("sample_container"){_->com.example.sbwhelldiver.survival.SampleContainerItem(Item.Properties().stacksTo(1))}
     val BIOPROCESSOR_CONTAINER=ITEMS.register("bioprocessor_container"){_->com.example.sbwhelldiver.survival.MachineContainerItem(com.example.sbwhelldiver.survival.MachineDeployment.BIOPROCESSOR,Item.Properties().stacksTo(1))}
     val REFINERY_CONTAINER=ITEMS.register("refinery_container"){_->com.example.sbwhelldiver.survival.MachineContainerItem(com.example.sbwhelldiver.survival.MachineDeployment.REFINERY,Item.Properties().stacksTo(1))}
 

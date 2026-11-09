@@ -54,6 +54,99 @@ object HelldiverPonder : PonderPlugin {
             helper.addStoryBoard(id(machine.id + "_container"), "survival/${machine.id}", scene)
         }
         helper.addStoryBoard(id("tactical_terminal"), "survival/tactical_terminal", ::tacticalScene)
+        helper.addStoryBoard(id("sample_container"), "survival/sample_container", ::sampleScene)
+    }
+
+    private fun sampleScene(scene: SceneBuilder, util: SceneBuildingUtil) {
+        val world = scene.world()
+        val bag = ItemStack(ModItems.SAMPLE_CONTAINER.get())
+        val bagPos = Vec3(2.5, 2.0, 2.5)
+        val machinePos = BlockPos(3, 1, 5)
+        val terminalPos = BlockPos(6, 1, 4)
+        scene.title("sample_container", Component.translatable("item.sbw_helldiver.sample_container").string)
+        scene.configureBasePlate(0, 0, 9)
+        scene.scaleSceneView(.8f)
+        scene.showBasePlate()
+        val displayed = world.createItemEntity(bagPos, Vec3.ZERO, bag)
+        world.modifyEntity(displayed) { it.isNoGravity = true; place(it, bagPos) }
+        scene.idle(15)
+
+        caption(scene, bagPos, 100)
+        scene.overlay().showControls(bagPos, Pointing.DOWN, 80).rightClick().withItem(bag)
+        card(scene, 100) { g, x, y, age ->
+            text(g, "sample_storage", x + 6, y + 3)
+            for (i in 0..2) {
+                val top = y + 13 + i * 14
+                g.pose().pushPose(); g.pose().translate((x + 6).toFloat(), top.toFloat(), 0f)
+                g.pose().scale(.75f, .75f, 1f)
+                stack(g, ItemStack(when (i) { 0 -> ModItems.COMMON_SAMPLE.get(); 1 -> ModItems.RARE_SAMPLE.get(); else -> ModItems.SUPER_SAMPLE.get() }), 0, 0)
+                g.pose().popPose()
+                val amount = if (i == 0) { if (age < 35) 0 else if (age < 70) 64 else 63 } else 0
+                label(g, Component.literal(amount.toString()), x + 22, top + 2)
+                for ((j, key) in listOf("sample_deposit", "sample_take_one", "sample_take_stack").withIndex()) {
+                    val left = x + 54 + j * 39
+                    val active = i == 0 && ((j == 0 && age in 25f..40f) || (j == 1 && age in 60f..75f))
+                    g.fill(left, top, left + 37, top + 12, if (active) 0xff927b29.toInt() else 0xff28414c.toInt())
+                    text(g, key, left + 2, top + 2)
+                }
+            }
+        }
+        scene.idle(100)
+
+        caption(scene, bagPos, 95)
+        scene.overlay().showControls(bagPos, Pointing.DOWN, 65).rightClick().whileSneaking().withItem(bag)
+        card(scene, 95) { g, x, y, age ->
+            text(g, "sample_auto", x + 8, y + 8)
+            stack(g, ItemStack(ModItems.COMMON_SAMPLE.get(), 5), x + 10, y + 28)
+            label(g, Component.literal("→"), x + 42, y + 32)
+            stack(g, bag, x + 62, y + 26)
+            label(g, Component.literal(if (age < 45) "63" else "68"), x + 88, y + 32)
+        }
+        moveItem(scene, ItemStack(ModItems.COMMON_SAMPLE.get(), 5), BlockPos(1, 1, 2), BlockPos(2, 1, 2))
+        scene.idle(74)
+
+        val machine = util.select().position(machinePos)
+        world.showSection(machine, Direction.DOWN)
+        caption(scene, Vec3.atCenterOf(machinePos), 100)
+        scene.overlay().showControls(Vec3.atCenterOf(machinePos).add(0.0, .5, -1.0), Pointing.DOWN, 80)
+            .rightClick().whileSneaking().withItem(bag)
+        scene.overlay().showOutline(PonderPalette.GREEN, "sample_binding", machine, 100)
+        card(scene, 100) { g, x, y, age ->
+            icon(g, MachineDeployment.BIOPROCESSOR, x + 8, y + 8)
+            icon(g, MachineDeployment.REFINERY, x + 36, y + 8)
+            label(g, Component.literal("→"), x + 70, y + 15)
+            stack(g, bag, x + 92, y + 10)
+            text(g, "sample_bound", x + 8, y + 39)
+        }
+        scene.idle(100)
+
+        caption(scene, bagPos, 110)
+        for (tick in 0..70) {
+            world.modifyBlockEntityNBT(machine, SampleMachineBlockEntity::class.java) {
+                it.putBoolean("Working", tick < 70); it.putLong("WorkTicks", tick.toLong())
+            }
+            scene.idle(1)
+        }
+        moveItem(scene, ItemStack(ModItems.COMMON_SAMPLE.get(), 5), machinePos, BlockPos(2, 1, 2))
+        scene.idle(19)
+        world.hideSection(machine, Direction.DOWN)
+
+        for (part in 0..3) world.showSection(util.select().position(TacticalTerminalBlock.position(terminalPos, facing, part)), Direction.DOWN)
+        caption(scene, Vec3.atCenterOf(terminalPos), 125)
+        scene.overlay().showControls(Vec3.atCenterOf(terminalPos).add(.5, .5, -.5), Pointing.DOWN, 70).rightClick()
+        card(scene, 125) { g, x, y, age ->
+            val elapsed = (age - 30).toDouble()
+            val progress = TacticalTerminalHold.maskProgress(elapsed)
+            val done = elapsed >= TacticalTerminalHold.DURATION_TICKS
+            g.fill(x + 5, y + 5, x + 169, y + 28, 0xff284654.toInt())
+            g.fill(x + 5, y + 5, x + 5 + (164 * progress).toInt(), y + 28, 0xfff2f0dd.toInt())
+            text(g, if (done) "purchase_complete" else "destroyer_refill", x + 10, y + 12,
+                color = if (progress > .85) 0xff17262c.toInt() else 0xfff2f0dd.toInt())
+            stack(g, bag, x + 8, y + 34)
+            text(g, "sample_terminal", x + 32, y + 39)
+        }
+        scene.idle(125)
+        scene.markAsFinished()
     }
 
     private fun machineScene(scene: SceneBuilder, util: SceneBuildingUtil, machine: MachineDeployment) {

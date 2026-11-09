@@ -72,6 +72,10 @@ object Stratagems {
     val equipmentDeployment = StratagemDefinition("machine_deployment_beacon", com.example.sbwhelldiver.survival.MachineDeployment.callCode, StratagemCategory.BLUE)
     val destroyerDirection = StratagemDefinition("destroyer_direction",listOf(UP,LEFT,RIGHT,DOWN))
     val destroyerManage = StratagemDefinition("destroyer_manage",listOf(LEFT,RIGHT))
+    val destroyerDurations=listOf(
+        StratagemDefinition("destroyer_duration_5",listOf(UP)),
+        StratagemDefinition("destroyer_duration_20",listOf(LEFT)),
+        StratagemDefinition("destroyer_duration_40",listOf(RIGHT)))
     fun isOrbital(id:String)=id.startsWith("orbital_")
     val eagleRearm = StratagemDefinition("eagle_rearm", listOf(UP, UP, LEFT, UP, RIGHT))
     fun commands(loadout: List<StratagemDefinition?>, hasEagles: Boolean = loadout.any { it?.id?.startsWith("eagle_") == true }): List<StratagemDefinition?> =

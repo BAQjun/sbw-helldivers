@@ -41,8 +41,19 @@ class DestroyerState {
  var appearedAt=0L;private set
  var residentSince=0L;private set
  var callsRemaining=0;private set
- fun canCall()=callsRemaining>0
- fun addCall():Boolean { if(callsRemaining>=5)return false;callsRemaining++;return true }
+ var calls20=0;private set
+ var calls40=0;private set
+ var residenceTicks=6000L;private set
+ fun calls(minutes:Int)=when(minutes){5->callsRemaining;20->calls20;40->calls40;else->0}
+ fun canCall()=callsRemaining>0||calls20>0||calls40>0
+ fun addCall(minutes:Int=5):Boolean {
+  if(calls(minutes)>=callLimit(minutes)||callLimit(minutes)==0)return false
+  when(minutes){5->callsRemaining++;20->calls20++;40->calls40++};return true
+ }
+ fun selectDuration(minutes:Int):Boolean {
+  if(anchor!=null||transitionEnd!=0L||calls(minutes)<=0)return false
+  residenceTicks=minutes*1200L;return true
+ }
  private var resupplyPending=false
  fun transitioning(now:Long)=transitionEnd>now
  fun schedule(destination:DestroyerAnchor?,now:Long):Boolean {
@@ -63,11 +74,18 @@ class DestroyerState {
   if(returning){resupplyPending=false;onResupply()}
   return true
  }
- fun spendCall():Boolean { if(!canCall())return false;callsRemaining--;return true }
- fun expired(now:Long)=anchor!=null && transitionEnd==0L && now-residentSince>=6000L
+ fun spendCall(minutes:Int=5):Boolean {
+  if(calls(minutes)<=0)return false
+  when(minutes){5->callsRemaining--;20->calls20--;40->calls40--;else->return false};return true
+ }
+ fun expired(now:Long)=anchor!=null && transitionEnd==0L && now-residentSince>=residenceTicks
  fun available(dimension:String,point:Vec3,radius:Double,now:Long)=Stratagems.dimensionAllowed(dimension)&&!transitioning(now)&&anchor?.covers(dimension,point,radius)==true
- fun save()=CompoundTag().also{t->anchor?.let{t.put("Anchor",it.save())};destination?.let{t.put("Destination",it.save())};t.putLong("TransitionEnd",transitionEnd);t.putLong("AppearedAt",appearedAt);t.putLong("ResidentSince",residentSince);t.putInt("CallsRemaining",callsRemaining);t.putBoolean("ResupplyPending",resupplyPending)}
- companion object{fun load(t:CompoundTag)=DestroyerState().apply{
+ fun save()=CompoundTag().also{t->anchor?.let{t.put("Anchor",it.save())};destination?.let{t.put("Destination",it.save())};t.putLong("TransitionEnd",transitionEnd);t.putLong("AppearedAt",appearedAt);t.putLong("ResidentSince",residentSince);t.putInt("CallsRemaining",callsRemaining);t.putInt("Calls20",calls20);t.putInt("Calls40",calls40);t.putLong("ResidenceTicks",residenceTicks);t.putBoolean("ResupplyPending",resupplyPending)}
+ companion object{
+  fun callLimit(minutes:Int)=when(minutes){5->5;20->3;40->1;else->0}
+  fun load(t:CompoundTag)=DestroyerState().apply{
+  calls20=t.getInt("Calls20").coerceIn(0,3);calls40=t.getInt("Calls40").coerceIn(0,1)
+  residenceTicks=t.getLong("ResidenceTicks").takeIf{it in listOf(6000L,24000L,48000L)}?:6000L
   anchor=if(t.contains("Anchor"))DestroyerAnchor.load(t.getCompound("Anchor")) else null
   destination=if(t.contains("Destination"))DestroyerAnchor.load(t.getCompound("Destination")) else null
   transitionEnd=t.getLong("TransitionEnd");appearedAt=t.getLong("AppearedAt");residentSince=if(t.contains("ResidentSince"))t.getLong("ResidentSince") else appearedAt;callsRemaining=if(t.contains("CallsRemaining"))t.getInt("CallsRemaining").coerceIn(0,5) else 0;resupplyPending=t.getBoolean("ResupplyPending")
@@ -89,19 +107,20 @@ object SuperDestroyers {
   if(!s.available(dimension,target,OrbitalConfig.range.get(),StratagemCooldowns.now(server)))return null
   return s.anchor!!.position.add(0.0,-15.0,0.0)
  }
- fun move(p:ServerPlayer,direction:Int):Boolean {
+ fun move(p:ServerPlayer,direction:Int,minutes:Int=5):Boolean {
   val dimension=p.level().dimension().location().toString()
   if(!Stratagems.dimensionAllowed(dimension)||direction !in 0..3)return false
   val ship=state(p);val previous=ship.anchor
   if(previous!=null && previous.dimension!=dimension)return false
-  if(previous==null && !ship.canCall())return false
+  if(previous==null && ship.calls(minutes)<=0)return false
   val destination=DestroyerAnchor.at(dimension,previous?.center?:p.position(),direction,OrbitalConfig.offset.get(),OrbitalConfig.altitude.get())
+  if(previous==null && !ship.selectDuration(minutes))return false
   if(!ship.schedule(destination,StratagemCooldowns.now(p.server)))return false
-  if(previous==null)ship.spendCall()
+  if(previous==null)check(ship.spendCall(minutes))
   fleet(p.server).setDirty();syncAll(p.server);return true
  }
- fun refillCall(p:ServerPlayer):Boolean {
-  if(!state(p).addCall())return false
+ fun refillCall(p:ServerPlayer,minutes:Int=5):Boolean {
+  if(!state(p).addCall(minutes))return false
   fleet(p.server).setDirty();sync(p);return true
  }
  fun depart(p:ServerPlayer):Boolean {

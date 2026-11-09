@@ -205,7 +205,7 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
         val m=selectedMachine?:return
         val l=level() as ServerLevel
         val box=com.example.sbwhelldiver.init.ModEntities.MACHINE_CONTAINER.get().create(l)?:return
-        box.configure(m,deploymentRoot(),reservedFacing,CompoundTag(),true,deploymentEnd)
+        box.configure(m,deploymentRoot(),reservedFacing,CompoundTag().also{n->owner?.let{n.putUUID("MachineOwner",it)}},true,deploymentEnd)
         if(l.addFreshEntity(box))containerSent=true
     }
     private fun sendState(p:ServerPlayer,open:Boolean) {

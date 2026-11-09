@@ -89,7 +89,6 @@ object TacticalTerminalDisplay {
         if(center(e).distanceToSqr(mc.gameRenderer.mainCamera.position)<=32.0*32.0){
             c.fill(0,0,WIDTH,4,0xFFE2C122.toInt())
             c.text(Component.translatable("block.sbw_helldiver.tactical_terminal"),12,10,0xFFF3ECCE.toInt())
-            c.text(Component.translatable("gui.sbw_helldiver.destroyer_uses",DestroyerClient.callsRemaining),180,10,0xFFFFDD55.toInt())
             c.fill(OFF_X, OFF_Y, OFF_WIDTH, OFF_HEIGHT, background(view, OFF_X, OFF_Y, OFF_WIDTH, OFF_HEIGHT))
             val powerColor = 0xFFFFDD55.toInt()
             c.fill(OFF_X + 10, OFF_Y + 2, 2, 6, powerColor)
@@ -98,12 +97,18 @@ object TacticalTerminalDisplay {
             c.fill(OFF_X + 9, OFF_Y + 10, 4, 2, powerColor)
             val category=view?.category
             if(category==null){
-                row(c,10,28,320,26,"destroyer_call",Component.translatable("gui.sbw_helldiver.replenish"),TacticalTerminalOffers.destroyerCall,null,view,partial)
-                TerminalCategory.entries.forEachIndexed{i,categoryEntry->
-                    val y=57+i*25;c.fill(10,y,320,22,background(view,10,y,320,22))
-                    c.text(Component.translatable("gui.sbw_helldiver.category.${categoryEntry.name.lowercase()}"),20,y+7)
-                    c.text(Component.literal(">"),314,y+7,0xFFE5C62D.toInt())
+                for(i in 0..3){
+                    val index=(view?.scroll?:0)+i;val y=28+i*29
+                    if(index<3){
+                        val refill=TacticalTerminalOffers.refills[index]
+                        row(c,10,y,320,26,refill.id,Component.translatable("gui.sbw_helldiver.destroyer_refill",refill.minutes,DestroyerClient.calls(refill.minutes),refill.limit),refill.cost,null,view,partial)
+                    }else TerminalCategory.entries.getOrNull(index-3)?.let{categoryEntry->
+                        c.fill(10,y,320,26,background(view,10,y,320,26))
+                        c.text(Component.translatable("gui.sbw_helldiver.category.${categoryEntry.name.lowercase()}"),20,y+9)
+                        c.text(Component.literal(">"),314,y+9,0xFFE5C62D.toInt())
+                    }
                 }
+                c.fill(333,28,2,116,0xFF34444A.toInt());c.fill(333,28+49*(view?.scroll?:0)/3,2,66,0xFFE5C62D.toInt())
             }else{
                 c.text(Component.translatable("gui.sbw_helldiver.back"),12,27,0xFFE5C62D.toInt())
                 c.text(Component.translatable("gui.sbw_helldiver.category.${category.name.lowercase()}"),65,27)

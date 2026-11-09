@@ -46,6 +46,7 @@ object ClientSetup {
 
     @SubscribeEvent
     fun menus(event:net.neoforged.neoforge.client.event.RegisterMenuScreensEvent) {
+        event.register(com.example.sbwhelldiver.init.ModMenus.SAMPLE_CONTAINER.get(), ::SampleContainerScreen)
         event.register(com.example.sbwhelldiver.init.ModMenus.BEACON_LOADOUT.get(), ::BeaconLoadoutScreen)
     }
 

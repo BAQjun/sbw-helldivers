@@ -44,13 +44,15 @@ neoForge {
             if (providers.gradleProperty("mineTests").isPresent) systemProperty("sbw_helldiver.mineRegression", "true")
             if (providers.gradleProperty("equipmentTests").isPresent) systemProperty("sbw_helldiver.equipmentRegression", "true")
             if (providers.gradleProperty("equipmentCollisionOnly").isPresent) systemProperty("sbw_helldiver.equipmentCollisionOnly", "true")
+            if (providers.gradleProperty("sampleTests").isPresent) systemProperty("sbw_helldiver.sampleRegression", "true")
+            if (providers.gradleProperty("samplePonderTests").isPresent) systemProperty("sbw_helldiver.samplePonderTests", "true")
             if (providers.gradleProperty("tacticalTests").isPresent) systemProperty("sbw_helldiver.tacticalRegression", "true")
             if (providers.gradleProperty("machineTests").isPresent) systemProperty("sbw_helldiver.machineRegression", "true")
             if (providers.gradleProperty("hudTests").isPresent) {
                 systemProperty("sbw_helldiver.hudRegression", "true")
             } }
         create("server") { server(); programArgument("--nogui"); gameDirectory = file(".codex/neoforge1211/runtime-server") }
-        create("gameTestServer") { type = "gameTestServer"; gameDirectory = file(".codex/neoforge1211/runtime-gametest"); systemProperty("neoforge.enabledGameTestNamespaces", if (providers.gradleProperty("taczCompatTests").isPresent) "sbw_helldiver_tacz" else if (providers.gradleProperty("destroyerPersistenceTests").isPresent) "sbw_helldiver_destroyer" else "sbw_helldiver") }
+        create("gameTestServer") { type = "gameTestServer"; gameDirectory = file(".codex/neoforge1211/runtime-gametest"); systemProperty("neoforge.enabledGameTestNamespaces", if (providers.gradleProperty("taczCompatTests").isPresent) "sbw_helldiver_tacz" else if (providers.gradleProperty("sampleTests").isPresent) "sbw_helldiver_samples" else if (providers.gradleProperty("destroyerPersistenceTests").isPresent) "sbw_helldiver_destroyer" else "sbw_helldiver") }
     }
     mods { create("sbw_helldiver") { sourceSet(sourceSets.main.get()); if (providers.gradleProperty("portTests").isPresent) sourceSet(portTest); if (providers.gradleProperty("taczCompatTests").isPresent) sourceSet(taczCompatTest) } }
 }

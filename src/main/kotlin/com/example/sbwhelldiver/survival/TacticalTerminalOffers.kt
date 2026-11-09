@@ -4,9 +4,12 @@ package com.example.sbwhelldiver.survival
 data class SampleCost(val common:Int, val rare:Int=0, val superSample:Int=0)
 enum class TerminalCategory { ORBITAL, EAGLE, SENTRY, DEFENSE }
 data class TerminalOffer(val id:String, val category:TerminalCategory, val cost:SampleCost)
+data class DestroyerRefill(val id:String,val minutes:Int,val cost:SampleCost,val limit:Int)
 
 object TacticalTerminalOffers {
     val destroyerCall = SampleCost(50, 15)
+    val refills=listOf(DestroyerRefill("destroyer_call",5,destroyerCall,5),DestroyerRefill("destroyer_call_20",20,SampleCost(200,60,1),3),DestroyerRefill("destroyer_call_40",40,SampleCost(400,120,5),1))
+    val refillsById=refills.associateBy{it.id}
     private fun offer(category:TerminalCategory, id:String, common:Int, rare:Int=0, superSample:Int=0) =
         TerminalOffer(id, category, SampleCost(common, rare, superSample))
     val all = listOf(
