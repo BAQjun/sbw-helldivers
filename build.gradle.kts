@@ -38,6 +38,11 @@ val survivalTest = sourceSets.create("survivalTest") {
     runtimeClasspath += output + sourceSets.main.get().output + sourceSets.main.get().runtimeClasspath
 }
 
+val sampleTest = sourceSets.create("sampleTest") {
+    compileClasspath += sourceSets.main.get().output + sourceSets.main.get().compileClasspath
+    runtimeClasspath += output + sourceSets.main.get().output + sourceSets.main.get().runtimeClasspath
+}
+
 minecraft {
     // 使用官方映射（Mojang），避免依赖连不上的 parchmentmc 仓库
     mappings("official", "1.20.1")
@@ -94,10 +99,14 @@ minecraft {
                 workingDirectory(project.file(".codex/survival-alpha14/server"))
                 property("forge.enabledGameTestNamespaces", if(project.hasProperty("destroyerPersistenceTests")) "sbw_helldiver_destroyer" else "sbw_helldiver")
             }
+            if(project.hasProperty("sampleTests")) {
+                workingDirectory(project.file(".codex/samples/server"))
+                property("forge.enabledGameTestNamespaces",if(project.hasProperty("destroyerPersistenceTests")) "sbw_helldiver_destroyer" else "sbw_helldiver_samples")
+            }
             property("mixin.env.remapRefMap", "true")
             property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
             mods {
-                create(project.property("mod_id").toString()) { source(sourceSets.main.get()); if(project.hasProperty("survivalTests"))source(survivalTest); if(project.hasProperty("taczCompatTests"))source(taczTest) }
+                create(project.property("mod_id").toString()) { source(sourceSets.main.get()); if(project.hasProperty("sampleTests"))source(sampleTest); if(project.hasProperty("survivalTests"))source(survivalTest); if(project.hasProperty("taczCompatTests"))source(taczTest) }
             }
         }
         create("client") {
@@ -218,10 +227,17 @@ minecraft {
             property("mixin.env.remapRefMap", "true")
             property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
 
+            if(project.hasProperty("sampleTests")){
+                workingDirectory(project.file(".codex/samples/client"))
+                property("sbw_helldiver.sampleRegression","true")
+                if(project.hasProperty("samplePonderTests"))property("sbw_helldiver.samplePonderTests","true")
+                jvmArgs("-Xms512m","-Xmx3G","-XX:ActiveProcessorCount=4")
+                args("--width","1280","--height","720")
+            }
             if(project.hasProperty("survivalClientTests"))workingDirectory(project.file(".codex/survival-alpha14/client"))
             mods {
                 create(project.property("mod_id").toString()) {
-                    source(sourceSets.main.get());if(project.hasProperty("survivalClientTests"))source(survivalTest)
+                    source(sourceSets.main.get());if(project.hasProperty("sampleTests"))source(sampleTest);if(project.hasProperty("survivalClientTests"))source(survivalTest)
                     if(project.hasProperty("taczCompatTests"))source(taczTest)
                     if(project.hasProperty("combatFixClientTests"))source(combatTest)
                 }
@@ -255,7 +271,7 @@ minecraft {
 }
 
 repositories {
-    maven("https://maven.createmod.net") { content { includeGroup("net.createmod.ponder") } }
+    maven("https://maven.createmod.net") { content { includeGroup("net.createmod.ponder"); includeGroup("dev.engine-room.flywheel") } }
     // 国内镜像：替代被墙的 libraries.minecraft.net
     maven {
         name = "BMCLAPI"
@@ -299,6 +315,12 @@ tasks.named<Jar>("jarJar") { archiveClassifier.set("") }
 dependencies {
     compileOnly(fg.deobf("net.createmod.ponder:Ponder-Forge-1.20.1:1.0.91",
         closureOf<ExternalModuleDependency> { isTransitive = false }))
+    if(project.hasProperty("samplePonderTests")) {
+        runtimeOnly(fg.deobf("net.createmod.ponder:Ponder-Forge-1.20.1:1.0.91",
+            closureOf<ExternalModuleDependency> { isTransitive = false }))
+        runtimeOnly(fg.deobf("dev.engine-room.flywheel:flywheel-forge-1.20.1:1.0.6",
+            closureOf<ExternalModuleDependency> { isTransitive = false }))
+    }
     compileOnly(fg.deobf("maven.modrinth:jei:6E4ps2ER"))
     if(project.hasProperty("survivalClientTests"))runtimeOnly(fg.deobf("maven.modrinth:jei:6E4ps2ER"))
     compileOnly("io.github.llamalad7:mixinextras-common:0.3.6")
@@ -420,4 +442,13 @@ if (providers.gradleProperty("equipmentTests").isPresent || providers.gradleProp
     val reset = tasks.register<Delete>("resetEquipmentClientWorld") { delete(save) }
     val cleanup = tasks.register<Delete>("cleanEquipmentClientWorld") { delete(save) }
     tasks.matching { it.name == "runClient" }.configureEach { dependsOn(reset); finalizedBy(cleanup) }
+}
+
+// Clean only the isolated sample fixtures, preserving user saves and QA captures.
+if(providers.gradleProperty("sampleTests").isPresent){
+    for((taskName,savePath) in listOf("runClient" to ".codex/samples/client/saves/port-client-test","runGameTestServer" to ".codex/samples/server/world")){
+        val reset=tasks.register<Delete>("resetSample${taskName}World"){delete(layout.projectDirectory.dir(savePath))}
+        val cleanup=tasks.register<Delete>("cleanSample${taskName}World"){delete(layout.projectDirectory.dir(savePath))}
+        tasks.matching{it.name==taskName}.configureEach{dependsOn(reset);finalizedBy(cleanup)}
+    }
 }

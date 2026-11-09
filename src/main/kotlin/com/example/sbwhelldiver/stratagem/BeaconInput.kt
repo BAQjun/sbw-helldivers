@@ -11,7 +11,7 @@ import java.util.UUID
 
 /** The server chooses the stratagem from the actual item, never from a client entity ID. */
 object BeaconInput {
-    private data class Session(val beacon: UUID, val prefix: MutableList<Int>, var lastTick: Long, var countAtTick: Int = 0, var stage:Int=0)
+    private data class Session(val beacon: UUID, val prefix: MutableList<Int>, var lastTick: Long, var countAtTick: Int = 0, var stage:Int=0,var minutes:Int=5)
     private val sessions = mutableMapOf<UUID, Session>()
     private data class HeldState(val slot: Int, val main: ItemStack, val off: ItemStack)
     private val heldStates = mutableMapOf<UUID, HeldState>()
@@ -65,9 +65,13 @@ object BeaconInput {
         if (++session.countAtTick > 8) return false
         session.lastTick = tick
         if(session.stage!=0){
-            val chooseBearing=session.stage==2&&direction==Stratagems.RIGHT
+            val chooseBearing=session.stage==3 || session.stage==2&&direction==Stratagems.RIGHT
             val accepted=when(session.stage){
-                1->SuperDestroyers.move(player,direction)
+                1->SuperDestroyers.move(player,direction,session.minutes)
+                3->{
+                    val minutes=when(direction){Stratagems.UP->5;Stratagems.LEFT->20;Stratagems.RIGHT->40;else->0}
+                    if(SuperDestroyers.state(player).calls(minutes)>0){session.minutes=minutes;session.stage=1;menu(player,1);true}else false
+                }
                 2->when(direction){Stratagems.LEFT->SuperDestroyers.depart(player);Stratagems.RIGHT->{session.stage=1;menu(player,1);true};else->false}
                 else->false
             }
@@ -92,7 +96,7 @@ object BeaconInput {
         player.playNotifySound(ModSounds.EVENTS.getValue("beacon_arrow_input_$step").get(), SoundSource.PLAYERS, 1f, 1f)
         val complete = candidates.firstOrNull { it.code.size == session.prefix.size } ?: return false
         if(complete==Stratagems.destroyerCall){
-            session.prefix.clear();session.countAtTick=0;session.stage=if(SuperDestroyers.state(player).anchor==null)1 else 2
+            session.prefix.clear();session.countAtTick=0;session.stage=if(SuperDestroyers.state(player).anchor==null)3 else 2
             menu(player,session.stage)
             player.playNotifySound(ModSounds.EVENTS.getValue("beacon_ready").get(),SoundSource.PLAYERS,1f,1f)
             return true

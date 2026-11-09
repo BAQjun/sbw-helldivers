@@ -402,7 +402,7 @@ object StratagemClient {
         val maxLabelWidth = ((panelWidth - 40) / 1.5f).toInt()
         val fittedLabel = if (mc.font.width(label) <= maxLabelWidth) label
             else mc.font.plainSubstrByWidth(label, maxLabelWidth - mc.font.width("…")) + "…"
-        if(def==Stratagems.destroyerCall){
+        if(def==Stratagems.destroyerCall||def in Stratagems.destroyerDurations){
             gui.pose().pushPose();gui.pose().translate(textX.toDouble(),y.toDouble(),0.0)
             val labelScale=minOf(1.5f,120f/mc.font.width(label).coerceAtLeast(1));gui.pose().scale(labelScale,labelScale,1f)
             gui.drawString(mc.font,label,0,0,if(enabled)0xF4F4EF else 0x95A79B,true);gui.pose().popPose()

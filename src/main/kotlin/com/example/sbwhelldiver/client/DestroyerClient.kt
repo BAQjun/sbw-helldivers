@@ -34,8 +34,10 @@ object DestroyerClient:ResourceManagerReloadListener {
  var equipped=false;private set
  val transitionEnd get()=own.transitionEnd
  val callsRemaining get()=own.callsRemaining
+ fun calls(minutes:Int)=own.calls(minutes)
+ fun canCall()=own.canCall()
  val hasShip get()=own.anchor!=null
- fun remainingResidence(partial:Float=0f):Int? = if(own.anchor==null) null else kotlin.math.ceil((own.residentSince+6000-now(partial)).coerceAtLeast(0.0)/20.0).toInt()
+ fun remainingResidence(partial:Float=0f):Int? = if(own.anchor==null) null else kotlin.math.ceil((own.residentSince+own.residenceTicks-now(partial)).coerceAtLeast(0.0)/20.0).toInt()
  fun now(partial:Float=0f)=serverTime+((Minecraft.getInstance().level?.gameTime?:localTime)-localTime)+partial.toDouble()
  fun receive(p:DestroyerSnapshotPacket){
   serverTime=p.serverTime;localTime=Minecraft.getInstance().level?.gameTime?:0

@@ -1,5 +1,21 @@
 # 版本记录
 
+## 0.6.7
+
+### 中文
+
+- 新增样本容器，可存取三种样本、自动收集背包内的样本，并绑定自己的生产机器远程接收产物。战术终端可直接消耗容器内的样本。
+- 为样本容器新增按住 W 查看思索的教程，演示存取、自动收集、机器绑定与终端兑换。
+- 新增 20 分钟和 40 分钟的超级驱逐舰补充选项，分别最多储存 3 次和 1 次；原补充选项保留为 5 分钟、最多 5 次。
+- 呼叫超级驱逐舰时先选择驻场时长，再选择方位；时长选项显示各自剩余次数，移除图标下方的次数显示。
+
+### English
+
+- Added the Sample Container: store and withdraw all three sample types, automatically collect samples from your inventory, and bind your own production machines for remote collection. Tactical Terminals can spend samples directly from the container.
+- Added a hold-W Ponder tutorial covering storage, automatic collection, machine binding, and terminal purchases.
+- Added 20-minute and 40-minute Super Destroyer refill options, with capacities of 3 and 1 calls respectively. The original option remains available as 5-minute calls, up to 5.
+- Calling a Super Destroyer now prompts for deployment duration before direction. Duration options show their remaining calls, replacing the counter beneath the icon.
+
 ## 0.6.5
 
 ### 中文

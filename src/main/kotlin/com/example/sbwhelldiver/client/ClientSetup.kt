@@ -41,6 +41,7 @@ object ClientSetup {
             net.minecraft.client.renderer.ItemBlockRenderTypes.setRenderLayer(com.example.sbwhelldiver.init.ModBlocks.SENTRY_FIRE.get(),net.minecraft.client.renderer.RenderType.cutout())
             net.minecraft.client.Minecraft.getInstance().mainRenderTarget.enableStencil()
             net.minecraft.client.gui.screens.MenuScreens.register(com.example.sbwhelldiver.init.ModMenus.BEACON_LOADOUT.get(), ::BeaconLoadoutScreen)
+            net.minecraft.client.gui.screens.MenuScreens.register(com.example.sbwhelldiver.init.ModMenus.SAMPLE_CONTAINER.get(), ::SampleContainerScreen)
         }
     }
 

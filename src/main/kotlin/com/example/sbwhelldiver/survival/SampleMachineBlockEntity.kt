@@ -17,6 +17,8 @@ class SampleMachineBlockEntity(pos:BlockPos,state:BlockState):BlockEntity(Machin
     var tearingDown=false
     var readyAt=0L
     var layoutVersion=MachineLayout.VERSION
+    var owner:java.util.UUID?=null
+    var boundContainer:java.util.UUID?=null
     var energy=0;private set
     var progress=0;private set
     var duration=100;private set
@@ -76,11 +78,13 @@ class SampleMachineBlockEntity(pos:BlockPos,state:BlockState):BlockEntity(Machin
         return true
     }
     private fun outputFits(stack:ItemStack):Boolean {
+        if(SampleStorage.receiver(this)!=null)return true
         var left=stack.count
         for(i in 9..17){val s=inventory.getStackInSlot(i);if(s.isEmpty)left-=stack.maxStackSize else if(ItemStack.isSameItemSameTags(s,stack))left-=s.maxStackSize-s.count}
         return left<=0
     }
     private fun insertOutput(stack:ItemStack) {
+        if(SampleStorage.send(this,stack))return
         var left=stack
         for(i in 9..17){left=inventory.insertItem(i,left,false);if(left.isEmpty)break}
         check(left.isEmpty)
@@ -149,6 +153,7 @@ class SampleMachineBlockEntity(pos:BlockPos,state:BlockState):BlockEntity(Machin
         val hasContainer=targets.isNotEmpty() || adjacent.any{l.getBlockEntity(it.first)!=null} || !l.getBlockState(outPos).getCollisionShape(l,outPos).isEmpty
         for(slot in 9..17) {
             val stack=inventory.getStackInSlot(slot);if(stack.isEmpty)continue
+            if(SampleStorage.send(this,stack)){inventory.setStackInSlot(slot,ItemStack.EMPTY);continue}
             if(targets.isNotEmpty()) {
                 val copy=stack.copyWithCount(minOf(32,stack.count));var rest=copy
                 for(target in targets){rest=ItemHandlerHelper.insertItemStacked(target,rest,false);if(rest.isEmpty)break}
@@ -159,15 +164,17 @@ class SampleMachineBlockEntity(pos:BlockPos,state:BlockState):BlockEntity(Machin
     }
     private fun drop(stack:ItemStack,pos:BlockPos){if(stack.isEmpty)return;val l=level?:return;l.addFreshEntity(ItemEntity(l,pos.x+.5,pos.y+.5,pos.z+.5,stack).also{it.setDeltaMovement(facing.stepX*.08,.03,facing.stepZ*.08)})}
     fun contents():CompoundTag=CompoundTag().also{n->
+        owner?.let{n.putUUID("MachineOwner",it)};boundContainer?.let{n.putUUID("BoundSampleContainer",it)}
         n.put("Inventory",inventory.serializeNBT());n.putInt("Energy",energy);n.putInt("Progress",progress);n.putInt("Duration",duration);n.putLong("WorkTicks",workTicks)
         if(!pending.isEmpty)n.put("Pending",pending.save(CompoundTag()))
     }
     fun restoreContents(n:CompoundTag) {
-        val l=level?:return;inventory.deserializeNBT(n.getCompound("Inventory"));energy=n.getInt("Energy").coerceIn(0,capacity)
+        val l=level?:return;readBinding(n);inventory.deserializeNBT(n.getCompound("Inventory"));energy=n.getInt("Energy").coerceIn(0,capacity)
         pending=ItemStack.of(n.getCompound("Pending"));duration=n.getInt("Duration").coerceAtLeast(1);progress=n.getInt("Progress").coerceIn(0,duration-1);workTicks=n.getLong("WorkTicks");setChanged()
     }
     override fun saveAdditional(n:CompoundTag){super.saveAdditional(n);n.putLong("Root",root.asLong());n.putInt("LayoutVersion",layoutVersion);n.putLong("ReadyAt",readyAt);if(root==blockPos)n.merge(contents());n.putBoolean("Working",working)}
-    override fun load(n:CompoundTag){super.load(n);root=if(n.contains("Root"))BlockPos.of(n.getLong("Root"))else blockPos;layoutVersion=n.getInt("LayoutVersion");readyAt=n.getLong("ReadyAt");inventory.deserializeNBT(n.getCompound("Inventory"));energy=n.getInt("Energy").coerceIn(0,capacity);pending=ItemStack.of(n.getCompound("Pending"));duration=n.getInt("Duration").coerceAtLeast(1);progress=n.getInt("Progress").coerceIn(0,duration-1);workTicks=n.getLong("WorkTicks");working=n.getBoolean("Working")}
+    override fun load(n:CompoundTag){super.load(n);readBinding(n);root=if(n.contains("Root"))BlockPos.of(n.getLong("Root"))else blockPos;layoutVersion=n.getInt("LayoutVersion");readyAt=n.getLong("ReadyAt");inventory.deserializeNBT(n.getCompound("Inventory"));energy=n.getInt("Energy").coerceIn(0,capacity);pending=ItemStack.of(n.getCompound("Pending"));duration=n.getInt("Duration").coerceAtLeast(1);progress=n.getInt("Progress").coerceIn(0,duration-1);workTicks=n.getLong("WorkTicks");working=n.getBoolean("Working")}
+    private fun readBinding(n:CompoundTag){owner=if(n.hasUUID("MachineOwner"))n.getUUID("MachineOwner")else null;boundContainer=if(n.hasUUID("BoundSampleContainer"))n.getUUID("BoundSampleContainer")else null}
     fun sync(){val l=level?:return;l.sendBlockUpdated(blockPos,blockState,blockState,3)}
     override fun getRenderBoundingBox()=bounds()
     override fun getUpdateTag()=saveWithoutMetadata()

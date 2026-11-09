@@ -57,6 +57,7 @@ class MachineContainerEntity(type:EntityType<out MachineContainerEntity>,level:L
         if(level() is ServerLevel) {
             if(player.isShiftKeyDown){spawnAtLocation(MachineContainerItem.stack(machine,payload));discard()}
             else {
+                if(!payload.hasUUID("MachineOwner"))payload.putUUID("MachineOwner",player.uuid)
                 val be=MachineStructure.place(level() as ServerLevel,root,machine,facing,payload,this)
                 if(be==null){player.displayClientMessage(net.minecraft.network.chat.Component.translatable("terminal.sbw_helldiver.no_space"),true);return InteractionResult.FAIL}
                 payload=CompoundTag();entityData.set(PHASE,OPENING);entityData.set(START,level().gameTime)

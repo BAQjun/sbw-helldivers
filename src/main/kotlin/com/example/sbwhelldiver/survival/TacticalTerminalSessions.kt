@@ -7,7 +7,6 @@ import com.example.sbwhelldiver.stratagem.SuperDestroyers
 import net.minecraft.core.BlockPos
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.server.level.ServerPlayer
-import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import java.util.UUID
 
@@ -36,7 +35,7 @@ object TacticalTerminalSessions {
         val now=l.gameTime
         if(action == -1){s.offer="";return}
         if(action==0){
-            if(id!="destroyer_call" && id !in TacticalTerminalOffers.byId)return
+            if(id !in TacticalTerminalOffers.refillsById && id !in TacticalTerminalOffers.byId)return
             s.offer=id;s.started=now;s.startedNanos=monotonicNanos;s.heartbeat=now;return
         }
         if(s.offer!=id||id.isEmpty())return
@@ -44,24 +43,20 @@ object TacticalTerminalSessions {
         if(action==1){s.heartbeat=now;return}
         if(action!=2||!TacticalTerminalHold.serverDurationReached(now-s.started,monotonicNanos-s.startedNanos))return
         s.offer=""
-        val cost=if(id=="destroyer_call")TacticalTerminalOffers.destroyerCall else TacticalTerminalOffers.byId[id]?.cost?:return
-        if(id=="destroyer_call"&&SuperDestroyers.state(player).callsRemaining>=5){feedback(player,"message.sbw_helldiver.terminal_full");return}
-        val offer=if(id=="destroyer_call")null else Stratagems.get(id)?:return
+        val refill=TacticalTerminalOffers.refillsById[id]
+        val cost=refill?.cost?:TacticalTerminalOffers.byId[id]?.cost?:return
+        if(refill!=null&&SuperDestroyers.state(player).calls(refill.minutes)>=refill.limit){feedback(player,"message.sbw_helldiver.terminal_full");return}
+        val offer=if(refill!=null)null else Stratagems.get(id)?:return
         val item=offer?.let{BuiltInRegistries.ITEM.getOptional(it.itemId).orElse(null)}
         if(offer!=null&&item==null)return
         val costs=listOf(ModItems.COMMON_SAMPLE.get() to cost.common,ModItems.RARE_SAMPLE.get() to cost.rare,ModItems.SUPER_SAMPLE.get() to cost.superSample)
-        if(costs.any{(type,count)->countOf(player,type)<count}){feedback(player,"message.sbw_helldiver.terminal_insufficient");return}
+        if(costs.withIndex().any{(index,pair)->SampleStorage.total(player,index)<java.math.BigInteger.valueOf(pair.second.toLong())}){feedback(player,"message.sbw_helldiver.terminal_insufficient");return}
         // No resource is removed until all failure conditions have been checked.
-        if(id=="destroyer_call"&&!SuperDestroyers.refillCall(player))return
-        for((type,count)in costs)consume(player,type,count)
+        if(refill!=null&&!SuperDestroyers.refillCall(player,refill.minutes))return
+        for((index,pair)in costs.withIndex())SampleStorage.consume(player,index,pair.second)
         if(item!=null){val stack=ItemStack(item);if(!player.inventory.add(stack)&&!stack.isEmpty)player.drop(stack,false)}
         player.inventory.setChanged();player.containerMenu.broadcastChanges()
         feedback(player,"message.sbw_helldiver.terminal_success")
-    }
-    private fun countOf(player:ServerPlayer,item:Item)=(0 until player.inventory.containerSize).sumOf{slot->player.inventory.getItem(slot).takeIf{it.`is`(item)}?.count?:0}
-    private fun consume(player:ServerPlayer,item:Item,amount:Int){
-        var left=amount
-        for(slot in 0 until player.inventory.containerSize){val stack=player.inventory.getItem(slot);if(stack.`is`(item)){val n=minOf(left,stack.count);stack.shrink(n);left-=n;if(left==0)return}}
     }
     private fun feedback(player:ServerPlayer,key:String){if(player is net.minecraftforge.common.util.FakePlayer)return;sessions[player.uuid]?.let{BeaconNetwork.CHANNEL.send(net.minecraftforge.network.PacketDistributor.PLAYER.with{player},TacticalTerminalResultPacket(it.token,key))}}
 }
