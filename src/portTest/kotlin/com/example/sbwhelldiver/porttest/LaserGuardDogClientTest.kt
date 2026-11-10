@@ -174,7 +174,7 @@ object LaserGuardDogClientTest {
                 check(GuardDogBackpack.isLaser(pack));check(!player.inventoryMenu.getSlot(6).mayPlace(ItemStack(ModItems.GUARD_DOG_BACKPACK.get())))
                 // An empty ammo record must have no influence on the laser variant.
                 GuardDogBackpack.updateAmmo(pack,0);repeat(8){check(GuardDogBackpack.loadSpare(pack))};GuardDogBackpack.updateAmmo(pack,0)
-                val enemy=EntityType.HUSK.create(level)!!;enemy.setNoAi(true);enemy.getAttribute(Attributes.MAX_HEALTH)!!.baseValue=100000.0;enemy.getAttribute(Attributes.ARMOR)!!.baseValue=0.0;enemy.getAttribute(Attributes.KNOCKBACK_RESISTANCE)!!.baseValue=1.0;enemy.health=100000f;enemy.moveTo(4.5,80.0,10.5,0f,0f);check(level.addFreshEntity(enemy));target=enemy
+                val enemy=EntityType.HUSK.create(level)!!;enemy.setNoAi(true);enemy.getAttribute(Attributes.MAX_HEALTH)!!.baseValue=1024.0;enemy.getAttribute(Attributes.ARMOR)!!.baseValue=0.0;enemy.getAttribute(Attributes.KNOCKBACK_RESISTANCE)!!.baseValue=1.0;enemy.health=enemy.maxHealth;enemy.moveTo(4.5,80.0,10.5,0f,0f);check(level.addFreshEntity(enemy));target=enemy
                 player.connection.teleport(player.x,player.y,player.z,0f,-10f)
                 phaseStart=player.position();pressG=true;stage=1
             }
@@ -183,6 +183,10 @@ object LaserGuardDogClientTest {
             3->{
                 check(drone?.flight==GuardDogEntity.Flight.PATROL){"Unexpected drone loss/recall: drone=$drone flight=${drone?.flight} player=${player.position()} pack=$pack active=${pack?.let(GuardDogBackpack::active)} target=${target?.position()}"}
                 check(GuardDogBackpack.ammo(pack!!)==0&&GuardDogBackpack.spareMags(pack)==0)
+                // Keep a real target in range past the sentry heat limit. Vanilla clamps max health.
+                val enemy = checkNotNull(target)
+                check(enemy.isAlive) { "Laser test target died before the heat-limit check" }
+                if (level.gameTime % 20 == 0L) enemy.health = enemy.maxHealth
                 if(drone!!.beamLength>0f){
                     beams++
                     val hit=LaserBeam.trace(drone,drone.laserOrigin(),Vec3.directionFromRotation(drone.xRot,drone.yRot))
