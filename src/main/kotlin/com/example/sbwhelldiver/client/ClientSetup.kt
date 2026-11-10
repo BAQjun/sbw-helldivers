@@ -92,7 +92,21 @@ object ClientSetup {
     }
 
     @SubscribeEvent
+    fun guardDogKeys(event: net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent) {
+        event.register(GuardDogVisual.key)
+    }
+
+    @SubscribeEvent
+    fun guardDogLayers(event: EntityRenderersEvent.AddLayers) {
+        for (skin in event.skins) {
+            val renderer = event.getSkin<net.minecraft.client.renderer.entity.player.PlayerRenderer>(skin) ?: continue
+            renderer.addLayer(GuardDogVisual.PackLayer(renderer))
+        }
+    }
+
+    @SubscribeEvent
     fun registerRenderers(event: EntityRenderersEvent.RegisterRenderers) {
+        event.registerEntityRenderer(ModEntities.GUARD_DOG.get(), GuardDogVisual::DroneRenderer)
         event.registerBlockEntityRenderer(com.example.sbwhelldiver.survival.MachineRegistry.MACHINE.get(),::SampleMachineRenderer)
         event.registerBlockEntityRenderer(com.example.sbwhelldiver.survival.MachineRegistry.TACTICAL_TERMINAL.get(),::TacticalTerminalRenderer)
         event.registerEntityRenderer(ModEntities.MACHINE_CONTAINER.get(),::MachineContainerRenderer)
@@ -142,6 +156,7 @@ object ClientSetup {
             ::HellpodRenderer,
         )
 
+        event.registerEntityRenderer<AutoAimableEntity>(ModEntities.ITEM_DELIVERY_HELLPOD.get(), ::HellpodRenderer)
         event.registerEntityRenderer<AutoAimableEntity>(ModEntities.ROCKET_SENTRY.get(), ::HellpodRenderer)
         event.registerEntityRenderer<AutoAimableEntity>(ModEntities.AUTOCANNON_SENTRY.get(), ::HellpodRenderer)
         event.registerEntityRenderer<AutoAimableEntity>(ModEntities.MORTAR_SENTRY.get(), ::HellpodRenderer)

@@ -7,6 +7,11 @@ import kotlin.math.roundToInt
 object StratagemCooldownConfig {
     val baseSeconds = linkedMapOf(
         "machine_deployment_beacon" to 0.0,
+        "guard_dog" to 480.0,
+        "laser_guard_dog" to 480.0,
+        "stun_guard_dog" to 480.0,
+        "flame_guard_dog" to 480.0,
+        "gas_guard_dog" to 480.0,
         "orbital_120mm_he_barrage" to 180.0, "orbital_380mm_he_barrage" to 240.0, "orbital_walking_barrage" to 240.0,
         "orbital_gas_strike" to 75.0,
         "orbital_ems_strike" to 75.0,

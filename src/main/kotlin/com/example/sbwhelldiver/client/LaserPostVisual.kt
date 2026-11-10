@@ -104,6 +104,20 @@ object LaserPostVisual:ResourceManagerReloadListener {
             quad(start.subtract(offset),start.add(offset),end.add(offset),end.subtract(offset),0f,2.7f,1.8f,.08f,1f)
             if(e.beamLength<199){val r=right.scale(.13);val u=up.scale(.13);quad(end.subtract(r).subtract(u),end.subtract(r).add(u),end.add(r).add(u),end.add(r).subtract(u),1f,2.7f,1.9f,.6f,.85f)}
         }
+        for (e in level.entitiesForRendering()) if (e is GuardDogEntity && e.isLaser && e.beamLength > 0f && e.flight == GuardDogEntity.Flight.PATROL) {
+            val start = e.laserOrigin(partial)
+            val axis = Vec3.directionFromRotation(net.minecraft.util.Mth.lerp(partial, e.xRotO, e.xRot), net.minecraft.util.Mth.rotLerp(partial, e.yRotO, e.yRot))
+            val end = start.add(axis.scale(e.beamLength.toDouble()))
+            if (!frustum.isVisible(AABB(start, end).inflate(.2))) continue
+            var side = axis.cross(camera.subtract(start)).normalize()
+            if (side.lengthSqr() < .01) side = right
+            val offset = side.scale(.055 * (1 + .03 * sin((e.tickCount + partial) * 1.7)))
+            quad(start.subtract(offset), start.add(offset), end.add(offset), end.subtract(offset), 0f, 2.7f, 1.8f, .08f, 1f)
+            val rr = right.scale(.09); val uu = up.scale(.09)
+            quad(end.subtract(rr).subtract(uu), end.subtract(rr).add(uu), end.add(rr).add(uu), end.add(rr).subtract(uu), 1f, 2.7f, 1.9f, .6f, .85f)
+        }
+        for (e in level.entitiesForRendering()) if (e is GuardDogEntity && e.isStun)
+            StunGuardDogVisual.collect(e, partial, camera, frustum, ::quad)
         for(s in sparks){
             val p=s.previous.lerp(s.p,partial.toDouble());if(p.distanceToSqr(camera)>96*96)continue
             val tail=p.subtract(s.v.scale(.7));var side=s.v.cross(camera.subtract(p)).normalize();if(side.lengthSqr()<.01)side=right

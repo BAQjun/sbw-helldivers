@@ -14,6 +14,8 @@ class SentryBulletEntity(type: EntityType<out ProjectileEntity>, level: Level) :
     ProjectileEntity(type, level), IEntityWithComplexSpawn {
     private var flightGravity = 0.05f
     private var receivedFullMotion = false
+    // Separate from damage attribution: the owner is still the player.
+    var emitterId = -1
     // Snapshot the decoded spawn packet so diagnostics do not confuse a later gravity tick with clipping.
     internal var initialSpawnMotion: Vec3? = null
         private set
@@ -42,6 +44,7 @@ class SentryBulletEntity(type: EntityType<out ProjectileEntity>, level: Level) :
         buffer.writeDouble(motion.z)
         buffer.writeFloat(flightGravity)
         buffer.writeInt(owner?.id ?: 0)
+        buffer.writeInt(emitterId)
     }
 
     override fun readSpawnData(buffer: RegistryFriendlyByteBuf) {
@@ -51,6 +54,7 @@ class SentryBulletEntity(type: EntityType<out ProjectileEntity>, level: Level) :
         receivedFullMotion = true
         setCustomGravity(buffer.readFloat())
         owner = level().getEntity(buffer.readInt())
+        emitterId = buffer.readInt()
         updateHeading()
     }
 

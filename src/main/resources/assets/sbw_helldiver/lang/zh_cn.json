@@ -345,5 +345,20 @@
   "tutorial.sbw_helldiver.sample_take_stack": "取 64",
   "tutorial.sbw_helldiver.sample_auto": "自动收集：已开启",
   "tutorial.sbw_helldiver.sample_bound": "绑定机器 → 随身容器",
-  "tutorial.sbw_helldiver.sample_terminal": "直接扣除容器内样本"
+  "tutorial.sbw_helldiver.sample_terminal": "直接扣除容器内样本",
+  "item.sbw_helldiver.guard_dog_stratagem": "“护卫犬”",
+  "item.sbw_helldiver.guard_dog_backpack": "“护卫犬”",
+  "gui.sbw_helldiver.category.backpack": "背包",
+  "key.sbw_helldiver.guard_dog": "放飞／召回护卫犬",
+  "message.sbw_helldiver.guard_dog_no_ammo": "护卫犬弹药已耗尽",
+  "message.sbw_helldiver.guard_dog_servicing": "护卫犬正在补给",
+  "entity.sbw_helldiver.item_delivery_hellpod": "物品投送空投仓",
+  "item.sbw_helldiver.laser_guard_dog_stratagem": "漫游车",
+  "item.sbw_helldiver.laser_guard_dog_backpack": "漫游车",
+  "item.sbw_helldiver.stun_guard_dog_stratagem": "K-9",
+  "item.sbw_helldiver.stun_guard_dog_backpack": "K-9",
+  "item.sbw_helldiver.flame_guard_dog_stratagem": "热狗",
+  "item.sbw_helldiver.flame_guard_dog_backpack": "热狗",
+  "item.sbw_helldiver.gas_guard_dog_stratagem": "腐息",
+  "item.sbw_helldiver.gas_guard_dog_backpack": "腐息"
 }

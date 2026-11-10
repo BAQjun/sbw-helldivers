@@ -5647,5 +5647,374 @@
         "attenuation_distance": 64
       }
     ]
+  },
+  "sfx_item_delivery_deploy_a": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:item_delivery/deploy_a_1",
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:item_delivery/deploy_a_2",
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:item_delivery/deploy_a_3",
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:item_delivery/deploy_a_4",
+        "stream": false,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_item_delivery_deploy_b": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:item_delivery/deploy_b_1",
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:item_delivery/deploy_b_2",
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:item_delivery/deploy_b_3",
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:item_delivery/deploy_b_4",
+        "stream": false,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_item_delivery_retract_a": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:item_delivery/retract_a_1",
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:item_delivery/retract_a_2",
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:item_delivery/retract_a_3",
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:item_delivery/retract_a_4",
+        "stream": false,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_item_delivery_retract_b": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:item_delivery/retract_b_1",
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:item_delivery/retract_b_2",
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:item_delivery/retract_b_3",
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:item_delivery/retract_b_4",
+        "stream": false,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_item_delivery_shutter_a": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:item_delivery/shutter_a_1",
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:item_delivery/shutter_a_2",
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:item_delivery/shutter_a_3",
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:item_delivery/shutter_a_4",
+        "stream": false,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "sfx_item_delivery_shutter_b": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:item_delivery/shutter_b_1",
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:item_delivery/shutter_b_2",
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:item_delivery/shutter_b_3",
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:item_delivery/shutter_b_4",
+        "stream": false,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "guard_dog_release": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:guard_dog/release",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:guard_dog/release_2",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:guard_dog/release_3",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "guard_dog_return": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:guard_dog/return",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:guard_dog/return_2",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:guard_dog/return_3",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "guard_dog_ignition": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:guard_dog/ignition",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:guard_dog/ignition_2",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:guard_dog/ignition_3",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:guard_dog/ignition_4",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "guard_dog_latch": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:guard_dog/latch",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:guard_dog/latch_2",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:guard_dog/latch_3",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:guard_dog/latch_4",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "guard_dog_rack": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:guard_dog/rack",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:guard_dog/rack_2",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:guard_dog/rack_3",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "guard_dog_dock": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:guard_dog/dock",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:guard_dog/dock_2",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:guard_dog/dock_3",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:guard_dog/dock_4",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:guard_dog/dock_5",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "guard_dog_shutdown": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:guard_dog/shutdown",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:guard_dog/shutdown_2",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:guard_dog/shutdown_3",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:guard_dog/shutdown_4",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "guard_dog_engine": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:guard_dog/engine_native/flight_loop",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "guard_dog_fire": {
+    "sounds": [
+      {
+        "name": "superbwarfare:gun/qbz_191/qbz_191_fire_3p",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "gas_dog_spray": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:guard_dog/gas/spray_loop",
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "rover_fire_loop_1": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:guard_dog/rover/loop_1",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "rover_fire_loop_2": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:guard_dog/rover/loop_2",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "rover_fire_loop_3": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:guard_dog/rover/loop_3",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "rover_fire_loop_4": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:guard_dog/rover/loop_4",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "rover_fire_start": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:guard_dog/rover/start",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "rover_fire_stop": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:guard_dog/rover/stop",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "stun_guard_dog_fire": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:guard_dog/engine_native/stun_fire_0",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:guard_dog/engine_native/stun_fire_1",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:guard_dog/engine_native/stun_fire_2",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:guard_dog/engine_native/stun_fire_3",
+        "attenuation_distance": 64
+      }
+    ]
   }
 }

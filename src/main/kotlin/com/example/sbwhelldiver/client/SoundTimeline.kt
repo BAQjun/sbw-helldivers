@@ -3,6 +3,7 @@ package com.example.sbwhelldiver.client
 import com.example.sbwhelldiver.MOD_ID
 import com.example.sbwhelldiver.asset.AssetCatalog
 import com.example.sbwhelldiver.entity.AbstractHellpodEntity
+import com.example.sbwhelldiver.entity.GuardDogEntity
 import com.example.sbwhelldiver.entity.SentryHellpodEntity
 import com.example.sbwhelldiver.entity.PlayerHellpodEntity
 import com.example.sbwhelldiver.entity.LaserClock
@@ -109,7 +110,7 @@ object SoundTimeline : ResourceManagerReloadListener {
         if (!definition.audible || cue.effect !in AssetCatalog.audibleEffects || !allowed(entity,definition)) return
         if (definition.kind == "loop" && state.sounds.any { it.effect == cue.effect && !it.isStopped && !it.releasing }) return
         val sound = NodeSound(entity, cue, definition)
-        if (java.lang.Boolean.getBoolean("sbw_helldiver.playerDropSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.clientSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.mortarSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.statusMortarSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.flameSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.shieldSmokeTest")) started.merge(cue.effect, 1, Int::plus)
+        if (java.lang.Boolean.getBoolean("sbw_helldiver.itemDeliveryTests") || java.lang.Boolean.getBoolean("sbw_helldiver.playerDropSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.clientSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.mortarSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.statusMortarSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.flameSmokeTest") || java.lang.Boolean.getBoolean("sbw_helldiver.shieldSmokeTest")) started.merge(cue.effect, 1, Int::plus)
         state.sounds.add(sound)
         Minecraft.getInstance().soundManager.play(sound)
     }
@@ -134,6 +135,7 @@ object SoundTimeline : ResourceManagerReloadListener {
     }
 
     private fun position(entity: net.minecraft.world.entity.Entity, locator: String): Vec3 = when {
+        entity is GuardDogEntity && locator.contains("muzzle") -> entity.muzzleOrigin()
         entity !is AbstractHellpodEntity -> entity.position().add(0.0,0.1,0.0)
         locator=="emitter" && entity is com.example.sbwhelldiver.entity.ShieldGeneratorEntity -> entity.emitter()
         locator=="tesla_top" -> entity.position().add(0.0,entity.profile.aimHeight,0.0)
@@ -156,7 +158,8 @@ object SoundTimeline : ResourceManagerReloadListener {
         val effect = cue.effect
         private val reference = WeakReference(entity)
         private val locator = cue.locator
-        private val fixed = if (definition.kind != "loop" && locator.contains("muzzle")) position(entity, locator) else null
+        private val fixed = if (entity !is GuardDogEntity && definition.kind != "loop" && locator.contains("muzzle"))
+            position(entity, locator) else null
         private val playerDescent = entity is PlayerHellpodEntity && PlayerDropAudio.isDescent(effect)
         private val onboard = playerDescent && PlayerDropClient.belongsToLocalPlayer(entity as PlayerHellpodEntity)
         private var age = 0

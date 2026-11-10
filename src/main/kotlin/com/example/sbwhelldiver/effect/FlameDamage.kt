@@ -25,8 +25,8 @@ object FlameDamage {
         // Only the visual fire timer is vanilla. Its damage is intercepted while BURNING is present.
         target.remainingFireTicks = maxOf(target.remainingFireTicks,60)
     }
-    fun hit(target: LivingEntity, attacker: Entity) {
-        target.hurt(source(target,"flame_jet",attacker),FlameClock.DIRECT_DAMAGE_PER_JET)
+    fun hit(target: LivingEntity, attacker: Entity, damage: Float = FlameClock.DIRECT_DAMAGE_PER_JET) {
+        target.hurt(source(target,"flame_jet",attacker),damage)
         ignite(target,attacker)
         if (target !is Player) target.addEffect(MobEffectInstance(ModEffects.PANIC,20,0,false,true,true))
     }

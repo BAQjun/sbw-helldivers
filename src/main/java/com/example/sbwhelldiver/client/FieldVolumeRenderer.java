@@ -5,6 +5,7 @@ import com.mojang.logging.LogUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
@@ -102,22 +103,39 @@ public final class FieldVolumeRenderer {
         return (float)field.getFieldHeight()+canopyLift(field);
     }
     // Restrict each ray-march pass to its projected bounds. Inside/near-plane cases use the full screen.
-    private static void fieldScissor(MortarFieldEntity field,Vec3 camera,Matrix4f projection,int w,int h,float down) {
-        Matrix4f view=new Matrix4f(new Matrix3f(new org.joml.Matrix3f().rotation(net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().rotation())).transpose());
-        Matrix4f clip=new Matrix4f(projection).mul(view);
+    private static void fieldScissor(Vec3 center,double radius,float height,float down,Vec3 camera,Matrix4f clip,int w,int h,int[] coverage) {
+        fieldScissor(new AABB(center.x-radius,center.y-down,center.z-radius,
+            center.x+radius,center.y+height,center.z+radius),camera,clip,w,h,coverage);
+    }
+    private static void fieldScissor(AABB bounds,Vec3 camera,Matrix4f clip,int w,int h,int[] coverage) {
         float minX=1,minY=1,maxX=-1,maxY=-1;
-        for(int dx:new int[]{-1,1})for(int dz:new int[]{-1,1})for(int dy:new int[]{0,1}) {
-            var v=new org.joml.Vector4f((float)(field.getX()+dx*field.getRadius()-camera.x),
-                (float)(field.getY()+(dy==0?-down:visualHeight(field))-camera.y),(float)(field.getZ()+dz*field.getRadius()-camera.z),1);
+        for(double x:new double[]{bounds.minX,bounds.maxX})for(double z:new double[]{bounds.minZ,bounds.maxZ})
+            for(double y:new double[]{bounds.minY,bounds.maxY}) {
+            var v=new org.joml.Vector4f((float)(x-camera.x),(float)(y-camera.y),(float)(z-camera.z),1);
             clip.transform(v);
-            if(v.w<=.01f){glScissor(0,0,w,h);return;}
-            float x=v.x/v.w,y=v.y/v.w;minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);
+            if(v.w<=.01f){fogScissor(0,0,w,h,coverage);return;}
+            float screenX=v.x/v.w,screenY=v.y/v.w;minX=Math.min(minX,screenX);maxX=Math.max(maxX,screenX);minY=Math.min(minY,screenY);maxY=Math.max(maxY,screenY);
         }
         int x=Math.max(0,(int)Math.floor((minX+1)*.5*w)-2),y=Math.max(0,(int)Math.floor((minY+1)*.5*h)-2);
         int right=Math.min(w,(int)Math.ceil((maxX+1)*.5*w)+2),top=Math.min(h,(int)Math.ceil((maxY+1)*.5*h)+2);
+        fogScissor(x,y,right,top,coverage);
+    }
+    private static void fogScissor(int x,int y,int right,int top,int[] coverage) {
         glScissor(x,y,Math.max(0,right-x),Math.max(0,top-y));
+        if(right<=x || top<=y)return;
+        coverage[0]=Math.min(coverage[0],x);
+        coverage[1]=Math.min(coverage[1],y);
+        coverage[2]=Math.max(coverage[2],right);
+        coverage[3]=Math.max(coverage[3],top);
     }
     private static int uniform(String name){return uniforms.computeIfAbsent(name,n->glGetUniformLocation(program,n));}
+    private static void uploadTerrain(FieldTerrainMask.Data floor,Vec3 center) {
+        glActiveTexture(GL_TEXTURE2);glBindTexture(GL_TEXTURE_2D,terrain);
+        glTexSubImage2D(GL_TEXTURE_2D,0,0,0,floor.width(),floor.height(),GL_RED,GL_FLOAT,floor.floors());
+        glUniform2f(uniform("TerrainOrigin"),(float)(floor.x()-center.x),(float)(floor.z()-center.z));
+        glUniform2f(uniform("TerrainSize"),33,33);
+    }
+
     private static GLCapabilities currentCapabilities() {
         // A render event alone does not guarantee a current native context.
         if(GLFW.glfwGetCurrentContext()==0L)return null;
@@ -129,26 +147,44 @@ public final class FieldVolumeRenderer {
     }
 
     public static void render(RenderLevelStageEvent event) {
-        if(event.getStage()==RenderLevelStageEvent.Stage.AFTER_SKY&&!ShaderPackCompat.INSTANCE.shadowPass())MineGlowGeometry.beginFrame();
+        if(event.getStage()==RenderLevelStageEvent.Stage.AFTER_SKY&&!ShaderPackCompat.INSTANCE.shadowPass()) {
+            MineGlowGeometry.beginFrame();
+            GuardDogThrusters.INSTANCE.beginFrame();
+            BeaconBeamVisual.INSTANCE.beginFrame();
+        }
         if(event.getStage()!=RenderLevelStageEvent.Stage.AFTER_LEVEL||ShaderPackCompat.INSTANCE.shadowPass())return;
         events++;Minecraft mc=Minecraft.getInstance();if(mc.level==null)return;
         Vec3 camera=event.getCamera().getPosition();
         var fields=new ArrayList<MortarFieldEntity>();
-        for(var entity:mc.level.entitiesForRendering())if(entity instanceof MortarFieldEntity f&&f.isAlive()&&f.distanceToSqr(camera)<128*128&&event.getFrustum().isVisible(new net.minecraft.world.phys.AABB(f.getX()-f.getRadius(),f.getY()-FieldTerrainMask.maximumDepth(f),f.getZ()-f.getRadius(),f.getX()+f.getRadius(),f.getY()+visualHeight(f),f.getZ()+f.getRadius())))fields.add(f);
-        visible=fields.size();
         var energy=new ArrayList<net.minecraft.world.entity.Entity>();
-        for(var entity:mc.level.entitiesForRendering()){
-            if(!entity.isAlive()||entity.distanceToSqr(camera)>192*192)continue;
-            if(entity instanceof com.example.sbwhelldiver.entity.ShieldGeneratorEntity ||
-                ShaderPackCompat.INSTANCE.active()&&entity instanceof com.example.sbwhelldiver.entity.SentryHellpodEntity s&&s.getProfile().isTesla())energy.add(entity);
+        boolean shaderPack=ShaderPackCompat.INSTANCE.active();
+        for(var entity:mc.level.entitiesForRendering()) {
+            if(entity instanceof MortarFieldEntity field) {
+                if(field.isAlive() && field.distanceToSqr(camera)<128*128 &&
+                    event.getFrustum().isVisible(new AABB(field.getX()-field.getRadius(),field.getY()-FieldTerrainMask.maximumDepth(field),
+                        field.getZ()-field.getRadius(),field.getX()+field.getRadius(),field.getY()+visualHeight(field),field.getZ()+field.getRadius()))) {
+                    fields.add(field);
+                }
+            } else if((entity instanceof com.example.sbwhelldiver.entity.ShieldGeneratorEntity ||
+                shaderPack && entity instanceof com.example.sbwhelldiver.entity.SentryHellpodEntity sentry && sentry.getProfile().isTesla())
+                && entity.isAlive() && entity.distanceToSqr(camera)<192*192) {
+                energy.add(entity);
+            }
         }
+        visible=fields.size();
         float[] fuelFlames=FlameJetVisual.INSTANCE.volumeInstances(event.getPartialTick().getGameTimeDeltaPartialTick(false),camera,event.getFrustum());
         float[] impacts=OrbitalLaserImpact.INSTANCE.volumeInstances(event.getPartialTick().getGameTimeDeltaPartialTick(false),camera,event.getFrustum());
         final float[] flames;
         if(impacts.length>0){int previous=fuelFlames.length;flames=java.util.Arrays.copyOf(fuelFlames,previous+impacts.length);System.arraycopy(impacts,0,flames,previous,impacts.length);}else flames=fuelFlames;
         var orbitalBeams=OrbitalBeamGeometry.collect(event.getPartialTick().getGameTimeDeltaPartialTick(false),camera);
         float[] lasers=LaserPostVisual.INSTANCE.collect(event.getPartialTick().getGameTimeDeltaPartialTick(false),camera,event.getFrustum());
-        if((fields.isEmpty()&&flames.length==0&&lasers.length==0&&orbitalBeams.isEmpty()&&energy.isEmpty()&&MineGlowGeometry.vertexCount()==0)||(failed&&!reload))return;
+        float[] exhaust=GuardDogThrusters.INSTANCE.collect(camera);
+        float[] beacons=BeaconBeamVisual.INSTANCE.collect();
+        float partialTick=event.getPartialTick().getGameTimeDeltaPartialTick(false);
+        var mist=GasGuardDogVisual.INSTANCE.mistVolumes(mc.level,partialTick,camera,event.getFrustum());
+        var spray=GasGuardDogVisual.INSTANCE.sprayVolumes(mc.level,partialTick,camera,event.getFrustum());
+        boolean hasFog=!fields.isEmpty()||!mist.isEmpty()||!spray.isEmpty();
+        if((!hasFog&&flames.length==0&&lasers.length==0&&exhaust.length==0&&beacons.length==0&&orbitalBeams.isEmpty()&&energy.isEmpty()&&MineGlowGeometry.vertexCount()==0)||(failed&&!reload))return;
         var capabilities=currentCapabilities();
         if(capabilities==null||!capabilities.OpenGL32)return;
         boolean samplerObjects=capabilities.OpenGL33||capabilities.GL_ARB_sampler_objects;
@@ -204,51 +240,108 @@ public final class FieldVolumeRenderer {
                 glColorMask(true,true,true,true);glEnable(GL_BLEND);glBlendEquationSeparate(GL_FUNC_ADD,GL_FUNC_ADD);
                 glBlendFuncSeparate(GL_ONE,GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA);
                 FieldArcGeometry.draw(fields,event.getPartialTick().getGameTimeDeltaPartialTick(false),camera,event.getProjectionMatrix(),new Matrix3f(new org.joml.Matrix3f().rotation(net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().rotation())),w,h);
-                int fogW=Math.max(1,(w+1)/2),fogH=Math.max(1,(h+1)/2);
-                if(!fields.isEmpty())FieldFogLayer.begin(fogW,fogH);
-                glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,depth);
-                glUseProgram(program);glBindVertexArray(vao);
-                glUniform1i(uniform("SceneDepth"),0);glUniform1i(uniform("DensityNoise"),1);glUniform1i(uniform("TerrainFloor"),2);
-                glActiveTexture(GL_TEXTURE1);glBindTexture(GL_TEXTURE_3D,noise);
-                FloatBuffer matrix=stack.mallocFloat(16);
-                new Matrix4f(event.getProjectionMatrix()).invert().get(matrix);glUniformMatrix4fv(uniform("InverseProjection"),false,matrix);
-                FloatBuffer rotation=stack.mallocFloat(9);
-                new Matrix3f(new org.joml.Matrix3f().rotation(net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().rotation())).get(rotation);glUniformMatrix3fv(uniform("InverseViewRotation"),false,rotation);
-                glUniform2f(uniform("Viewport"),fogW,fogH);
-                glEnable(GL_SCISSOR_TEST);
-                for(var field:fields) {
-                    var floor=FieldTerrainMask.get(field);
-                    fieldScissor(field,camera,event.getProjectionMatrix(),fogW,fogH,floor.depth());
-                    glActiveTexture(GL_TEXTURE2);glBindTexture(GL_TEXTURE_2D,terrain);
-                    glTexSubImage2D(GL_TEXTURE_2D,0,0,0,floor.width(),floor.height(),GL_RED,GL_FLOAT,floor.floors());
-                    glUniform2f(uniform("TerrainOrigin"),(float)(floor.x()-field.getX()),(float)(floor.z()-field.getZ()));
-                    glUniform2f(uniform("TerrainSize"),33,33);
-                    glUniform1f(uniform("DownwardDepth"),floor.depth());
-                    Vec3 eye=camera.subtract(field.position());boolean gas=field.getKind()==MortarFieldEntity.Kind.GAS,smoke=field.getKind()==MortarFieldEntity.Kind.SMOKE;
-                    float partial=event.getPartialTick().getGameTimeDeltaPartialTick(false);
-                    float fade=(float)Math.max(0,Math.min(1,Math.min((field.tickCount+partial)/(gas?7:6),field.getRemainingTicks()/(gas?20.0:12.0))));
-                    glUniform3f(uniform("Eye"),(float)eye.x,(float)eye.y,(float)eye.z);
-                    glUniform1f(uniform("Radius"),(float)field.getRadius());glUniform1f(uniform("Time"),(field.tickCount+partial)/20f);
-                    glUniform1f(uniform("Seed"),(float)((field.getX()*.731+field.getZ()*.173)%91));
-                    glUniform1f(uniform("Height"),visualHeight(field));
-                    glUniform1f(uniform("CanopyLift"),canopyLift(field));
-                    // Every field uses the same billowing density profile, including the light EMS fog.
-                    glUniform1i(uniform("Smoke"),1);
-                    glUniform3f(uniform("SmokeNoiseOrigin"),(float)((field.getX()*.22)%64),
-                        (float)((field.getY()*.30-(mc.level.getGameTime()+(double)partial)*.055/20)%64),(float)((field.getZ()*.22)%64));
-                    glUniform1f(uniform("Extinction"),(smoke?.95f:gas?.20f:.028f)*fade);
-                    glUniform3f(uniform("FogColor"),smoke?.82f:gas?.48f:.38f,smoke?.84f:gas?.55f:.60f,smoke?.86f:gas?.15f:.84f);
-                    glDrawArrays(GL_TRIANGLES,0,3);
+                if(hasFog) {
+                    int fogW=Math.max(1,(w+1)/2),fogH=Math.max(1,(h+1)/2);
+                    FieldFogLayer.begin(fogW,fogH);
+                    glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,depth);
+                    glUseProgram(program);glBindVertexArray(vao);
+                    glUniform1i(uniform("SceneDepth"),0);glUniform1i(uniform("DensityNoise"),1);glUniform1i(uniform("TerrainFloor"),2);
+                    glActiveTexture(GL_TEXTURE1);glBindTexture(GL_TEXTURE_3D,noise);
+                    FloatBuffer matrix=stack.mallocFloat(16);
+                    new Matrix4f(event.getProjectionMatrix()).invert().get(matrix);glUniformMatrix4fv(uniform("InverseProjection"),false,matrix);
+                    FloatBuffer rotation=stack.mallocFloat(9);
+                    Matrix3f inverseViewRotation=new Matrix3f().rotation(mc.gameRenderer.getMainCamera().rotation());
+                    inverseViewRotation.get(rotation);
+                    glUniformMatrix3fv(uniform("InverseViewRotation"),false,rotation);
+                    Matrix4f fogClip=new Matrix4f(event.getProjectionMatrix()).mul(new Matrix4f(inverseViewRotation.transpose()));
+                    int[] fogCoverage={fogW,fogH,0,0};
+                    glUniform2f(uniform("Viewport"),fogW,fogH);
+                    glEnable(GL_SCISSOR_TEST);
+                    glUniform1i(uniform("SprayMode"),0);
+                    for(var field:fields) {
+                        var floor=FieldTerrainMask.get(field);
+                        fieldScissor(field.position(),field.getRadius(),visualHeight(field),floor.depth(),camera,fogClip,fogW,fogH,fogCoverage);
+                        uploadTerrain(floor,field.position());
+                        glUniform1f(uniform("DownwardDepth"),floor.depth());
+                        Vec3 eye=camera.subtract(field.position());boolean gas=field.getKind()==MortarFieldEntity.Kind.GAS,smoke=field.getKind()==MortarFieldEntity.Kind.SMOKE;
+                        float partial=event.getPartialTick().getGameTimeDeltaPartialTick(false);
+                        float fade=(float)Math.max(0,Math.min(1,Math.min((field.tickCount+partial)/(gas?7:6),field.getRemainingTicks()/(gas?20.0:12.0))));
+                        glUniform3f(uniform("Eye"),(float)eye.x,(float)eye.y,(float)eye.z);
+                        glUniform1f(uniform("Radius"),(float)field.getRadius());glUniform1f(uniform("Time"),(field.tickCount+partial)/20f);
+                        glUniform1f(uniform("Seed"),(float)((field.getX()*.731+field.getZ()*.173)%91));
+                        glUniform1f(uniform("Height"),visualHeight(field));
+                        glUniform1f(uniform("CanopyLift"),canopyLift(field));
+                        // Every field uses the same billowing density profile, including the light EMS fog.
+                        glUniform1i(uniform("Smoke"),1);
+                        glUniform3f(uniform("SmokeNoiseOrigin"),(float)((field.getX()*.22)%64),
+                            (float)((field.getY()*.30-(mc.level.getGameTime()+(double)partial)*.055/20)%64),(float)((field.getZ()*.22)%64));
+                        glUniform1f(uniform("Extinction"),(smoke?.95f:gas?.20f:.028f)*fade);
+                        glUniform3f(uniform("FogColor"),smoke?.82f:gas?.48f:.38f,smoke?.84f:gas?.55f:.60f,smoke?.86f:gas?.15f:.84f);
+                        glDrawArrays(GL_TRIANGLES,0,3);
+                    }
+                    glUniform1i(uniform("SprayMode"),2);
+                    glUniform3f(uniform("FogColor"),.27f,.43f,.16f);
+                    glUniform1f(uniform("Height"),1f);
+                    glUniform1f(uniform("Extinction"),.48f);
+                    glUniform1f(uniform("Time"),(mc.level.getGameTime()%24000+partialTick)/20f);
+                    for(var jet:spray) {
+                        var bounds=jet.getBounds();
+                        Vec3 center=jet.getCenter(),eye=camera.subtract(center),axis=jet.getAxis();
+                        fieldScissor(bounds,camera,fogClip,fogW,fogH,fogCoverage);
+                        glUniform3f(uniform("Eye"),(float)eye.x,(float)eye.y,(float)eye.z);
+                        glUniform3f(uniform("SprayAxis"),(float)axis.x,(float)axis.y,(float)axis.z);
+                        glUniform1f(uniform("SprayLength"),jet.getLength());
+                        glUniform3f(uniform("SprayBoxMin"),(float)(bounds.minX-center.x),
+                            (float)(bounds.minY-center.y),(float)(bounds.minZ-center.z));
+                        glUniform3f(uniform("SprayBoxMax"),(float)(bounds.maxX-center.x),
+                            (float)(bounds.maxY-center.y),(float)(bounds.maxZ-center.z));
+                        glUniform3f(uniform("SmokeNoiseOrigin"),(float)((center.x*2.2)%64),
+                            (float)((center.y*2.8)%64),(float)((center.z*2.2)%64));
+                        glDrawArrays(GL_TRIANGLES,0,3);
+                    }
+                    glUniform1i(uniform("SprayMode"),1);
+                    glUniform1f(uniform("Radius"),GasGuardDogVisual.MIST_RADIUS);
+                    glUniform1f(uniform("Height"),GasGuardDogVisual.MIST_HEIGHT);
+                    glUniform1f(uniform("DownwardDepth"),GasGuardDogVisual.MIST_DEPTH);
+                    glUniform3f(uniform("FogColor"),.24f,.43f,.13f);
+                    for(var cloud:mist) {
+                        Vec3 center=cloud.getCenter(),eye=camera.subtract(center);
+                        fieldScissor(center,GasGuardDogVisual.MIST_RADIUS,GasGuardDogVisual.MIST_HEIGHT,
+                            GasGuardDogVisual.MIST_DEPTH,camera,fogClip,fogW,fogH,fogCoverage);
+                        glUniform3f(uniform("Eye"),(float)eye.x,(float)eye.y,(float)eye.z);
+                        var floor=FieldTerrainMask.getSpray(cloud.getTerrainKey(),mc.level,center,
+                            GasGuardDogVisual.MIST_RADIUS,GasGuardDogVisual.MIST_DEPTH);
+                        uploadTerrain(floor,center);
+                        Vec3 flow=cloud.getFlow();
+                        glUniform3f(uniform("SprayAxis"),(float)flow.x,0f,(float)flow.z);
+                        glUniform1f(uniform("Extinction"),.60f*cloud.getDensity());
+                        glUniform1f(uniform("Time"),cloud.getAge());
+                        glUniform3f(uniform("SmokeNoiseOrigin"),(float)((center.x*.63)%64),
+                            (float)((center.y*.80)%64),(float)((center.z*.63)%64));
+                        glDrawArrays(GL_TRIANGLES,0,3);
+                    }
+                    // Leave room for the neighboring half-resolution texels used by the resolve.
+                    int left=Math.max(0,2*fogCoverage[0]-3),bottom=Math.max(0,2*fogCoverage[1]-3);
+                    int right=Math.min(w,2*fogCoverage[2]+3),top=Math.min(h,2*fogCoverage[3]+3);
+                    if(fogCoverage[2]<=fogCoverage[0] || fogCoverage[3]<=fogCoverage[1])glScissor(0,0,0,0);
+                    else glScissor(left,bottom,right-left,top-bottom);
+                    FieldFogLayer.composite(target.frameBufferId,depth,w,h,event.getProjectionMatrix());
+                    glDisable(GL_SCISSOR_TEST);
                 }
-                glDisable(GL_SCISSOR_TEST);
-                if(!fields.isEmpty())FieldFogLayer.composite(target.frameBufferId,depth,w,h,event.getProjectionMatrix());
                 if(flames.length>0){
                     FlameSurfaceLighting.draw(flames,camera,event.getProjectionMatrix(),new Matrix3f(new org.joml.Matrix3f().rotation(net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().rotation())),w,h);
                     FlameGlow.render(w,h,()->FlameVolumeGeometry.draw(flames,event.getProjectionMatrix(),new Matrix3f(new org.joml.Matrix3f().rotation(net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().rotation())),camera,w,h,(mc.level.getGameTime()+event.getPartialTick().getGameTimeDeltaPartialTick(false))/20f));
                 }
                 if(!orbitalBeams.isEmpty())FlameGlow.renderAdditive(w,h,.18f,()->OrbitalBeamGeometry.draw(orbitalBeams,event.getProjectionMatrix(),new Matrix3f(new org.joml.Matrix3f().rotation(net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().rotation())),w,h));
                 glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,depth);
-                if(lasers.length>0)FlameGlow.render(w,h,.18f,()->LaserEffectGeometry.draw(lasers,event.getProjectionMatrix(),new Matrix3f(new org.joml.Matrix3f().rotation(net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().rotation())),w,h));
+                if(lasers.length>0 || exhaust.length>0 || beacons.length>0) {
+                    Matrix4f clip=new Matrix4f(event.getProjectionMatrix()).mul(event.getModelViewMatrix());
+                    FlameGlow.render(w,h,.18f,()->{
+                        if(lasers.length>0)LaserEffectGeometry.draw(lasers,clip,w,h);
+                        if(exhaust.length>0)LaserEffectGeometry.draw(exhaust,clip,w,h);
+                        if(beacons.length>0)LaserEffectGeometry.draw(beacons,clip,w,h);
+                    });
+                }
                 glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,depth);
                 EnergyEffectGeometry.draw(energy,event.getPartialTick().getGameTimeDeltaPartialTick(false),camera,event.getProjectionMatrix(),new Matrix3f(new org.joml.Matrix3f().rotation(net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().rotation())),w,h);
                 glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,depth);

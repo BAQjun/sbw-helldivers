@@ -15,6 +15,9 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.resources.ResourceLocation
 import org.joml.Vector3f
+import com.example.sbwhelldiver.entity.GuardDogEntity
+import com.example.sbwhelldiver.entity.SentryBulletEntity
+import net.minecraft.world.phys.Vec3
 
 /** Native ballistics and tracer colours, with the visible geometry centred on the real flight path. */
 class SentryBulletRenderer(context: EntityRendererProvider.Context) : EntityRenderer<ProjectileEntity>(context) {
@@ -25,6 +28,12 @@ class SentryBulletRenderer(context: EntityRendererProvider.Context) : EntityRend
         val model = entity.modelInstance ?: return
         val velocity = entity.deltaMovement
         if (velocity.lengthSqr() < 1e-8) return
+        val bullet = entity as? SentryBulletEntity
+        val emitter = bullet?.let { entity.level().getEntity(it.emitterId) } as? GuardDogEntity
+        if (bullet != null && emitter != null) {
+            drawDroneTracer(bullet, emitter, partial, pose, buffers, light)
+            return
+        }
         val origin = pose.last().pose().transformPosition(Vector3f())
         val direction = pose.last().pose().transformDirection(Vector3f(velocity.normalize().toVector3f()))
         val launch = (entity as? com.example.sbwhelldiver.entity.SentryBulletEntity)?.launchPosition ?: entity.position()
@@ -57,7 +66,45 @@ class SentryBulletRenderer(context: EntityRendererProvider.Context) : EntityRend
         }
     }
 
+    private fun drawDroneTracer(bullet: SentryBulletEntity, drone: GuardDogEntity, partial: Float,
+        pose: PoseStack, buffers: MultiBufferSource, light: Int) {
+        val direction = bullet.deltaMovement.normalize()
+        val age = bullet.tickCount + partial
+        // A tracked drone interpolates independently of its fast projectile. Anchor
+        // the newborn streak to the displayed gun, then release it into world space.
+        val release = ((age - 1f) / 2f).coerceIn(0f, 1f)
+        val weight = 1f - release * release * (3f - 2f * release)
+        val offset = GuardDogVisual.firingMuzzle(drone, partial).subtract(bullet.launchPosition).scale(weight.toDouble())
+        val position = bullet.getPosition(partial)
+        val travelled = position.subtract(bullet.launchPosition).dot(direction).coerceAtLeast(0.0)
+        val length = minOf(.7 * bullet.deltaMovement.length() / 4.0, travelled.coerceAtLeast(.15))
+        val end = position.add(offset).add(direction.scale((length - travelled).coerceAtLeast(0.0)))
+        val start = end.subtract(direction.scale(length))
+        droneTracerObserver?.invoke(bullet, start, end)
+        val side = direction.cross(if (kotlin.math.abs(direction.y) > .99) Vec3(1.0, 0.0, 0.0) else Vec3(0.0, 1.0, 0.0)).normalize()
+        val up = side.cross(direction).normalize()
+        val consumer = buffers.getBuffer(RenderType.energySwirl(TEXTURE, 15f, 15f))
+        val data = bullet.entityData
+        fun shell(width: Double, r: Float, g: Float, b: Float) {
+            val corners = listOf(side.add(up), side.subtract(up), side.scale(-1.0).subtract(up), up.subtract(side)).map { it.scale(width) }
+            for (i in corners.indices) {
+                val next = (i + 1) % 4
+                val points = listOf(start.add(corners[i]), start.add(corners[next]), end.add(corners[next]), end.add(corners[i]))
+                for ((j, point) in points.withIndex()) {
+                    val local = point.subtract(position)
+                    consumer.addVertex(pose.last(), local.x.toFloat(), local.y.toFloat(), local.z.toFloat())
+                        .setColor(r, g, b, 1f).setUv(if (j == 1 || j == 2) 1f else 0f, if (j >= 2) 1f else 0f)
+                        .setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(pose.last(), 0f, 1f, 0f)
+                }
+            }
+        }
+        // Explicitly centred geometry avoids the SBW model's off-centre Y pivot.
+        shell(.015, data.get(ProjectileEntity.COLOR_R), data.get(ProjectileEntity.COLOR_G), data.get(ProjectileEntity.COLOR_B))
+        shell(.0075, 1f, 1f, 1f)
+    }
+
     companion object {
+        internal var droneTracerObserver: ((SentryBulletEntity, Vec3, Vec3) -> Unit)? = null
         private val TEXTURE = ResourceLocation.fromNamespaceAndPath("superbwarfare", "textures/bedrock/projectile/projectile.png")
         var checkedVertices = 0
             private set

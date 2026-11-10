@@ -198,6 +198,17 @@ object ModEntities {
             .sized(.1f,.1f).clientTrackingRange(12).updateInterval(20).build("mortar_field")
     }
 
+    val GUARD_DOG = ENTITIES.register("guard_dog") { _ ->
+        EntityType.Builder.of({ type, level -> com.example.sbwhelldiver.entity.GuardDogEntity(type, level) }, MobCategory.MISC)
+            .sized(.6f, .45f).noSave().clientTrackingRange(10).updateInterval(1).build("guard_dog")
+    }
+
+    val ITEM_DELIVERY_HELLPOD = ENTITIES.register("item_delivery_hellpod") { _ ->
+        vehicle { type, level -> com.example.sbwhelldiver.entity.ItemDeliveryHellpodEntity(type, level) }
+            .sized(1.4f, 2.75f)
+            .build("item_delivery_hellpod")
+    }
+
     /** 独立空投仓，落地开舱后弹出补给容器。 */
     val SUPPLY_HELLPOD: DeferredHolder<EntityType<*>, EntityType<SupplyHellpodEntity>> =
         ENTITIES.register("supply_hellpod") { _ ->

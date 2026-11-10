@@ -2,26 +2,36 @@ package com.example.sbwhelldiver.client
 
 import com.example.sbwhelldiver.entity.AbstractHellpodEntity.Phase
 import com.example.sbwhelldiver.entity.FlameClock
-import com.example.sbwhelldiver.entity.FlameJet
+import com.example.sbwhelldiver.entity.GuardDogEntity
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.phys.Vec3
 import com.example.sbwhelldiver.entity.SentryHellpodEntity
 import com.example.sbwhelldiver.init.ModParticles
-import net.minecraft.world.level.ClipContext
 import java.util.WeakHashMap
 
 object FlameSentryClient {
     private class State { var phase=FlameClock.State.OFF }
-    private val states=WeakHashMap<SentryHellpodEntity,State>()
+    private val states=WeakHashMap<Entity,State>()
     var smokeSamples=0
         private set
     var flameSamples=0
         private set
     var sootSamples=0
         private set
-    private fun cue(sentry: SentryHellpodEntity,event: String) {
-        SoundTimeline.schedule(sentry,"animation.flame."+event,group="flame_"+event)
+    private fun cue(emitter: Entity, event: String) {
+        val animation = "animation.flame.$event"
+        val cues = if (emitter is GuardDogEntity) SoundTimeline.cues("flame_hellpod_v1", animation)
+            else SoundTimeline.cues(emitter, animation)
+        SoundTimeline.schedule(emitter, cues, group = "flame_$event")
     }
-    fun tick(sentry: SentryHellpodEntity) {
-        val state=if(sentry.phase==Phase.ACTIVE)sentry.flameState else FlameClock.State.OFF
+    fun tick(dog: GuardDogEntity) {
+        updateAudio(dog,dog.flameState)
+        SoundTimeline.tick(dog)
+        if (dog.flameState == FlameClock.State.OFF) return
+        FlameJetVisual.tick(dog,dog.flameState,GuardDogVisual.firingMuzzle(dog,1f),
+            Vec3.directionFromRotation(dog.xRot,dog.yRot),GuardDogEntity.FLAME_RANGE)
+    }
+    private fun updateAudio(sentry: Entity, state: FlameClock.State) {
         val local=states.getOrPut(sentry) { State() }
         val previous=local.phase
         local.phase=state
@@ -33,6 +43,10 @@ object FlameSentryClient {
                 cue(sentry,"cooldown_stop")
             }
         }
+    }
+    fun tick(sentry: SentryHellpodEntity) {
+        val state=if(sentry.phase==Phase.ACTIVE)sentry.flameState else FlameClock.State.OFF
+        updateAudio(sentry,state)
         FlameJetVisual.tick(sentry)
         if(state==FlameClock.State.SPRAYING){flameSamples++;return}
         if(state!=FlameClock.State.IGNITING)return

@@ -27,7 +27,7 @@ data class SentryProfile(
     val isEmsMortar get() = id == "ems_mortar_sentry"
     val isMortar get() = id == "mortar_sentry" || isGasMortar || isEmsMortar
     val mortarScatterRadius get() = if (isGasMortar || isEmsMortar) 5.0 else 10.0
-    val isSupply get() = id == "supply_hellpod" || id == "player_hellpod"
+    val isSupply get() = id == "supply_hellpod" || id == "player_hellpod" || id == "item_delivery_hellpod"
 }
 
 /** Generated from reviewed geometry and animation; shared by both logical sides. */
@@ -55,7 +55,7 @@ object AssetCatalog {
             }
         }
     }
-    fun profile(type: EntityType<*>): SentryProfile = requireNotNull(BuiltInRegistries.ENTITY_TYPE.getKey(type)).path.let {if(it=="player_hellpod")profiles.getValue("supply_hellpod").copy(id=it) else profiles.getValue(it)}
+    fun profile(type: EntityType<*>): SentryProfile = requireNotNull(BuiltInRegistries.ENTITY_TYPE.getKey(type)).path.let {if(it=="player_hellpod" || it=="item_delivery_hellpod")profiles.getValue("supply_hellpod").copy(id=it) else profiles.getValue(it)}
     val audibleEffects: Set<String> = run {
         val stream = requireNotNull(javaClass.classLoader.getResourceAsStream("assets/$MOD_ID/sounds.json"))
         stream.bufferedReader(Charsets.UTF_8).use { JsonParser.parseReader(it).asJsonObject.keySet().toSet() }

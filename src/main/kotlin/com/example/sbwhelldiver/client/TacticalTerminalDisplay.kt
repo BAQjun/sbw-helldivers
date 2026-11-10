@@ -108,7 +108,10 @@ object TacticalTerminalDisplay {
                         c.text(Component.literal(">"),314,y+9,0xFFE5C62D.toInt())
                     }
                 }
-                c.fill(333,28,2,116,0xFF34444A.toInt());c.fill(333,28+49*(view?.scroll?:0)/3,2,66,0xFFE5C62D.toInt())
+                val total=TacticalTerminalOffers.refills.size+TerminalCategory.entries.size
+                val thumb=116*4/total
+                val offset=(116-thumb)*(view?.scroll?:0)/(total-4)
+                c.fill(333,28,2,116,0xFF34444A.toInt());c.fill(333,28+offset,2,thumb,0xFFE5C62D.toInt())
             }else{
                 c.text(Component.translatable("gui.sbw_helldiver.back"),12,27,0xFFE5C62D.toInt())
                 c.text(Component.translatable("gui.sbw_helldiver.category.${category.name.lowercase()}"),65,27)

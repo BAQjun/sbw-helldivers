@@ -389,8 +389,19 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
             if(!server.addFreshEntity(pod))return false
             podUUID=pod.uuid;return true
         }
-        if (!BuiltInRegistries.ENTITY_TYPE.containsKey(id)) return false
-        val pod = BuiltInRegistries.ENTITY_TYPE.get(id).create(server) as? AbstractHellpodEntity ?: return false
+        val pod = if (id.path in setOf("guard_dog", "laser_guard_dog", "stun_guard_dog", "flame_guard_dog", "gas_guard_dog")) {
+            val pack = net.minecraft.world.item.ItemStack(when (id.path) {
+                "stun_guard_dog" -> com.example.sbwhelldiver.init.ModItems.STUN_GUARD_DOG_BACKPACK.get()
+                "gas_guard_dog" -> com.example.sbwhelldiver.init.ModItems.GAS_GUARD_DOG_BACKPACK.get()
+                "flame_guard_dog" -> com.example.sbwhelldiver.init.ModItems.FLAME_GUARD_DOG_BACKPACK.get()
+                "laser_guard_dog" -> com.example.sbwhelldiver.init.ModItems.LASER_GUARD_DOG_BACKPACK.get()
+                else -> com.example.sbwhelldiver.init.ModItems.GUARD_DOG_BACKPACK.get()
+            })
+            com.example.sbwhelldiver.init.ModEntities.ITEM_DELIVERY_HELLPOD.get().create(server)
+                ?.also { it.setPayload(pack, net.minecraft.world.item.ItemStack.EMPTY) } ?: return false
+        } else {
+            BuiltInRegistries.ENTITY_TYPE.getOptional(id).orElse(null)?.create(server) as? AbstractHellpodEntity ?: return false
+        }
         val spawnY = surfaceY + AbstractHellpodEntity.descentSpawnHeight() + AbstractHellpodEntity.ORIGIN_ABOVE_BOTTOM
         pod.moveTo(x, spawnY, z, yRot, 0f)
         (pod as? GrenadierBattlementEntity)?.setDeploymentHeading(yRot)

@@ -4,16 +4,12 @@ import com.example.sbwhelldiver.entity.StratagemBeacon
 import com.example.sbwhelldiver.entity.StratagemMarker
 import com.example.sbwhelldiver.stratagem.BeaconData
 import com.mojang.blaze3d.vertex.PoseStack
-import com.mojang.math.Axis
 import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.culling.Frustum
 import net.minecraft.client.renderer.entity.EntityRenderer
 import net.minecraft.client.renderer.entity.EntityRendererProvider
 import org.joml.Quaternionf
 import org.joml.Vector3f
-import kotlin.math.cos
-import kotlin.math.sin
 
 class BeaconProjectileRenderer(context: EntityRendererProvider.Context) : EntityRenderer<StratagemBeacon>(context) {
     init { shadowRadius = 0.12f }
@@ -44,28 +40,12 @@ class BeaconMarkerRenderer(context: EntityRendererProvider.Context) : EntityRend
         pose.scale(2.2f, 2.2f, 2.2f)
         BeaconModel.render(pose, buffers, light, seconds, true, entity.color)
         pose.popPose()
-        beam(entity, pose, buffers, (seconds / 0.7f).coerceIn(0f, 1f))
+        beam(entity, pose, (seconds / 0.7f).coerceIn(0f, 1f))
         super.render(entity, yaw, partial, pose, buffers, light)
     }
-    private fun beam(entity: StratagemMarker, pose: PoseStack, buffers: MultiBufferSource, strength: Float) {
+    private fun beam(entity: StratagemMarker, pose: PoseStack, strength: Float) {
         if (!entity.hasBeaconBeam || strength <= 0) return
-        val vertex = buffers.getBuffer(RenderType.lightning())
-        val transform = pose.last().pose()
-        val r = ((entity.color shr 16) and 255) / 255f
-        val g = ((entity.color shr 8) and 255) / 255f
-        val b = (entity.color and 255) / 255f
         val height = com.example.sbwhelldiver.entity.AbstractHellpodEntity.descentSpawnHeight().toFloat()
-        for ((radius, alpha) in listOf(0.018f to 0.9f, 0.045f to 0.32f, 0.10f to 0.10f)) {
-            for (i in 0..7) {
-                val a = i * Math.PI / 4
-                val c = (i + 1) * Math.PI / 4
-                val x1 = (cos(a) * radius).toFloat(); val z1 = (sin(a) * radius).toFloat()
-                val x2 = (cos(c) * radius).toFloat(); val z2 = (sin(c) * radius).toFloat()
-                vertex.vertex(transform, x1, 0.2f, z1).color(r, g, b, alpha * strength).endVertex()
-                vertex.vertex(transform, x1, height, z1).color(r, g, b, alpha * strength).endVertex()
-                vertex.vertex(transform, x2, height, z2).color(r, g, b, alpha * strength).endVertex()
-                vertex.vertex(transform, x2, 0.2f, z2).color(r, g, b, alpha * strength).endVertex()
-            }
-        }
+        BeaconBeamVisual.capture(pose, .2f, height, entity.color, strength)
     }
 }
