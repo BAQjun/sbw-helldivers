@@ -14,11 +14,14 @@ import java.util.zip.GZIPInputStream
 object MachineMesh:ResourceManagerReloadListener {
     private data class Node(val parent:Int,val mesh:Int,val t:Vector3f,val r:Quaternionf,val s:Vector3f,val name:String)
     private data class Primitive(val material:Int,val vertices:FloatArray)
-    private data class Batch(val node:Int,val material:Int,val glow:Boolean,val vertices:FloatArray)
+    private class Batch(val node:Int,val material:Int,val glow:Boolean,val vertices:FloatArray) {
+        val geometry=MachineVertexBatch(vertices)
+    }
     private data class Channel(val node:Int,val path:String,val times:FloatArray,val values:List<FloatArray>,val step:Boolean)
     private data class Exhaust(val node: Int, val origin: Vector3f, val axis: Vector3f)
 
     private class Model(val nodes:List<Node>,meshes:List<List<Primitive>>,val clips:Map<String,List<Channel>>,val textures:List<ResourceLocation>,val nozzles:List<net.minecraft.world.phys.Vec3>, val exhausts: List<Exhaust>) {
+        val sourceFaceCount:Int
         val batches:List<Batch>
         init {
             val bind=arrayOfNulls<Matrix4f>(nodes.size)
@@ -46,7 +49,8 @@ object MachineMesh:ResourceManagerReloadListener {
             }
             // These meshes use cutout surfaces. Draw each material together and the
             // emissive overlay afterwards instead of flushing once per animated part.
-            batches=grouped.map{(key,vertices)->Batch(key.first,key.second,key.third,vertices.toFloatArray())}
+            sourceFaceCount=grouped.values.sumOf { it.size/32 }
+            batches=grouped.map{(key,vertices)->Batch(key.first,key.second,key.third,PlanarMeshQuads.packQuads(vertices.toFloatArray()))}
                 .sortedWith(compareBy<Batch> { it.glow }.thenBy { it.material })
         }
         private val meshCenters = meshes.map { mesh ->
@@ -202,13 +206,13 @@ object MachineMesh:ResourceManagerReloadListener {
         return model.pose("flight", time % (if (laser || stun || flame || gas) .15f else .4f))[gun].transformPosition(marker)
     }
 
-    private fun guardDogMesh(name: String, distanceSquared: Double): Model? =
-        if (distanceSquared > 0 && ModelLod.reduced(distanceSquared)) models[name + "_lod"] ?: models[name]
+    private fun guardDogMesh(name: String, reducedModel: Boolean): Model? =
+        if (reducedModel) models[name + "_lod"] ?: models[name]
         else models[name]
 
     fun drawGuardDogPack(animation: String, time: Float, socketTime: Float, p: PoseStack, b: MultiBufferSource, light: Int,
-        spares: Int, reload: String?, reloadTime: Float, magazineInTransit: Boolean, laser: Boolean = false, stun: Boolean = false, flame: Boolean = false, gas: Boolean = false, distanceSquared: Double = 0.0): GuardDogPackPose? {
-        val model = guardDogMesh(guardDogModel(laser, stun, flame, gas) + "_backpack", distanceSquared) ?: return null
+        spares: Int, reload: String?, reloadTime: Float, magazineInTransit: Boolean, laser: Boolean = false, stun: Boolean = false, flame: Boolean = false, gas: Boolean = false, reducedModel: Boolean = false): GuardDogPackPose? {
+        val model = guardDogMesh(guardDogModel(laser, stun, flame, gas) + "_backpack", reducedModel) ?: return null
         if (flame || gas) {
             val transforms = model.pose(animation, time, overlay = reload, overlayTime = reloadTime) {
                 it.startsWith("feed_arm_") || it.startsWith("piston_") || it.startsWith("sleeve_")
@@ -281,8 +285,8 @@ object MachineMesh:ResourceManagerReloadListener {
     fun drawGuardDog(animation: String, time: Float, p: PoseStack, b: MultiBufferSource, light: Int,
         enginePitch: (left: Boolean) -> Float, overlay: String? = null, overlayTime: Float = 0f,
         hideMagazine: Boolean = false, laser: Boolean = false, stun: Boolean = false, flame: Boolean = false, gas: Boolean = false, motion: Vector3f? = null, spin: Float? = null,
-        distanceSquared: Double = 0.0, jet: (Matrix4f, Vector3f, Vector3f) -> Unit): Matrix4f? {
-        val model = guardDogMesh(guardDogModel(laser, stun, flame, gas), distanceSquared) ?: return null
+        reducedModel: Boolean = false, jet: (Matrix4f, Vector3f, Vector3f) -> Unit): Matrix4f? {
+        val model = guardDogMesh(guardDogModel(laser, stun, flame, gas), reducedModel) ?: return null
         val engineOffsets = (if (laser || stun || flame || gas) emptyList() else model.exhausts).mapNotNull {
             val radians = enginePitch(model.nodes[it.node].t.x < 0f)
             if (radians == 0f) null else it.node to radians
@@ -356,6 +360,10 @@ object MachineMesh:ResourceManagerReloadListener {
                 }
                 val vc=consumer!!;val data=batch.vertices
                 val packedLight=if(batch.glow)LightTexture.FULL_BRIGHT else light
+                if(PlanarMeshQuads.ENABLED) {
+                    batch.geometry.draw(matrix,normals,vc,bulk,packedLight,OverlayTexture.NO_OVERLAY)
+                    continue
+                }
                 var k=0
                 while(k<data.size) {
                     normal.set(data[k+5],data[k+6],data[k+7]).mul(normals).normalize()
@@ -368,6 +376,10 @@ object MachineMesh:ResourceManagerReloadListener {
                 }
         }
         bulk?.flush()
+    }
+    fun faceCounts(name:String):Pair<Int,Int>?=models[name]?.let{it.sourceFaceCount to it.batches.sumOf{batch->batch.vertices.size/32}}
+    fun transformCounts(name:String):Pair<Int,Int>?=models[name]?.let { model ->
+        model.batches.sumOf { it.geometry.sourceVertices() } to model.batches.sumOf { it.geometry.uniquePositions() }
     }
     fun batchCount(name:String)=models[name]?.batches?.size?:0
     fun glowFaceCount(name:String)=models[name]?.batches?.filter{it.glow}?.sumOf{it.vertices.size/32}?:0

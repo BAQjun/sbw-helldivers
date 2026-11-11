@@ -88,6 +88,44 @@ object GuardDogVisual {
             .mul(flightRotation(yaw, if (owner != null) 0f else Mth.lerp(partial, entity.xRotO, entity.xRot)))
     }
 
+    private data class ReturnPose(
+        val position: Vec3,
+        val renderedAt: Float,
+        var dockStartedAt: Float = Float.NaN,
+        var correction: Vec3 = Vec3.ZERO
+    )
+
+    private val returnPoses = java.util.WeakHashMap<GuardDogEntity, ReturnPose>()
+
+    private fun smoothDockHandoff(entity: GuardDogEntity, partial: Float, modelPose: Matrix4f) {
+        val flight = entity.flight
+        if ((flight != Flight.RETURN && flight != Flight.DOCK) || ShaderPackCompat.shadowPass()) return
+        val now = entity.tickCount + partial
+        val camera = Minecraft.getInstance().gameRenderer.mainCamera.position
+        val world = camera.add(modelPose.m30().toDouble(), modelPose.m31().toDouble(), modelPose.m32().toDouble())
+        if (flight == Flight.RETURN) {
+            returnPoses[entity] = ReturnPose(world, now)
+            return
+        }
+        val approach = returnPoses[entity] ?: return
+        if (approach.dockStartedAt.isNaN()) {
+            if (now - approach.renderedAt > 3f) {
+                returnPoses.remove(entity)
+                return
+            }
+            // The dock packet may arrive ahead of the interpolated free-flight pose.
+            approach.dockStartedAt = now
+            approach.correction = approach.position.subtract(world)
+        }
+        val weight = 1.0 - ease((now - approach.dockStartedAt) / 5f)
+        if (weight <= 0.0) {
+            returnPoses.remove(entity)
+            return
+        }
+        val corrected = world.add(approach.correction.scale(weight)).subtract(camera)
+        modelPose.setTranslation(corrected.x.toFloat(), corrected.y.toFloat(), corrected.z.toFloat())
+    }
+
     internal fun firingMuzzle(entity: GuardDogEntity, partial: Float): Vec3 {
         val local = MachineMesh.guardDogMuzzle(entity.isLaser, (entity.tickCount + partial) / 20f, entity.isStun, entity.isFlame, entity.isGas)
             ?: return entity.muzzleOrigin(partial)
@@ -113,7 +151,7 @@ object GuardDogVisual {
     fun drawPack(pose: PoseStack, buffers: MultiBufferSource, light: Int, docked: Boolean,
         drone: GuardDogEntity? = null, partial: Float = 0f, spares: Int = GuardDogEntity.SPARE_MAGAZINES,
         emptyFold: Boolean = false, flightPose: Matrix4f? = null, observe: Boolean = false, laser: Boolean = drone?.isLaser == true, stun: Boolean = drone?.isStun == true,
-        flameDog: Boolean = drone?.isFlame == true, gasDog: Boolean = drone?.isGas == true, distanceSquared: Double = 0.0) {
+        flameDog: Boolean = drone?.isFlame == true, gasDog: Boolean = drone?.isGas == true, reducedModel: Boolean = false) {
         val energy = laser || stun
         val age = drone?.let { it.phaseAge + partial } ?: 0f
         val launch = drone?.flight == Flight.LAUNCH
@@ -142,7 +180,7 @@ object GuardDogVisual {
             else -> clock
         }
         val pack = MachineMesh.drawGuardDogPack(animation, clock, socketTime, pose, buffers, light,
-            displayedSpares, if (loading) reload?.clip else null, loadTime, inTransit, laser, stun, flameDog, gasDog, distanceSquared) ?: return
+            displayedSpares, if (loading) reload?.clip else null, loadTime, inTransit, laser, stun, flameDog, gasDog, reducedModel) ?: return
         if (!docked && !launch && !docking) return
 
         // Player model, backpack, arm and drone share this transform all the way through contact.
@@ -188,9 +226,10 @@ object GuardDogVisual {
         val ejected = docking && reload?.changesMagazine == true && age >= GuardDogEntity.EJECT_TICK && loadTime < insertion
         pose.pushPose()
         pose.mulPose(mount)
+        if (docking) smoothDockHandoff(drone!!, partial, pose.last().pose())
         if (observe) poseObserver?.invoke(drone, Matrix4f(pose.last().pose()))
         val magazine = MachineMesh.drawGuardDog(droneClip, clock, pose, buffers, light, { 0f },
-            overlay, overlayTime, hideMagazine = ejected, laser = laser, stun = stun, flame = flameDog, gas = gasDog, distanceSquared = distanceSquared) { matrix, origin, axis ->
+            overlay, overlayTime, hideMagazine = ejected, laser = laser, stun = stun, flame = flameDog, gas = gasDog, reducedModel = reducedModel) { matrix, origin, axis ->
             jet(pose, buffers, matrix, origin, axis, flame, age)
         }
         pose.popPose()
@@ -248,7 +287,7 @@ object GuardDogVisual {
             }
             drawPack(pose, buffers, light, drone == null && active == null, drone, partial, spares,
                 GuardDogBackpack.emptyFold(pack), flightPose, observe = true, laser = GuardDogBackpack.isLaser(pack), stun = GuardDogBackpack.isStun(pack), flameDog = GuardDogBackpack.isFlame(pack), gasDog = GuardDogBackpack.isGas(pack),
-                distanceSquared = player.distanceToSqr(Minecraft.getInstance().gameRenderer.mainCamera.position))
+                reducedModel = ModelLod.reduced(player.distanceToSqr(Minecraft.getInstance().gameRenderer.mainCamera.position)))
             pose.popPose()
         }
     }
@@ -278,7 +317,7 @@ object GuardDogVisual {
 
         override fun render(entity: GuardDogEntity, yaw: Float, partial: Float, pose: PoseStack,
             buffers: MultiBufferSource, light: Int) {
-            val distanceSquared = entity.distanceToSqr(Minecraft.getInstance().gameRenderer.mainCamera.position)
+            val reducedModel = ModelLod.reduced(entity.distanceToSqr(Minecraft.getInstance().gameRenderer.mainCamera.position))
             val pitch = Mth.lerp(partial, entity.xRotO, entity.xRot)
             pose.pushPose()
             val owner = entity.clientOwner()?.takeIf { entity.usesPackPose }
@@ -291,6 +330,7 @@ object GuardDogVisual {
             pose.translate(0.0, GuardDogEntity.MODEL_HEIGHT, 0.0)
             pose.mulPose(flightRotation(owner?.let { Mth.rotLerp(partial, it.yBodyRotO, it.yBodyRot) } ?: yaw,
                 if (owner != null) 0f else pitch))
+            smoothDockHandoff(entity, partial, pose.last().pose())
             poseObserver?.invoke(entity, Matrix4f(pose.last().pose()))
             if (entity.usesPackPose) {
                 val age = entity.phaseAge + partial
@@ -307,7 +347,7 @@ object GuardDogVisual {
                 val flame = if (launch) ease((carrierAge - 31f) / 15f) else 1f - ease((carrierAge - 7f) / 15f)
                 MachineMesh.drawGuardDog(if (launch) "deploy" else "retract", carrierAge / 20f, pose, buffers, light,
                     { 0f }, if (entity.isEnergy) "empty_fold" else reload?.clip?.takeIf { reloadAge >= 0f },
-                    if (entity.isEnergy) GuardDogMotion.foldTime(launch, age) else reloadAge.coerceAtLeast(0f) / 20f, ejected, laser = entity.isLaser, stun = entity.isStun, flame = entity.isFlame, gas = entity.isGas, distanceSquared = distanceSquared
+                    if (entity.isEnergy) GuardDogMotion.foldTime(launch, age) else reloadAge.coerceAtLeast(0f) / 20f, ejected, laser = entity.isLaser, stun = entity.isStun, flame = entity.isFlame, gas = entity.isGas, reducedModel = reducedModel
                 ) { matrix, origin, axis -> jet(pose, buffers, matrix, origin, axis, flame, age) }
             } else {
                 val age = entity.tickCount + partial
@@ -318,7 +358,7 @@ object GuardDogVisual {
                     (engineOffset(input) + pitch).coerceIn(-47.1f, 51.8f) * Mth.DEG_TO_RAD
                 }, laser = entity.isLaser, stun = entity.isStun, flame = entity.isFlame, gas = entity.isGas,
                     motion = Vector3f(entity.thrustAlong(yaw, partial), entity.thrustAcross(yaw, partial) + turn, pitch * Mth.DEG_TO_RAD),
-                    spin = (age / 20f) % .3f, distanceSquared = distanceSquared
+                    spin = (age / 20f) % .3f, reducedModel = reducedModel
                 ) { matrix, origin, axis -> jet(pose, buffers, matrix, origin, axis, 1f, age) }
             }
             pose.popPose()
@@ -327,6 +367,8 @@ object GuardDogVisual {
         }
     }
 
+    var heldItemObserver: ((ItemDisplayContext, Boolean) -> Unit)? = null
+
     class PackItemRenderer : BlockEntityWithoutLevelRenderer(Minecraft.getInstance().blockEntityRenderDispatcher,
         Minecraft.getInstance().entityModels) {
         override fun renderByItem(stack: ItemStack, context: ItemDisplayContext, pose: PoseStack,
@@ -334,9 +376,16 @@ object GuardDogVisual {
             pose.pushPose()
             pose.translate(.5, .5, .6)
             pose.scale(1.25f, 1.25f, 1.25f)
+            val held = when (context) {
+                ItemDisplayContext.FIRST_PERSON_LEFT_HAND, ItemDisplayContext.FIRST_PERSON_RIGHT_HAND,
+                ItemDisplayContext.THIRD_PERSON_LEFT_HAND, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND -> true
+                else -> false
+            }
+            heldItemObserver?.invoke(context, held)
             val spares = GuardDogBackpack.spareMags(stack)
             drawPack(pose, buffers, light, GuardDogBackpack.active(stack) == null, spares = spares,
-                emptyFold = GuardDogBackpack.emptyFold(stack), laser = GuardDogBackpack.isLaser(stack), stun = GuardDogBackpack.isStun(stack), flameDog = GuardDogBackpack.isFlame(stack), gasDog = GuardDogBackpack.isGas(stack))
+                emptyFold = GuardDogBackpack.emptyFold(stack), laser = GuardDogBackpack.isLaser(stack), stun = GuardDogBackpack.isStun(stack),
+                flameDog = GuardDogBackpack.isFlame(stack), gasDog = GuardDogBackpack.isGas(stack), reducedModel = held)
             pose.popPose()
         }
     }

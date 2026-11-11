@@ -2,6 +2,7 @@ package com.example.sbwhelldiver.client
 
 import com.example.sbwhelldiver.entity.AbstractHellpodEntity.Phase
 import com.example.sbwhelldiver.entity.ItemDeliveryHellpodEntity
+import com.example.sbwhelldiver.item.GuardDogBackpack
 import com.example.sbwhelldiver.entity.ItemDeliveryHellpodEntity.Side
 import com.example.sbwhelldiver.entity.ItemDeliveryHellpodEntity.Companion.LIFT_START
 import com.example.sbwhelldiver.entity.ItemDeliveryHellpodEntity.Companion.LIFT_END
@@ -81,9 +82,13 @@ object ItemDeliveryRackRenderer {
             val mount = side.mount
             pose.translate(mount.x, mount.y + lift, mount.z)
             if (side == Side.REAR) pose.mulPose(Axis.YP.rotationDegrees(180f))
-            if (stack.item is com.example.sbwhelldiver.item.GuardDogBackpack) {
+            if (stack.item is GuardDogBackpack) {
                 pose.scale(.85f, .85f, .85f)
-                GuardDogVisual.drawPack(pose, buffers, light, true)
+                val reduced = ModelLod.reduced(pod.distanceToSqr(Minecraft.getInstance().gameRenderer.mainCamera.position))
+                GuardDogVisual.drawPack(pose, buffers, light, true, spares = GuardDogBackpack.spareMags(stack),
+                    emptyFold = GuardDogBackpack.emptyFold(stack), laser = GuardDogBackpack.isLaser(stack),
+                    stun = GuardDogBackpack.isStun(stack), flameDog = GuardDogBackpack.isFlame(stack),
+                    gasDog = GuardDogBackpack.isGas(stack), reducedModel = reduced)
                 return
             }
             pose.mulPose(Axis.ZP.rotationDegrees(90f))

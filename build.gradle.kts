@@ -44,6 +44,9 @@ neoForge {
             if (providers.gradleProperty("stunGuardDogTests").isPresent) systemProperty("sbw_helldiver.stunGuardDogTests", "true")
             if (providers.gradleProperty("gasGuardDogTests").isPresent) systemProperty("sbw_helldiver.gasGuardDogTests", "true")
             if (providers.gradleProperty("flameGuardDogTests").isPresent) systemProperty("sbw_helldiver.flameGuardDogTests", "true")
+            if (providers.gradleProperty("baselineNearMeshes").isPresent && providers.gradleProperty("portTests").isPresent) systemProperty("sbw_helldiver.qaDisableNearMeshes", "true")
+            if (providers.gradleProperty("turretRocketTests").isPresent) { systemProperty("sbw_helldiver.turretPerformanceTests", "true"); systemProperty("sbw_helldiver.perfRocketOnly", "true") }
+            if (providers.gradleProperty("turretPerformanceTests").isPresent) systemProperty("sbw_helldiver.turretPerformanceTests", "true")
             if (providers.gradleProperty("laserGuardDogTests").isPresent) systemProperty("sbw_helldiver.laserGuardDogTests", "true")
             if (providers.gradleProperty("guardDogTests").isPresent) systemProperty("sbw_helldiver.guardDogTests", "true")
             if (providers.gradleProperty("itemDeliveryTests").isPresent) systemProperty("sbw_helldiver.itemDeliveryTests", "true")

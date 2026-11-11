@@ -82,6 +82,7 @@ object LaserGuardDogClientTest {
             pulses++
         }catch(e:Throwable){failure=e}
     }
+    private val heldViews=mutableSetOf<net.minecraft.world.item.ItemDisplayContext>()
     private fun capture(mc:Minecraft,name:String) {
         if(screenshots.add(name))Screenshot.grab(mc.gameDirectory,"laser-dog-$name.png",mc.mainRenderTarget){LOGGER.info("LASER_DOG_SCREENSHOT {}",name)}
     }
@@ -106,6 +107,11 @@ object LaserGuardDogClientTest {
             if(started==0L&&mc.screen is TitleScreen&&mc.overlay==null) {
                 started=System.currentTimeMillis();mc.options.pauseOnLostFocus=false
                 mc.options.cameraType=CameraType.THIRD_PERSON_BACK;mc.options.fov().set(65)
+                GuardDogVisual.heldItemObserver={context,reduced->
+                    if(context.firstPerson() || context==net.minecraft.world.item.ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) {
+                        check(reduced){"Handheld backpack used full mesh: $context"};heldViews.add(context)
+                    }
+                }
                 GuardDogVisual.poseObserver=::observe
                 MachineMesh.guardDogEngineObserver={name,matrix->
                     val axis=matrix.transformDirection(org.joml.Vector3f(0f,-1f,0f)).normalize()
@@ -134,9 +140,18 @@ object LaserGuardDogClientTest {
                 check(pod.item(ItemDeliveryHellpodEntity.Side.REAR).isEmpty)
                 val d=pod.toWorld(ItemDeliveryHellpodEntity.Side.FRONT.mount).subtract(player.eyePosition)
                 player.yRot=Math.toDegrees(kotlin.math.atan2(-d.x,d.z)).toFloat();player.xRot=Math.toDegrees(kotlin.math.atan2(-d.y,d.horizontalDistance())).toFloat()
-                capture(mc,"delivery");check(mc.gameMode!!.interactAt(player,pod,EntityHitResult(pod),InteractionHand.MAIN_HAND).consumesAction());picked=true;equipAt=level.gameTime+12
+                capture(mc,"delivery");check(mc.gameMode!!.interactAt(player,pod,EntityHitResult(pod),InteractionHand.MAIN_HAND).consumesAction());picked=true;equipAt=level.gameTime+36
             }
-            if(!used&&level.gameTime>=equipAt&&GuardDogBackpack.isLaser(player.mainHandItem)) {used=true;mc.gameMode!!.useItem(player,InteractionHand.MAIN_HAND)}
+            if (picked && !used && GuardDogBackpack.isLaser(player.mainHandItem)) {
+                val heldTicks = equipAt - level.gameTime
+                mc.options.cameraType = if (heldTicks > 18) CameraType.FIRST_PERSON else CameraType.THIRD_PERSON_BACK
+                if (heldTicks in 20L..28L) capture(mc, "held-first-person")
+                if (heldTicks in 5L..12L) capture(mc, "held-third-person")
+                if (heldTicks <= 0) {
+                    used = true
+                    mc.gameMode!!.useItem(player, InteractionHand.MAIN_HAND)
+                }
+            }
             if(mc.screen is net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<*>){player.closeContainer();return}
             val drone=level.entitiesForRendering().filterIsInstance<GuardDogEntity>().firstOrNull()
             val walking=drone?.usesPackPose==true&&drone.phaseAge in 2..40
@@ -154,6 +169,12 @@ object LaserGuardDogClientTest {
             }
             if(pressG&&mc.screen==null&&GuardDogBackpack.equipped(player)!=null){pressG=false;KeyMapping.click(InputConstants.Type.KEYSYM.getOrCreate(GLFW.GLFW_KEY_G));GuardDogVisual.pollKey()}
             if(finished){
+                check(screenshots.containsAll(listOf("held-first-person", "held-third-person"))) { "Missing held-backpack views" }
+                check(heldViews.containsAll(listOf(net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_RIGHT_HAND,
+                    net.minecraft.world.item.ItemDisplayContext.THIRD_PERSON_RIGHT_HAND))){"Handheld render contexts missing: $heldViews"}
+                LOGGER.info("HELD_BACKPACK_PASSED reduced=true contexts={}",heldViews)
+                for(name in listOf("guard_dog","laser_guard_dog","stun_guard_dog","flame_guard_dog","gas_guard_dog").flatMap{listOf(it,it+"_backpack")})
+                    LOGGER.info("NEAR_MODEL_TRANSFORMS {} vertices={}",name,MachineMesh.transformCounts(name))
                 check(pulses>=30){"Insufficient real laser damage pulses: $pulses"}
                 check(rendered.getOrDefault(GuardDogEntity.Flight.LAUNCH,0)>10&&rendered.getOrDefault(GuardDogEntity.Flight.DOCK,0)>10){"Native transitions were not rendered: $rendered"}
                 check(handoffs>=3){"Missing visible handoffs: $handoffs"}
@@ -209,5 +230,5 @@ object LaserGuardDogClientTest {
             6->if(level.gameTime>removeAt+1){check(detached!!.isRemoved);finished=true}
         }
     }
-    private fun stop(mc:Minecraft){mc.options.keyUp.setDown(false);mc.options.keyDown.setDown(false);mc.options.keyLeft.setDown(false);mc.options.keyRight.setDown(false);GuardDogVisual.poseObserver=null;MachineMesh.guardDogEngineObserver=null;mc.stop()}
+    private fun stop(mc:Minecraft){mc.options.keyUp.setDown(false);mc.options.keyDown.setDown(false);mc.options.keyLeft.setDown(false);mc.options.keyRight.setDown(false);GuardDogVisual.poseObserver=null;GuardDogVisual.heldItemObserver=null;MachineMesh.guardDogEngineObserver=null;mc.stop()}
 }
