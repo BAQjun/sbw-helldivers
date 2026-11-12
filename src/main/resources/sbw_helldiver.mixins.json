@@ -25,7 +25,8 @@
     "tacz.TaczInputMixin",
     "tacz.TaczCameraMixin",
     "tacz.TaczCrosshairMixin",
-    "ModListSearchMixin"
+    "ModListSearchMixin",
+    "GuardDogTrackingMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -72,12 +72,14 @@ object StratagemCooldowns {
         change(server, player) { s, time -> s.beginArrival(id, token, time, deadline) }
     fun cancel(server: MinecraftServer, player: UUID, id: String, token: UUID) = change(server, player) { s, _ -> s.cancel(id, token) }
     fun rearm(player: ServerPlayer) = change(player.server, player.uuid) { s, time -> s.equip(equipped(player)); Stratagems.dimensionAllowed(player.level().dimension().location().toString()) && SuperDestroyers.available(player) && s.rearm(time) }
+    fun purchaseResupply(player: ServerPlayer) = change(player.server, player.uuid) { s, _ -> s.purchaseResupply() }
     fun setEnabled(player: ServerPlayer, enabled: Boolean) = change(player.server, player.uuid) { s, time -> s.setEnabled(enabled, time) }
     fun sync(player: ServerPlayer) {
         if (player is FakePlayer) return
         BeaconNetwork.CHANNEL.send(PacketDistributor.PLAYER.with { player }, CooldownSnapshotPacket(now(player.server), state(player).save()))
     }
     @SubscribeEvent fun tick(event: TickEvent.PlayerTickEvent) {
+        if(event.phase != TickEvent.Phase.END) return
         val p = event.player as? ServerPlayer ?: return
         if (event.phase != TickEvent.Phase.END) return
         // Clock transitions happen every tick; inventory scans and clock correction are infrequent.

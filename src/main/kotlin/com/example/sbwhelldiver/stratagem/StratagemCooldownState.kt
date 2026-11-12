@@ -35,7 +35,11 @@ class StratagemCooldownState {
     var equippedEagles: Set<String> = emptySet(); private set
     var revision = 0L; private set
     private fun changed() { revision++ }
-    fun entry(id: String) = entries.getOrPut(id) { CallStatus(id, remaining = StratagemCooldownConfig.maxUses(id)).also { changed() } }
+    fun entry(id: String) = entries.getOrPut(id) { CallStatus(id, remaining = if(id=="resupply")0 else StratagemCooldownConfig.maxUses(id)).also { changed() } }
+    fun purchaseResupply():Boolean {
+        val e=entry("resupply");if(e.remaining>=5)return false
+        e.remaining++;changed();return true
+    }
     fun equip(ids: Collection<String>) {
         val next = ids.filter { it.startsWith("eagle_") && it != "eagle_rearm" }.toSet()
         if (next != equippedEagles) { equippedEagles = next; next.forEach(::entry); changed() }
@@ -70,7 +74,7 @@ class StratagemCooldownState {
     }
     fun available(id: String, now: Long): Boolean {
         advance(now)
-        if (!enabled) return true
+        if (!enabled && id!="resupply") return true
         val e = entry(id)
         if (e.phase != CallPhase.READY) return false
         if (!id.startsWith("eagle_")) return e.remaining != 0
@@ -79,13 +83,13 @@ class StratagemCooldownState {
     }
     fun reserve(id: String, token: UUID, now: Long): Boolean {
         if (!available(id, now)) return false
-        if (!enabled) return true
+        if (!enabled && id!="resupply") return true
         entry(id).apply { activityStart = -1; activityEnd = -1; activityFinished = -1; activityToken = null; equipmentMachine=""; phase = CallPhase.THROWN; start = now; end = now + 1200; request = token }
         changed(); return true
     }
     fun beginArrival(id: String, token: UUID, now: Long, arrival: Long): Boolean {
-        val e = entries[id] ?: return !enabled
-        if (e.request != token || e.phase !in listOf(CallPhase.THROWN, CallPhase.ARRIVING)) return !enabled
+        val e = entries[id] ?: return !enabled && id!="resupply"
+        if (e.request != token || e.phase !in listOf(CallPhase.THROWN, CallPhase.ARRIVING)) return !enabled && id!="resupply"
         // Railcannon has no inbound/arrived stage: its beacon starts cooldown on landing.
         // Repeated marker timing updates must never restart an already-running cooldown.
         if (id == "orbital_railcannon_strike") {
@@ -94,7 +98,7 @@ class StratagemCooldownState {
             changed(); return true
         }
         if (e.phase == CallPhase.THROWN) {
-            if ((id.startsWith("eagle_") || id=="orbital_laser") && enabled) e.remaining = (e.remaining - 1).coerceAtLeast(0)
+            if (id=="resupply" || (id.startsWith("eagle_") || id=="orbital_laser") && enabled) e.remaining = (e.remaining - 1).coerceAtLeast(0)
             e.phase = CallPhase.ARRIVING; e.start = now; e.end = arrival; changed()
         } else if (e.end != arrival) { e.end = arrival; changed() }
         return true
@@ -125,7 +129,7 @@ class StratagemCooldownState {
             e.activityStart = -1; e.activityEnd = -1; e.activityFinished = -1; e.activityToken = null; changed()
         }
         if (e.request != token || e.phase !in listOf(CallPhase.THROWN, CallPhase.ARRIVING)) return
-        if (e.phase == CallPhase.ARRIVING && (id.startsWith("eagle_") || id=="orbital_laser")) e.remaining = (e.remaining + 1).coerceAtMost(StratagemCooldownConfig.maxUses(id))
+        if (e.phase == CallPhase.ARRIVING && (id.startsWith("eagle_") || id=="orbital_laser" || id=="resupply")) e.remaining = (e.remaining + 1).coerceAtMost(StratagemCooldownConfig.maxUses(id))
         e.phase = CallPhase.READY; e.request = null; changed()
     }
     private fun startRearm(now: Long, hasOrdnance: Boolean) {
@@ -148,6 +152,7 @@ class StratagemCooldownState {
     fun restoreAllUses() {
         var restored = false
         for (e in entries.values) {
+            if(e.id=="resupply")continue
             val maximum = StratagemCooldownConfig.maxUses(e.id)
             if (maximum > 0 && e.remaining != maximum) { e.remaining = maximum; restored = true }
         }
@@ -159,7 +164,7 @@ class StratagemCooldownState {
         if (!value) {
             rearmStart = 0; rearmEnd = 0; turnaroundStart = 0; turnaroundEnd = 0
             for (e in entries.values) {
-                e.remaining = StratagemCooldownConfig.maxUses(e.id)
+                if(e.id!="resupply") e.remaining = StratagemCooldownConfig.maxUses(e.id)
                 if (e.phase == CallPhase.COOLDOWN) { e.phase = CallPhase.READY; e.request = null }
             }
         }
@@ -186,7 +191,7 @@ class StratagemCooldownState {
                 val e = raw as CompoundTag; val id = e.getString("Id")
                 if (Stratagems.get(id) == null) continue
                 s.entries[id] = CallStatus(id, CallPhase.entries.getOrElse(e.getInt("Phase")) { CallPhase.READY }, e.getLong("Start"), e.getLong("End"),
-                    e.getInt("Remaining").coerceAtMost(StratagemCooldownConfig.maxUses(id)), if (e.hasUUID("Request")) e.getUUID("Request") else null,
+                    e.getInt("Remaining").coerceIn(if(id=="resupply")0 else -1,StratagemCooldownConfig.maxUses(id)), if (e.hasUUID("Request")) e.getUUID("Request") else null,
                     if(e.contains("ActivityStart")) e.getLong("ActivityStart") else -1,
                     if(e.contains("ActivityEnd")) e.getLong("ActivityEnd") else -1,
                     if(e.contains("ActivityFinished")) e.getLong("ActivityFinished") else -1,

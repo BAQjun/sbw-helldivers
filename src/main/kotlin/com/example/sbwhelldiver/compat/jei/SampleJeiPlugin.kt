@@ -55,7 +55,7 @@ private class SampleCategory(val machine:MachineDeployment,gui:IGuiHelper):IReci
     override fun getHeight()=78
     override fun setRecipe(b:IRecipeLayoutBuilder,r:SampleRecipe,focus:IFocusGroup) {
         b.addInputSlot(8,14).addItemStacks(r.ingredient.items.map{it.copyWithCount(r.count)}).setStandardSlotBackground()
-        r.outcomes.forEachIndexed{i,out->b.addOutputSlot(78+i*33,14).addItemStack(out.stack()).setStandardSlotBackground().addTooltipCallback{_,tips->tips.add(Component.translatable("jei.sbw_helldiver.chance",out.chance))}}
+        r.outcomes.forEachIndexed{i,out->b.addOutputSlot(78+i*33,14).addItemStack(out.stack()).setStandardSlotBackground().addTooltipCallback{_,tips->tips.add(Component.translatable("jei.sbw_helldiver.chance",out.chance));if(out.maxCount!=out.count)tips.add(Component.translatable("jei.sbw_helldiver.output_range",out.count,out.maxCount))}}
     }
     override fun draw(r:SampleRecipe,slots:IRecipeSlotsView,g:GuiGraphics,x:Double,y:Double) {
         val font=Minecraft.getInstance().font

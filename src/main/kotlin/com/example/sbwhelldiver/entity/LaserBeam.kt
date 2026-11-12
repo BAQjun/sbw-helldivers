@@ -9,8 +9,8 @@ import net.minecraft.world.phys.Vec3
 /** Damage follows the same ray rendered by the client, including blockers and close overlaps. */
 object LaserBeam {
     data class Trace(val end: Vec3, val target: LivingEntity?, val mine: AntiPersonnelMineEntity?=null)
-    fun trace(sentry: SentryHellpodEntity, origin: Vec3, direction: Vec3): Trace {
-        val end = origin.add(direction.normalize().scale(LaserClock.BEAM_RANGE))
+    fun trace(sentry: net.minecraft.world.entity.Entity, origin: Vec3, direction: Vec3, range: Double = LaserClock.BEAM_RANGE): Trace {
+        val end = origin.add(direction.normalize().scale(range))
         val wall = sentry.level().clip(ClipContext(origin,end,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,sentry)).location
         var nearest = wall
         var victim: LivingEntity? = null

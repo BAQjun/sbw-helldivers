@@ -99,23 +99,30 @@ object TacticalTerminalDisplay {
             if(category==null){
                 for(i in 0..3){
                     val index=(view?.scroll?:0)+i;val y=28+i*29
-                    if(index<3){
-                        val refill=TacticalTerminalOffers.refills[index]
-                        row(c,10,y,320,26,refill.id,Component.translatable("gui.sbw_helldiver.destroyer_refill",refill.minutes,DestroyerClient.calls(refill.minutes),refill.limit),refill.cost,null,view,partial)
-                    }else TerminalCategory.entries.getOrNull(index-3)?.let{categoryEntry->
+                    TerminalCategory.entries.getOrNull(index)?.let{categoryEntry->
                         c.fill(10,y,320,26,background(view,10,y,320,26))
                         c.text(Component.translatable("gui.sbw_helldiver.category.${categoryEntry.name.lowercase()}"),20,y+9)
                         c.text(Component.literal(">"),314,y+9,0xFFE5C62D.toInt())
                     }
                 }
-                c.fill(333,28,2,116,0xFF34444A.toInt());c.fill(333,28+49*(view?.scroll?:0)/3,2,66,0xFFE5C62D.toInt())
+                val total=TerminalCategory.entries.size
+                val thumb=116*4/total
+                val offset=(116-thumb)*(view?.scroll?:0)/(total-4)
+                c.fill(333,28,2,116,0xFF34444A.toInt());c.fill(333,28+offset,2,thumb,0xFFE5C62D.toInt())
             }else{
                 c.text(Component.translatable("gui.sbw_helldiver.back"),12,27,0xFFE5C62D.toInt())
                 c.text(Component.translatable("gui.sbw_helldiver.category.${category.name.lowercase()}"),65,27)
-                val entries=TacticalTerminalOffers.all.filter{it.category==category}
-                entries.drop(view?.scroll?:0).take(4).forEachIndexed{i,offer->
-                    val def=Stratagems.get(offer.id)?:return@forEachIndexed
-                    row(c,10,38+i*29,320,26,offer.id,Component.translatable(def.translation),offer.cost,def.icon,view,partial)
+                val entries=TacticalTerminalOffers.ids(category)
+                entries.drop(view?.scroll?:0).take(4).forEachIndexed{i,id->
+                    val refill=TacticalTerminalOffers.refillsById[id]
+                    if(refill!=null){
+                        row(c,10,38+i*29,320,26,id,Component.translatable("gui.sbw_helldiver.destroyer_refill",refill.minutes,DestroyerClient.calls(refill.minutes),refill.limit),refill.cost,null,view,partial)
+                    }else{
+                        val def=Stratagems.get(id)?:return@forEachIndexed
+                        val offer=TacticalTerminalOffers.byId.getValue(id)
+                        val label=if(id=="resupply")Component.translatable("gui.sbw_helldiver.resupply_refill",StratagemCooldownClient.remainingUses(id).coerceAtLeast(0),5) else Component.translatable(def.translation)
+                        row(c,10,38+i*29,320,26,id,label,offer.cost,def.icon,view,partial)
+                    }
                 }
                 if(entries.size>4){
                     c.fill(333,38,2,116,0xFF34444A.toInt())

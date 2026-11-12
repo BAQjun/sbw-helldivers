@@ -62,6 +62,8 @@ data class BeaconFailurePacket(val stratagemId: String, val loadoutIds: List<Str
 object BeaconNetwork {
     val CHANNEL = NetworkRegistry.newSimpleChannel(ResourceLocation(MOD_ID, "beacon"), { "14" }, { it == "14" }, { it == "14" })
     fun register() {
+        CHANNEL.registerMessage(29, GuardDogTogglePacket::class.java, { _, _ -> }, { GuardDogTogglePacket },
+            { _, context -> GuardDogTogglePacket.handle(context) }, Optional.of(NetworkDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(28,TacticalTerminalResultPacket::class.java,{p,b->p.encode(b)},TacticalTerminalResultPacket::decode,TacticalTerminalResultPacket::handle,Optional.of(NetworkDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(26,TacticalTerminalOpenPacket::class.java,{p,b->p.encode(b)},TacticalTerminalOpenPacket::decode,TacticalTerminalOpenPacket::handle,Optional.of(NetworkDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(27,TacticalTerminalActionPacket::class.java,{p,b->p.encode(b)},TacticalTerminalActionPacket::decode,TacticalTerminalActionPacket::handle,Optional.of(NetworkDirection.PLAY_TO_SERVER))

@@ -3,6 +3,7 @@ package com.example.sbwhelldiver.client
 import com.example.sbwhelldiver.MOD_ID
 import com.example.sbwhelldiver.entity.*
 import net.minecraft.client.Minecraft
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.*
@@ -22,7 +23,7 @@ object FlameJetVisual {
     private const val SOOT=3
     private data class Parcel(var p:Vec3,var previous:Vec3,var velocity:Vec3,var age:Double,var life:Double,val kind:Int,val seed:Double,val limit:Double,var travelled:Double=0.0,var smoked:Boolean=false)
     private data class Emitter(var position:Vec3,var direction:Vec3,var ignition:Int=0,var spraying:Int=0)
-    private val emitters=WeakHashMap<SentryHellpodEntity,Emitter>()
+    private val emitters=WeakHashMap<Entity,Emitter>()
     private val parcels=ArrayList<Parcel>()
     private var world:Level?=null
     private fun world(level:Level?){if(world!==level){parcels.clear();emitters.clear();world=level}}
@@ -33,9 +34,11 @@ object FlameJetVisual {
         return axis.add(side.scale(cos(a)*radius)).add(up.scale(sin(a)*radius)).normalize()
     }
     fun tick(s:SentryHellpodEntity) {
-        world(s.level())
         val state=if(s.phase==AbstractHellpodEntity.Phase.ACTIVE)s.flameState else FlameClock.State.OFF
-        val muzzle=s.getShootPos("Main",1f);val direction=s.getShootVec("Main",1f).normalize()
+        tick(s,state,s.getShootPos("Main",1f),s.getShootVec("Main",1f).normalize(),FlameClock.RANGE)
+    }
+    fun tick(s: Entity, state: FlameClock.State, muzzle: Vec3, direction: Vec3, range: Double) {
+        world(s.level())
         val emitter=emitters.getOrPut(s){Emitter(muzzle,direction)};val rng=s.level().random
         emitter.ignition=if(state==FlameClock.State.IGNITING)emitter.ignition+1 else 0
         emitter.spraying=if(state==FlameClock.State.SPRAYING)emitter.spraying+1 else 0
@@ -51,7 +54,7 @@ object FlameJetVisual {
                 val speed=if(kind==CORE)3.0 else 3.6+rng.nextDouble()*.6
                 val life=if(kind==CORE)2.0+rng.nextDouble()*.5 else 11.5+rng.nextDouble()*2.5
                 val v=scatter(axis,spread,rng).scale(if(short).28 else speed)
-                parcels.add(Parcel(at,at,v,-fraction,if(short)4.0 else life,kind,rng.nextDouble(),if(short)1.8 else FlameClock.RANGE))
+                parcels.add(Parcel(at,at,v,-fraction,if(short)4.0 else life,kind,rng.nextDouble(),if(short)1.8 else range))
             }
         }
         if(state==FlameClock.State.SPRAYING) {
@@ -71,6 +74,7 @@ object FlameJetVisual {
     // Emissions are drawn independently of the turret's model and its culling box.
     fun bounds(s:SentryHellpodEntity):AABB?=null
     @SubscribeEvent fun advance(event:TickEvent.ClientTickEvent) {
+        if(event.phase != TickEvent.Phase.END) return
         if(event.phase!=TickEvent.Phase.END)return
         val mc=Minecraft.getInstance();world(mc.level)
         val level=world?:return;if(mc.isPaused)return

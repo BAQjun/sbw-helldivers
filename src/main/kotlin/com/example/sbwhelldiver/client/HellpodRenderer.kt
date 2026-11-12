@@ -4,6 +4,7 @@ import com.atsuishio.superbwarfare.client.model.entity.VehicleModelInstance
 import com.atsuishio.superbwarfare.client.renderer.entity.BasicAutoAimableRenderer
 import com.atsuishio.superbwarfare.entity.vehicle.base.AutoAimableEntity
 import com.example.sbwhelldiver.entity.AbstractHellpodEntity
+import com.example.sbwhelldiver.entity.ItemDeliveryHellpodEntity
 import com.example.sbwhelldiver.entity.SentryHellpodEntity
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.renderer.entity.EntityRendererProvider
@@ -64,6 +65,15 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
         try {super.render(entity,yaw,partial,pose,meshBuffers?:buffers,light)}
         finally {meshBuffers?.finish()}
         val pod = entity as? AbstractHellpodEntity ?: return
+        if (pod is ItemDeliveryHellpodEntity) {
+            pose.pushPose()
+            try {
+                rotateVehicleAxis(entity, pose, yaw, partial)
+                if(pod is com.example.sbwhelldiver.entity.ResupplyHellpodEntity) ResupplyRackRenderer.render(pod, partial, pose, buffers, light) else ItemDeliveryRackRenderer.render(pod, partial, pose, buffers, light)
+            } finally {
+                pose.popPose()
+            }
+        }
         if(pod is com.example.sbwhelldiver.entity.MineDispenserEntity){
             getCurrentModelEntry(pose,entity)?.let{entry->
                 pose.pushPose()

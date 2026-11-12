@@ -10,12 +10,14 @@
     {
       "tier": 0,
       "chance": 70,
-      "count": 5
+      "count": 7,
+      "max_count": 8
     },
     {
       "tier": 1,
       "chance": 29,
-      "count": 1
+      "count": 1,
+      "max_count": 2
     },
     {
       "tier": 2,

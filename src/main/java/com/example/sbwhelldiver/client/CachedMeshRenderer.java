@@ -44,7 +44,7 @@ public final class CachedMeshRenderer {
         if (filtered && selection.visibleCount == 0) return;
         Vector3f v = mesh.scratch;
         for (int i=0; i<mesh.positions.length; i+=3) {
-            if (filtered && !selection.usedPositions[i/3]) continue;
+            if (!quads && filtered && !selection.usedPositions[i/3]) continue;
             v.set(mesh.positions[i],mesh.positions[i+1],mesh.positions[i+2]).mulPosition(matrix.pose());
             mesh.transformed[i]=v.x; mesh.transformed[i+1]=v.y; mesh.transformed[i+2]=v.z;
         }
@@ -55,21 +55,26 @@ public final class CachedMeshRenderer {
             mesh.packedNormals[i/3]=PackedEntityVertices.packNormal(v.x,v.y,v.z);
         }
         int color=((int)(red*255)&255)|(((int)(green*255)&255)<<8)|(((int)(blue*255)&255)<<16)|(((int)(alpha*255)&255)<<24);
-        for (int i=0; i<mesh.positionIndices.length; i+=3) {
+        if(quads && PlanarMeshQuads.ENABLED) {
+            int[] corners=mesh.shaderQuads.corners(),sources=mesh.shaderQuads.sourceTriangles();
+            for(int i=0;i<corners.length;i+=4) {
+                int first=sources[i/2],second=sources[i/2+1];
+                if(filtered && !selection.visible[first] && (second<0 || !selection.visible[second]))continue;
+                // Any partially exposed pair retains both source triangles.
+                int a=mesh.positionIndices[corners[i]],b=mesh.positionIndices[corners[i+1]],c=mesh.positionIndices[corners[i+2]];
+                if(degenerate(mesh.transformed,a,b,c))continue;
+                for(int j=0;j<4;j++)emit(mesh,corners[i+j],out,bulk,color,red,green,blue,alpha,overlay,light);
+            }
+        } else for (int i=0; i<mesh.positionIndices.length; i+=3) {
             if (filtered && !selection.visible[i/3]) continue;
-            // A collapsed animation bone must not submit degenerate primitives to Iris.
-            int a=mesh.positionIndices[i], b=mesh.positionIndices[i+1], c=mesh.positionIndices[i+2];
-            float[] t=mesh.transformed;
-            float ux=t[b]-t[a],uy=t[b+1]-t[a+1],uz=t[b+2]-t[a+2];
-            float vx=t[c]-t[a],vy=t[c+1]-t[a+1],vz=t[c+2]-t[a+2];
-            float cx=uy*vz-uz*vy,cy=uz*vx-ux*vz,cz=ux*vy-uy*vx;
-            if (quads && cx*cx+cy*cy+cz*cz<=1.0E-16f) continue;
+            if(quads && degenerate(mesh.transformed,mesh.positionIndices[i],mesh.positionIndices[i+1],mesh.positionIndices[i+2]))continue;
             emit(mesh,i,out,bulk,color,red,green,blue,alpha,overlay,light);
             emit(mesh,i+1,out,bulk,color,red,green,blue,alpha,overlay,light);
             emit(mesh,i+2,out,bulk,color,red,green,blue,alpha,overlay,light);
-            if (quads) emit(mesh,i+2,out,bulk,color,red,green,blue,alpha,overlay,light);
+            if(quads)emit(mesh,i+2,out,bulk,color,red,green,blue,alpha,overlay,light);
         }
     }
+
     private static void emit(Mesh m,int index,VertexConsumer out,PackedEntityVertices bulk,int color,
                              float r,float g,float b,float a,int overlay,int light) {
         int p=m.positionIndices[index],n=m.normalIndices[index],u=index*2;
@@ -224,12 +229,14 @@ public final class CachedMeshRenderer {
         return Arrays.copyOf(unique,size);
     }
     private static final class Mesh {
+        final PlanarMeshQuads.Compiled shaderQuads;
         final int[] positionIndices,normalIndices,packedNormals;
         final float[] positions,normals,uvs,transformed,transformedNormals;
         final Vector3f scratch=new Vector3f();
         final Selection selection;
         Mesh(BakedGeometryChunk chunk) {
             BakedVertexData data=chunk.vertices();
+            shaderQuads=PlanarMeshQuads.compile(data.positions(),data.normals(),data.uvs());
             if(data.vertexCount()%3!=0)throw new IllegalArgumentException("Incomplete Bedrock mesh triangle");
             positionIndices=new int[data.vertexCount()];normalIndices=new int[data.vertexCount()];
             positions=unique(data.positions(),positionIndices);normals=unique(data.normals(),normalIndices);uvs=data.uvs();

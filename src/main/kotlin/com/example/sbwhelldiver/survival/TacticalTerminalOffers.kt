@@ -2,7 +2,7 @@ package com.example.sbwhelldiver.survival
 
 /** Sample costs are per purchase, including repeat purchases of a stratagem. */
 data class SampleCost(val common:Int, val rare:Int=0, val superSample:Int=0)
-enum class TerminalCategory { ORBITAL, EAGLE, SENTRY, DEFENSE }
+enum class TerminalCategory { BASIC, ORBITAL, EAGLE, SENTRY, DEFENSE, BACKPACK }
 data class TerminalOffer(val id:String, val category:TerminalCategory, val cost:SampleCost)
 data class DestroyerRefill(val id:String,val minutes:Int,val cost:SampleCost,val limit:Int)
 
@@ -12,7 +12,9 @@ object TacticalTerminalOffers {
     val refillsById=refills.associateBy{it.id}
     private fun offer(category:TerminalCategory, id:String, common:Int, rare:Int=0, superSample:Int=0) =
         TerminalOffer(id, category, SampleCost(common, rare, superSample))
+    fun ids(category:TerminalCategory)=if(category==TerminalCategory.BASIC)refills.map{it.id}+"resupply" else all.filter{it.category==category}.map{it.id}
     val all = listOf(
+        offer(TerminalCategory.BASIC,"resupply",150,50,1),
         offer(TerminalCategory.ORBITAL,"orbital_precision_strike",50,15),
         offer(TerminalCategory.ORBITAL,"orbital_smoke_strike",65,15),
         offer(TerminalCategory.ORBITAL,"orbital_ems_strike",65,15),
@@ -51,6 +53,11 @@ object TacticalTerminalOffers {
         offer(TerminalCategory.DEFENSE,"anti_tank_minefield",70,15),
         offer(TerminalCategory.DEFENSE,"anti_tank_emplacement",150,20,5),
         offer(TerminalCategory.DEFENSE,"grenadier_battlement",110,15,5),
+        offer(TerminalCategory.BACKPACK, "guard_dog", 90, 15),
+        offer(TerminalCategory.BACKPACK, "laser_guard_dog", 90, 15),
+        offer(TerminalCategory.BACKPACK, "stun_guard_dog", 90, 15),
+        offer(TerminalCategory.BACKPACK, "flame_guard_dog", 90, 15),
+        offer(TerminalCategory.BACKPACK, "gas_guard_dog", 90, 15),
     ).sortedWith(compareBy({ it.cost.superSample }, { it.cost.rare }, { it.cost.common }))
     val byId = all.associateBy { it.id }
 }

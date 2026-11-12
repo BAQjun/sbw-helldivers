@@ -46,6 +46,29 @@ object ModItems {
     val EAGLE_AIRSTRIKE=ITEMS.register("eagle_airstrike_stratagem") { StratagemItem(Item.Properties().stacksTo(16),dropId("eagle_airstrike")) }
     val EAGLE_STRAFING_RUN=ITEMS.register("eagle_strafing_run_stratagem") { StratagemItem(Item.Properties().stacksTo(16),dropId("eagle_strafing_run")) }
 
+    val STUN_GUARD_DOG = ITEMS.register("stun_guard_dog_stratagem") { StratagemItem(Item.Properties().stacksTo(16), dropId("stun_guard_dog")) }
+    val STUN_GUARD_DOG_BACKPACK = ITEMS.register("stun_guard_dog_backpack") {
+        com.example.sbwhelldiver.item.StratagemBackpacks.createGuardDog(Item.Properties().stacksTo(1), stun = true)
+    }
+    val GAS_GUARD_DOG = ITEMS.register("gas_guard_dog_stratagem") { StratagemItem(Item.Properties().stacksTo(16), dropId("gas_guard_dog")) }
+    val GAS_GUARD_DOG_BACKPACK = ITEMS.register("gas_guard_dog_backpack") {
+        com.example.sbwhelldiver.item.StratagemBackpacks.createGuardDog(Item.Properties().stacksTo(1), gas = true)
+    }
+    val FLAME_GUARD_DOG = ITEMS.register("flame_guard_dog_stratagem") { StratagemItem(Item.Properties().stacksTo(16), dropId("flame_guard_dog")) }
+    val FLAME_GUARD_DOG_BACKPACK = ITEMS.register("flame_guard_dog_backpack") {
+        com.example.sbwhelldiver.item.StratagemBackpacks.createGuardDog(Item.Properties().stacksTo(1), flame = true)
+    }
+
+    val LASER_GUARD_DOG = ITEMS.register("laser_guard_dog_stratagem") { StratagemItem(Item.Properties().stacksTo(16), dropId("laser_guard_dog")) }
+    val LASER_GUARD_DOG_BACKPACK = ITEMS.register("laser_guard_dog_backpack") {
+        com.example.sbwhelldiver.item.StratagemBackpacks.createGuardDog(Item.Properties().stacksTo(1), laser = true)
+    }
+
+    val GUARD_DOG = ITEMS.register("guard_dog_stratagem") { StratagemItem(Item.Properties().stacksTo(16), dropId("guard_dog")) }
+    val GUARD_DOG_BACKPACK = ITEMS.register("guard_dog_backpack") {
+        com.example.sbwhelldiver.item.StratagemBackpacks.createGuardDog(Item.Properties().stacksTo(1))
+    }
+
     val SHIELD_GENERATOR = ITEMS.register("shield_generator_stratagem") { StratagemItem(Item.Properties().stacksTo(16),dropId("shield_generator")) }
 
     val BEACON: RegistryObject<Item> = ITEMS.register("stratagem_beacon") {

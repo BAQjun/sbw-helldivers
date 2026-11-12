@@ -106,7 +106,7 @@ minecraft {
             property("mixin.env.remapRefMap", "true")
             property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
             mods {
-                create(project.property("mod_id").toString()) { source(sourceSets.main.get()); if(project.hasProperty("sampleTests"))source(sampleTest); if(project.hasProperty("survivalTests"))source(survivalTest); if(project.hasProperty("taczCompatTests"))source(taczTest) }
+                create(project.property("mod_id").toString()) { source(sourceSets.main.get()); if(project.hasProperty("sampleTests") || project.hasProperty("resupplyTests"))source(sampleTest); if(project.hasProperty("survivalTests"))source(survivalTest); if(project.hasProperty("taczCompatTests"))source(taczTest) }
             }
         }
         create("client") {
@@ -119,8 +119,7 @@ minecraft {
                 else if(project.hasProperty("destroyerTests"))property("sbw_helldiver.destroyerRegression","true")
                 else property("sbw_helldiver.tacticalRegression","true")
                 jvmArgs("-Xms512m","-Xmx3G","-XX:ActiveProcessorCount=4")
-                args("--width","1280","--height","720")
-            }
+                          }
             workingDirectory(project.file("run"))
             if (project.hasProperty("cooldownSmokeTest")) {
                 workingDirectory(project.file("run-client-test"))
@@ -229,15 +228,14 @@ minecraft {
 
             if(project.hasProperty("sampleTests")){
                 workingDirectory(project.file(".codex/samples/client"))
-                property("sbw_helldiver.sampleRegression","true")
+                if(!project.hasProperty("resupplyTests"))property("sbw_helldiver.sampleRegression","true")
                 if(project.hasProperty("samplePonderTests"))property("sbw_helldiver.samplePonderTests","true")
                 jvmArgs("-Xms512m","-Xmx3G","-XX:ActiveProcessorCount=4")
-                args("--width","1280","--height","720")
-            }
+                          }
             if(project.hasProperty("survivalClientTests"))workingDirectory(project.file(".codex/survival-alpha14/client"))
             mods {
                 create(project.property("mod_id").toString()) {
-                    source(sourceSets.main.get());if(project.hasProperty("sampleTests"))source(sampleTest);if(project.hasProperty("survivalClientTests"))source(survivalTest)
+                    source(sourceSets.main.get());if(project.hasProperty("sampleTests") || project.hasProperty("resupplyTests"))source(sampleTest);if(project.hasProperty("survivalClientTests"))source(survivalTest)
                     if(project.hasProperty("taczCompatTests"))source(taczTest)
                     if(project.hasProperty("combatFixClientTests"))source(combatTest)
                 }
@@ -312,7 +310,18 @@ jarJar.enable()
 tasks.named<Jar>("jar") { archiveClassifier.set("slim") }
 tasks.named<Jar>("jarJar") { archiveClassifier.set("") }
 
+val sbwEmbeddedApi = configurations.create("sbwEmbeddedApi") { isTransitive = false }
+val extractCuriosApi = tasks.register<Copy>("extractCuriosApi") {
+    from(provider { zipTree(sbwEmbeddedApi.singleFile) })
+    include("META-INF/jarjar/*curios*.jar")
+    eachFile { path = name }
+    includeEmptyDirs = false
+    into(layout.buildDirectory.dir("generated/curios-api"))
+}
+val curiosApi = files(provider { fileTree(layout.buildDirectory.dir("generated/curios-api")) { include("*.jar") } }).builtBy(extractCuriosApi)
 dependencies {
+    add("sbwEmbeddedApi", "curse.maven:superb-warfare-${project.property("superbwarfare_curse_id")}:${project.property("superbwarfare_file_id")}")
+    compileOnly(curiosApi)
     compileOnly(fg.deobf("net.createmod.ponder:Ponder-Forge-1.20.1:1.0.91",
         closureOf<ExternalModuleDependency> { isTransitive = false }))
     if(project.hasProperty("samplePonderTests")) {
@@ -451,4 +460,18 @@ if(providers.gradleProperty("sampleTests").isPresent){
         val cleanup=tasks.register<Delete>("cleanSample${taskName}World"){delete(layout.projectDirectory.dir(savePath))}
         tasks.matching{it.name==taskName}.configureEach{dependsOn(reset);finalizedBy(cleanup)}
     }
+}
+
+if(providers.gradleProperty("resupplyTests").isPresent){
+ minecraft.runs.named("client"){
+  workingDirectory(project.file(".codex/resupply/client"))
+  property("sbw_helldiver.resupplyTests","true")
+  if(providers.gradleProperty("effectDiagnostics").isPresent){property("sbw_helldiver.visualOnly","true");property("sbw_helldiver.laserShaderSmokeTest","true")}
+  jvmArgs("-Xms512m","-Xmx3G","-XX:ActiveProcessorCount=4")
+
+ }
+ val save=layout.projectDirectory.dir(".codex/resupply/client/saves/port-client-test")
+ val reset=tasks.register<Delete>("resetResupplyClient"){delete(save)}
+ val cleanup=tasks.register<Delete>("cleanupResupplyClient"){delete(save)}
+ tasks.matching{it.name=="runClient"}.configureEach{dependsOn(reset);finalizedBy(cleanup)}
 }

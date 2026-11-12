@@ -30,13 +30,17 @@ public final class LaserEffectGeometry {
         glEnableVertexAttribArray(2);glVertexAttribPointer(2,4,GL_FLOAT,false,40,24L);
     }
     static void draw(float[] geometry,Matrix4f projection,Matrix3f inverseView,int width,int height)throws java.io.IOException {
+        draw(geometry,new Matrix4f(projection).mul(new Matrix4f().set3x3(new Matrix3f(inverseView).invert())),width,height);
+    }
+    /** Attached effects must use the mesh's full view, including camera bob translation. */
+    static void draw(float[] geometry,Matrix4f viewProjection,int width,int height)throws java.io.IOException {
         vertices=geometry.length/10;if(vertices==0)return;
         if(data.capacity()<geometry.length)data=org.lwjgl.BufferUtils.createFloatBuffer(geometry.length);
         data.clear();data.put(geometry);data.flip();initialize();
         glUseProgram(program);glBindVertexArray(vao);glBindBuffer(GL_ARRAY_BUFFER,vbo);glBufferData(GL_ARRAY_BUFFER,data,GL_STREAM_DRAW);
         glUniform1i(glGetUniformLocation(program,"SceneDepth"),0);glUniform1i(glGetUniformLocation(program,"DisplayTexture"),1);glUniform2f(glGetUniformLocation(program,"Viewport"),width,height);
         try(var stack=org.lwjgl.system.MemoryStack.stackPush()){
-            var matrix=stack.mallocFloat(16);new Matrix4f(projection).mul(new Matrix4f().set3x3(new Matrix3f(inverseView).invert())).get(matrix);glUniformMatrix4fv(glGetUniformLocation(program,"ViewProjection"),false,matrix);
+            var matrix=stack.mallocFloat(16);viewProjection.get(matrix);glUniformMatrix4fv(glGetUniformLocation(program,"ViewProjection"),false,matrix);
         }
         int active=glGetInteger(GL_ACTIVE_TEXTURE);glActiveTexture(GL_TEXTURE1);int previous=glGetInteger(GL_TEXTURE_BINDING_2D);
         try{

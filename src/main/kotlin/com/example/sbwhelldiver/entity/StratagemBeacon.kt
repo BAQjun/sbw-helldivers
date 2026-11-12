@@ -159,7 +159,7 @@ class StratagemBeacon(type: EntityType<StratagemBeacon>, level: Level) :
                     else->yRot
                 }
                 marker.moveTo(result.location.x, result.location.y + 0.015, result.location.z, deployYaw, 0f)
-                marker.configure(selected.dropId, HelldiversConfig.dropDelayTicks.get(), owner?.uuid ?: savedCallOwner,
+                marker.configure(selected.dropId, if (selected.id in setOf("guard_dog", "laser_guard_dog", "stun_guard_dog", "flame_guard_dog", "gas_guard_dog")) GuardDogEntity.CALL_TICKS else HelldiversConfig.dropDelayTicks.get(), owner?.uuid ?: savedCallOwner,
                     Direction.UP, result.location.y, selected.category.beamColor)
                 val request = managedRequest
                 if (request != null) {
