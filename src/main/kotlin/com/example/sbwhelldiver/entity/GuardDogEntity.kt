@@ -28,6 +28,11 @@ import kotlin.math.hypot
 import kotlin.math.sin
 
 class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
+    // The owner-relative launch/dock pose and free-flight interpolation must keep
+    // ticking even when the drone is behind the camera. Rendering still has its
+    // own frustum check in DroneRenderer.
+    init { noCulling = true }
+
     enum class Flight { LAUNCH, PATROL, RETURN, DOCK }
 
     private var ownerId: UUID? = null
@@ -44,6 +49,7 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     private data class GasCloud(val center: Vec3, val born: Long)
     private val gasClouds = ArrayDeque<GasCloud>()
     private val gasExposure = mutableMapOf<UUID, Int>()
+    private var clientPhaseStartedAt = 0
     private var lerpTicks = 0
     private var lerpPosition = Vec3.ZERO
     private var lerpYaw = 0f
@@ -100,7 +106,9 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     val flight get() = Flight.entries[entityData.get(FLIGHT)]
     val dockingSpares get() = entityData.get(DOCKING_SPARES)
     val reload get() = Reload.entries[entityData.get(RELOAD)]
-    val phaseAge get() = (level().gameTime - entityData.get(PHASE_START)).coerceAtLeast(0)
+    val phaseAge get() = if (level().isClientSide)
+        (tickCount - clientPhaseStartedAt).toLong().coerceAtLeast(0)
+        else (level().gameTime - entityData.get(PHASE_START)).coerceAtLeast(0)
     fun belongsTo(player: Player) =
         if (level().isClientSide) entityData.get(OWNER) == player.id else ownerId == player.uuid
 
@@ -110,6 +118,18 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
 
     override fun onSyncedDataUpdated(key: EntityDataAccessor<*>) {
         super.onSyncedDataUpdated(key)
+        // Attached poses are evaluated from the owner, never from queued flight packets.
+        // Discard that queue at the handoff so an old dock location cannot pull
+        // a drone back after it has already launched.
+        if (level().isClientSide) {
+            if (key == FLIGHT) lerpTicks = 0
+            if (key == PHASE_START) {
+                // Anchor once on receipt. Later world-time corrections must not rewind a flight animation.
+                val elapsed = (level().gameTime - entityData.get(PHASE_START)).coerceIn(0, TRANSITION_TICKS.toLong())
+                clientPhaseStartedAt = tickCount - elapsed.toInt()
+            }
+        }
+
         // A short discharge must start on receipt, not expire during transit or
         // because the client world clock was corrected by a time-sync packet.
         if (key == ARC_DATA && level().isClientSide && arcData.getInt("Count") > 0)
@@ -303,10 +323,10 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
 
     private fun patrol(owner: Player) {
-        val offset = Vec3(-2.2, 2.65 + sin(tickCount * .07) * .20, -1.6)
+        val offset = Vec3(-2.2, 3.05 + sin(tickCount * .07) * .20, -1.6)
             .yRot(-owner.yBodyRot * Mth.DEG_TO_RAD)
         var destination = owner.position().add(offset)
-        val pivot = owner.position().add(0.0, 2.55, 0.0)
+        val pivot = owner.position().add(0.0, 2.95, 0.0)
         if (!clear(pivot, destination)) {
             destination = pivot.lerp(destination, .3)
             if (!clear(pivot, destination)) destination = pivot
@@ -567,10 +587,13 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
 
     override fun lerpTo(x: Double, y: Double, z: Double, yaw: Float, pitch: Float, steps: Int) {
+        if (usesPackPose) { lerpTicks = 0; return }
+
         lerpPosition = Vec3(x, y, z)
         lerpYaw = yaw
         lerpPitch = pitch
-        lerpTicks = 2
+        // Respect the tracking interval, including the first free-flight update.
+        lerpTicks = steps.coerceIn(3, 10)
     }
 
     fun thrustAlong(yaw: Float, partial: Float): Float {

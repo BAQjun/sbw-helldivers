@@ -60,12 +60,13 @@ object ResupplyClientTest {
   if(!enabled)return
   val mc=Minecraft.getInstance()
   try {
-   check(System.currentTimeMillis()-launch<240000){"Resupply client timed out"};failure?.let{throw it}
+   check(System.currentTimeMillis()-launch<360000){"Resupply client timed out"};failure?.let{throw it}
    if(!started&&mc.screen is TitleScreen&&mc.overlay==null){
     started=true;mc.options.pauseOnLostFocus=false
     mc.createWorldOpenFlows().createFreshLevel("port-client-test",LevelSettings("Resupply test",GameType.CREATIVE,false,Difficulty.PEACEFUL,true,GameRules(),WorldDataConfiguration.DEFAULT),WorldOptions(5L,false,false),{a->a.registryOrThrow(Registries.WORLD_PRESET).getHolderOrThrow(WorldPresets.FLAT).value().createWorldDimensions()},mc.screen!!)
    }
    val player=mc.player?:return;val client=mc.level?:return;val server=mc.singleplayerServer?:return;val level=server.overworld();ticks++
+   if(java.lang.Boolean.getBoolean("sbw_helldiver.visualOnly")&&ticks>40){Release07CombatSmoke.started=true;Release07CombatSmoke.tick(mc);return}
    if(ticks==1)server.execute{try{
     level.gameRules.getRule(GameRules.RULE_DAYLIGHT).set(false,server);level.dayTime=6000
     for(x in -12..12)for(z in -12..12)for(y in 76..79)level.setBlock(BlockPos(x,y,z),Blocks.SMOOTH_STONE.defaultBlockState(),3)

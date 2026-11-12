@@ -40,8 +40,8 @@ public final class FieldVolumeRenderer {
     private static boolean failed;
     private static volatile boolean reload;
     private static long frames,events;
-    private static int visible;
-    public static String diagnostics(){return "events="+events+" frames="+frames+" fields="+visible+" ready="+isReady()+" depthFormat="+depthFormat+" "+FlameVolumeGeometry.diagnostics()+" "+FlameSurfaceLighting.diagnostics()+" "+LaserEffectGeometry.diagnostics()+" "+EnergyEffectGeometry.diagnostics();}
+    private static int visible,mistCount,sprayCount;
+    public static String diagnostics(){return "events="+events+" frames="+frames+" fields="+visible+" mist="+mistCount+" spray="+sprayCount+" ready="+isReady()+" depthFormat="+depthFormat+" "+FlameVolumeGeometry.diagnostics()+" "+FlameSurfaceLighting.diagnostics()+" "+LaserEffectGeometry.diagnostics()+" "+EnergyEffectGeometry.diagnostics();}
     public static void requestReload(){reload=true;}
     public static boolean isReady(){return program!=0&&!failed;}
     public static long renderedFrames(){return frames;}
@@ -183,6 +183,7 @@ public final class FieldVolumeRenderer {
         float partialTick=event.getPartialTick().getGameTimeDeltaPartialTick(false);
         var mist=GasGuardDogVisual.INSTANCE.mistVolumes(mc.level,partialTick,camera,event.getFrustum());
         var spray=GasGuardDogVisual.INSTANCE.sprayVolumes(mc.level,partialTick,camera,event.getFrustum());
+        mistCount=mist.size();sprayCount=spray.size();
         boolean hasFog=!fields.isEmpty()||!mist.isEmpty()||!spray.isEmpty();
         if((!hasFog&&flames.length==0&&lasers.length==0&&exhaust.length==0&&beacons.length==0&&orbitalBeams.isEmpty()&&energy.isEmpty()&&MineGlowGeometry.vertexCount()==0)||(failed&&!reload))return;
         var capabilities=currentCapabilities();
@@ -329,6 +330,9 @@ public final class FieldVolumeRenderer {
                     glDisable(GL_SCISSOR_TEST);
                 }
                 if(flames.length>0){
+                    // Flame density also needs noise when no fog field is present.
+                    glActiveTexture(GL_TEXTURE1);glBindTexture(GL_TEXTURE_3D,noise);
+                    glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,depth);
                     FlameSurfaceLighting.draw(flames,camera,event.getProjectionMatrix(),new Matrix3f(new org.joml.Matrix3f().rotation(net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().rotation())),w,h);
                     FlameGlow.render(w,h,()->FlameVolumeGeometry.draw(flames,event.getProjectionMatrix(),new Matrix3f(new org.joml.Matrix3f().rotation(net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().rotation())),camera,w,h,(mc.level.getGameTime()+event.getPartialTick().getGameTimeDeltaPartialTick(false))/20f));
                 }

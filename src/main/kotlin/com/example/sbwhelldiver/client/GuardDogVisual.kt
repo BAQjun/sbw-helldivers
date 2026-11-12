@@ -298,7 +298,8 @@ object GuardDogVisual {
 
         override fun shouldRender(entity: GuardDogEntity, frustum: Frustum, x: Double, y: Double, z: Double): Boolean {
             val mc = Minecraft.getInstance()
-            if (!entity.usesPackPose) return super.shouldRender(entity, frustum, x, y, z)
+            if (!entity.usesPackPose) return super.shouldRender(entity, frustum, x, y, z) &&
+                frustum.isVisible(entity.boundingBoxForCulling)
             val owner = entity.clientOwner() ?: return super.shouldRender(entity, frustum, x, y, z)
             val pack = GuardDogBackpack.equipped(owner) ?: return false
             if (!matchesPack(entity, owner, GuardDogBackpack.active(pack))) return false
