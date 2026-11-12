@@ -46,7 +46,7 @@ object BeaconCallHud : ResourceManagerReloadListener {
         whiteIcons.values.forEach { mc.textureManager.release(it) }
         whiteIcons.clear(); monochromeIconCount = 0
         // Derive a white silhouette only for this label; preserve coloured inventory/loadout cards.
-        val sources=(Stratagems.definitions+Stratagems.equipmentDeployment).map{it.id to it.icon}
+        val sources=(Stratagems.definitions+Stratagems.equipmentDeployment+Stratagems.resupply).map{it.id to it.icon}
         sources.distinctBy{it.first}.forEach { (id,texture) ->
             manager.getResource(texture).orElseThrow().open().use { stream ->
                 NativeImage.read(stream).use { source ->

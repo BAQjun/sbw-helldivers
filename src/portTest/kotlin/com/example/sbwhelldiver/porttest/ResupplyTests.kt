@@ -27,7 +27,7 @@ object ResupplyTests {
  @JvmStatic @GameTest(template="port_test",timeoutTicks=30)
  fun ammunitionDedupOverflowAndBackpacks(h:GameTestHelper){
   val p=player(h);val guns=listOf(gun("ak_47"),gun("m_4"),gun("mk_14"));val expected=linkedMapOf<Ammo,Int>()
-  guns.forEachIndexed{i,g->val d=g.toGunData()!!;val c=d.selectedAmmoConsumer();if(!c.initialized())c.init();check(c.type==AmmoConsumer.AmmoConsumeType.PLAYER_AMMO);val a=c.playerAmmoType!!;expected[a]=maxOf(expected[a]?:0,d.get(GunProp.MAGAZINE)*4/c.loadAmount.coerceAtLeast(1));p.inventory.setItem(i,g)}
+  guns.forEachIndexed{i,g->val d=g.toGunData()!!;val c=d.selectedAmmoConsumer();if(!c.initialized())c.init();check(c.type==AmmoConsumer.AmmoConsumeType.PLAYER_AMMO);val a=c.playerAmmoType!!;expected[a]=maxOf(expected[a]?:0,d.get(GunProp.MAGAZINE)*6/c.loadAmount.coerceAtLeast(1));p.inventory.setItem(i,g)}
   h.assertTrue(expected.size<guns.size,"Fixture guns do not share ammunition")
   for(a in expected.keys){val missing=a.limit-a.get(p);if(missing>0)check(a.add(p,missing))}
   val packs=listOf(ModItems.GUARD_DOG_BACKPACK.get(),ModItems.FLAME_GUARD_DOG_BACKPACK.get(),ModItems.GAS_GUARD_DOG_BACKPACK.get())
@@ -64,7 +64,7 @@ object ResupplyTests {
   check(!g.isEmpty)
   p.inventory.setItem(0,g);p.inventory.setItem(1,g.copy())
   val data=com.tacz.guns.api.TimelessAPI.getCommonGunIndex(id).orElseThrow().gunData
-  val amount=com.tacz.guns.util.AttachmentDataUtils.getAmmoCountWithAttachment(g,data)*4
+  val amount=com.tacz.guns.util.AttachmentDataUtils.getAmmoCountWithAttachment(g,data)*6
   val ammo=data.ammoId
   val boxStack=ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("tacz","ammo_box")))
   val box=boxStack.item as com.tacz.guns.api.item.IAmmoBox

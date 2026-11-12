@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack
 
 /** One grant per ammunition type, using the largest carried magazine of that type. */
 object ResupplyAmmo {
+    const val MAGAZINES_PER_GUN = 6
     /** Both attached and loose cases use the verified native supply-box interaction event. */
     fun playPickupSound(level: net.minecraft.world.level.Level, x: Double, y: Double, z: Double) {
         if (!level.isClientSide) level.playSound(null, x, y, z,
@@ -27,7 +28,7 @@ object ResupplyAmmo {
             if (!consumer.initialized()) consumer.init()
             val magazine = gun.get(GunProp.MAGAZINE).coerceAtLeast(0)
             val loadAmount = consumer.loadAmount.coerceAtLeast(1)
-            val amount = ((magazine.toLong() * 4 + loadAmount - 1) / loadAmount).coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
+            val amount = ((magazine.toLong() * MAGAZINES_PER_GUN + loadAmount - 1) / loadAmount).coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
             when (consumer.type) {
                 AmmoConsumer.AmmoConsumeType.PLAYER_AMMO -> consumer.playerAmmoType?.let { reserves[it] = maxOf(reserves[it] ?: 0, amount) }
                 AmmoConsumer.AmmoConsumeType.ITEM -> {

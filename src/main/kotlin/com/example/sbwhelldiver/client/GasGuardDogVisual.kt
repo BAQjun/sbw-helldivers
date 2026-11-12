@@ -2,6 +2,7 @@ package com.example.sbwhelldiver.client
 
 import com.example.sbwhelldiver.MOD_ID
 import com.example.sbwhelldiver.entity.GuardDogEntity
+import com.example.sbwhelldiver.entity.GuardDogGas
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.Minecraft
 import net.minecraft.client.multiplayer.ClientLevel
@@ -22,11 +23,11 @@ object GasGuardDogVisual {
     const val MIST_DEPTH = 2.65f
     private const val SPRAY_EDGE = .85
     private const val SPRAY_DROP = .40
-    private const val EMISSION_INTERVAL = 7L
-    private const val MIST_LIFETIME = 28L
+    private const val EMISSION_INTERVAL = GuardDogGas.CLOUD_INTERVAL_TICKS.toLong()
+    private const val MIST_LIFETIME = GuardDogGas.CLOUD_LIFETIME_TICKS.toLong()
     private val clouds = WeakHashMap<GuardDogEntity, ArrayDeque<Cloud>>()
 
-    private class Cloud(val center: Vec3, val flow: Vec3, val born: Long)
+    private class Cloud(val center: Vec3, val flow: Vec3, val born: Long, var lastEmission: Long = born)
 
     data class MistVolume(val center: Vec3, val flow: Vec3, val terrainKey: Any, val density: Float, val age: Float)
     data class SprayVolume(val center: Vec3, val axis: Vec3, val length: Float, val bounds: AABB)
@@ -69,9 +70,9 @@ object GasGuardDogVisual {
         if (camera.distanceToSqr(dog.position()) > 64.0 * 64.0) return
         val now = dog.level().gameTime
         val trail = clouds.getOrPut(dog) { ArrayDeque(4) }
-        trail.removeAll { now - it.born >= MIST_LIFETIME }
-        val last = trail.lastOrNull()
-        if (last != null && now - last.born < EMISSION_INTERVAL) return
+        trail.removeAll { now - it.lastEmission >= MIST_LIFETIME }
+        val last = trail.maxOfOrNull { it.lastEmission }
+        if (last != null && now - last < EMISSION_INTERVAL) return
 
         val axis = direction(dog, 1f)
         val offset = sin((now % 61) * 2.4) * .52
@@ -80,7 +81,9 @@ object GasGuardDogVisual {
         val flow = forward.add(side.scale(offset))
         val center = GuardDogVisual.firingMuzzle(dog, 1f)
             .add(axis.scale(dog.gasSprayLength * (.91 + .08 * offset))).add(side.scale(offset * .36))
-        trail.addLast(Cloud(center, flow, now))
+        val nearby = trail.lastOrNull { it.center.distanceToSqr(center) <= GuardDogGas.CLOUD_MERGE_DISTANCE_SQR }
+        if (nearby != null) nearby.lastEmission = now
+        else trail.addLast(Cloud(center, flow, now))
     }
 
     @Synchronized
@@ -90,7 +93,7 @@ object GasGuardDogVisual {
         val active = clouds.entries.iterator()
         while (active.hasNext()) {
             val (dog, trail) = active.next()
-            trail.removeAll { now - it.born >= MIST_LIFETIME }
+            trail.removeAll { now - it.lastEmission >= MIST_LIFETIME }
             if (dog.level() !== level || trail.isEmpty()) {
                 active.remove()
                 continue
@@ -102,7 +105,7 @@ object GasGuardDogVisual {
                         center.x + MIST_RADIUS, center.y + MIST_HEIGHT, center.z + MIST_RADIUS))) continue
                 val age = (now - cloud.born + partial).coerceAtLeast(0f)
                 val fill = (age / 5f).coerceAtMost(1f)
-                val tail = 1f - ((age - 13f) / (MIST_LIFETIME - 13f)).coerceIn(0f, 1f)
+                val tail = 1f - ((now - cloud.lastEmission + partial - 20f) / (MIST_LIFETIME - 20f)).coerceIn(0f, 1f)
                 volumes += MistVolume(center, cloud.flow, cloud, fill * fill * (3f - 2f * fill) * tail, age / 20f)
             }
         }
