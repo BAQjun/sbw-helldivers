@@ -106,6 +106,15 @@ tasks.processResources {
     val props = listOf("minecraft_version", "neo_version", "mod_id", "mod_name", "mod_license", "mod_version", "mod_authors", "mod_description", "superbwarfare_version").associateWith { project.property(it) }
     inputs.properties(props)
     filesMatching(listOf("META-INF/neoforge.mods.toml", "pack.mcmeta")) { expand(props) }
+    // Optional QA geometry overrides, isolated from the checked-in runtime assets.
+    val nearOverride = providers.gradleProperty("nearModelOverride").orElse("").get()
+    inputs.property("nearModelOverride", nearOverride)
+    doLast {
+        if (nearOverride.isNotEmpty()) copy {
+            from(file(nearOverride).resolve("assets"))
+            into(destinationDir.resolve("assets"))
+        }
+    }
 }
 
 // These directories belong exclusively to explicitly requested isolated checks.

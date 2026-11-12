@@ -57,6 +57,9 @@ object TurretPerformanceClientTest {
     private val names=listOf("empty","mixed-idle","machine-gun","gatling","autocannon","rocket",
         "mortar","gas-mortar","ems-mortar","flame","laser","tesla","mixed-active")
 
+    private val laserNames=listOf("empty","laser-idle","laser-active","four-laser-idle","four-laser-active","eight-laser-idle","eight-laser-active")
+    private fun label(i:Int)=if(laserOnly)laserNames[i] else names[i]
+
     @SubscribeEvent fun serverTick(e:ServerTickEvent.Post) {
         if(!enabled||!ready||done||failure!=null)return
         try {
@@ -64,13 +67,13 @@ object TurretPerformanceClientTest {
             for(target in targets)if(target.isAlive){target.health=target.maxHealth;target.clearFire()}
             if(scenario>=2) firing[scenario]=pods.sumOf{it.shotSerial+it.teslaArcData.getInt("Serial")}
             if(age>=240){
-                if(scenario==(if(laserOnly)4 else if(rocketOnly)5 else names.lastIndex)){done=true;return}
+                if(scenario==(if(laserOnly)6 else if(rocketOnly)5 else names.lastIndex)){done=true;return}
                 level.getAllEntities().toList().filter{it !is net.minecraft.world.entity.player.Player}.forEach{it.discard()}
                 targets.clear();pods.clear();scenario++;age=0
-                val indices=if(laserOnly)when(scenario){0->emptyList();1,2->listOf(8);else->listOf(8,8,8,8)}else when(scenario){0->emptyList();1,12->types.indices.toList();else->listOf(scenario-2)}
+                val indices=if(laserOnly)when(scenario){0->emptyList();1,2->listOf(8);3,4->List(4){8};else->List(8){8}}else when(scenario){0->emptyList();1,12->types.indices.toList();else->listOf(scenario-2)}
                 for((slot,index) in indices.withIndex()){
-                    val x=if(indices.size==1)0.5 else if(laserOnly)(slot%2)*3.0-1.0 else (slot%5-2)*4.0+.5
-                    val z=if(indices.size==1)0.5 else if(laserOnly)slot/2*3.0+.5 else slot/5*4.0+.5
+                    val x=if(indices.size==1)0.5 else if(laserOnly)(slot%4)*3.0-4.0 else (slot%5-2)*4.0+.5
+                    val z=if(indices.size==1)0.5 else if(laserOnly)slot/4*3.0+.5 else slot/5*4.0+.5
                     val pod=types[index].get().create(level)!!
                     pod.moveTo(x,80.0,z,180f,0f);pod.setOwnerUUID(playerId!!)
                     val data=CompoundTag();pod.saveWithoutId(data)
@@ -78,7 +81,7 @@ object TurretPerformanceClientTest {
                     data.putInt("HellpodPhaseTicks",pod.deployTicks-1);data.putBoolean("HellpodCapReleased",true)
                     data.putDouble("HellpodRestY",80.0);pod.load(data)
                     check(level.addFreshEntity(pod));pods.add(pod)
-                    if(if(laserOnly)scenario==2||scenario==4 else scenario>=2){
+                    if(if(laserOnly)scenario==2||scenario==4||scenario==6 else scenario>=2){
                         val target=EntityType.HUSK.create(level)!!
                         target.getAttribute(Attributes.MAX_HEALTH)!!.baseValue=1024.0;target.health=target.maxHealth
                         target.isNoAi=true;target.setPersistenceRequired()
@@ -87,7 +90,7 @@ object TurretPerformanceClientTest {
                         check(level.addFreshEntity(target));targets.add(target)
                     }
                 }
-                LOGGER.info("TURRET_PERF_BEGIN {} fullDetail=true lod=false",names[scenario])
+                LOGGER.info("TURRET_PERF_BEGIN {} fullDetail=true lod=false",label(scenario))
             }
         }catch(t:Throwable){failure=t}
     }
@@ -112,7 +115,12 @@ object TurretPerformanceClientTest {
             }
             check(started==0L || System.currentTimeMillis()-started<600_000){"Turret fixture timed out at $scenario/$age"}
             val player=mc.player?:return;val server=mc.singleplayerServer?:return
-            if(!prepared){prepared=true;server.execute{
+            if(!prepared){prepared=true
+                val id=net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(MOD_ID,"models/bedrock/vehicle/laser_hellpod_v1.geo.json")
+                val resource=mc.resourceManager.getResource(id).orElseThrow()
+                val sha=resource.open().use{java.security.MessageDigest.getInstance("SHA-256").digest(it.readBytes()).joinToString(""){b->"%02x".format(b)}}
+                LOGGER.info("TURRET_PERF_MODEL_RESOURCE source={} sha256={}",resource.sourcePackId(),sha)
+                server.execute{
                 try{
                     HelldiversConfig.autoRetract.set(false);HelldiversConfig.infiniteTurretAmmo.set(true)
                     val level=server.overworld();val p=server.playerList.getPlayer(player.uuid)!!;playerId=p.uuid
@@ -127,7 +135,7 @@ object TurretPerformanceClientTest {
             // Approximately nine blocks from the primary model; never switch to reduced models.
             player.setPos(5.5,80.0,-7.5);player.yRot=30f;player.yRotO=30f;player.xRot=-6f;player.xRotO=-6f
             if(scenario!=captured && age in 170..210 && scenario>=0){
-                captured=scenario;Screenshot.grab(mc.gameDirectory,"turret-perf-${names[scenario]}.png",mc.mainRenderTarget){LOGGER.info("TURRET_PERF_SCREENSHOT {}",names[scenario])}
+                captured=scenario;Screenshot.grab(mc.gameDirectory,"turret-perf-${label(scenario)}.png",mc.mainRenderTarget){LOGGER.info("TURRET_PERF_SCREENSHOT {}",label(scenario))}
             }
             if(done){
                 if(digWait==0){
@@ -142,10 +150,10 @@ object TurretPerformanceClientTest {
                 check(com.example.sbwhelldiver.client.TerrainMeshOcclusion.volume(pod)==null){"Digging did not expose retained hull"}
                 LOGGER.info("TURRET_PERF_DIG_EXPOSURE_PASSED")
                 val lines=mutableListOf("scenario,frames,median_ms,p95_ms,shots_or_arcs")
-                for(i in if(laserOnly)(0..4).toList()else if(rocketOnly)listOf(5)else names.indices.toList()){
-                    if(if(laserOnly)i==2||i==4 else i>=2)check((firing[i]?:0)>0){"No actual shots from ${names[i]}"}
+                for(i in if(laserOnly)(0..6).toList()else if(rocketOnly)listOf(5)else names.indices.toList()){
+                    if(if(laserOnly)i==2||i==4||i==6 else i>=2)check((firing[i]?:0)>0){"No actual shots from ${names[i]}"}
                     val values=frames[i].orEmpty().sorted();check(values.size>=30){"Insufficient frames ${names[i]}: ${values.size}"}
-                    val label=if(laserOnly)listOf("empty","laser-idle","laser-active","four-laser-idle","four-laser-active")[i]else names[i]
+                    val label=label(i)
                     val row="$label,${values.size},${values[values.size/2]},${values[(values.size*.95).toInt().coerceAtMost(values.lastIndex)]},${firing[i]?:0}"
                     lines.add(row);LOGGER.info("TURRET_PERF_RESULT {}",row)
                 }

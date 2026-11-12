@@ -87,3 +87,19 @@ structural stage intentionally changes cube partitioning and removes invisible
 triangles, so the earlier ordered-triangle and cube-object checks do not apply
 to its output. Verify bone metadata, retained mesh attributes, and triangle
 subsets against the separate baseline as well as running the structural fixtures.
+
+
+## Optional pod and laser near-model experiment
+
+`laser_structural.py` runs in Blender and reads the accepted standalone Blockbench source under the supplied artwork workspace. It flattens shallow engravings, reduces parts independently with bounded bidirectional surface error, reprojects reduced faces into source UV charts, and preserves the authored rig. Broad marked armour retains its original chart boundaries. `pod_structural.py` replaces repeated nozzle shell/rim boxes with six continuous 16-sided stepped rings and flattens badge-cap relief. Neither script overwrites the accepted source.
+
+`near_pack.py` stages a reversible resource pack from these candidates and the structurally cleaned cube export of the candidate pod. Export the pod cubes with Blockbench's Bedrock codec into `work/structural-near-test/pod-input/bedrock/vehicle/hellpod_v3.geo.json`, then run `structural.mjs` into the sibling `pod-output` directory. The pack builder restores the new nozzle meshes, retains the runtime heat indicators and bone metadata, and reuses the existing atlas dimensions. Python image processing requires Pillow. `clean_side_markings.py` fixes the four cradle UV-island V outlines with identical mirrored raster legs.
+
+```sh
+blender --background --python tools/model_optimizer/laser_structural.py -- --workspace <artwork-workspace> --output <artwork-workspace>/work/structural-near-test
+python tools/model_optimizer/pod_structural.py --workspace <artwork-workspace> --output <artwork-workspace>/work/structural-near-test
+# Export pod cubes with Blockbench, then apply structural.mjs as described above.
+python tools/model_optimizer/near_pack.py --workspace <artwork-workspace> --repo .
+```
+
+The checked-in optional pack is in `art/experiments/pod-laser-near-model/resourcepack/`. Default mod resources are unchanged. For an isolated client comparison only, `-PnearModelOverride=<unpacked-pack>` overlays processed resources for that Gradle invocation; omit it to restore normal resources. Do not use this flag for a release build.
