@@ -283,7 +283,7 @@
   "gui.sbw_helldiver.category.eagle": "Eagle",
   "gui.sbw_helldiver.category.sentry": "Sentries",
   "gui.sbw_helldiver.category.defense": "Defenses",
-  "message.sbw_helldiver.terminal_full": "Destroyer calls are full",
+  "message.sbw_helldiver.terminal_full": "Maximum charges reached",
   "message.sbw_helldiver.terminal_insufficient": "Not enough samples",
   "message.sbw_helldiver.terminal_success": "Purchase complete",
   "tutorial.sbw_helldiver.call_command": "Equipment Deployment Beacon",
@@ -360,5 +360,12 @@
   "item.sbw_helldiver.flame_guard_dog_stratagem": "Hot Dog",
   "item.sbw_helldiver.flame_guard_dog_backpack": "Hot Dog",
   "item.sbw_helldiver.gas_guard_dog_stratagem": "Dog Breath",
-  "item.sbw_helldiver.gas_guard_dog_backpack": "Dog Breath"
+  "item.sbw_helldiver.gas_guard_dog_backpack": "Dog Breath",
+  "gui.sbw_helldiver.category.basic": "Basic Stratagems",
+  "item.sbw_helldiver.resupply_stratagem": "Resupply",
+  "entity.sbw_helldiver.resupply": "Resupply",
+  "entity.sbw_helldiver.supply_case": "Supply Box",
+  "jei.sbw_helldiver.output_range": "Output: %s–%s (equal chance)",
+  "gui.sbw_helldiver.resupply_refill": "Resupply (%s/%s)",
+  "subtitles.sbw_helldiver.supply_pickup": "Supplies collected"
 }

@@ -69,7 +69,7 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
             pose.pushPose()
             try {
                 rotateVehicleAxis(entity, pose, yaw, partial)
-                ItemDeliveryRackRenderer.render(pod, partial, pose, buffers, light)
+                if(pod is com.example.sbwhelldiver.entity.ResupplyHellpodEntity) ResupplyRackRenderer.render(pod, partial, pose, buffers, light) else ItemDeliveryRackRenderer.render(pod, partial, pose, buffers, light)
             } finally {
                 pose.popPose()
             }

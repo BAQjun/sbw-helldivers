@@ -99,6 +99,10 @@ open class GuardDogBackpack(properties: Properties, val laser: Boolean = false, 
             if (it.contains(HEALTH)) it.getFloat(HEALTH).coerceIn(0f, GuardDogEntity.MAX_HEALTH) else GuardDogEntity.MAX_HEALTH
         }
 
+        fun refill(stack: ItemStack) = update(stack) {
+            it.putInt(AMMO, capacity(stack)); it.putInt(SPARE_MAGS, reserveCapacity(stack)); it.remove(EMPTY_FOLD)
+        }
+
         fun updateAmmo(stack: ItemStack, ammo: Int) = update(stack) { it.putInt(AMMO, ammo) }
         fun updateHealth(stack: ItemStack, health: Float) = update(stack) { it.putFloat(HEALTH, health) }
 

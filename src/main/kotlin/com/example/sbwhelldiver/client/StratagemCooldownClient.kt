@@ -61,7 +61,7 @@ object StratagemCooldownClient : ResourceManagerReloadListener {
     fun visual(id: String, partial: Float = 0f): Visual {
         if(Minecraft.getInstance().level?.let{!Stratagems.dimensionAllowed(it.dimension().location().toString())}==true)
             return Visual(blocked=true,reason="dimension_unavailable")
-        if((id == "eagle_rearm" || Stratagems.definitions.any { it.id == id }) && !DestroyerClient.available())return Visual(blocked=true,reason="destroyer_unavailable")
+        if((id == "resupply" || id == "eagle_rearm" || Stratagems.definitions.any { it.id == id }) && !DestroyerClient.available())return Visual(blocked=true,reason="destroyer_unavailable")
         if(id=="call_super_destroyer"&&DestroyerClient.transitionEnd>DestroyerClient.now(partial))return Visual(CallPhase.ARRIVING,DestroyerClient.transitionEnd-60,DestroyerClient.transitionEnd,blocked=true,reason="destroyer_warping")
         if(id=="call_super_destroyer")return Visual(blocked=!DestroyerClient.canCall() && !DestroyerClient.hasShip)
         if(id.startsWith("destroyer_duration_"))return Visual(blocked=DestroyerClient.calls(id.substringAfterLast('_').toInt())==0)
@@ -77,11 +77,11 @@ object StratagemCooldownClient : ResourceManagerReloadListener {
                 e!!.getInt("Remaining"),blocked=enabled && e.getInt("Phase")!=CallPhase.READY.ordinal)
         if(id==Stratagems.equipmentDeployment.id && e?.getInt("Phase")==CallPhase.ARRIVING.ordinal && e.getLong("End")>time)
             return Visual(CallPhase.ARRIVING,e.getLong("Start"),e.getLong("End"),blocked=true)
-        if (!enabled) return Visual()
+        if (!enabled && id!="resupply") return Visual()
         val eagle = id.startsWith("eagle_")
         if (eagle && data.getLong("RearmEnd") > time) return Visual(CallPhase.COOLDOWN, data.getLong("RearmStart"), data.getLong("RearmEnd"), e?.getInt("Remaining") ?: -1, true, true)
         if (id == "eagle_rearm") return Visual()
-        val remaining = e?.getInt("Remaining") ?: -1
+        val remaining = e?.getInt("Remaining") ?: if(id=="resupply")0 else -1
         val phase = e?.let { CallPhase.entries.getOrElse(it.getInt("Phase")) { CallPhase.READY } } ?: CallPhase.READY
         val end = e?.getLong("End") ?: 0
         if (phase == CallPhase.THROWN) return Visual(phase, remaining = remaining, blocked = true)
@@ -99,6 +99,7 @@ object StratagemCooldownClient : ResourceManagerReloadListener {
         return v.phase == CallPhase.THROWN || v.phase == CallPhase.ARRIVING || v.phase == CallPhase.ACTIVE || v.phase == CallPhase.ARRIVED ||
             v.phase == CallPhase.COOLDOWN && v.end - now(partial) in 0.0..60.0 && (v.remaining != 0 || v.rearming)
     }
+    fun remainingUses(id: String) = entries[id]?.getInt("Remaining") ?: if(id=="resupply") 0 else -1
     fun available(id: String) = !visual(id).blocked && (id != "eagle_rearm" || !data.contains("Enabled") || data.getBoolean("Enabled"))
     fun text(v: Visual, partial: Float): Component? {
         val key = when {
@@ -132,7 +133,7 @@ object StratagemCooldownClient : ResourceManagerReloadListener {
     override fun onResourceManagerReload(manager: ResourceManager) {
         val textures = Minecraft.getInstance().textureManager
         grey.values.forEach(textures::release); grey.clear()
-        for (def in Stratagems.definitions + listOf(Stratagems.equipmentDeployment,Stratagems.eagleRearm,Stratagems.destroyerCall,Stratagems.destroyerDirection,Stratagems.destroyerManage)+Stratagems.destroyerDurations) {
+        for (def in Stratagems.definitions + listOf(Stratagems.resupply,Stratagems.equipmentDeployment,Stratagems.eagleRearm,Stratagems.destroyerCall,Stratagems.destroyerDirection,Stratagems.destroyerManage)+Stratagems.destroyerDurations) {
             val resource = manager.getResource(def.icon).orElse(null) ?: continue
             val pixels = resource.open().use(NativeImage::read)
             // Native icons encode category and ammunition as two independent masks.

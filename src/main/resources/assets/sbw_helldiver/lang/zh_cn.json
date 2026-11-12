@@ -283,7 +283,7 @@
   "gui.sbw_helldiver.category.eagle": "飞鹰类",
   "gui.sbw_helldiver.category.sentry": "哨戒炮类",
   "gui.sbw_helldiver.category.defense": "防御类",
-  "message.sbw_helldiver.terminal_full": "驱逐舰呼叫次数已满",
+  "message.sbw_helldiver.terminal_full": "该战略配备的次数已满",
   "message.sbw_helldiver.terminal_insufficient": "样本不足",
   "message.sbw_helldiver.terminal_success": "获取成功",
   "tutorial.sbw_helldiver.call_command": "设备部署信标",
@@ -360,5 +360,12 @@
   "item.sbw_helldiver.flame_guard_dog_stratagem": "热狗",
   "item.sbw_helldiver.flame_guard_dog_backpack": "热狗",
   "item.sbw_helldiver.gas_guard_dog_stratagem": "腐息",
-  "item.sbw_helldiver.gas_guard_dog_backpack": "腐息"
+  "item.sbw_helldiver.gas_guard_dog_backpack": "腐息",
+  "gui.sbw_helldiver.category.basic": "基础战略配备",
+  "item.sbw_helldiver.resupply_stratagem": "重新补给",
+  "entity.sbw_helldiver.resupply": "重新补给",
+  "entity.sbw_helldiver.supply_case": "补给箱",
+  "jei.sbw_helldiver.output_range": "产量：%s–%s（等概率）",
+  "gui.sbw_helldiver.resupply_refill": "重新补给（%s/%s）",
+  "subtitles.sbw_helldiver.supply_pickup": "领取补给"
 }

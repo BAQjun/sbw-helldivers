@@ -7,6 +7,7 @@ import kotlin.math.roundToInt
 object StratagemCooldownConfig {
     val baseSeconds = linkedMapOf(
         "machine_deployment_beacon" to 0.0,
+        "resupply" to 0.0,
         "guard_dog" to 480.0,
         "laser_guard_dog" to 480.0,
         "stun_guard_dog" to 480.0,
@@ -58,6 +59,6 @@ object StratagemCooldownConfig {
     }
     fun upgradedSeconds(id: String, base: Double) = base * if (id.startsWith("eagle_")) .5 * .95 else .9 * .95
     fun ticks(id: String) = (cooldowns.getValue(id).get() * 20).roundToInt()
-    fun maxUses(id: String) = uses[id]?.get() ?: -1
+    fun maxUses(id: String) = if(id=="resupply")5 else uses[id]?.get() ?: -1
     fun rearmTicks(hasOrdnance: Boolean) = ((if (hasOrdnance) manualRearm else autoRearm).get() * 20).roundToInt()
 }

@@ -10,12 +10,12 @@
     {
       "tier": 0,
       "chance": 25,
-      "count": 32
+      "count": 40
     },
     {
       "tier": 1,
       "chance": 60,
-      "count": 12
+      "count": 15
     },
     {
       "tier": 2,

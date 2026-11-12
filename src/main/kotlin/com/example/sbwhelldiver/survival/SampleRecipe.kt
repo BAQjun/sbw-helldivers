@@ -19,14 +19,15 @@ import net.neoforged.neoforge.registries.DeferredRegister
 /** A single weighted choice per batch. The chosen output is persisted before work starts. */
 data class SampleRecipe(val machine:String,val ingredient:Ingredient,val count:Int,val ticks:Int,val outcomes:List<Outcome>):Recipe<SingleRecipeInput> {
     init { require(machine in setOf("bioprocessor","refinery"));require(outcomes.isNotEmpty()&&outcomes.sumOf{it.chance}==100) }
-    data class Outcome(val tier:Int,val chance:Int,val count:Int) {
+    data class Outcome(val tier:Int,val chance:Int,val count:Int,val maxCount:Int=count) {
         fun stack()=ItemStack(when(tier){0->ModItems.COMMON_SAMPLE.get();1->ModItems.RARE_SAMPLE.get();else->ModItems.SUPER_SAMPLE.get()},count)
         companion object {val CODEC:Codec<Outcome> = RecordCodecBuilder.create { b->b.group(
             Codec.intRange(0,2).fieldOf("tier").forGetter(Outcome::tier),
             Codec.intRange(1,100).fieldOf("chance").forGetter(Outcome::chance),
-            Codec.intRange(1,64).fieldOf("count").forGetter(Outcome::count)).apply(b,::Outcome) }}
+            Codec.intRange(1,4096).fieldOf("count").forGetter(Outcome::count),
+            Codec.intRange(0,4096).optionalFieldOf("max_count",0).forGetter { if(it.maxCount==it.count)0 else it.maxCount }).apply(b){tier,chance,count,max -> Outcome(tier,chance,count,if(max==0)count else max).also{require(it.maxCount>=count)} } }}
     }
-    fun roll(random:RandomSource):ItemStack {var roll=random.nextInt(100);for(o in outcomes){roll-=o.chance;if(roll<0)return o.stack()};error("Invalid sample weights")}
+    fun roll(random:RandomSource):ItemStack {var roll=random.nextInt(100);for(o in outcomes){roll-=o.chance;if(roll<0)return o.stack().copyWithCount(if(o.maxCount==o.count)o.count else random.nextInt(o.maxCount-o.count+1)+o.count)};error("Invalid sample weights")}
     override fun matches(input:SingleRecipeInput,level:Level)=ingredient.test(input.item())&&input.item().count>=count
     override fun assemble(input:SingleRecipeInput,registries:HolderLookup.Provider)=ItemStack.EMPTY
     override fun canCraftInDimensions(w:Int,h:Int)=false

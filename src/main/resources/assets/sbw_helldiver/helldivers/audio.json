@@ -2520,6 +2520,14 @@
           }
         ]
       }
+    },
+    "sfx_supply_pickup": {
+      "kind": "one_shot",
+      "audible": true,
+      "fade_in": 0,
+      "fade_out": 0,
+      "duration": 0.6761875,
+      "stop_effects": []
     }
   },
   "models": {
@@ -4864,22 +4872,66 @@
       "animation.hellpod.item_delivery_deploy": {
         "length": 0.7,
         "events": [
-          {"time":0,"effect":"sfx_hellpod_bolts","locator":"sfx_pod_lid"},
-          {"time":0,"effect":"sfx_hellpod_bolts_layer_a","locator":"sfx_pod_lid"},
-          {"time":0,"effect":"sfx_hellpod_bolts_layer_b","locator":"sfx_pod_lid"},
-          {"time":0,"effect":"sfx_hellpod_cap_release","locator":"sfx_cap_eject"},
-          {"time":0.07,"effect":"sfx_hellpod_iris_unlock","locator":"sfx_pod_lid"},
-          {"time":0.14,"effect":"sfx_hellpod_iris_motor","locator":"sfx_pod_lid"},
-          {"time":0.45,"effect":"sfx_hellpod_lift_start","locator":"sfx_pod_lift"},
-          {"time":0.7,"effect":"sfx_hellpod_lift_stop","locator":"sfx_pod_lift"}
+          {
+            "time": 0,
+            "effect": "sfx_hellpod_bolts",
+            "locator": "sfx_pod_lid"
+          },
+          {
+            "time": 0,
+            "effect": "sfx_hellpod_bolts_layer_a",
+            "locator": "sfx_pod_lid"
+          },
+          {
+            "time": 0,
+            "effect": "sfx_hellpod_bolts_layer_b",
+            "locator": "sfx_pod_lid"
+          },
+          {
+            "time": 0,
+            "effect": "sfx_hellpod_cap_release",
+            "locator": "sfx_cap_eject"
+          },
+          {
+            "time": 0.07,
+            "effect": "sfx_hellpod_iris_unlock",
+            "locator": "sfx_pod_lid"
+          },
+          {
+            "time": 0.14,
+            "effect": "sfx_hellpod_iris_motor",
+            "locator": "sfx_pod_lid"
+          },
+          {
+            "time": 0.45,
+            "effect": "sfx_hellpod_lift_start",
+            "locator": "sfx_pod_lift"
+          },
+          {
+            "time": 0.7,
+            "effect": "sfx_hellpod_lift_stop",
+            "locator": "sfx_pod_lift"
+          }
         ]
       },
       "animation.hellpod.item_delivery_retract": {
         "length": 1.25,
         "events": [
-          {"time":0,"effect":"sfx_hellpod_lift_down","locator":"sfx_pod_lift"},
-          {"time":0.8,"effect":"sfx_hellpod_lift_stop","locator":"sfx_pod_lift"},
-          {"time":0.95,"effect":"sfx_hellpod_iris_close","locator":"sfx_pod_lid"}
+          {
+            "time": 0,
+            "effect": "sfx_hellpod_lift_down",
+            "locator": "sfx_pod_lift"
+          },
+          {
+            "time": 0.8,
+            "effect": "sfx_hellpod_lift_stop",
+            "locator": "sfx_pod_lift"
+          },
+          {
+            "time": 0.95,
+            "effect": "sfx_hellpod_iris_close",
+            "locator": "sfx_pod_lid"
+          }
         ]
       },
       "animation.hellpod.packed": {

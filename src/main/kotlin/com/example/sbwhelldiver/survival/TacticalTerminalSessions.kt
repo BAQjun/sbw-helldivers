@@ -46,13 +46,16 @@ object TacticalTerminalSessions {
         val refill=TacticalTerminalOffers.refillsById[id]
         val cost=refill?.cost?:TacticalTerminalOffers.byId[id]?.cost?:return
         if(refill!=null&&SuperDestroyers.state(player).calls(refill.minutes)>=refill.limit){feedback(player,"message.sbw_helldiver.terminal_full");return}
-        val offer=if(refill!=null)null else Stratagems.get(id)?:return
+        val resupply=id=="resupply"
+        if(resupply && com.example.sbwhelldiver.stratagem.StratagemCooldowns.state(player).entry(id).remaining>=5){feedback(player,"message.sbw_helldiver.terminal_full");return}
+        val offer=if(refill!=null||resupply)null else Stratagems.get(id)?:return
         val item=offer?.let{BuiltInRegistries.ITEM.getOptional(it.itemId).orElse(null)}
         if(offer!=null&&item==null)return
         val costs=listOf(ModItems.COMMON_SAMPLE.get() to cost.common,ModItems.RARE_SAMPLE.get() to cost.rare,ModItems.SUPER_SAMPLE.get() to cost.superSample)
         if(costs.withIndex().any{(index,pair)->SampleStorage.total(player,index)<java.math.BigInteger.valueOf(pair.second.toLong())}){feedback(player,"message.sbw_helldiver.terminal_insufficient");return}
         // No resource is removed until all failure conditions have been checked.
         if(refill!=null&&!SuperDestroyers.refillCall(player,refill.minutes))return
+        if(resupply && !com.example.sbwhelldiver.stratagem.StratagemCooldowns.purchaseResupply(player))return
         for((index,pair)in costs.withIndex())SampleStorage.consume(player,index,pair.second)
         if(item!=null){val stack=ItemStack(item);if(!player.inventory.add(stack)&&!stack.isEmpty)player.drop(stack,false)}
         player.inventory.setChanged();player.containerMenu.broadcastChanges()

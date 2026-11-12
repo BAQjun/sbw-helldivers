@@ -21,7 +21,7 @@ import net.minecraft.world.phys.HitResult
 import net.minecraft.world.phys.Vec3
 
 /** The shared hellpod carries one independently removable item on each side of its lift. */
-class ItemDeliveryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEntity(type, level) {
+open class ItemDeliveryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEntity(type, level) {
     enum class Side(
         val sign: Int,
         val shield: String,
@@ -54,15 +54,19 @@ class ItemDeliveryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHel
         entityData.set(Side.REAR.stackData, rear.copy())
     }
 
+    protected fun closeSide(side: Side) {
+        entityData.set(side.closedAt, level().gameTime)
+        playRackSound("shutter", toWorld(side.mount))
+    }
     fun item(side: Side): ItemStack = entityData.get(side.stackData)
-    fun shieldAge(side: Side, sampleTime: Double): Float {
+    open fun shieldAge(side: Side, sampleTime: Double): Float {
         val start = entityData.get(side.closedAt)
         if (start < 0) return 0f
         return (sampleTime - start).toFloat().coerceIn(0f, SHUTTER_TICKS.toFloat())
     }
 
     fun toWorld(local: Vec3): Vec3 = position().add(local.yRot(modelRotation()))
-    private fun toLocal(world: Vec3): Vec3 = world.subtract(position()).yRot(-modelRotation())
+    protected fun toLocal(world: Vec3): Vec3 = world.subtract(position()).yRot(-modelRotation())
     private fun modelRotation() = Math.toRadians(180.0 - yRot).toFloat()
 
     override fun interactAt(player: Player, hit: Vec3, hand: InteractionHand) = interact(player, hand)
@@ -100,7 +104,7 @@ class ItemDeliveryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHel
         playRackSound("retract", position())
     }
 
-    private fun playRackSound(action: String, pos: Vec3) {
+    protected fun playRackSound(action: String, pos: Vec3) {
         // Each weapon-rack event plays two independently randomized layers.
         for (layer in listOf("a", "b")) {
             val sound = ModSounds.EVENTS.getValue("sfx_item_delivery_" + action + "_" + layer).get()

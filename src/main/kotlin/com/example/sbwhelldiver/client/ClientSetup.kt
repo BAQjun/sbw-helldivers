@@ -157,6 +157,8 @@ object ClientSetup {
         )
 
         event.registerEntityRenderer<AutoAimableEntity>(ModEntities.ITEM_DELIVERY_HELLPOD.get(), ::HellpodRenderer)
+        event.registerEntityRenderer<AutoAimableEntity>(ModEntities.RESUPPLY_HELLPOD.get(), ::HellpodRenderer)
+        event.registerEntityRenderer(ModEntities.SUPPLY_CASE.get(), ::SupplyCaseRenderer)
         event.registerEntityRenderer<AutoAimableEntity>(ModEntities.ROCKET_SENTRY.get(), ::HellpodRenderer)
         event.registerEntityRenderer<AutoAimableEntity>(ModEntities.AUTOCANNON_SENTRY.get(), ::HellpodRenderer)
         event.registerEntityRenderer<AutoAimableEntity>(ModEntities.MORTAR_SENTRY.get(), ::HellpodRenderer)

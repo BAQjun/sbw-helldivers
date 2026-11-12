@@ -28,7 +28,7 @@ object MachineMesh:ResourceManagerReloadListener {
             fun world(i:Int):Matrix4f {bind[i]?.let{return it};val n=nodes[i];val m=Matrix4f().translationRotateScale(n.t,n.r,n.s);if(n.parent>=0)m.set(Matrix4f(world(n.parent)).mul(m));bind[i]=m;return m}
             val moving=clips.values.flatten().map{it.node}.toMutableSet()
             nodes.indices.filterTo(moving) { nodes[it].name == "gun_magazine" || nodes[it].name.matches(spareNode) ||
-                nodes[it].name.startsWith("fuel_gauge_") }
+                nodes[it].name.startsWith("fuel_gauge_") || nodes[it].name in setOf("rack_lift","front_shield","rear_shield") || nodes[it].name.matches(Regex("case_0[1-4]")) }
             val grouped=linkedMapOf<Triple<Int,Int,Boolean>,MutableList<Float>>()
             for((i,node)in nodes.withIndex())if(node.mesh>=0) {
                 var anchor=i;while(anchor>=0 && anchor !in moving)anchor=nodes[anchor].parent
@@ -139,7 +139,7 @@ object MachineMesh:ResourceManagerReloadListener {
         val dogs = listOf("guard_dog", "laser_guard_dog", "stun_guard_dog", "flame_guard_dog", "gas_guard_dog")
             .flatMap { listOf(it, it + "_backpack") }
         val withLod = listOf("bioprocessor", "refinery", "bioprocessor_container", "refinery_container") + dogs
-        models=(withLod.flatMap { listOf(it, it + "_lod") } + listOf("tactical_terminal", "sample_container", "item_delivery_rack")).associateWith { name ->
+        models=(withLod.flatMap { listOf(it, it + "_lod") } + listOf("tactical_terminal", "sample_container", "item_delivery_rack", "resupply_rack", "supply_case")).associateWith { name ->
             val json=manager.open(ResourceLocation.fromNamespaceAndPath(MOD_ID,"models/mesh/$name.mesh.json.gz")).use{GZIPInputStream(it).reader().use(JsonParser::parseReader)}.asJsonObject
             fun floats(a:JsonArray)=a.map{it.asFloat}.toFloatArray()
             fun vector(a:JsonArray)=floats(a).let{Vector3f(it[0],it[1],it[2])}
@@ -174,10 +174,10 @@ object MachineMesh:ResourceManagerReloadListener {
         }
     }
     fun nozzles(machine:com.example.sbwhelldiver.survival.MachineDeployment)=models[machine.id+"_container"]?.nozzles.orEmpty()
-    fun draw(name:String,animation:String,time:Float,p:PoseStack,b:MultiBufferSource,light:Int,distanceSquared:Double=0.0, nodeYOffsets:Map<String,Float> = emptyMap()) {
+    fun draw(name:String,animation:String,time:Float,p:PoseStack,b:MultiBufferSource,light:Int,distanceSquared:Double=0.0, nodeYOffsets:Map<String,Float> = emptyMap(), hiddenNodeNames:Set<String> = emptySet()) {
         val selected=if(ModelLod.reduced(distanceSquared))name+"_lod" else name
         val model=models[selected]?:models[name]?:return
-        draw(model,animation,time,p,b,light,nodeYOffsets)
+        draw(model,animation,time,p,b,light,nodeYOffsets, hiddenNodes = model.nodes.indices.filter { model.nodes[it].name in hiddenNodeNames }.toSet())
     }
 
     private val spareNode = Regex("mags_[lr]_0[1-4]_scale")

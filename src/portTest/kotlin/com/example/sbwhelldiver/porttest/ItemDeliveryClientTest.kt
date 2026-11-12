@@ -139,7 +139,7 @@ object ItemDeliveryClientTest {
                 175 -> {
                     check(sawBraking && sawCap && pod?.phase == Phase.ACTIVE) { "Shared landing or cap ejection missing" }
                     check(sawOpenRackRise) { "Open rack did not rise above the pod" }
-                    check(MachineMesh.batchCount("item_delivery_rack") == 3)
+                    check(MachineMesh.batchCount("item_delivery_rack") == 5)
                     check(SoundTimeline.startedCount("sfx_hellpod_cap_release") > 0)
                     check(SoundTimeline.startedCount("sfx_hellpod_impact") > 0)
                     checkSoundLayers("deploy", 1)

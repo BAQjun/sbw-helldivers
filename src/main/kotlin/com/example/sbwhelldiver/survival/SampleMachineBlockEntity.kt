@@ -105,7 +105,7 @@ class SampleMachineBlockEntity(pos:BlockPos,state:BlockState):BlockEntity(Machin
                 val slots=(0..8).filter{r.ingredient.test(inventory.getStackInSlot(it))}
                 if(slots.sumOf{inventory.getStackInSlot(it).count}<r.count)continue
                 // Reserve room for every possible roll before consuming the batch.
-                if(r.outcomes.any{!outputFits(it.stack())})continue
+                if(r.outcomes.any{!outputFits(it.stack().copyWithCount(it.maxCount))})continue
                 var count=r.count
                 for(slot in slots){val n=minOf(count,inventory.getStackInSlot(slot).count);inventory.extractItem(slot,n,false);count-=n;if(count==0)break}
                 pending=r.roll(l.random);duration=r.ticks;progress=0;setChanged();break

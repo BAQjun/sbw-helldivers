@@ -21,6 +21,8 @@ object ModEntities {
     val MACHINE_CONTAINER=ENTITIES.register("machine_container"){_->EntityType.Builder.of({t,l->com.example.sbwhelldiver.survival.MachineContainerEntity(t,l)},MobCategory.MISC).sized(4f,3f).clientTrackingRange(32).updateInterval(1).fireImmune().build("machine_container")}
     val EQUIPMENT_BEACON=ENTITIES.register("machine_deployment_beacon"){_->EntityType.Builder.of({t,l->com.example.sbwhelldiver.survival.EquipmentDeploymentBeaconEntity(t,l)},MobCategory.MISC).sized(2.65f,4.4f).clientTrackingRange(32).updateInterval(1).fireImmune().build("machine_deployment_beacon")}
 
+    val RESUPPLY_HELLPOD=ENTITIES.register("resupply"){ _ -> vehicle{t,l->com.example.sbwhelldiver.entity.ResupplyHellpodEntity(t,l)}.sized(1.4f,2.1f).build("resupply") }
+    val SUPPLY_CASE=ENTITIES.register("supply_case"){ _ -> EntityType.Builder.of({t,l->com.example.sbwhelldiver.entity.SupplyCaseEntity(t,l)},MobCategory.MISC).sized(.65f,.34f).clientTrackingRange(32).updateInterval(1).fireImmune().build("supply_case") }
     val PLAYER_HELLPOD=ENTITIES.register("player_hellpod"){ _ ->vehicle{t,l->com.example.sbwhelldiver.entity.PlayerHellpodEntity(t,l)}.sized(2.65f,.2f).build("player_hellpod")}
 
     val ORBITAL_LASER=ENTITIES.register("orbital_laser"){ _ ->EntityType.Builder.of({t,l -> com.example.sbwhelldiver.entity.OrbitalLaserEntity(t,l)},MobCategory.MISC).sized(1f,1f).clientTrackingRange(32).updateInterval(1).fireImmune().build("orbital_laser")}

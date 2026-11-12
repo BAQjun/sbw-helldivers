@@ -6016,5 +6016,30 @@
         "attenuation_distance": 64
       }
     ]
+  },
+  "sfx_supply_pickup": {
+    "subtitle": "subtitles.sbw_helldiver.supply_pickup",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/resupply/pickup_782110398",
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/resupply/pickup_530078634",
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/resupply/pickup_969951178",
+        "stream": false,
+        "attenuation_distance": 64
+      },
+      {
+        "name": "sbw_helldiver:original/resupply/pickup_527746518",
+        "stream": false,
+        "attenuation_distance": 64
+      }
+    ]
   }
 }

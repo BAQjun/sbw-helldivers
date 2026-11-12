@@ -75,6 +75,7 @@ object Stratagems {
     val destroyerCall = StratagemDefinition("call_super_destroyer",listOf(UP,UP,DOWN,DOWN,LEFT,RIGHT,LEFT,RIGHT))
     /** Built into every beacon ball; deliberately excluded from the four card slots. */
     val equipmentDeployment = StratagemDefinition("machine_deployment_beacon", com.example.sbwhelldiver.survival.MachineDeployment.callCode, StratagemCategory.BLUE)
+    val resupply = StratagemDefinition("resupply",listOf(DOWN,DOWN,UP,RIGHT),StratagemCategory.BLUE)
     val destroyerDirection = StratagemDefinition("destroyer_direction",listOf(UP,LEFT,RIGHT,DOWN))
     val destroyerManage = StratagemDefinition("destroyer_manage",listOf(LEFT,RIGHT))
     val destroyerDurations=listOf(
@@ -84,8 +85,8 @@ object Stratagems {
     fun isOrbital(id:String)=id.startsWith("orbital_")
     val eagleRearm = StratagemDefinition("eagle_rearm", listOf(UP, UP, LEFT, UP, RIGHT))
     fun commands(loadout: List<StratagemDefinition?>, hasEagles: Boolean = loadout.any { it?.id?.startsWith("eagle_") == true }): List<StratagemDefinition?> =
-        listOf(destroyerCall, equipmentDeployment) + (if (hasEagles) listOf(eagleRearm) + loadout else loadout)
-    fun get(id: String) = definitions.firstOrNull { it.id == id } ?: equipmentDeployment.takeIf { it.id == id }
+        listOf(destroyerCall, equipmentDeployment, resupply) + (if (hasEagles) listOf(eagleRearm) + loadout else loadout)
+    fun get(id: String) = definitions.firstOrNull { it.id == id } ?: equipmentDeployment.takeIf { it.id == id } ?: resupply.takeIf { it.id == id }
     fun fromItem(stack: ItemStack) = (stack.item as? StratagemItem)?.dropEntityId?.path?.let(::get)
     fun matching(loadout: List<StratagemDefinition?>, prefix: List<Int>) = loadout.filterNotNull().filter {
         prefix.size <= it.code.size && it.code.take(prefix.size) == prefix
@@ -132,6 +133,7 @@ object BeaconData {
     fun selected(stack: ItemStack): StratagemDefinition? {
         val id = data(stack).getString(SELECTED)
         if (id == Stratagems.equipmentDeployment.id) return Stratagems.equipmentDeployment
+        if (id == Stratagems.resupply.id) return Stratagems.resupply
         return loadout(stack).filterNotNull().firstOrNull { it.id == id }
     }
     fun activate(stack: ItemStack, def: StratagemDefinition) = update(stack) { it.putString(SELECTED, def.id) }
