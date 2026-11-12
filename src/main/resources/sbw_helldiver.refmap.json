@@ -31,6 +31,10 @@
       "createPath(Ljava/util/Set;IZIF)Lnet/minecraft/world/level/pathfinder/Path;": "Lnet/minecraft/world/entity/ai/navigation/PathNavigation;m_148222_(Ljava/util/Set;IZIF)Lnet/minecraft/world/level/pathfinder/Path;",
       "createPath(Lnet/minecraft/world/entity/Entity;I)Lnet/minecraft/world/level/pathfinder/Path;": "Lnet/minecraft/world/entity/ai/navigation/PathNavigation;m_6570_(Lnet/minecraft/world/entity/Entity;I)Lnet/minecraft/world/level/pathfinder/Path;",
       "createPath(DDDI)Lnet/minecraft/world/level/pathfinder/Path;": "Lnet/minecraft/world/entity/ai/navigation/PathNavigation;m_26524_(DDDI)Lnet/minecraft/world/level/pathfinder/Path;"
+    },
+    "com/example/sbwhelldiver/mixin/GuardDogTrackingMixin": {
+      "handleMoveEntity": "Lnet/minecraft/client/multiplayer/ClientPacketListener;m_7865_(Lnet/minecraft/network/protocol/game/ClientboundMoveEntityPacket;)V",
+      "Lnet/minecraft/world/entity/Entity;lerpTo(DDDFFIZ)V": "Lnet/minecraft/world/entity/Entity;m_6453_(DDDFFIZ)V"
     }
   },
   "data": {
@@ -66,6 +70,10 @@
         "createPath(Ljava/util/Set;IZIF)Lnet/minecraft/world/level/pathfinder/Path;": "Lnet/minecraft/world/entity/ai/navigation/PathNavigation;m_148222_(Ljava/util/Set;IZIF)Lnet/minecraft/world/level/pathfinder/Path;",
         "createPath(Lnet/minecraft/world/entity/Entity;I)Lnet/minecraft/world/level/pathfinder/Path;": "Lnet/minecraft/world/entity/ai/navigation/PathNavigation;m_6570_(Lnet/minecraft/world/entity/Entity;I)Lnet/minecraft/world/level/pathfinder/Path;",
         "createPath(DDDI)Lnet/minecraft/world/level/pathfinder/Path;": "Lnet/minecraft/world/entity/ai/navigation/PathNavigation;m_26524_(DDDI)Lnet/minecraft/world/level/pathfinder/Path;"
+      },
+      "com/example/sbwhelldiver/mixin/GuardDogTrackingMixin": {
+        "handleMoveEntity": "Lnet/minecraft/client/multiplayer/ClientPacketListener;m_7865_(Lnet/minecraft/network/protocol/game/ClientboundMoveEntityPacket;)V",
+        "Lnet/minecraft/world/entity/Entity;lerpTo(DDDFFIZ)V": "Lnet/minecraft/world/entity/Entity;m_6453_(DDDFFIZ)V"
       }
     }
   }
