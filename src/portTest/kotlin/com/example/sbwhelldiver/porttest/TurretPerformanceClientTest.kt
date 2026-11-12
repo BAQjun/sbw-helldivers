@@ -32,6 +32,7 @@ import kotlin.math.*
 object TurretPerformanceClientTest {
     private val enabled=java.lang.Boolean.getBoolean("sbw_helldiver.turretPerformanceTests")
     private val rocketOnly=java.lang.Boolean.getBoolean("sbw_helldiver.perfRocketOnly")
+    private val laserOnly=java.lang.Boolean.getBoolean("sbw_helldiver.perfLaserOnly")
     private var started=0L
     private var prepared=false
     @Volatile private var ready=false
@@ -63,13 +64,13 @@ object TurretPerformanceClientTest {
             for(target in targets)if(target.isAlive){target.health=target.maxHealth;target.clearFire()}
             if(scenario>=2) firing[scenario]=pods.sumOf{it.shotSerial+it.teslaArcData.getInt("Serial")}
             if(age>=240){
-                if(scenario==(if(rocketOnly)5 else names.lastIndex)){done=true;return}
+                if(scenario==(if(laserOnly)4 else if(rocketOnly)5 else names.lastIndex)){done=true;return}
                 level.getAllEntities().toList().filter{it !is net.minecraft.world.entity.player.Player}.forEach{it.discard()}
                 targets.clear();pods.clear();scenario++;age=0
-                val indices=when(scenario){0->emptyList();1,12->types.indices.toList();else->listOf(scenario-2)}
+                val indices=if(laserOnly)when(scenario){0->emptyList();1,2->listOf(8);else->listOf(8,8,8,8)}else when(scenario){0->emptyList();1,12->types.indices.toList();else->listOf(scenario-2)}
                 for((slot,index) in indices.withIndex()){
-                    val x=if(indices.size==1)0.5 else (slot%5-2)*4.0+.5
-                    val z=if(indices.size==1)0.5 else slot/5*4.0+.5
+                    val x=if(indices.size==1)0.5 else if(laserOnly)(slot%2)*3.0-1.0 else (slot%5-2)*4.0+.5
+                    val z=if(indices.size==1)0.5 else if(laserOnly)slot/2*3.0+.5 else slot/5*4.0+.5
                     val pod=types[index].get().create(level)!!
                     pod.moveTo(x,80.0,z,180f,0f);pod.setOwnerUUID(playerId!!)
                     val data=CompoundTag();pod.saveWithoutId(data)
@@ -77,7 +78,7 @@ object TurretPerformanceClientTest {
                     data.putInt("HellpodPhaseTicks",pod.deployTicks-1);data.putBoolean("HellpodCapReleased",true)
                     data.putDouble("HellpodRestY",80.0);pod.load(data)
                     check(level.addFreshEntity(pod));pods.add(pod)
-                    if(scenario>=2){
+                    if(if(laserOnly)scenario==2||scenario==4 else scenario>=2){
                         val target=EntityType.HUSK.create(level)!!
                         target.getAttribute(Attributes.MAX_HEALTH)!!.baseValue=1024.0;target.health=target.maxHealth
                         target.isNoAi=true;target.setPersistenceRequired()
@@ -141,10 +142,11 @@ object TurretPerformanceClientTest {
                 check(com.example.sbwhelldiver.client.TerrainMeshOcclusion.volume(pod)==null){"Digging did not expose retained hull"}
                 LOGGER.info("TURRET_PERF_DIG_EXPOSURE_PASSED")
                 val lines=mutableListOf("scenario,frames,median_ms,p95_ms,shots_or_arcs")
-                for(i in if(rocketOnly)listOf(5)else names.indices.toList()){
-                    if(i>=2)check((firing[i]?:0)>0){"No actual shots from ${names[i]}"}
+                for(i in if(laserOnly)(0..4).toList()else if(rocketOnly)listOf(5)else names.indices.toList()){
+                    if(if(laserOnly)i==2||i==4 else i>=2)check((firing[i]?:0)>0){"No actual shots from ${names[i]}"}
                     val values=frames[i].orEmpty().sorted();check(values.size>=30){"Insufficient frames ${names[i]}: ${values.size}"}
-                    val row="${names[i]},${values.size},${values[values.size/2]},${values[(values.size*.95).toInt().coerceAtMost(values.lastIndex)]},${firing[i]?:0}"
+                    val label=if(laserOnly)listOf("empty","laser-idle","laser-active","four-laser-idle","four-laser-active")[i]else names[i]
+                    val row="$label,${values.size},${values[values.size/2]},${values[(values.size*.95).toInt().coerceAtMost(values.lastIndex)]},${firing[i]?:0}"
                     lines.add(row);LOGGER.info("TURRET_PERF_RESULT {}",row)
                 }
                 val path=mc.gameDirectory.toPath().resolve("turret-performance.csv");Files.write(path,lines)
