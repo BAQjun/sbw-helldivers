@@ -13,7 +13,7 @@
 - 整合性能测试版的近景模型和渲染优化，减少重复绘制与手持背包的渲染开销，保留模型外观细节。
 
 - 修复护卫犬在视野外停止更新后被拉回背包附近的问题，改善起飞交接并抬高待机悬停位置。
-- 修复 Forge 中部分激光、电弧、喷焰、信标光柱及激光哨戒炮进度显示异常。
+- 修复 Forge 中部分激光、电弧、喷焰、毒雾、信标光柱及激光哨戒炮进度显示异常。
 
 ### English
 
@@ -26,7 +26,7 @@
 - Integrated the performance test build's close-up model and rendering optimizations, reducing redundant drawing and held-backpack rendering costs while preserving visible detail.
 
 - Fixed Guard Dogs snapping toward the backpack after off-camera updates were skipped, smoothed the launch handoff, and raised their idle hover position.
-- Fixed rendering issues with lasers, arcs, thruster flames, beacon beams, and laser sentry progress displays on Forge.
+- Fixed rendering issues with lasers, arcs, thruster flames, gas fog, beacon beams, and laser sentry progress displays on Forge.
 
 ## 0.6.7
 
