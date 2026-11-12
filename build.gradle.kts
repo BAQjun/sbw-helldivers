@@ -475,3 +475,23 @@ if(providers.gradleProperty("resupplyTests").isPresent){
  val cleanup=tasks.register<Delete>("cleanupResupplyClient"){delete(save)}
  tasks.matching{it.name=="runClient"}.configureEach{dependsOn(reset);finalizedBy(cleanup)}
 }
+
+// Reversible near-model experiment; never edits production resources.
+if(providers.gradleProperty("nearModelTests").isPresent){
+ minecraft.runs.named("client"){
+  workingDirectory(project.file(".codex/near-model/client"))
+  property("sbw_helldiver.turretPerformanceTests","true")
+  mods.named(project.property("mod_id").toString()){source(sampleTest)}
+  jvmArgs("-Xms512m","-Xmx3G","-XX:ActiveProcessorCount=4")
+  args("--width","1280","--height","720")
+ }
+ val save=layout.projectDirectory.dir(".codex/near-model/client/saves/port-client-test")
+ val reset=tasks.register<Delete>("resetNearModelClient"){delete(save)}
+ val cleanup=tasks.register<Delete>("cleanupNearModelClient"){delete(save)}
+ tasks.matching{it.name=="runClient"}.configureEach{dependsOn(reset);finalizedBy(cleanup)}
+}
+tasks.named<ProcessResources>("processResources"){
+ val override=providers.gradleProperty("nearModelOverride").orElse("").get()
+ inputs.property("nearModelOverride",override)
+ doLast{if(override.isNotEmpty())copy{from(file(override).resolve("assets"));into(destinationDir.resolve("assets"))}}
+}
