@@ -11,11 +11,18 @@ import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.item.ItemStack
 
 /** Actual rendering and live-target firing check for the newly backported close-up renderers. */
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 object Release07CombatSmoke {
  var started=false
  private var age=0;private var stage=-1;private var sprayingTicks=0;private var previousDogPosition:net.minecraft.world.phys.Vec3?=null;private var maxFlightStep=0.0;private var rendered=false;private var effectCaptured=false
  @Volatile private var failure:Throwable?=null
  @Volatile private var ready=false
+ private var poseDog:GuardDogEntity?=null
+ private var poseWorld:net.minecraft.world.phys.Vec3?=null
+ private var poseTick=0f
+ private var posePhase:GuardDogEntity.Flight?=null
+ private var poseSamples=0
+ private var maxPoseStep=0.0
  private var victim:net.minecraft.world.entity.monster.Husk?=null
  private val dogs by lazy {listOf(ModItems.GUARD_DOG_BACKPACK,ModItems.LASER_GUARD_DOG_BACKPACK,ModItems.STUN_GUARD_DOG_BACKPACK,ModItems.FLAME_GUARD_DOG_BACKPACK,ModItems.GAS_GUARD_DOG_BACKPACK)}
  private val turrets by lazy {listOf(ModEntities.MACHINE_GUN_SENTRY,ModEntities.FLAME_SENTRY,ModEntities.LASER_SENTRY,ModEntities.MORTAR_SENTRY)}
@@ -25,7 +32,7 @@ object Release07CombatSmoke {
   if(!ready){
    if(age!=0)return
    age=1;stage++;rendered=false;effectCaptured=false;sprayingTicks=0;previousDogPosition=null
-   if(stage>=dogs.size+turrets.size){LOGGER.info("RELEASE07_COMBAT_PASSED: all five Guard Dogs and MG/flame/laser/mortar sentries had deployed entities and affected live targets; inspect screenshots for visual verification");mc.stop();return}
+   if(stage>=dogs.size+turrets.size){check(poseSamples>=dogs.size){"Missing visible handoffs: $poseSamples"};LOGGER.info("RELEASE07_VISIBLE_CONTINUITY maxStep={} handoffs={}",maxPoseStep,poseSamples);LOGGER.info("RELEASE07_COMBAT_PASSED: all five Guard Dogs and MG/flame/laser/mortar sentries had deployed entities and affected live targets; inspect screenshots for visual verification");mc.stop();return}
    server.execute{try{
     level.getAllEntities().toList().filter{it !is net.minecraft.world.entity.player.Player}.forEach{it.discard()}
     server.setDifficulty(net.minecraft.world.Difficulty.NORMAL,true)
@@ -42,17 +49,42 @@ object Release07CombatSmoke {
     ready=true;LOGGER.info("RELEASE07_COMBAT_BEGIN stage={}",stage)
    }catch(t:Throwable){failure=t}};return
   }
+  com.example.sbwhelldiver.client.GuardDogVisual.poseObserver={dog,matrix->
+   if(dog!=null&&stage<dogs.size&&!com.example.sbwhelldiver.client.ShaderPackCompat.shadowPass()){
+    val camera=mc.gameRenderer.mainCamera.position
+    val world=camera.add(matrix.m30().toDouble(),matrix.m31().toDouble(),matrix.m32().toDouble())
+    val now=dog.tickCount.toFloat()
+    val previous=poseWorld
+    if(poseDog===dog&&previous!=null&&now-poseTick in 0f..2f){
+     val step=world.distanceTo(previous);maxPoseStep=maxOf(maxPoseStep,step)
+     if(step>=.85)failure=IllegalStateException("Visible drone jumped $step blocks at ${dog.flight}/${dog.phaseAge}, prior=$posePhase")
+     if(posePhase==GuardDogEntity.Flight.LAUNCH&&dog.flight!=posePhase){
+      poseSamples++;LOGGER.info("RELEASE07_VISIBLE_HANDOFF stage={} step={} world={} entity={}",stage,step,world,dog.position())
+     }
+    }
+    poseDog=dog;poseWorld=world;poseTick=now;posePhase=dog.flight
+   }
+  }
   age++
   player.yRot=0f;player.yRotO=0f;player.xRot=8f;player.xRotO=8f
-  if(stage==0&&age in 30..190){val step=age;server.execute{server.playerList.getPlayer(player.uuid)?.teleportTo(level,.5+2*kotlin.math.sin(step*.035),80.0,-2.1,0f,0f)}}
+  if(stage==0&&age in 30..190){val step=age;server.execute{server.playerList.getPlayer(player.uuid)?.teleportTo(level,.5+2*kotlin.math.sin((step-30)*.035),80.0,-2.1,0f,0f)}}
   val entities=mc.level!!.entitiesForRendering().toList()
   if(stage<dogs.size){if(entities.any{it is GuardDogEntity&&it.flight!=GuardDogEntity.Flight.LAUNCH})rendered=true}
   else if(entities.any{it is SentryHellpodEntity&&it.phase==AbstractHellpodEntity.Phase.ACTIVE})rendered=true
   val flying=entities.filterIsInstance<GuardDogEntity>().firstOrNull()
-  if(stage==0&&age in listOf(20,40,60,68))LOGGER.info("RELEASE07_LAUNCH_CLOCK age={} phase={} phaseAge={} position={}",age,flying?.flight,flying?.phaseAge,flying?.position())
-  if(stage==0&&age in listOf(40,60)&&flying!=null){
+  if(stage<dogs.size&&age in listOf(20,40,60,68))LOGGER.info("RELEASE07_LAUNCH_CLOCK age={} phase={} phaseAge={} position={}",age,flying?.flight,flying?.phaseAge,flying?.position())
+  if(stage==0&&age in listOf(40,60)&&flying!=null&&flying.usesPackPose){
    val owner=flying.clientOwner()!!
    check(flying.position().distanceTo(flying.transitionPosition(owner,flying.phaseAge.toDouble()))<.1){"Off-camera launch tick was skipped"}
+  }
+  if(stage==0&&age==100&&flying!=null){
+   val probe=GuardDogEntity(ModEntities.GUARD_DOG.get(),mc.level!!)
+   probe.entityData.assignValues(flying.entityData.nonDefaultValues!!)
+   probe.setPos(1.0,81.0,1.0)
+   probe.lerpTo(4.0,83.0,4.0,0f,0f,3)
+   probe.lerpTo(probe.lerpTargetX(),probe.lerpTargetY(),probe.lerpTargetZ(),90f,0f,3)
+   check(probe.lerpTargetX()==4.0&&probe.lerpTargetY()==83.0&&probe.lerpTargetZ()==4.0){"Rotation packet overwrote pending destination"}
+   LOGGER.info("RELEASE07_ROTATION_PACKET_TARGET_PASSED")
   }
   if(stage==0&&flying!=null){
    val previous=previousDogPosition

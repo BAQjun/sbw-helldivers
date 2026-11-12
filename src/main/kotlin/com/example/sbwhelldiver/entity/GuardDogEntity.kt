@@ -51,6 +51,7 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     private val gasExposure = mutableMapOf<UUID, Int>()
     private var clientPhaseStartedAt = 0
     private var lerpTicks = 0
+    private var hasTrackedPosition = false
     private var lerpPosition = Vec3.ZERO
     private var lerpYaw = 0f
     private var lerpPitch = 0f
@@ -119,10 +120,15 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     override fun onSyncedDataUpdated(key: EntityDataAccessor<*>) {
         super.onSyncedDataUpdated(key)
         // Attached poses are evaluated from the owner, never from queued flight packets.
-        // Discard that queue at the handoff so an old dock location cannot pull
-        // a drone back after it has already launched.
+        // Preserve the latest network destination across the animated handoff;
+        // rotation-only packets must never replace it with the attached pose.
         if (level().isClientSide) {
-            if (key == FLIGHT) lerpTicks = 0
+            if (key == FLIGHT) {
+                // Movement arrives before phase metadata. Keep its destination
+                // while the pack animation owns the pose, then continue toward
+                // that same destination instead of discarding the handoff packet.
+                lerpTicks = if (!usesPackPose && hasTrackedPosition) 3 else 0
+            }
             if (key == PHASE_START) {
                 // Anchor once on receipt. Later world-time corrections must not rewind a flight animation.
                 val elapsed = (level().gameTime - entityData.get(PHASE_START)).coerceIn(0, TRANSITION_TICKS.toLong())
@@ -587,14 +593,22 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
 
     override fun lerpTo(x: Double, y: Double, z: Double, yaw: Float, pitch: Float, steps: Int) {
-        if (usesPackPose) { lerpTicks = 0; return }
-
+        hasTrackedPosition = true
         lerpPosition = Vec3(x, y, z)
         lerpYaw = yaw
         lerpPitch = pitch
         // Respect the tracking interval, including the first free-flight update.
-        lerpTicks = steps.coerceIn(3, 10)
+        lerpTicks = if (usesPackPose) 0 else steps.coerceIn(3, 10)
     }
+
+    // Rotation-only tracking packets reuse these targets. Entity's defaults
+    // return the current animated position, which would overwrite an in-flight
+    // position update and pull the drone back toward its old backpack pose.
+    override fun lerpTargetX() = if (hasTrackedPosition) lerpPosition.x else x
+    override fun lerpTargetY() = if (hasTrackedPosition) lerpPosition.y else y
+    override fun lerpTargetZ() = if (hasTrackedPosition) lerpPosition.z else z
+    override fun lerpTargetYRot() = if (hasTrackedPosition) lerpYaw else yRot
+    override fun lerpTargetXRot() = if (hasTrackedPosition) lerpPitch else xRot
 
     fun thrustAlong(yaw: Float, partial: Float): Float {
         val forward = Vec3.directionFromRotation(0f, yaw)
