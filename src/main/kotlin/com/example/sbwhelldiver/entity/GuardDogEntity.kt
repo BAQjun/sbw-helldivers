@@ -89,7 +89,7 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
 
     private var shotClock = 0
 
-    private data class GasCloud(val center: Vec3, val born: Long)
+    private data class GasCloud(val center: Vec3, var born: Long)
 
     private val gasClouds = ArrayDeque<GasCloud>()
 
@@ -768,15 +768,13 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
 
 
 
-        if (gasClouds.lastOrNull()?.let { server.gameTime - it.born >= 7 } != false) {
-
+        if (gasClouds.maxOfOrNull { it.born }?.let { server.gameTime - it >= GuardDogGas.CLOUD_INTERVAL_TICKS } != false) {
             val axis = Vec3.directionFromRotation(xRot, yRot)
-
-            gasClouds.addLast(GasCloud(muzzle.add(axis.scale(muzzle.distanceTo(point) * .94)), server.gameTime))
-
+            val center = muzzle.add(axis.scale(muzzle.distanceTo(point) * .94))
+            val nearby = gasClouds.lastOrNull { it.center.distanceToSqr(center) <= GuardDogGas.CLOUD_MERGE_DISTANCE_SQR }
+            if (nearby != null) nearby.born = server.gameTime
+            else gasClouds.addLast(GasCloud(center, server.gameTime))
         }
-
-
 
         if (shotClock-- > 0) return
 
@@ -792,7 +790,7 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
 
     private fun tickGasClouds(server: ServerLevel, owner: ServerPlayer) {
 
-        gasClouds.removeAll { server.gameTime - it.born >= 28 }
+        gasClouds.removeAll { server.gameTime - it.born >= GuardDogGas.CLOUD_LIFETIME_TICKS }
 
         val exposed = mutableSetOf<UUID>()
 

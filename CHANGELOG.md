@@ -1,5 +1,22 @@
 # 版本记录
 
+## 0.7.2
+
+### 中文
+
+- 补上重新补给空投时信标旁的图标、名称与抵达倒计时。
+- 每箱补给的枪械弹药增加至六个弹匣，同类弹药仍按最大弹匣容量计算，不重复补给。
+- 修正火焰与毒气背包罐体的储量条：灰色表示已消耗部分，红色或绿色表示剩余储量。
+- 毒狗的持续接触上毒时间缩短至一秒。喷射后留下约三秒的滞留毒雾，可对进入雾区的目标施加毒气效果；附近雾团会合并以控制开销。
+
+### English
+
+- Added the missing beacon-side icon, name, and arrival countdown for Resupply drops.
+- Each supply box now provides six magazines of ammunition. Shared ammunition types still use the largest carried magazine capacity without duplicate grants.
+- Corrected flame and gas backpack tank gauges: grey indicates spent fuel, while red or green indicates the remaining supply.
+- Reduced the gas drone's continuous exposure requirement to one second. Its spray now leaves poisonous mist for approximately three seconds, affecting targets that enter the cloud. Nearby clouds merge to limit performance overhead.
+
+
 ## 0.7.1
 
 ### 中文

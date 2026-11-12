@@ -20,7 +20,10 @@ object GuardDogGas {
 
     const val EFFECT_TICKS = 180
 
-    const val EXPOSURE_TICKS = 30
+    const val EXPOSURE_TICKS = 20
+    const val CLOUD_LIFETIME_TICKS = 60
+    const val CLOUD_INTERVAL_TICKS = 7
+    const val CLOUD_MERGE_DISTANCE_SQR = .75 * .75
 
     // The native spray is 16 degrees wide.
 

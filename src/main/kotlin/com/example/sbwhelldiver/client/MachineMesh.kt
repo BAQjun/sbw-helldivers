@@ -224,8 +224,15 @@ object MachineMesh:ResourceManagerReloadListener {
             for ((side, used) in listOf("r" to (spent + 1) / 2, "l" to spent / 2)) {
                 val index = model.nodes.indexOfFirst { it.name == "fuel_gauge_$side" }
                 if (index < 0) continue
-                if (used >= 3) hidden.add(index)
-                else transforms[index] = Matrix4f(transforms[index]).scale(1f, (3 - used) / 3f, 1f)
+                // The animated mesh is a grey cover over the coloured tank stripe.
+                // Cover the spent portion from the top; leave remaining fuel coloured below.
+                if (used == 0) hidden.add(index)
+                else {
+                    val spentFraction = used / 3f
+                    val height = model.meshCenter(index).y * 2f
+                    transforms[index] = Matrix4f(transforms[index])
+                        .translate(0f, height * (1f - spentFraction), 0f).scale(1f, spentFraction, 1f)
+                }
             }
             draw(model, animation, time, p, b, light, matrices = transforms, hiddenNodes = hidden)
             val socket = model.nodes.indexOfFirst { it.name == "drone_attach" }

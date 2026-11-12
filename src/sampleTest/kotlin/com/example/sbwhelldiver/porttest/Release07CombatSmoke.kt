@@ -24,6 +24,10 @@ object Release07CombatSmoke {
  private var poseSamples=0
  private var maxPoseStep=0.0
  private var victim:net.minecraft.world.entity.monster.Husk?=null
+ @Volatile private var gasFirstSpray = -1L
+ @Volatile private var gasStopped = -1L
+ @Volatile private var lingeringVerified = false
+ private var lingerVictim:net.minecraft.world.entity.animal.Pig?=null
  private val dogs by lazy {listOf(ModItems.GUARD_DOG_BACKPACK,ModItems.LASER_GUARD_DOG_BACKPACK,ModItems.STUN_GUARD_DOG_BACKPACK,ModItems.FLAME_GUARD_DOG_BACKPACK,ModItems.GAS_GUARD_DOG_BACKPACK)}
  private val turrets by lazy {listOf(ModEntities.MACHINE_GUN_SENTRY,ModEntities.FLAME_SENTRY,ModEntities.LASER_SENTRY,ModEntities.MORTAR_SENTRY)}
  fun tick(mc:Minecraft){
@@ -94,6 +98,33 @@ object Release07CombatSmoke {
    if(previous!=null&&flying.flight==GuardDogEntity.Flight.PATROL){val step=flying.position().distanceTo(previous);maxFlightStep=maxOf(maxFlightStep,step);check(step<.85){"Drone jumped $step blocks in free flight at phase ${flying.phaseAge}"}}
    previousDogPosition=flying.position()
   }
+  if(stage in listOf(3,4)&&age in listOf(100,150))server.execute{
+   val p=server.playerList.getPlayer(player.uuid)!!
+   GuardDogBackpack.equipped(p)?.let{pack->repeat(3){check(GuardDogBackpack.loadSpare(pack))}}
+  }
+  if(stage in listOf(3,4)&&age in listOf(90,130,180))Screenshot.grab(mc.gameDirectory,"release072-gauge-$stage-$age.png",mc.mainRenderTarget){}
+  if(stage==4)server.execute{try{
+   val dog=level.getAllEntities().filterIsInstance<GuardDogEntity>().firstOrNull()?:return@execute
+   val now=level.gameTime
+   if(dog.gasSpraying&&gasFirstSpray<0)gasFirstSpray=now
+   if(victim!!.hasEffect(ModEffects.GAS.get())&&gasStopped<0){
+    val exposure=now-gasFirstSpray
+    check(exposure in 19L..23L){"Gas exposure took $exposure ticks instead of one second"}
+    LOGGER.info("RELEASE072_GAS_EXPOSURE_PASSED ticks={}",exposure)
+    gasStopped=now
+   }
+   if(gasStopped>=0&&now-gasStopped>=15&&lingerVictim==null){
+    check(!dog.gasSpraying){"Gas dog kept spraying poisoned target"}
+    val pig=EntityType.PIG.create(level)!!;pig.isNoAi=true
+    val at=victim!!.position();pig.moveTo(at.x+.6,at.y,at.z,0f,0f)
+    check(level.addFreshEntity(pig));lingerVictim=pig
+   }
+   if(gasStopped>=0&&now-gasStopped>=38&&!lingeringVerified){
+    check(!dog.gasSpraying)
+    check(lingerVictim?.hasEffect(ModEffects.GAS.get())==true){"Late entrant was not poisoned by lingering mist after spray stopped"}
+    lingeringVerified=true;LOGGER.info("RELEASE072_LINGERING_GAS_PASSED stoppedTicks={}",now-gasStopped)
+   }
+  }catch(t:Throwable){failure=t}}
   if(stage==4&&flying?.gasSpraying==true){sprayingTicks++;if(sprayingTicks%8==0)LOGGER.info("RELEASE07_GAS_ACTIVE ticks={} {}",sprayingTicks,com.example.sbwhelldiver.client.FieldVolumeRenderer.diagnostics())}
   if(!effectCaptured&&age>90&&stage in listOf(2,4)){
    val dog=entities.filterIsInstance<GuardDogEntity>().firstOrNull()
@@ -105,7 +136,7 @@ object Release07CombatSmoke {
   if(age==200)LOGGER.info("RELEASE07_RENDER_DIAGNOSTICS stage={} {}",stage,com.example.sbwhelldiver.client.FieldVolumeRenderer.diagnostics())
   if(age==200)Screenshot.grab(mc.gameDirectory,"release07-combat-$stage.png",mc.mainRenderTarget){LOGGER.info("RELEASE07_COMBAT_SCREENSHOT {}",stage)}
   if(age==260){check(rendered){"No deployed client entity stage=$stage"};if(stage==0)LOGGER.info("RELEASE07_MOVING_LAUNCH_CONTINUITY maxStep={}",maxFlightStep);server.execute{try{
-   val v=victim!!;check(v.health<1024f||v.activeEffects.isNotEmpty()){ "No actual damage/effect stage=$stage health=${v.health}" }
+   if(stage==4)check(lingeringVerified){"Lingering gas check did not finish"};val v=victim!!;check(v.health<1024f||v.activeEffects.isNotEmpty()){ "No actual damage/effect stage=$stage health=${v.health}" }
    LOGGER.info("RELEASE07_COMBAT_VERIFIED stage={} health={} effects={}",stage,v.health,v.activeEffects.size);ready=false;age=0
   }catch(t:Throwable){failure=t}}}
  }

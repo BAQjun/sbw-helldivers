@@ -49,7 +49,7 @@ object ResupplyClientTest {
  private var started=false;private var ticks=0;private var active=0;private var picked=0;private var braking=false;private var cap=false
  @Volatile private var podId:UUID?=null
  @Volatile private var failure:Throwable?=null
- @Volatile private var pickupSounds=0; @Volatile private var vanillaPickups=0; private var looseRequested=false
+ @Volatile private var pickupSounds=0; @Volatile private var vanillaPickups=0; private var looseRequested=false; private var hudSeen=false
  @SubscribeEvent fun sound(event:PlaySoundSourceEvent) {
   if(!enabled)return
   if(event.sound.location.path=="sfx_supply_pickup") { check(event.sound.sound.location.path.startsWith("original/resupply/pickup_")); check(event.sound.pitch==1f); pickupSounds++; LOGGER.info("RESUPPLY_NATIVE_SOUND {} pitch={}",pickupSounds,event.sound.pitch) }
@@ -71,9 +71,11 @@ object ResupplyClientTest {
     for(x in -12..12)for(z in -12..12)for(y in 76..79)level.setBlock(BlockPos(x,y,z),Blocks.SMOOTH_STONE.defaultBlockState(),3)
     level.setDefaultSpawnPos(BlockPos(0,80,-4),0f)
     server.playerList.getPlayer(player.uuid)!!.teleportTo(level,.5,80.0,-2.1,0f,0f)
-    val pod=ModEntities.RESUPPLY_HELLPOD.get().create(level)!!
-    pod.moveTo(.5,80.0+AbstractHellpodEntity.descentSpawnHeight()+AbstractHellpodEntity.ORIGIN_ABOVE_BOTTOM,.5,180f,0f)
-    pod.scheduleArrival(80.0,level.gameTime+AbstractHellpodEntity.FALL_TICKS);podId=pod.uuid;check(level.addFreshEntity(pod))
+    val marker=ModEntities.STRATAGEM_MARKER.get().create(level)!!
+    marker.moveTo(.5,80.0,.5,180f,0f)
+    marker.configure(com.example.sbwhelldiver.stratagem.Stratagems.resupply.dropId,197,player.uuid,groundY=80.0)
+    check(level.addFreshEntity(marker))
+
    }catch(e:Throwable){failure=e}}
    if(java.lang.Boolean.getBoolean("sbw_helldiver.visualOnly")&&ticks>40)Release07CombatSmoke.started=true
    if(Release07CombatSmoke.started){Release07CombatSmoke.tick(mc);return}
@@ -89,7 +91,14 @@ object ResupplyClientTest {
     }
     return
    }
-   val pod=client.entitiesForRendering().filterIsInstance<com.example.sbwhelldiver.entity.ResupplyHellpodEntity>().firstOrNull{it.uuid==podId}?:return
+   if(ticks<200){player.yRot=0f;player.yRotO=0f;player.xRot=0f;player.xRotO=0f}
+   val label=com.example.sbwhelldiver.client.BeaconCallHud.label
+   if(!hudSeen&&label?.iconKey=="resupply"){
+    check(com.example.sbwhelldiver.client.BeaconCallHud.monochromeIconCount==com.example.sbwhelldiver.stratagem.Stratagems.definitions.size+2)
+    hudSeen=true;capture(mc,"resupply-beacon-hud.png");LOGGER.info("RELEASE072_RESUPPLY_HUD_PASSED")
+   }
+   val pod=client.entitiesForRendering().filterIsInstance<com.example.sbwhelldiver.entity.ResupplyHellpodEntity>().firstOrNull()?:return
+   podId=pod.uuid
    if(pod.braking)braking=true
    if(client.entitiesForRendering().any{it is HellpodCapEntity})cap=true
    if(pod.phase==Phase.ACTIVE){
@@ -97,7 +106,7 @@ object ResupplyClientTest {
     val index=if(active<75)0 else 2
     val target=pod.toWorld(com.example.sbwhelldiver.entity.ResupplyHellpodEntity.caseBounds(index).center)
     val d=target.subtract(player.eyePosition);player.yRot=Math.toDegrees(atan2(-d.x,d.z)).toFloat();player.xRot=Math.toDegrees(atan2(-d.y,d.horizontalDistance())).toFloat();player.yRotO=player.yRot;player.xRotO=player.xRot
-    if(active==30){check(braking&&cap);check((0..3).all(pod::hasCase));check(MachineMesh.batchCount("resupply_rack")==7);capture(mc,"resupply-four-cases.png")}
+    if(active==30){check(hudSeen){"Resupply HUD never displayed"};check(braking&&cap);check((0..3).all(pod::hasCase));check(MachineMesh.batchCount("resupply_rack")==7);capture(mc,"resupply-four-cases.png")}
     if(active==50||active==100){check(mc.gameMode!!.interactAt(player,pod,EntityHitResult(pod),InteractionHand.MAIN_HAND).consumesAction());picked++}
     if(active==70){check(!pod.hasCase(0)&&pod.hasCase(2));capture(mc,"resupply-one-consumed.png")}
     if(active==120){check(!pod.hasCase(0)&&!pod.hasCase(2)&&pod.hasCase(1)&&pod.hasCase(3));capture(mc,"resupply-front-empty.png")

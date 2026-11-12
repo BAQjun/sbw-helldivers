@@ -18,7 +18,7 @@ object TaczResupply {
         for (stack in stacks) {
             val gun = IGun.getIGunOrNull(stack) ?: continue
             val data = TimelessAPI.getCommonGunIndex(gun.getGunId(stack)).orElse(null)?.gunData ?: continue
-            val amount = AttachmentDataUtils.getAmmoCountWithAttachment(stack, data).coerceAtLeast(0) * 4
+            val amount = (AttachmentDataUtils.getAmmoCountWithAttachment(stack, data).coerceAtLeast(0).toLong() * com.example.sbwhelldiver.survival.ResupplyAmmo.MAGAZINES_PER_GUN).coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
             amounts[data.ammoId] = maxOf(amounts[data.ammoId] ?: 0, amount)
         }
         for ((ammo, amount) in amounts) {
