@@ -1,0 +1,128 @@
+[
+  {
+    "model": "机炮炮台",
+    "before": 13616,
+    "after": 12852,
+    "body_before": 3876,
+    "body_after": 3112,
+    "changed_parts": 30,
+    "views": [
+      {
+        "silhouette_difference": 0,
+        "original_pixels": 17779
+      },
+      {
+        "silhouette_difference": 0,
+        "original_pixels": 18480
+      }
+    ]
+  },
+  {
+    "model": "毒气迫击炮哨戒炮",
+    "before": 29404,
+    "after": 20056,
+    "body_before": 19832,
+    "body_after": 10484,
+    "changed_parts": 42,
+    "views": [
+      {
+        "silhouette_difference": 113,
+        "original_pixels": 34153
+      },
+      {
+        "silhouette_difference": 170,
+        "original_pixels": 34467
+      }
+    ]
+  },
+  {
+    "model": "火焰炮台",
+    "before": 31652,
+    "after": 23070,
+    "body_before": 21912,
+    "body_after": 13330,
+    "changed_parts": 53,
+    "views": [
+      {
+        "silhouette_difference": 112,
+        "original_pixels": 36159
+      },
+      {
+        "silhouette_difference": 159,
+        "original_pixels": 36246
+      }
+    ]
+  },
+  {
+    "model": "火箭炮台",
+    "before": 20540,
+    "after": 17500,
+    "body_before": 10800,
+    "body_after": 7760,
+    "changed_parts": 137,
+    "views": [
+      {
+        "silhouette_difference": 0,
+        "original_pixels": 71135
+      },
+      {
+        "silhouette_difference": 0,
+        "original_pixels": 71110
+      }
+    ]
+  },
+  {
+    "model": "特斯拉电塔",
+    "before": 29588,
+    "after": 14284,
+    "body_before": 29588,
+    "body_after": 14284,
+    "changed_parts": 157,
+    "views": [
+      {
+        "silhouette_difference": 146,
+        "original_pixels": 18617
+      },
+      {
+        "silhouette_difference": 167,
+        "original_pixels": 18428
+      }
+    ]
+  },
+  {
+    "model": "电磁迫击炮哨戒炮",
+    "before": 29404,
+    "after": 20282,
+    "body_before": 19832,
+    "body_after": 10710,
+    "changed_parts": 42,
+    "views": [
+      {
+        "silhouette_difference": 113,
+        "original_pixels": 34153
+      },
+      {
+        "silhouette_difference": 170,
+        "original_pixels": 34467
+      }
+    ]
+  },
+  {
+    "model": "迫击炮哨戒炮",
+    "before": 29404,
+    "after": 20366,
+    "body_before": 19832,
+    "body_after": 10794,
+    "changed_parts": 42,
+    "views": [
+      {
+        "silhouette_difference": 110,
+        "original_pixels": 34153
+      },
+      {
+        "silhouette_difference": 165,
+        "original_pixels": 34467
+      }
+    ]
+  }
+]

@@ -4,6 +4,7 @@ import path from 'node:path';
 import {MeshoptSimplifier as S} from 'meshoptimizer';
 import {PNG} from 'pngjs';
 const dir=process.argv[2]; if(!dir)throw Error('Pass candidate model directory');
+const secondPass = process.argv.includes('--second-pass');
 await S.ready;
 const sub=(a,b)=>a.map((v,i)=>v-b[i]);
 const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
@@ -18,7 +19,7 @@ for(const filename of fs.readdirSync(dir).filter(x=>x.endsWith('.bbmodel'))){
   if(e.type!=='mesh'||e.name.startsWith('共用_')||e.name.startsWith('结构_')||/标志|标识|镜片|指示|发光|光学|lens|heat_|optic/.test(e.name))continue;
   const F=Object.values(e.faces);if(F.length<32)continue;
   const before=F.reduce((n,f)=>n+f.vertices.length-2,0);
-  const palette=new Map(),canonical=[];
+  const palette=new Map(),canonical=[],flatColors=[];
   for(const f of F){
    let uv=f.vertices.map(k=>f.uv[k]),im=images[Number(f.texture)];
    if(!im){canonical.push(uv);continue;}
@@ -26,7 +27,7 @@ for(const filename of fs.readdirSync(dir).filter(x=>x.endsWith('.bbmodel'))){
    if(l>=0&&t>=0&&r<im.width&&b<im.height&&Math.floor(l/100)===Math.floor(r/100)&&Math.floor(t/100)===Math.floor(b/100)){
     const px=(x,y)=>im.data.subarray((y*im.width+x)*4,(y*im.width+x)*4+4),c=px(l,t);let solid=true;
     for(let y=t;y<=b&&solid;y++)for(let x=l;x<=r;x++)if(!px(x,y).equals(c)){solid=false;break;}
-    if(solid){const key=[f.texture,Math.floor(l/100),Math.floor(t/100),...c].join(',');if(!palette.has(key))palette.set(key,[(l+r)/2+.5,(t+b)/2+.5]);uv=uv.map(()=>palette.get(key));}
+    if(solid){flatColors[canonical.length]=c.readUInt32LE();const key=[f.texture,Math.floor(l/100),Math.floor(t/100),...c].join(',');if(!palette.has(key))palette.set(key,[(l+r)/2+.5,(t+b)/2+.5]);uv=uv.map(()=>palette.get(key));}
    }
    canonical.push(uv);
   }
@@ -39,7 +40,7 @@ for(const filename of fs.readdirSync(dir).filter(x=>x.endsWith('.bbmodel'))){
     const ids=[];
     for(const k of keys){
      const p=e.vertices[vs[k]],uv=canonical[fi][k],key=JSON.stringify([p,uv,f.texture]);let id=unique.get(key);
-     if(id===undefined){id=refs.length;unique.set(key,id);refs.push({p,uv,texture:f.texture});positions.push(...p);attrs.push(...uv);const loc=JSON.stringify(p);if(!locations.has(loc))locations.set(loc,[]);locations.get(loc).push(id);}
+     if(id===undefined){id=refs.length;unique.set(key,id);refs.push({p,uv,texture:f.texture,color:flatColors[fi]});positions.push(...p);attrs.push(...uv);const loc=JSON.stringify(p);if(!locations.has(loc))locations.set(loc,[]);locations.get(loc).push(id);}
      ids.push(id);indices.push(id);
     }
     for(let k=0;k<3;k++){const a=JSON.stringify(p[k]),b=JSON.stringify(p[(k+1)%3]),key=[a,b].sort().join('|');if(!edges.has(key))edges.set(key,[]);edges.get(key).push({ids:[ids[k],ids[(k+1)%3]],normal:n.map(v=>v/len)});}
@@ -48,14 +49,48 @@ for(const filename of fs.readdirSync(dir).filter(x=>x.endsWith('.bbmodel'))){
   // Do not silently delete pre-existing degenerate triangles.
   if(indices.length/3!==before)continue;
   const locks=new Uint8Array(refs.length);
+  if (secondPass) {
+    // A geometric edge may be split into several UV wedges. Preserve every
+    // wedge at open edges, and preserve seams between texture images.
+    for (const ids of locations.values()) {
+      const colors = new Set(ids.map(id => refs[id].color));
+      if (colors.size > 1 || colors.has(undefined)) {
+        for (const id of ids) locks[id] = 2;
+      }
+      if (new Set(ids.map(id => refs[id].texture)).size > 1) {
+        for (const id of ids) locks[id] = 1;
+      }
+    }
+    for (const rows of edges.values()) {
+      if (rows.length === 2) continue;
+      for (const row of rows) for (const id of row.ids) locks[id] = 1;
+    }
+  } else {
   for(const ids of locations.values())if(ids.length>1)for(const id of ids)locks[id]=1;
   for(const rows of edges.values())if(rows.length!==2||dot(rows[0].normal,rows[1].normal)<Math.cos(Math.PI*35/180))for(const row of rows)for(const id of row.ids)locks[id]=1;
-  const [selected,error]=S.simplifyWithAttributes(Uint32Array.from(indices),Float32Array.from(positions),3,Float32Array.from(attrs),2,[1,1],locks,Math.floor(before*.60)*3,.08,['LockBorder','ErrorAbsolute','PreserveFolds']);
+  }
+  const flags = ['LockBorder','ErrorAbsolute','PreserveFolds'];
+  if (secondPass) flags.push('Permissive');
+  const uvWeight = secondPass ? 0.001 : 1;
+  const [selected,error]=S.simplifyWithAttributes(Uint32Array.from(indices),Float32Array.from(positions),3,Float32Array.from(attrs),2,[uvWeight,uvWeight],locks,Math.floor(before*(secondPass ? .45 : .60))*3,secondPass ? .12 : .08,flags);
   if(selected.length>=indices.length)continue;
   const vertices={},faces={};
   for(let i=0;i<selected.length;i+=3){const tri=[selected[i],selected[i+1],selected[i+2]],tex=refs[tri[0]].texture;if(tri.some(v=>refs[v].texture!==tex))throw Error('Material boundary crossed');
    const keys=tri.map(v=>'v'+v);for(const v of tri)vertices['v'+v]=refs[v].p;
    faces['f'+i/3]={vertices:keys,uv:Object.fromEntries(tri.map(v=>['v'+v,refs[v].uv])),texture:tex};
+  }
+  if (secondPass) {
+    // Reject a collapse that joins separate sheets or changes a boundary.
+    const incidence = new Map();
+    for (const face of Object.values(faces)) {
+      const points = face.vertices.map(id => JSON.stringify(vertices[id]));
+      for (let i = 0; i < 3; i++) {
+        const edge = [points[i],points[(i+1)%3]].sort().join('|');
+        incidence.set(edge,(incidence.get(edge) ?? 0)+1);
+      }
+    }
+    if ([...incidence].some(([key,n]) => n !== 2 && edges.get(key)?.length !== n) ||
+        [...edges].some(([key,rows]) => rows.length !== 2 && incidence.get(key) !== rows.length)) continue;
   }
   changes.push({part:e.name,before,after:selected.length/3,error});e.vertices=vertices;e.faces=faces;
  }
