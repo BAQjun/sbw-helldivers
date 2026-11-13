@@ -106,3 +106,34 @@ python tools/model_optimizer/near_pack.py --workspace <artwork-workspace> --repo
 The checked-in optional pack is in `art/experiments/pod-laser-near-model/resourcepack/`. Default mod resources are unchanged. For an isolated client comparison only, `-PnearModelOverride=<unpacked-pack>` overlays processed resources for that Gradle invocation; omit it to restore normal resources. Do not use this flag for a release build.
 
 The second laser pass starts at a 30% per-part ratio and increases retained geometry until the same surface-error limit passes. Marked cradle armour is still protected. Degenerate source UV projections fall back to their source chart centre; non-finite JSON values fail export. Run the marking postprocess with ordinary Python/Pillow, not Blender's separate Python installation.
+
+
+## Other turret near-model candidates
+
+The separate editable candidates are in `art/models/其它炮台减面/`. They cover
+Autocannon, Rocket, Flame, Tesla, and the three mortar sentries. Default runtime
+assets are unchanged.
+
+`other_turrets.py` combines coincident cube-built octagonal prisms into closed
+meshes, retains their surface colors in a baked atlas, and collapses redundant
+planar vertices only when surface and UV interpolation agree. `turret_curves.mjs`
+then reduces unmarked curved parts with a 0.08 model-unit error limit, locking UV
+seams, open boundaries and creases sharper than 35 degrees. Uniform UVs may be
+canonicalized only after every texel in the original face bounds is confirmed
+identical within the same material tile. Shared base and cradle parts are excluded.
+
+Run these steps once from the reviewed source, never by repeatedly simplifying
+an existing candidate. Python requires NumPy and Pillow; Node dependencies are
+pinned in this directory's lockfile.
+
+```sh
+python tools/model_optimizer/other_turrets.py --workspace <artwork-workspace> --output <candidate-directory>
+node tools/model_optimizer/turret_curves.mjs <candidate-directory>
+python tools/model_optimizer/review_turrets.py --workspace <artwork-workspace> --models <candidate-directory> --previews <preview-directory>
+```
+
+The reviewer checks preserved animation data, hierarchy, locators and shared
+parts, finite geometry and valid face UVs, and unchanged open/non-manifold edge
+positions for modified source meshes. New octagonal prisms must be closed. It
+renders two matched body views and reports actual triangle counts. These checks
+do not establish an in-game frame-rate improvement.
