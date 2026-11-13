@@ -75,8 +75,8 @@ for e in out['elements']:
     # Engraving removal is intentional; bound decimation against this cleaned surface.
     cleaned_ref=tree(cleaned);cleaned_points=samples(cleaned)
     # No convex hulls, global remesh, texture baking, or arbitrary vertex displacement.
-    ratio=.48 if before>180 else .70 if before>60 else 1.0
-    if '支架' in e['name']:ratio=.62
+    ratio=.30 if before>180 else .55 if before>60 else 1.0
+    if '支架' in e['name']:ratio=.50
     # Broad armour carries stripes and printed markings across shallow engravings.
     # Keep its chart boundaries intact; only flatten the engraving geometry.
     if e['name']=='共用_支架_0':ratio=1.0
@@ -101,14 +101,13 @@ for e in out['elements']:
         pts=[source_mesh.vertices[v].co for v in old.vertices]
         old_uv=[Vector((*source_mesh.uv_layers.active.data[l].uv,0)) for l in old.loops]
         mapped=([uv.data[l].uv for l in t.loops] if ratio>=.995 else [barycentric_transform(closest_point_on_tri(me.vertices[v].co,*pts),*pts,*old_uv) for v in t.vertices])
+        if any(not math.isfinite(value) for q in mapped for value in q):
+            mapped=[sum(old_uv,Vector())/3]*3
         tex=me.polygons[t.polygon_index].material_index if ratio>=.995 else source_mesh.polygons[old.polygon_index].material_index
         e['faces'][f'f{i}']={'vertices':keys,'uv':{k:[p.x*2048,(1-p.y)*4608] for k,p in zip(keys,mapped)},'texture':tex}
     rows.append({'name':e['name'],'bone':parents[e['uuid']],'before':before,'after':triangles(me),'surface_error_units':round(error(me,ref,points),5),'attempts':attempts})
     print(e['name'],before,triangles(me),flush=True)
-sys.path.insert(0,str(pathlib.Path(__file__).resolve().parent))
-from clean_side_markings import repair_embedded
-repair_embedded(out)
 out['name']='激光炮台_结构优化测试'
-(W/'laser.bbmodel').write_text(json.dumps(out,ensure_ascii=False,separators=(',',':')),encoding='utf8')
+(W/'laser.bbmodel').write_text(json.dumps(out,ensure_ascii=False,separators=(',',':'),allow_nan=False),encoding='utf8')
 (W/'laser-report.json').write_text(json.dumps(rows,ensure_ascii=False,indent=2),encoding='utf8')
 print('TOTAL',sum(x['before'] for x in rows),sum(x['after'] for x in rows),flush=True)

@@ -2,7 +2,7 @@
 
 Production runtime models remain unchanged. This pack is an alternative for the current full-detail models.
 
-- Laser sentry including shared pod: 49,954 to 34,217 triangles (-31.5%).
+- Laser sentry including shared pod: 49,954 to 30,682 triangles (-38.6%).
 - Shared pod: 18,430 to 15,336 triangles (-16.8%).
 - Preserve primary silhouette, moving parts, rig, locators, heat indicators and atlas dimensions.
 - Reduce curve tessellation and shallow engravings; replace overlapping nozzle boxes with continuous rings.

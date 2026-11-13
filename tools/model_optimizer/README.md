@@ -97,9 +97,12 @@ subsets against the separate baseline as well as running the structural fixtures
 
 ```sh
 blender --background --python tools/model_optimizer/laser_structural.py -- --workspace <artwork-workspace> --output <artwork-workspace>/work/structural-near-test
+python tools/model_optimizer/clean_side_markings.py --model <artwork-workspace>/work/structural-near-test/laser.bbmodel
 python tools/model_optimizer/pod_structural.py --workspace <artwork-workspace> --output <artwork-workspace>/work/structural-near-test
 # Export pod cubes with Blockbench, then apply structural.mjs as described above.
 python tools/model_optimizer/near_pack.py --workspace <artwork-workspace> --repo .
 ```
 
 The checked-in optional pack is in `art/experiments/pod-laser-near-model/resourcepack/`. Default mod resources are unchanged. For an isolated client comparison only, `-PnearModelOverride=<unpacked-pack>` overlays processed resources for that Gradle invocation; omit it to restore normal resources. Do not use this flag for a release build.
+
+The second laser pass starts at a 30% per-part ratio and increases retained geometry until the same surface-error limit passes. Marked cradle armour is still protected. Degenerate source UV projections fall back to their source chart centre; non-finite JSON values fail export. Run the marking postprocess with ordinary Python/Pillow, not Blender's separate Python installation.

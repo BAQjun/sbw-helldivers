@@ -47,3 +47,10 @@ def repair_embedded(model):
     t=model['textures'][0];im=Image.open(io.BytesIO(base64.b64decode(t['source'].split(',',1)[1])))
     im=repair(im);out=io.BytesIO();im.save(out,format='PNG')
     t['source']='data:image/png;base64,'+base64.b64encode(out.getvalue()).decode()
+
+if __name__ == '__main__':
+    import argparse,json,pathlib,sys
+    ap=argparse.ArgumentParser();ap.add_argument('--model',type=pathlib.Path,required=True);ap.add_argument('--pillow');a=ap.parse_args()
+    if a.pillow:sys.path.insert(0,a.pillow)
+    d=json.loads(a.model.read_text(encoding='utf8'));repair_embedded(d)
+    a.model.write_text(json.dumps(d,ensure_ascii=False,separators=(',',':'),allow_nan=False),encoding='utf8')
