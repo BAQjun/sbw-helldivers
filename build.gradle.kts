@@ -445,8 +445,8 @@ tasks.named<Jar>("jar") {
     finalizedBy("reobfJar")
 }
 
-// Only the disposable equipment-compatibility fixture is reset and removed.
-if (providers.gradleProperty("equipmentTests").isPresent || providers.gradleProperty("destroyerTests").isPresent) {
+// Reset and remove only the disposable survival client fixture, preserving user saves.
+if (providers.gradleProperty("equipmentTests").isPresent || providers.gradleProperty("destroyerTests").isPresent || providers.gradleProperty("survivalClientTests").isPresent) {
     val save = layout.projectDirectory.dir(".codex/survival-alpha14/client/saves/port-client-test")
     val reset = tasks.register<Delete>("resetEquipmentClientWorld") { delete(save) }
     val cleanup = tasks.register<Delete>("cleanEquipmentClientWorld") { delete(save) }

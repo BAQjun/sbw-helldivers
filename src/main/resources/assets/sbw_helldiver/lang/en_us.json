@@ -348,7 +348,7 @@
   "tutorial.sbw_helldiver.sample_terminal": "Pay from container",
   "item.sbw_helldiver.guard_dog_stratagem": "Guard Dog",
   "item.sbw_helldiver.guard_dog_backpack": "Guard Dog",
-  "gui.sbw_helldiver.category.backpack": "Backpacks",
+  "gui.sbw_helldiver.category.backpack": "Backpack Stratagems",
   "key.sbw_helldiver.guard_dog": "Deploy / recall Guard Dog",
   "message.sbw_helldiver.guard_dog_no_ammo": "Guard Dog is out of ammunition",
   "message.sbw_helldiver.guard_dog_servicing": "Guard Dog is rearming",
