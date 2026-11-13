@@ -53,11 +53,11 @@ object TacticalTerminalOffers {
         offer(TerminalCategory.DEFENSE,"anti_tank_minefield",70,15),
         offer(TerminalCategory.DEFENSE,"anti_tank_emplacement",150,20,5),
         offer(TerminalCategory.DEFENSE,"grenadier_battlement",110,15,5),
-        offer(TerminalCategory.BACKPACK, "guard_dog", 90, 15),
-        offer(TerminalCategory.BACKPACK, "laser_guard_dog", 90, 15),
-        offer(TerminalCategory.BACKPACK, "stun_guard_dog", 90, 15),
-        offer(TerminalCategory.BACKPACK, "flame_guard_dog", 90, 15),
-        offer(TerminalCategory.BACKPACK, "gas_guard_dog", 90, 15),
+        offer(TerminalCategory.BACKPACK, "guard_dog", 180, 40, 5),
+        offer(TerminalCategory.BACKPACK, "laser_guard_dog", 260, 70, 10),
+        offer(TerminalCategory.BACKPACK, "stun_guard_dog", 280, 80, 10),
+        offer(TerminalCategory.BACKPACK, "flame_guard_dog", 240, 60, 5),
+        offer(TerminalCategory.BACKPACK, "gas_guard_dog", 220, 50, 5),
     ).sortedWith(compareBy({ it.cost.superSample }, { it.cost.rare }, { it.cost.common }))
     val byId = all.associateBy { it.id }
 }
