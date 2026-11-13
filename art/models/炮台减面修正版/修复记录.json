@@ -1,0 +1,56 @@
+[
+  {
+    "model": "机炮炮台",
+    "shared_parts": 35,
+    "triangles_before": 12852,
+    "triangles_after": 8478
+  },
+  {
+    "model": "毒气迫击炮哨戒炮",
+    "shared_parts": 33,
+    "triangles_before": 20056,
+    "triangles_after": 15850
+  },
+  {
+    "model": "火焰炮台",
+    "shared_parts": 35,
+    "triangles_before": 23070,
+    "triangles_after": 18524
+  },
+  {
+    "model": "火箭炮台",
+    "shared_parts": 35,
+    "triangles_before": 17500,
+    "triangles_after": 13126
+  },
+  {
+    "model": "特斯拉电塔",
+    "shared_parts": 0,
+    "triangles_before": 14284,
+    "triangles_after": 14284
+  },
+  {
+    "model": "电磁迫击炮哨戒炮",
+    "shared_parts": 33,
+    "triangles_before": 20282,
+    "triangles_after": 16076
+  },
+  {
+    "model": "迫击炮哨戒炮",
+    "shared_parts": 33,
+    "triangles_before": 20366,
+    "triangles_after": 16160
+  },
+  {
+    "model": "加特林炮台",
+    "shared_parts": 35,
+    "triangles_before": 12520,
+    "triangles_after": 8146
+  },
+  {
+    "model": "机枪炮台",
+    "shared_parts": 35,
+    "triangles_before": 11516,
+    "triangles_after": 7142
+  }
+]
