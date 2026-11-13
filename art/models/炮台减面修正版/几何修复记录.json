@@ -1,0 +1,47 @@
+[
+  {
+    "model": "加特林炮台_修正",
+    "unsupported_caps_replaced": 70,
+    "barrel_parts_restored_without_deformation": 0
+  },
+  {
+    "model": "机枪炮台_修正",
+    "unsupported_caps_replaced": 36,
+    "barrel_parts_restored_without_deformation": 0
+  },
+  {
+    "model": "机炮炮台_修正",
+    "unsupported_caps_replaced": 60,
+    "barrel_parts_restored_without_deformation": 0
+  },
+  {
+    "model": "毒气迫击炮哨戒炮_修正",
+    "unsupported_caps_replaced": 0,
+    "barrel_parts_restored_without_deformation": 0
+  },
+  {
+    "model": "火焰炮台_修正",
+    "unsupported_caps_replaced": 0,
+    "barrel_parts_restored_without_deformation": 5
+  },
+  {
+    "model": "火箭炮台_修正",
+    "unsupported_caps_replaced": 274,
+    "barrel_parts_restored_without_deformation": 0
+  },
+  {
+    "model": "特斯拉电塔_修正",
+    "unsupported_caps_replaced": 0,
+    "barrel_parts_restored_without_deformation": 0
+  },
+  {
+    "model": "电磁迫击炮哨戒炮_修正",
+    "unsupported_caps_replaced": 0,
+    "barrel_parts_restored_without_deformation": 0
+  },
+  {
+    "model": "迫击炮哨戒炮_修正",
+    "unsupported_caps_replaced": 0,
+    "barrel_parts_restored_without_deformation": 0
+  }
+]
