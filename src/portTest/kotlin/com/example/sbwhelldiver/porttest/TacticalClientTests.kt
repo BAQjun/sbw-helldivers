@@ -29,6 +29,7 @@ object TacticalClientTests {
     private var cancelledSound:net.minecraft.client.resources.sounds.SoundInstance?=null
     @SubscribeEvent fun tick(e:ClientTickEvent.Post){
         if(!java.lang.Boolean.getBoolean("sbw_helldiver.tacticalRegression"))return
+        if(java.lang.Boolean.getBoolean("sbw_helldiver.backpackTerminalTests")){BackpackTerminalClientTest.tick();return}
         val mc=Minecraft.getInstance()
         if(System.currentTimeMillis()-launched>240000){LOGGER.error("TACTICAL_TIMEOUT");mc.stop();return}
         if(!started&&mc.screen is TitleScreen&&mc.overlay==null){
