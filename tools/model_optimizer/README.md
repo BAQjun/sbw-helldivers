@@ -175,3 +175,12 @@ original/candidate views with identical cameras. Preserve element metadata,
 texture data, hierarchy and animation definitions exactly. Source triangle
 budgets include cubes; mesh-only native index counts are checked separately.
 These model checks do not establish an in-game frame-rate improvement.
+
+Guard Dog airframes are excluded from curved simplification, both in standalone
+body files and the body section of combined review models. A small positional
+error still changed surface normals enough to create visible dents. Their revised
+files retain the authored curves and use exact planar cleanup only.
+`repair_drone_surfaces.py --baseline <native-sorted-baseline> --planar <exact-planar-baseline> --models <candidate-directory> --report <report.json>`
+updates both views together, checks per-plane orientation, area and first moments
+and preserves all rig/texture metadata. Reject an inexact planar candidate by
+restoring that part from its original baseline.

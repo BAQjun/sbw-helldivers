@@ -2,28 +2,28 @@
   {
     "model": "机枪护卫犬/机枪护卫犬_机身.bbmodel",
     "before": 19530,
-    "after": 13884,
-    "reduction": 28.9,
+    "after": 19132,
+    "reduction": 2.0,
     "parts": [
       {
         "part": "boss",
         "before": 4091,
-        "after": 2367
+        "after": 3991
       },
       {
         "part": "elevation",
         "before": 342,
-        "after": 186
+        "after": 312
       },
       {
         "part": "engine_l_1",
         "before": 2240,
-        "after": 1784
+        "after": 2226
       },
       {
         "part": "engine_l_1_fold1",
         "before": 580,
-        "after": 300
+        "after": 526
       },
       {
         "part": "engine_l_1_rotor",
@@ -33,12 +33,12 @@
       {
         "part": "engine_l_2",
         "before": 2232,
-        "after": 1762
+        "after": 2220
       },
       {
         "part": "engine_l_2_fold",
         "before": 542,
-        "after": 306
+        "after": 524
       },
       {
         "part": "engine_l_2_rotor",
@@ -48,12 +48,12 @@
       {
         "part": "engine_r_1",
         "before": 2184,
-        "after": 1840
+        "after": 2168
       },
       {
         "part": "engine_r_1_fold",
         "before": 556,
-        "after": 338
+        "after": 542
       },
       {
         "part": "engine_r_1_rotor",
@@ -63,12 +63,12 @@
       {
         "part": "engine_r_2",
         "before": 2360,
-        "after": 1916
+        "after": 2342
       },
       {
         "part": "engine_r_2_fold",
         "before": 381,
-        "after": 285
+        "after": 363
       },
       {
         "part": "engine_r_2_rotor",
@@ -78,22 +78,22 @@
       {
         "part": "head",
         "before": 1562,
-        "after": 918
+        "after": 1478
       },
       {
         "part": "hinge",
         "before": 612,
-        "after": 304
+        "after": 608
       },
       {
         "part": "swing_arm",
         "before": 744,
-        "after": 532
+        "after": 736
       },
       {
         "part": "traverse",
         "before": 298,
-        "after": 248
+        "after": 298
       }
     ]
   },
@@ -138,28 +138,28 @@
   {
     "model": "机枪护卫犬/机枪护卫犬_组合检查.bbmodel",
     "before": 45438,
-    "after": 30442,
-    "reduction": 33.0,
+    "after": 35690,
+    "reduction": 21.5,
     "parts": [
       {
         "part": "boss",
         "before": 4091,
-        "after": 2367
+        "after": 3991
       },
       {
         "part": "elevation",
         "before": 342,
-        "after": 186
+        "after": 312
       },
       {
         "part": "engine_l_1",
         "before": 2240,
-        "after": 1784
+        "after": 2226
       },
       {
         "part": "engine_l_1_fold1",
         "before": 580,
-        "after": 300
+        "after": 526
       },
       {
         "part": "engine_l_1_rotor",
@@ -169,12 +169,12 @@
       {
         "part": "engine_l_2",
         "before": 2232,
-        "after": 1762
+        "after": 2220
       },
       {
         "part": "engine_l_2_fold",
         "before": 542,
-        "after": 306
+        "after": 524
       },
       {
         "part": "engine_l_2_rotor",
@@ -184,12 +184,12 @@
       {
         "part": "engine_r_1",
         "before": 2184,
-        "after": 1840
+        "after": 2168
       },
       {
         "part": "engine_r_1_fold",
         "before": 556,
-        "after": 338
+        "after": 542
       },
       {
         "part": "engine_r_1_rotor",
@@ -199,12 +199,12 @@
       {
         "part": "engine_r_2",
         "before": 2360,
-        "after": 1916
+        "after": 2342
       },
       {
         "part": "engine_r_2_fold",
         "before": 381,
-        "after": 285
+        "after": 363
       },
       {
         "part": "engine_r_2_rotor",
@@ -214,22 +214,22 @@
       {
         "part": "head",
         "before": 1562,
-        "after": 918
+        "after": 1478
       },
       {
         "part": "hinge",
         "before": 612,
-        "after": 304
+        "after": 608
       },
       {
         "part": "swing_arm",
         "before": 744,
-        "after": 532
+        "after": 736
       },
       {
         "part": "traverse",
         "before": 298,
-        "after": 248
+        "after": 298
       },
       {
         "part": "bolt",
@@ -534,28 +534,28 @@
   {
     "model": "激光护卫犬/激光护卫犬_机身.bbmodel",
     "before": 19508,
-    "after": 13862,
-    "reduction": 28.9,
+    "after": 19114,
+    "reduction": 2.0,
     "parts": [
       {
         "part": "boss",
         "before": 4091,
-        "after": 2367
+        "after": 3991
       },
       {
         "part": "elevation",
         "before": 400,
-        "after": 262
+        "after": 368
       },
       {
         "part": "engine_l_1",
         "before": 2240,
-        "after": 1784
+        "after": 2226
       },
       {
         "part": "engine_l_1_fold1",
         "before": 580,
-        "after": 300
+        "after": 526
       },
       {
         "part": "engine_l_1_rotor",
@@ -565,12 +565,12 @@
       {
         "part": "engine_l_2",
         "before": 2232,
-        "after": 1762
+        "after": 2220
       },
       {
         "part": "engine_l_2_fold",
         "before": 542,
-        "after": 306
+        "after": 524
       },
       {
         "part": "engine_l_2_rotor",
@@ -580,12 +580,12 @@
       {
         "part": "engine_r_1",
         "before": 2184,
-        "after": 1840
+        "after": 2168
       },
       {
         "part": "engine_r_1_fold",
         "before": 556,
-        "after": 338
+        "after": 542
       },
       {
         "part": "engine_r_1_rotor",
@@ -595,12 +595,12 @@
       {
         "part": "engine_r_2",
         "before": 2360,
-        "after": 1916
+        "after": 2342
       },
       {
         "part": "engine_r_2_fold",
         "before": 381,
-        "after": 285
+        "after": 363
       },
       {
         "part": "engine_r_2_rotor",
@@ -610,27 +610,27 @@
       {
         "part": "gun_clamp_left",
         "before": 191,
-        "after": 125
+        "after": 191
       },
       {
         "part": "gun_clamp_right",
         "before": 191,
-        "after": 133
+        "after": 191
       },
       {
         "part": "head",
         "before": 1562,
-        "after": 918
+        "after": 1478
       },
       {
         "part": "hinge",
         "before": 616,
-        "after": 306
+        "after": 612
       },
       {
         "part": "swing_arm",
         "before": 156,
-        "after": 124
+        "after": 156
       },
       {
         "part": "telescope_01",
@@ -645,7 +645,7 @@
       {
         "part": "traverse",
         "before": 300,
-        "after": 178
+        "after": 298
       }
     ]
   },
@@ -670,28 +670,28 @@
   {
     "model": "激光护卫犬/激光护卫犬_组合检查.bbmodel",
     "before": 32714,
-    "after": 24288,
-    "reduction": 25.8,
+    "after": 29540,
+    "reduction": 9.7,
     "parts": [
       {
         "part": "boss",
         "before": 4091,
-        "after": 2367
+        "after": 3991
       },
       {
         "part": "elevation",
         "before": 400,
-        "after": 262
+        "after": 368
       },
       {
         "part": "engine_l_1",
         "before": 2240,
-        "after": 1784
+        "after": 2226
       },
       {
         "part": "engine_l_1_fold1",
         "before": 580,
-        "after": 300
+        "after": 526
       },
       {
         "part": "engine_l_1_rotor",
@@ -701,12 +701,12 @@
       {
         "part": "engine_l_2",
         "before": 2232,
-        "after": 1762
+        "after": 2220
       },
       {
         "part": "engine_l_2_fold",
         "before": 542,
-        "after": 306
+        "after": 524
       },
       {
         "part": "engine_l_2_rotor",
@@ -716,12 +716,12 @@
       {
         "part": "engine_r_1",
         "before": 2184,
-        "after": 1840
+        "after": 2168
       },
       {
         "part": "engine_r_1_fold",
         "before": 556,
-        "after": 338
+        "after": 542
       },
       {
         "part": "engine_r_1_rotor",
@@ -731,12 +731,12 @@
       {
         "part": "engine_r_2",
         "before": 2360,
-        "after": 1916
+        "after": 2342
       },
       {
         "part": "engine_r_2_fold",
         "before": 381,
-        "after": 285
+        "after": 363
       },
       {
         "part": "engine_r_2_rotor",
@@ -746,27 +746,27 @@
       {
         "part": "gun_clamp_left",
         "before": 191,
-        "after": 125
+        "after": 191
       },
       {
         "part": "gun_clamp_right",
         "before": 191,
-        "after": 133
+        "after": 191
       },
       {
         "part": "head",
         "before": 1562,
-        "after": 918
+        "after": 1478
       },
       {
         "part": "hinge",
         "before": 616,
-        "after": 306
+        "after": 612
       },
       {
         "part": "swing_arm",
         "before": 156,
-        "after": 124
+        "after": 156
       },
       {
         "part": "telescope_01",
@@ -781,7 +781,7 @@
       {
         "part": "traverse",
         "before": 300,
-        "after": 178
+        "after": 298
       },
       {
         "part": "boss",
@@ -846,28 +846,28 @@
   {
     "model": "电护卫犬/电护卫犬_机身.bbmodel",
     "before": 19508,
-    "after": 13874,
-    "reduction": 28.9,
+    "after": 19114,
+    "reduction": 2.0,
     "parts": [
       {
         "part": "boss",
         "before": 4091,
-        "after": 2367
+        "after": 3991
       },
       {
         "part": "elevation",
         "before": 400,
-        "after": 274
+        "after": 368
       },
       {
         "part": "engine_l_1",
         "before": 2240,
-        "after": 1784
+        "after": 2226
       },
       {
         "part": "engine_l_1_fold1",
         "before": 580,
-        "after": 300
+        "after": 526
       },
       {
         "part": "engine_l_1_rotor",
@@ -877,12 +877,12 @@
       {
         "part": "engine_l_2",
         "before": 2232,
-        "after": 1762
+        "after": 2220
       },
       {
         "part": "engine_l_2_fold",
         "before": 542,
-        "after": 306
+        "after": 524
       },
       {
         "part": "engine_l_2_rotor",
@@ -892,12 +892,12 @@
       {
         "part": "engine_r_1",
         "before": 2184,
-        "after": 1840
+        "after": 2168
       },
       {
         "part": "engine_r_1_fold",
         "before": 556,
-        "after": 338
+        "after": 542
       },
       {
         "part": "engine_r_1_rotor",
@@ -907,12 +907,12 @@
       {
         "part": "engine_r_2",
         "before": 2360,
-        "after": 1916
+        "after": 2342
       },
       {
         "part": "engine_r_2_fold",
         "before": 381,
-        "after": 285
+        "after": 363
       },
       {
         "part": "engine_r_2_rotor",
@@ -922,27 +922,27 @@
       {
         "part": "gun_clamp_left",
         "before": 191,
-        "after": 135
+        "after": 191
       },
       {
         "part": "gun_clamp_right",
         "before": 191,
-        "after": 129
+        "after": 191
       },
       {
         "part": "head",
         "before": 1562,
-        "after": 918
+        "after": 1478
       },
       {
         "part": "hinge",
         "before": 616,
-        "after": 306
+        "after": 612
       },
       {
         "part": "swing_arm",
         "before": 156,
-        "after": 120
+        "after": 156
       },
       {
         "part": "telescope_01",
@@ -957,7 +957,7 @@
       {
         "part": "traverse",
         "before": 300,
-        "after": 176
+        "after": 298
       }
     ]
   },
@@ -977,28 +977,28 @@
   {
     "model": "电护卫犬/电护卫犬_组合检查.bbmodel",
     "before": 39340,
-    "after": 25162,
-    "reduction": 36.0,
+    "after": 30402,
+    "reduction": 22.7,
     "parts": [
       {
         "part": "boss",
         "before": 4091,
-        "after": 2367
+        "after": 3991
       },
       {
         "part": "elevation",
         "before": 400,
-        "after": 274
+        "after": 368
       },
       {
         "part": "engine_l_1",
         "before": 2240,
-        "after": 1784
+        "after": 2226
       },
       {
         "part": "engine_l_1_fold1",
         "before": 580,
-        "after": 300
+        "after": 526
       },
       {
         "part": "engine_l_1_rotor",
@@ -1008,12 +1008,12 @@
       {
         "part": "engine_l_2",
         "before": 2232,
-        "after": 1762
+        "after": 2220
       },
       {
         "part": "engine_l_2_fold",
         "before": 542,
-        "after": 306
+        "after": 524
       },
       {
         "part": "engine_l_2_rotor",
@@ -1023,12 +1023,12 @@
       {
         "part": "engine_r_1",
         "before": 2184,
-        "after": 1840
+        "after": 2168
       },
       {
         "part": "engine_r_1_fold",
         "before": 556,
-        "after": 338
+        "after": 542
       },
       {
         "part": "engine_r_1_rotor",
@@ -1038,12 +1038,12 @@
       {
         "part": "engine_r_2",
         "before": 2360,
-        "after": 1916
+        "after": 2342
       },
       {
         "part": "engine_r_2_fold",
         "before": 381,
-        "after": 285
+        "after": 363
       },
       {
         "part": "engine_r_2_rotor",
@@ -1053,27 +1053,27 @@
       {
         "part": "gun_clamp_left",
         "before": 191,
-        "after": 135
+        "after": 191
       },
       {
         "part": "gun_clamp_right",
         "before": 191,
-        "after": 129
+        "after": 191
       },
       {
         "part": "head",
         "before": 1562,
-        "after": 918
+        "after": 1478
       },
       {
         "part": "hinge",
         "before": 616,
-        "after": 306
+        "after": 612
       },
       {
         "part": "swing_arm",
         "before": 156,
-        "after": 120
+        "after": 156
       },
       {
         "part": "telescope_01",
@@ -1088,7 +1088,7 @@
       {
         "part": "traverse",
         "before": 300,
-        "after": 176
+        "after": 298
       },
       {
         "part": "boss",
@@ -1148,28 +1148,28 @@
   {
     "model": "火焰护卫犬/火焰护卫犬_机身.bbmodel",
     "before": 19508,
-    "after": 13874,
-    "reduction": 28.9,
+    "after": 19114,
+    "reduction": 2.0,
     "parts": [
       {
         "part": "boss",
         "before": 4091,
-        "after": 2367
+        "after": 3991
       },
       {
         "part": "elevation",
         "before": 400,
-        "after": 274
+        "after": 368
       },
       {
         "part": "engine_l_1",
         "before": 2240,
-        "after": 1784
+        "after": 2226
       },
       {
         "part": "engine_l_1_fold1",
         "before": 580,
-        "after": 300
+        "after": 526
       },
       {
         "part": "engine_l_1_rotor",
@@ -1179,12 +1179,12 @@
       {
         "part": "engine_l_2",
         "before": 2232,
-        "after": 1762
+        "after": 2220
       },
       {
         "part": "engine_l_2_fold",
         "before": 542,
-        "after": 306
+        "after": 524
       },
       {
         "part": "engine_l_2_rotor",
@@ -1194,12 +1194,12 @@
       {
         "part": "engine_r_1",
         "before": 2184,
-        "after": 1840
+        "after": 2168
       },
       {
         "part": "engine_r_1_fold",
         "before": 556,
-        "after": 338
+        "after": 542
       },
       {
         "part": "engine_r_1_rotor",
@@ -1209,12 +1209,12 @@
       {
         "part": "engine_r_2",
         "before": 2360,
-        "after": 1916
+        "after": 2342
       },
       {
         "part": "engine_r_2_fold",
         "before": 381,
-        "after": 285
+        "after": 363
       },
       {
         "part": "engine_r_2_rotor",
@@ -1224,27 +1224,27 @@
       {
         "part": "gun_clamp_left",
         "before": 191,
-        "after": 125
+        "after": 191
       },
       {
         "part": "gun_clamp_right",
         "before": 191,
-        "after": 139
+        "after": 191
       },
       {
         "part": "head",
         "before": 1562,
-        "after": 918
+        "after": 1478
       },
       {
         "part": "hinge",
         "before": 616,
-        "after": 306
+        "after": 612
       },
       {
         "part": "swing_arm",
         "before": 156,
-        "after": 120
+        "after": 156
       },
       {
         "part": "telescope_01",
@@ -1259,7 +1259,7 @@
       {
         "part": "traverse",
         "before": 300,
-        "after": 176
+        "after": 298
       }
     ]
   },
@@ -1279,28 +1279,28 @@
   {
     "model": "火焰护卫犬/火焰护卫犬_组合检查.bbmodel",
     "before": 47134,
-    "after": 34074,
-    "reduction": 27.7,
+    "after": 39314,
+    "reduction": 16.6,
     "parts": [
       {
         "part": "boss",
         "before": 4091,
-        "after": 2367
+        "after": 3991
       },
       {
         "part": "elevation",
         "before": 400,
-        "after": 274
+        "after": 368
       },
       {
         "part": "engine_l_1",
         "before": 2240,
-        "after": 1784
+        "after": 2226
       },
       {
         "part": "engine_l_1_fold1",
         "before": 580,
-        "after": 300
+        "after": 526
       },
       {
         "part": "engine_l_1_rotor",
@@ -1310,12 +1310,12 @@
       {
         "part": "engine_l_2",
         "before": 2232,
-        "after": 1762
+        "after": 2220
       },
       {
         "part": "engine_l_2_fold",
         "before": 542,
-        "after": 306
+        "after": 524
       },
       {
         "part": "engine_l_2_rotor",
@@ -1325,12 +1325,12 @@
       {
         "part": "engine_r_1",
         "before": 2184,
-        "after": 1840
+        "after": 2168
       },
       {
         "part": "engine_r_1_fold",
         "before": 556,
-        "after": 338
+        "after": 542
       },
       {
         "part": "engine_r_1_rotor",
@@ -1340,12 +1340,12 @@
       {
         "part": "engine_r_2",
         "before": 2360,
-        "after": 1916
+        "after": 2342
       },
       {
         "part": "engine_r_2_fold",
         "before": 381,
-        "after": 285
+        "after": 363
       },
       {
         "part": "engine_r_2_rotor",
@@ -1355,27 +1355,27 @@
       {
         "part": "gun_clamp_left",
         "before": 191,
-        "after": 125
+        "after": 191
       },
       {
         "part": "gun_clamp_right",
         "before": 191,
-        "after": 139
+        "after": 191
       },
       {
         "part": "head",
         "before": 1562,
-        "after": 918
+        "after": 1478
       },
       {
         "part": "hinge",
         "before": 616,
-        "after": 306
+        "after": 612
       },
       {
         "part": "swing_arm",
         "before": 156,
-        "after": 120
+        "after": 156
       },
       {
         "part": "telescope_01",
@@ -1390,7 +1390,7 @@
       {
         "part": "traverse",
         "before": 300,
-        "after": 176
+        "after": 298
       },
       {
         "part": "boss",
@@ -1560,28 +1560,28 @@
   {
     "model": "毒气护卫犬/毒气护卫犬_机身.bbmodel",
     "before": 19508,
-    "after": 13882,
-    "reduction": 28.8,
+    "after": 19114,
+    "reduction": 2.0,
     "parts": [
       {
         "part": "boss",
         "before": 4091,
-        "after": 2367
+        "after": 3991
       },
       {
         "part": "elevation",
         "before": 400,
-        "after": 274
+        "after": 368
       },
       {
         "part": "engine_l_1",
         "before": 2240,
-        "after": 1784
+        "after": 2226
       },
       {
         "part": "engine_l_1_fold1",
         "before": 580,
-        "after": 300
+        "after": 526
       },
       {
         "part": "engine_l_1_rotor",
@@ -1591,12 +1591,12 @@
       {
         "part": "engine_l_2",
         "before": 2232,
-        "after": 1762
+        "after": 2220
       },
       {
         "part": "engine_l_2_fold",
         "before": 542,
-        "after": 306
+        "after": 524
       },
       {
         "part": "engine_l_2_rotor",
@@ -1606,12 +1606,12 @@
       {
         "part": "engine_r_1",
         "before": 2184,
-        "after": 1840
+        "after": 2168
       },
       {
         "part": "engine_r_1_fold",
         "before": 556,
-        "after": 338
+        "after": 542
       },
       {
         "part": "engine_r_1_rotor",
@@ -1621,12 +1621,12 @@
       {
         "part": "engine_r_2",
         "before": 2360,
-        "after": 1916
+        "after": 2342
       },
       {
         "part": "engine_r_2_fold",
         "before": 381,
-        "after": 285
+        "after": 363
       },
       {
         "part": "engine_r_2_rotor",
@@ -1636,27 +1636,27 @@
       {
         "part": "gun_clamp_left",
         "before": 191,
-        "after": 127
+        "after": 191
       },
       {
         "part": "gun_clamp_right",
         "before": 191,
-        "after": 145
+        "after": 191
       },
       {
         "part": "head",
         "before": 1562,
-        "after": 918
+        "after": 1478
       },
       {
         "part": "hinge",
         "before": 616,
-        "after": 306
+        "after": 612
       },
       {
         "part": "swing_arm",
         "before": 156,
-        "after": 120
+        "after": 156
       },
       {
         "part": "telescope_01",
@@ -1671,7 +1671,7 @@
       {
         "part": "traverse",
         "before": 300,
-        "after": 176
+        "after": 298
       }
     ]
   },
@@ -1691,28 +1691,28 @@
   {
     "model": "毒气护卫犬/毒气护卫犬_组合检查.bbmodel",
     "before": 42404,
-    "after": 30838,
-    "reduction": 27.3,
+    "after": 36070,
+    "reduction": 14.9,
     "parts": [
       {
         "part": "boss",
         "before": 4091,
-        "after": 2367
+        "after": 3991
       },
       {
         "part": "elevation",
         "before": 400,
-        "after": 274
+        "after": 368
       },
       {
         "part": "engine_l_1",
         "before": 2240,
-        "after": 1784
+        "after": 2226
       },
       {
         "part": "engine_l_1_fold1",
         "before": 580,
-        "after": 300
+        "after": 526
       },
       {
         "part": "engine_l_1_rotor",
@@ -1722,12 +1722,12 @@
       {
         "part": "engine_l_2",
         "before": 2232,
-        "after": 1762
+        "after": 2220
       },
       {
         "part": "engine_l_2_fold",
         "before": 542,
-        "after": 306
+        "after": 524
       },
       {
         "part": "engine_l_2_rotor",
@@ -1737,12 +1737,12 @@
       {
         "part": "engine_r_1",
         "before": 2184,
-        "after": 1840
+        "after": 2168
       },
       {
         "part": "engine_r_1_fold",
         "before": 556,
-        "after": 338
+        "after": 542
       },
       {
         "part": "engine_r_1_rotor",
@@ -1752,12 +1752,12 @@
       {
         "part": "engine_r_2",
         "before": 2360,
-        "after": 1916
+        "after": 2342
       },
       {
         "part": "engine_r_2_fold",
         "before": 381,
-        "after": 285
+        "after": 363
       },
       {
         "part": "engine_r_2_rotor",
@@ -1767,27 +1767,27 @@
       {
         "part": "gun_clamp_left",
         "before": 191,
-        "after": 127
+        "after": 191
       },
       {
         "part": "gun_clamp_right",
         "before": 191,
-        "after": 145
+        "after": 191
       },
       {
         "part": "head",
         "before": 1562,
-        "after": 918
+        "after": 1478
       },
       {
         "part": "hinge",
         "before": 616,
-        "after": 306
+        "after": 612
       },
       {
         "part": "swing_arm",
         "before": 156,
-        "after": 120
+        "after": 156
       },
       {
         "part": "telescope_01",
@@ -1802,7 +1802,7 @@
       {
         "part": "traverse",
         "before": 300,
-        "after": 176
+        "after": 298
       },
       {
         "part": "boss",

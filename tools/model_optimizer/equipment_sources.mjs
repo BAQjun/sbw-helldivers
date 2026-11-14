@@ -84,7 +84,18 @@ for(const rel of JSON.parse(fs.readFileSync(opt.manifest,'utf8'))){
    caps++;
   }e.faces=fs;
  }
- const parts=[];d.elements=d.elements.map(e=>{const choices=[35,75,179].map(a=>optimize(e,images,dims,.05,a));const row=choices.reduce((a,b)=>count(a.element)<=count(b.element)?a:b);parts.push({part:e.name,before:count(e),after:count(row.element),error:row.error,reason:row.reason,markedFaces:row.marked});return row.element});
+ // Drone shells require their authored surface normals; a small positional error
+ // alone does not prevent visible dents. Only the exact planar prepass applies.
+ let bodyCount=0;
+ if(rel.endsWith('_机身.bbmodel'))bodyCount=d.elements.length;
+ else if(rel.endsWith('_组合检查.bbmodel')){
+  const bodyPath=path.join(opt.input,rel.replace('_组合检查.bbmodel','_机身.bbmodel'));
+  if(fs.existsSync(bodyPath)){
+   const body=JSON.parse(fs.readFileSync(bodyPath,'utf8'));bodyCount=body.elements.length;
+   if(body.elements.some((e,i)=>d.elements[i]?.name!==e.name))throw Error('Drone body ordering changed; identify body parts before simplifying');
+  }
+ }
+ const parts=[];d.elements=d.elements.map((e,i)=>{if(i<bodyCount){parts.push({part:e.name,before:count(e),after:count(e),reason:'authored drone surface protected'});return e}const choices=[35,75,179].map(a=>optimize(e,images,dims,.05,a));const row=choices.reduce((a,b)=>count(a.element)<=count(b.element)?a:b);parts.push({part:e.name,before:count(e),after:count(row.element),error:row.error,reason:row.reason,markedFaces:row.marked});return row.element});
  for(const k of ['groups','outliner','animations','textures'])if(JSON.stringify(d[k])!==JSON.stringify(original[k]))throw Error(k+' changed');
  d.name=d.name.replace(/_近景减面$/,'')+'_近景减面';
  const dest=path.join(opt.output,rel);fs.mkdirSync(path.dirname(dest),{recursive:true});fs.writeFileSync(dest,JSON.stringify(d));
