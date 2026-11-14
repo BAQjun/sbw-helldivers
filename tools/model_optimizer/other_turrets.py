@@ -43,6 +43,8 @@ def canonicalize_solid_faces(e, textures):
         f['uv']={v:list(palette[key]) for v in f['vertices']}
 
 def weld_exact_positions(e):
+    # Position equality does not imply equal authored smooth normals.
+    if e.get('shading') == 'smooth': return
     seen={};remap={};vertices={}
     for k,p in e['vertices'].items():
         v=seen.setdefault(tuple(p),k);remap[k]=v;vertices[v]=p
@@ -52,6 +54,26 @@ def weld_exact_positions(e):
     for f in e['faces'].values():
         f['uv']={remap[v]:uv for v,uv in f['uv'].items()};f['vertices']=[remap[v] for v in f['vertices']]
     e['vertices']=vertices
+
+def affine_star_consistent(vertices, faces):
+    # Shared UV endpoints can agree at the tip of a mirrored UV island while
+    # the mapping slopes disagree. Compare the full affine map over the star.
+    faces=list(faces)
+    if not faces:return False
+    f=faces[0];vs=f['vertices'];p=[vertices[v] for v in vs];n=cross(sub(p[1],p[0]),sub(p[2],p[0]));axes=[i for i in range(3) if i!=max(range(3),key=lambda i:abs(n[i]))]
+    x,y=axes;u=sub(p[1],p[0]);v=sub(p[2],p[0]);det=u[x]*v[y]-u[y]*v[x]
+    if abs(det)<1e-14:return False
+    gradients=[]
+    for j in range(2):
+        a,b=f['uv'][vs[1]][j]-f['uv'][vs[0]][j],f['uv'][vs[2]][j]-f['uv'][vs[0]][j]
+        gradients.append(((a*v[y]-b*u[y])/det,(b*u[x]-a*v[x])/det))
+    for face in faces:
+        if face.get('texture')!=f.get('texture'):return False
+        for key in face['vertices']:
+            delta=sub(vertices[key],p[0])
+            if abs(dot(n,delta))>1e-7*max(1,math.sqrt(dot(n,n))):return False
+            if any(abs(f['uv'][vs[0]][j]+g[0]*delta[x]+g[1]*delta[y]-face['uv'][key][j])>1e-5 for j,g in enumerate(gradients)):return False
+    return True
 
 def planar(e):
     V=e['vertices'];F=e['faces']
@@ -71,6 +93,7 @@ def planar(e):
         for v in list(V):
             star=A[v]
             if len(star)<3:continue
+            if not affine_star_consistent(V,(F[k] for k in star)):continue
             N=collections.Counter(t for k in star for t in F[k]['vertices'] if t!=v)
             if any(z!=2 for z in N.values()):continue
             for w in sorted(N,key=lambda j:math.dist(V[v],V[j])):

@@ -34,7 +34,7 @@ function optimize(e,images,texWidths,errorLimit,crease=75){
    // Existing zero-area triangles have no visible surface.
    if(len<1e-12)continue;
    for(const i of ks){
-    const p=e.vertices[vs[i]],k=JSON.stringify([p,uv[i],f.texture]);let id=unique.get(k);
+    const p=e.vertices[vs[i]],k=JSON.stringify([vs[i],p,uv[i],f.texture]);let id=unique.get(k);
     if(id===undefined){id=refs.length;unique.set(k,id);refs.push({p,uv:uv[i],texture:f.texture,marked:!solid});pos.push(...p);attrs.push(...uv[i]);const loc=pk(p);if(!locations.has(loc))locations.set(loc,[]);locations.get(loc).push(id)}
     else if(!solid)refs[id].marked=true;
     ids.push(id);indices.push(id);
@@ -85,7 +85,7 @@ for(const rel of JSON.parse(fs.readFileSync(opt.manifest,'utf8'))){
   }e.faces=fs;
  }
  // Drone shells require their authored surface normals; a small positional error
- // alone does not prevent visible dents. Only the exact planar prepass applies.
+ // alone does not prevent visible dents. Rebuilt panels stay intact; only main engine shells receive the mild curve pass.
  let bodyCount=0;
  if(rel.endsWith('_机身.bbmodel'))bodyCount=d.elements.length;
  else if(rel.endsWith('_组合检查.bbmodel')){
@@ -95,7 +95,7 @@ for(const rel of JSON.parse(fs.readFileSync(opt.manifest,'utf8'))){
    if(body.elements.some((e,i)=>d.elements[i]?.name!==e.name))throw Error('Drone body ordering changed; identify body parts before simplifying');
   }
  }
- const parts=[];d.elements=d.elements.map((e,i)=>{if(i<bodyCount){parts.push({part:e.name,before:count(e),after:count(e),reason:'authored drone surface protected'});return e}const choices=[35,75,179].map(a=>optimize(e,images,dims,.05,a));const row=choices.reduce((a,b)=>count(a.element)<=count(b.element)?a:b);parts.push({part:e.name,before:count(e),after:count(row.element),error:row.error,reason:row.reason,markedFaces:row.marked});return row.element});
+ const parts=[];d.elements=d.elements.map((e,i)=>{if(i<bodyCount&&!/^engine_[lr]_[12]$/.test(e.name)){parts.push({part:e.name,before:count(e),after:count(e),reason:'rebuilt panel or authored mechanism protected'});return e}const choices=[35].map(a=>optimize(e,images,dims,.03,a));const row=choices.reduce((a,b)=>count(a.element)<=count(b.element)?a:b);parts.push({part:e.name,before:count(e),after:count(row.element),error:row.error,reason:row.reason,markedFaces:row.marked});return row.element});
  for(const k of ['groups','outliner','animations','textures'])if(JSON.stringify(d[k])!==JSON.stringify(original[k]))throw Error(k+' changed');
  d.name=d.name.replace(/_近景减面$/,'')+'_近景减面';
  const dest=path.join(opt.output,rel);fs.mkdirSync(path.dirname(dest),{recursive:true});fs.writeFileSync(dest,JSON.stringify(d));

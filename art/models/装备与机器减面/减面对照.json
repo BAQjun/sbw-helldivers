@@ -2,43 +2,44 @@
   {
     "model": "机枪护卫犬/机枪护卫犬_机身.bbmodel",
     "before": 19530,
-    "after": 19132,
-    "reduction": 2.0,
+    "after": 18443,
+    "reduction": 5.6,
+    "panelPatches": 308,
     "parts": [
       {
         "part": "boss",
         "before": 4091,
-        "after": 3991
+        "after": 3952
       },
       {
         "part": "elevation",
         "before": 342,
-        "after": 312
+        "after": 309
       },
       {
         "part": "engine_l_1",
         "before": 2240,
-        "after": 2226
+        "after": 2051
       },
       {
         "part": "engine_l_1_fold1",
         "before": 580,
-        "after": 526
+        "after": 530
       },
       {
         "part": "engine_l_1_rotor",
         "before": 201,
-        "after": 199
+        "after": 198
       },
       {
         "part": "engine_l_2",
         "before": 2232,
-        "after": 2220
+        "after": 2039
       },
       {
         "part": "engine_l_2_fold",
         "before": 542,
-        "after": 524
+        "after": 530
       },
       {
         "part": "engine_l_2_rotor",
@@ -48,27 +49,27 @@
       {
         "part": "engine_r_1",
         "before": 2184,
-        "after": 2168
+        "after": 2044
       },
       {
         "part": "engine_r_1_fold",
         "before": 556,
-        "after": 542
+        "after": 544
       },
       {
         "part": "engine_r_1_rotor",
         "before": 205,
-        "after": 203
+        "after": 202
       },
       {
         "part": "engine_r_2",
         "before": 2360,
-        "after": 2342
+        "after": 2164
       },
       {
         "part": "engine_r_2_fold",
         "before": 381,
-        "after": 363
+        "after": 371
       },
       {
         "part": "engine_r_2_rotor",
@@ -78,103 +79,262 @@
       {
         "part": "head",
         "before": 1562,
-        "after": 1478
+        "after": 1476
       },
       {
         "part": "hinge",
         "before": 612,
-        "after": 608
+        "after": 607
       },
       {
         "part": "swing_arm",
         "before": 744,
-        "after": 736
+        "after": 734
       },
       {
         "part": "traverse",
         "before": 298,
-        "after": 298
+        "after": 296
+      }
+    ],
+    "curvePass": [
+      {
+        "part": "boss",
+        "before": 3952,
+        "after": 3952,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "elevation",
+        "before": 309,
+        "after": 309,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_1",
+        "before": 2201,
+        "after": 2051,
+        "error": 0.029677120968699455,
+        "markedFaces": 340
+      },
+      {
+        "part": "engine_l_1_fold1",
+        "before": 530,
+        "after": 530,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_1_rotor",
+        "before": 198,
+        "after": 198,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_2",
+        "before": 2191,
+        "after": 2039,
+        "error": 0.02988136187195778,
+        "markedFaces": 338
+      },
+      {
+        "part": "engine_l_2_fold",
+        "before": 530,
+        "after": 530,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_2_rotor",
+        "before": 196,
+        "after": 196,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_1",
+        "before": 2146,
+        "after": 2044,
+        "error": 0.029893159866333008,
+        "markedFaces": 340
+      },
+      {
+        "part": "engine_r_1_fold",
+        "before": 544,
+        "after": 544,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_1_rotor",
+        "before": 202,
+        "after": 202,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_2",
+        "before": 2316,
+        "after": 2164,
+        "error": 0.029871724545955658,
+        "markedFaces": 370
+      },
+      {
+        "part": "engine_r_2_fold",
+        "before": 371,
+        "after": 371,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_2_rotor",
+        "before": 200,
+        "after": 200,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "head",
+        "before": 1476,
+        "after": 1476,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "hinge",
+        "before": 607,
+        "after": 607,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "swing_arm",
+        "before": 734,
+        "after": 734,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "traverse",
+        "before": 296,
+        "after": 296,
+        "reason": "rebuilt panel or authored mechanism protected"
       }
     ]
   },
   {
     "model": "机枪护卫犬/机枪护卫犬_武器.bbmodel",
     "before": 5762,
-    "after": 3950,
-    "reduction": 31.4,
+    "after": 4713,
+    "reduction": 18.2,
+    "panelPatches": 184,
     "parts": [
       {
         "part": "bolt",
         "before": 8,
-        "after": 8
+        "after": 6
       },
       {
         "part": "bolt_carrier",
         "before": 346,
-        "after": 314
+        "after": 308
       },
       {
         "part": "boss",
         "before": 3422,
-        "after": 2524
+        "after": 2956
       },
       {
         "part": "boss",
         "before": 456,
-        "after": 228
+        "after": 437
       },
       {
         "part": "bullets",
         "before": 1050,
-        "after": 544
+        "after": 646
       },
       {
         "part": "boss",
         "before": 480,
-        "after": 332
+        "after": 360
+      }
+    ],
+    "curvePass": [
+      {
+        "part": "bolt",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "bolt_carrier",
+        "before": 332,
+        "after": 308,
+        "error": 0.017936311662197113,
+        "markedFaces": 0
+      },
+      {
+        "part": "boss",
+        "before": 3048,
+        "after": 2956,
+        "error": 0.02099638618528843,
+        "markedFaces": 181
+      },
+      {
+        "part": "boss",
+        "before": 443,
+        "after": 437,
+        "error": 0.016421020030975342,
+        "markedFaces": 8
+      },
+      {
+        "part": "bullets",
+        "before": 1038,
+        "after": 646,
+        "error": 0.029763098806142807,
+        "markedFaces": 0
+      },
+      {
+        "part": "boss",
+        "before": 480,
+        "after": 360,
+        "error": 0.029285985976457596,
+        "markedFaces": 214
       }
     ]
   },
   {
     "model": "机枪护卫犬/机枪护卫犬_组合检查.bbmodel",
     "before": 45438,
-    "after": 35690,
-    "reduction": 21.5,
+    "after": 39046,
+    "reduction": 14.1,
+    "panelPatches": 799,
     "parts": [
       {
         "part": "boss",
         "before": 4091,
-        "after": 3991
+        "after": 3952
       },
       {
         "part": "elevation",
         "before": 342,
-        "after": 312
+        "after": 309
       },
       {
         "part": "engine_l_1",
         "before": 2240,
-        "after": 2226
+        "after": 2051
       },
       {
         "part": "engine_l_1_fold1",
         "before": 580,
-        "after": 526
+        "after": 530
       },
       {
         "part": "engine_l_1_rotor",
         "before": 201,
-        "after": 199
+        "after": 198
       },
       {
         "part": "engine_l_2",
         "before": 2232,
-        "after": 2220
+        "after": 2039
       },
       {
         "part": "engine_l_2_fold",
         "before": 542,
-        "after": 524
+        "after": 530
       },
       {
         "part": "engine_l_2_rotor",
@@ -184,27 +344,27 @@
       {
         "part": "engine_r_1",
         "before": 2184,
-        "after": 2168
+        "after": 2044
       },
       {
         "part": "engine_r_1_fold",
         "before": 556,
-        "after": 542
+        "after": 544
       },
       {
         "part": "engine_r_1_rotor",
         "before": 205,
-        "after": 203
+        "after": 202
       },
       {
         "part": "engine_r_2",
         "before": 2360,
-        "after": 2342
+        "after": 2164
       },
       {
         "part": "engine_r_2_fold",
         "before": 381,
-        "after": 363
+        "after": 371
       },
       {
         "part": "engine_r_2_rotor",
@@ -214,363 +374,886 @@
       {
         "part": "head",
         "before": 1562,
-        "after": 1478
+        "after": 1476
       },
       {
         "part": "hinge",
         "before": 612,
-        "after": 608
+        "after": 607
       },
       {
         "part": "swing_arm",
         "before": 744,
-        "after": 736
+        "after": 734
       },
       {
         "part": "traverse",
         "before": 298,
-        "after": 298
+        "after": 296
       },
       {
         "part": "bolt",
         "before": 8,
-        "after": 8
+        "after": 6
       },
       {
         "part": "bolt_carrier",
         "before": 346,
-        "after": 168
+        "after": 308
       },
       {
         "part": "boss",
         "before": 3400,
-        "after": 1966
+        "after": 2944
       },
       {
         "part": "boss",
         "before": 456,
-        "after": 222
+        "after": 437
       },
       {
         "part": "bullets",
         "before": 1050,
-        "after": 538
+        "after": 626
       },
       {
         "part": "boss",
         "before": 480,
-        "after": 332
+        "after": 366
       },
       {
         "part": "arm_01",
         "before": 321,
-        "after": 147
+        "after": 277
       },
       {
         "part": "arm_02",
         "before": 147,
-        "after": 87
+        "after": 140
       },
       {
         "part": "arm_03",
         "before": 397,
-        "after": 193
+        "after": 342
       },
       {
         "part": "boss",
         "before": 5088,
-        "after": 3800
+        "after": 4667
       },
       {
         "part": "loading_l_arm_01",
         "before": 100,
-        "after": 72
+        "after": 98
       },
       {
         "part": "loading_l_arm_01_extension",
         "before": 80,
-        "after": 42
+        "after": 72
       },
       {
         "part": "loading_l_arm_02",
         "before": 174,
-        "after": 106
+        "after": 170
       },
       {
         "part": "loading_l_arm_03",
         "before": 72,
-        "after": 44
+        "after": 72
       },
       {
         "part": "loading_r_arm_01",
         "before": 100,
-        "after": 80
+        "after": 100
       },
       {
         "part": "loading_r_arm_01_extension",
         "before": 80,
-        "after": 40
+        "after": 72
       },
       {
         "part": "loading_r_arm_02",
         "before": 170,
-        "after": 90
+        "after": 168
       },
       {
         "part": "loading_r_arm_03",
         "before": 68,
-        "after": 40
+        "after": 66
       },
       {
         "part": "mag_l_base",
         "before": 97,
-        "after": 81
+        "after": 95
       },
       {
         "part": "mag_l_base_rotate",
         "before": 202,
-        "after": 98
+        "after": 180
       },
       {
         "part": "mag_r_base",
         "before": 97,
-        "after": 77
+        "after": 95
       },
       {
         "part": "mag_r_base_rotate",
         "before": 196,
-        "after": 92
+        "after": 180
       },
       {
         "part": "mags_l_01_scale",
         "before": 1510,
-        "after": 976
+        "after": 1067
       },
       {
         "part": "mags_l_02_scale",
         "before": 1514,
-        "after": 980
+        "after": 1061
       },
       {
         "part": "mags_l_03_scale",
         "before": 1514,
-        "after": 972
+        "after": 1079
       },
       {
         "part": "mags_l_04_scale",
         "before": 1510,
-        "after": 974
+        "after": 1085
       },
       {
         "part": "mags_l_rail",
         "before": 357,
-        "after": 227
+        "after": 272
       },
       {
         "part": "mags_r_01_scale",
         "before": 1504,
-        "after": 976
+        "after": 1075
       },
       {
         "part": "mags_r_02_scale",
         "before": 1512,
-        "after": 974
+        "after": 1087
       },
       {
         "part": "mags_r_03_scale",
         "before": 1512,
-        "after": 980
+        "after": 1057
       },
       {
         "part": "mags_r_04_scale",
         "before": 1506,
-        "after": 976
+        "after": 1067
       },
       {
         "part": "mags_r_rail",
         "before": 340,
-        "after": 200
+        "after": 272
+      }
+    ],
+    "curvePass": [
+      {
+        "part": "boss",
+        "before": 3952,
+        "after": 3952,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "elevation",
+        "before": 309,
+        "after": 309,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_1",
+        "before": 2201,
+        "after": 2051,
+        "error": 0.029677120968699455,
+        "markedFaces": 340
+      },
+      {
+        "part": "engine_l_1_fold1",
+        "before": 530,
+        "after": 530,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_1_rotor",
+        "before": 198,
+        "after": 198,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_2",
+        "before": 2191,
+        "after": 2039,
+        "error": 0.02988136187195778,
+        "markedFaces": 338
+      },
+      {
+        "part": "engine_l_2_fold",
+        "before": 530,
+        "after": 530,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_2_rotor",
+        "before": 196,
+        "after": 196,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_1",
+        "before": 2146,
+        "after": 2044,
+        "error": 0.029893159866333008,
+        "markedFaces": 340
+      },
+      {
+        "part": "engine_r_1_fold",
+        "before": 544,
+        "after": 544,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_1_rotor",
+        "before": 202,
+        "after": 202,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_2",
+        "before": 2316,
+        "after": 2164,
+        "error": 0.029871724545955658,
+        "markedFaces": 370
+      },
+      {
+        "part": "engine_r_2_fold",
+        "before": 371,
+        "after": 371,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_2_rotor",
+        "before": 200,
+        "after": 200,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "head",
+        "before": 1476,
+        "after": 1476,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "hinge",
+        "before": 607,
+        "after": 607,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "swing_arm",
+        "before": 734,
+        "after": 734,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "traverse",
+        "before": 296,
+        "after": 296,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "bolt",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "bolt_carrier",
+        "before": 332,
+        "after": 308,
+        "error": 0.0129823824390769,
+        "markedFaces": 0
+      },
+      {
+        "part": "boss",
+        "before": 3046,
+        "after": 2944,
+        "error": 0.02960396371781826,
+        "markedFaces": 181
+      },
+      {
+        "part": "boss",
+        "before": 443,
+        "after": 437,
+        "error": 0.016421018168330193,
+        "markedFaces": 8
+      },
+      {
+        "part": "bullets",
+        "before": 1038,
+        "after": 626,
+        "error": 0.029434384778141975,
+        "markedFaces": 0
+      },
+      {
+        "part": "boss",
+        "before": 480,
+        "after": 366,
+        "error": 0.02506496012210846,
+        "markedFaces": 214
+      },
+      {
+        "part": "arm_01",
+        "before": 287,
+        "after": 277,
+        "error": 0.029276270419359207,
+        "markedFaces": 4
+      },
+      {
+        "part": "arm_02",
+        "before": 140,
+        "after": 140,
+        "reason": "no safe collapse",
+        "markedFaces": 11
+      },
+      {
+        "part": "arm_03",
+        "before": 374,
+        "after": 342,
+        "error": 0.027959715574979782,
+        "markedFaces": 4
+      },
+      {
+        "part": "boss",
+        "before": 4891,
+        "after": 4667,
+        "error": 0.029992390424013138,
+        "markedFaces": 363
+      },
+      {
+        "part": "loading_l_arm_01",
+        "before": 100,
+        "after": 98,
+        "error": 9.553757990943268e-05,
+        "markedFaces": 8
+      },
+      {
+        "part": "loading_l_arm_01_extension",
+        "before": 80,
+        "after": 72,
+        "error": 0.026149984449148178,
+        "markedFaces": 0
+      },
+      {
+        "part": "loading_l_arm_02",
+        "before": 174,
+        "after": 170,
+        "error": 0.018898839130997658,
+        "markedFaces": 25
+      },
+      {
+        "part": "loading_l_arm_03",
+        "before": 72,
+        "after": 72,
+        "reason": "no safe collapse",
+        "markedFaces": 10
+      },
+      {
+        "part": "loading_r_arm_01",
+        "before": 100,
+        "after": 100,
+        "reason": "no safe collapse",
+        "markedFaces": 8
+      },
+      {
+        "part": "loading_r_arm_01_extension",
+        "before": 80,
+        "after": 72,
+        "error": 0.026156682521104813,
+        "markedFaces": 0
+      },
+      {
+        "part": "loading_r_arm_02",
+        "before": 170,
+        "after": 168,
+        "error": 3.8089237932581455e-05,
+        "markedFaces": 14
+      },
+      {
+        "part": "loading_r_arm_03",
+        "before": 68,
+        "after": 66,
+        "error": 2.3769784093019553e-05,
+        "markedFaces": 8
+      },
+      {
+        "part": "mag_l_base",
+        "before": 95,
+        "after": 95,
+        "reason": "no safe collapse",
+        "markedFaces": 11
+      },
+      {
+        "part": "mag_l_base_rotate",
+        "before": 180,
+        "after": 180,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "mag_r_base",
+        "before": 95,
+        "after": 95,
+        "reason": "no safe collapse",
+        "markedFaces": 7
+      },
+      {
+        "part": "mag_r_base_rotate",
+        "before": 180,
+        "after": 180,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "mags_l_01_scale",
+        "before": 1485,
+        "after": 1067,
+        "error": 0.02962755411863327,
+        "markedFaces": 8
+      },
+      {
+        "part": "mags_l_02_scale",
+        "before": 1489,
+        "after": 1061,
+        "error": 0.029635263606905937,
+        "markedFaces": 8
+      },
+      {
+        "part": "mags_l_03_scale",
+        "before": 1489,
+        "after": 1079,
+        "error": 0.029627639800310135,
+        "markedFaces": 8
+      },
+      {
+        "part": "mags_l_04_scale",
+        "before": 1485,
+        "after": 1085,
+        "error": 0.029700223356485367,
+        "markedFaces": 8
+      },
+      {
+        "part": "mags_l_rail",
+        "before": 272,
+        "after": 272,
+        "reason": "no safe collapse",
+        "markedFaces": 37
+      },
+      {
+        "part": "mags_r_01_scale",
+        "before": 1479,
+        "after": 1075,
+        "error": 0.029911059886217117,
+        "markedFaces": 8
+      },
+      {
+        "part": "mags_r_02_scale",
+        "before": 1487,
+        "after": 1087,
+        "error": 0.029700467362999916,
+        "markedFaces": 8
+      },
+      {
+        "part": "mags_r_03_scale",
+        "before": 1487,
+        "after": 1057,
+        "error": 0.029716577380895615,
+        "markedFaces": 8
+      },
+      {
+        "part": "mags_r_04_scale",
+        "before": 1481,
+        "after": 1067,
+        "error": 0.029700223356485367,
+        "markedFaces": 8
+      },
+      {
+        "part": "mags_r_rail",
+        "before": 272,
+        "after": 272,
+        "reason": "no safe collapse",
+        "markedFaces": 37
       }
     ]
   },
   {
     "model": "机枪护卫犬/机枪护卫犬_背包.bbmodel",
     "before": 20168,
-    "after": 13790,
-    "reduction": 31.6,
+    "after": 15870,
+    "reduction": 21.3,
+    "panelPatches": 313,
     "parts": [
       {
         "part": "arm_01",
         "before": 321,
-        "after": 147
+        "after": 283
       },
       {
         "part": "arm_02",
         "before": 147,
-        "after": 85
+        "after": 140
       },
       {
         "part": "arm_03",
         "before": 397,
-        "after": 193
+        "after": 344
       },
       {
         "part": "boss",
         "before": 5088,
-        "after": 3772
+        "after": 4651
       },
       {
         "part": "loading_l_arm_01",
         "before": 100,
-        "after": 72
+        "after": 98
       },
       {
         "part": "loading_l_arm_01_extension",
         "before": 80,
-        "after": 42
+        "after": 72
       },
       {
         "part": "loading_l_arm_02",
         "before": 174,
-        "after": 106
+        "after": 168
       },
       {
         "part": "loading_l_arm_03",
         "before": 72,
-        "after": 44
+        "after": 70
       },
       {
         "part": "loading_r_arm_01",
         "before": 100,
-        "after": 74
+        "after": 98
       },
       {
         "part": "loading_r_arm_01_extension",
         "before": 80,
-        "after": 40
+        "after": 72
       },
       {
         "part": "loading_r_arm_02",
         "before": 170,
-        "after": 84
+        "after": 166
       },
       {
         "part": "loading_r_arm_03",
         "before": 68,
-        "after": 42
+        "after": 64
       },
       {
         "part": "mag_l_base",
         "before": 97,
-        "after": 77
+        "after": 95
       },
       {
         "part": "mag_l_base_rotate",
         "before": 202,
-        "after": 100
+        "after": 180
       },
       {
         "part": "mag_r_base",
         "before": 97,
-        "after": 77
+        "after": 95
       },
       {
         "part": "mag_r_base_rotate",
         "before": 196,
-        "after": 92
+        "after": 180
       },
       {
         "part": "mags_l_01_scale",
         "before": 1510,
-        "after": 966
+        "after": 1055
       },
       {
         "part": "mags_l_02_scale",
         "before": 1514,
-        "after": 976
+        "after": 1081
       },
       {
         "part": "mags_l_03_scale",
         "before": 1514,
-        "after": 970
+        "after": 1081
       },
       {
         "part": "mags_l_04_scale",
         "before": 1510,
-        "after": 976
+        "after": 1063
       },
       {
         "part": "mags_l_rail",
         "before": 357,
-        "after": 233
+        "after": 272
       },
       {
         "part": "mags_r_01_scale",
         "before": 1504,
-        "after": 1482
+        "after": 1061
       },
       {
         "part": "mags_r_02_scale",
         "before": 1512,
-        "after": 990
+        "after": 1073
       },
       {
         "part": "mags_r_03_scale",
         "before": 1512,
-        "after": 978
+        "after": 1055
       },
       {
         "part": "mags_r_04_scale",
         "before": 1506,
-        "after": 972
+        "after": 1081
       },
       {
         "part": "mags_r_rail",
         "before": 340,
-        "after": 200
+        "after": 272
+      }
+    ],
+    "curvePass": [
+      {
+        "part": "arm_01",
+        "before": 287,
+        "after": 283,
+        "error": 0.02927635796368122,
+        "markedFaces": 4
+      },
+      {
+        "part": "arm_02",
+        "before": 140,
+        "after": 140,
+        "reason": "no safe collapse",
+        "markedFaces": 11
+      },
+      {
+        "part": "arm_03",
+        "before": 374,
+        "after": 344,
+        "error": 0.028091028332710266,
+        "markedFaces": 4
+      },
+      {
+        "part": "boss",
+        "before": 4891,
+        "after": 4651,
+        "error": 0.029371924698352814,
+        "markedFaces": 363
+      },
+      {
+        "part": "loading_l_arm_01",
+        "before": 100,
+        "after": 98,
+        "error": 0.00024837476667016745,
+        "markedFaces": 8
+      },
+      {
+        "part": "loading_l_arm_01_extension",
+        "before": 80,
+        "after": 72,
+        "error": 0.02614997886121273,
+        "markedFaces": 0
+      },
+      {
+        "part": "loading_l_arm_02",
+        "before": 174,
+        "after": 168,
+        "error": 0.00016433668497484177,
+        "markedFaces": 25
+      },
+      {
+        "part": "loading_l_arm_03",
+        "before": 72,
+        "after": 70,
+        "error": 6.161653436720371e-05,
+        "markedFaces": 10
+      },
+      {
+        "part": "loading_r_arm_01",
+        "before": 100,
+        "after": 98,
+        "error": 6.186952668940648e-05,
+        "markedFaces": 8
+      },
+      {
+        "part": "loading_r_arm_01_extension",
+        "before": 80,
+        "after": 72,
+        "error": 0.026165729388594627,
+        "markedFaces": 0
+      },
+      {
+        "part": "loading_r_arm_02",
+        "before": 170,
+        "after": 166,
+        "error": 0.026734383776783943,
+        "markedFaces": 14
+      },
+      {
+        "part": "loading_r_arm_03",
+        "before": 68,
+        "after": 64,
+        "error": 4.269797864253633e-05,
+        "markedFaces": 8
+      },
+      {
+        "part": "mag_l_base",
+        "before": 95,
+        "after": 95,
+        "reason": "no safe collapse",
+        "markedFaces": 11
+      },
+      {
+        "part": "mag_l_base_rotate",
+        "before": 180,
+        "after": 180,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "mag_r_base",
+        "before": 95,
+        "after": 95,
+        "reason": "no safe collapse",
+        "markedFaces": 7
+      },
+      {
+        "part": "mag_r_base_rotate",
+        "before": 180,
+        "after": 180,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "mags_l_01_scale",
+        "before": 1485,
+        "after": 1055,
+        "error": 0.029963651672005653,
+        "markedFaces": 8
+      },
+      {
+        "part": "mags_l_02_scale",
+        "before": 1489,
+        "after": 1081,
+        "error": 0.02970065176486969,
+        "markedFaces": 8
+      },
+      {
+        "part": "mags_l_03_scale",
+        "before": 1489,
+        "after": 1081,
+        "error": 0.029717644676566124,
+        "markedFaces": 8
+      },
+      {
+        "part": "mags_l_04_scale",
+        "before": 1485,
+        "after": 1063,
+        "error": 0.029739882797002792,
+        "markedFaces": 8
+      },
+      {
+        "part": "mags_l_rail",
+        "before": 272,
+        "after": 272,
+        "reason": "no safe collapse",
+        "markedFaces": 37
+      },
+      {
+        "part": "mags_r_01_scale",
+        "before": 1479,
+        "after": 1061,
+        "error": 0.02974054031074047,
+        "markedFaces": 8
+      },
+      {
+        "part": "mags_r_02_scale",
+        "before": 1487,
+        "after": 1073,
+        "error": 0.029625266790390015,
+        "markedFaces": 8
+      },
+      {
+        "part": "mags_r_03_scale",
+        "before": 1487,
+        "after": 1055,
+        "error": 0.029715092852711678,
+        "markedFaces": 8
+      },
+      {
+        "part": "mags_r_04_scale",
+        "before": 1481,
+        "after": 1081,
+        "error": 0.029639502987265587,
+        "markedFaces": 8
+      },
+      {
+        "part": "mags_r_rail",
+        "before": 272,
+        "after": 272,
+        "reason": "no safe collapse",
+        "markedFaces": 37
       }
     ]
   },
   {
     "model": "激光护卫犬/激光护卫犬_机身.bbmodel",
     "before": 19508,
-    "after": 19114,
-    "reduction": 2.0,
+    "after": 18435,
+    "reduction": 5.5,
+    "panelPatches": 299,
     "parts": [
       {
         "part": "boss",
         "before": 4091,
-        "after": 3991
+        "after": 3952
       },
       {
         "part": "elevation",
         "before": 400,
-        "after": 368
+        "after": 374
       },
       {
         "part": "engine_l_1",
         "before": 2240,
-        "after": 2226
+        "after": 2051
       },
       {
         "part": "engine_l_1_fold1",
         "before": 580,
-        "after": 526
+        "after": 530
       },
       {
         "part": "engine_l_1_rotor",
         "before": 201,
-        "after": 199
+        "after": 198
       },
       {
         "part": "engine_l_2",
         "before": 2232,
-        "after": 2220
+        "after": 2039
       },
       {
         "part": "engine_l_2_fold",
         "before": 542,
-        "after": 524
+        "after": 530
       },
       {
         "part": "engine_l_2_rotor",
@@ -580,27 +1263,27 @@
       {
         "part": "engine_r_1",
         "before": 2184,
-        "after": 2168
+        "after": 2044
       },
       {
         "part": "engine_r_1_fold",
         "before": 556,
-        "after": 542
+        "after": 544
       },
       {
         "part": "engine_r_1_rotor",
         "before": 205,
-        "after": 203
+        "after": 202
       },
       {
         "part": "engine_r_2",
         "before": 2360,
-        "after": 2342
+        "after": 2164
       },
       {
         "part": "engine_r_2_fold",
         "before": 381,
-        "after": 363
+        "after": 371
       },
       {
         "part": "engine_r_2_rotor",
@@ -620,12 +1303,12 @@
       {
         "part": "head",
         "before": 1562,
-        "after": 1478
+        "after": 1476
       },
       {
         "part": "hinge",
         "before": 616,
-        "after": 612
+        "after": 610
       },
       {
         "part": "swing_arm",
@@ -645,68 +1328,224 @@
       {
         "part": "traverse",
         "before": 300,
-        "after": 298
+        "after": 296
+      }
+    ],
+    "curvePass": [
+      {
+        "part": "boss",
+        "before": 3952,
+        "after": 3952,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "elevation",
+        "before": 374,
+        "after": 374,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_1",
+        "before": 2201,
+        "after": 2051,
+        "error": 0.029677120968699455,
+        "markedFaces": 340
+      },
+      {
+        "part": "engine_l_1_fold1",
+        "before": 530,
+        "after": 530,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_1_rotor",
+        "before": 198,
+        "after": 198,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_2",
+        "before": 2191,
+        "after": 2039,
+        "error": 0.02988136187195778,
+        "markedFaces": 338
+      },
+      {
+        "part": "engine_l_2_fold",
+        "before": 530,
+        "after": 530,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_2_rotor",
+        "before": 196,
+        "after": 196,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_1",
+        "before": 2146,
+        "after": 2044,
+        "error": 0.029893159866333008,
+        "markedFaces": 340
+      },
+      {
+        "part": "engine_r_1_fold",
+        "before": 544,
+        "after": 544,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_1_rotor",
+        "before": 202,
+        "after": 202,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_2",
+        "before": 2316,
+        "after": 2164,
+        "error": 0.029871724545955658,
+        "markedFaces": 370
+      },
+      {
+        "part": "engine_r_2_fold",
+        "before": 371,
+        "after": 371,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_2_rotor",
+        "before": 200,
+        "after": 200,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "gun_clamp_left",
+        "before": 191,
+        "after": 191,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "gun_clamp_right",
+        "before": 191,
+        "after": 191,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "head",
+        "before": 1476,
+        "after": 1476,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "hinge",
+        "before": 610,
+        "after": 610,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "swing_arm",
+        "before": 156,
+        "after": 156,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "telescope_01",
+        "before": 60,
+        "after": 60,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "telescope_02",
+        "before": 60,
+        "after": 60,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "traverse",
+        "before": 296,
+        "after": 296,
+        "reason": "rebuilt panel or authored mechanism protected"
       }
     ]
   },
   {
     "model": "激光护卫犬/激光护卫犬_武器.bbmodel",
     "before": 6871,
-    "after": 6131,
-    "reduction": 10.8,
+    "after": 6312,
+    "reduction": 8.1,
+    "panelPatches": 62,
     "parts": [
       {
         "part": "boss",
         "before": 6552,
-        "after": 5848
+        "after": 5996
       },
       {
         "part": "boss",
         "before": 319,
-        "after": 283
+        "after": 316
+      }
+    ],
+    "curvePass": [
+      {
+        "part": "boss",
+        "before": 6450,
+        "after": 5996,
+        "error": 0.02956274338066578,
+        "markedFaces": 695
+      },
+      {
+        "part": "boss",
+        "before": 316,
+        "after": 316,
+        "reason": "no safe collapse",
+        "markedFaces": 73
       }
     ]
   },
   {
     "model": "激光护卫犬/激光护卫犬_组合检查.bbmodel",
     "before": 32714,
-    "after": 29540,
-    "reduction": 9.7,
+    "after": 30526,
+    "reduction": 6.7,
+    "panelPatches": 478,
     "parts": [
       {
         "part": "boss",
         "before": 4091,
-        "after": 3991
+        "after": 3952
       },
       {
         "part": "elevation",
         "before": 400,
-        "after": 368
+        "after": 374
       },
       {
         "part": "engine_l_1",
         "before": 2240,
-        "after": 2226
+        "after": 2051
       },
       {
         "part": "engine_l_1_fold1",
         "before": 580,
-        "after": 526
+        "after": 530
       },
       {
         "part": "engine_l_1_rotor",
         "before": 201,
-        "after": 199
+        "after": 198
       },
       {
         "part": "engine_l_2",
         "before": 2232,
-        "after": 2220
+        "after": 2039
       },
       {
         "part": "engine_l_2_fold",
         "before": 542,
-        "after": 524
+        "after": 530
       },
       {
         "part": "engine_l_2_rotor",
@@ -716,27 +1555,27 @@
       {
         "part": "engine_r_1",
         "before": 2184,
-        "after": 2168
+        "after": 2044
       },
       {
         "part": "engine_r_1_fold",
         "before": 556,
-        "after": 542
+        "after": 544
       },
       {
         "part": "engine_r_1_rotor",
         "before": 205,
-        "after": 203
+        "after": 202
       },
       {
         "part": "engine_r_2",
         "before": 2360,
-        "after": 2342
+        "after": 2164
       },
       {
         "part": "engine_r_2_fold",
         "before": 381,
-        "after": 363
+        "after": 371
       },
       {
         "part": "engine_r_2_rotor",
@@ -756,12 +1595,12 @@
       {
         "part": "head",
         "before": 1562,
-        "after": 1478
+        "after": 1476
       },
       {
         "part": "hinge",
         "before": 616,
-        "after": 612
+        "after": 610
       },
       {
         "part": "swing_arm",
@@ -781,108 +1620,320 @@
       {
         "part": "traverse",
         "before": 300,
-        "after": 298
+        "after": 296
       },
       {
         "part": "boss",
         "before": 6555,
-        "after": 5853
+        "after": 6007
       },
       {
         "part": "boss",
         "before": 319,
-        "after": 283
+        "after": 317
       },
       {
         "part": "arm_01",
         "before": 321,
-        "after": 147
+        "after": 285
       },
       {
         "part": "arm_02",
         "before": 147,
-        "after": 87
+        "after": 140
       },
       {
         "part": "arm_03",
         "before": 397,
-        "after": 193
+        "after": 342
       },
       {
         "part": "boss",
         "before": 5467,
-        "after": 3863
+        "after": 5000
+      }
+    ],
+    "curvePass": [
+      {
+        "part": "boss",
+        "before": 3952,
+        "after": 3952,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "elevation",
+        "before": 374,
+        "after": 374,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_1",
+        "before": 2201,
+        "after": 2051,
+        "error": 0.029677120968699455,
+        "markedFaces": 340
+      },
+      {
+        "part": "engine_l_1_fold1",
+        "before": 530,
+        "after": 530,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_1_rotor",
+        "before": 198,
+        "after": 198,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_2",
+        "before": 2191,
+        "after": 2039,
+        "error": 0.02988136187195778,
+        "markedFaces": 338
+      },
+      {
+        "part": "engine_l_2_fold",
+        "before": 530,
+        "after": 530,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_2_rotor",
+        "before": 196,
+        "after": 196,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_1",
+        "before": 2146,
+        "after": 2044,
+        "error": 0.029893159866333008,
+        "markedFaces": 340
+      },
+      {
+        "part": "engine_r_1_fold",
+        "before": 544,
+        "after": 544,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_1_rotor",
+        "before": 202,
+        "after": 202,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_2",
+        "before": 2316,
+        "after": 2164,
+        "error": 0.029871724545955658,
+        "markedFaces": 370
+      },
+      {
+        "part": "engine_r_2_fold",
+        "before": 371,
+        "after": 371,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_2_rotor",
+        "before": 200,
+        "after": 200,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "gun_clamp_left",
+        "before": 191,
+        "after": 191,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "gun_clamp_right",
+        "before": 191,
+        "after": 191,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "head",
+        "before": 1476,
+        "after": 1476,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "hinge",
+        "before": 610,
+        "after": 610,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "swing_arm",
+        "before": 156,
+        "after": 156,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "telescope_01",
+        "before": 60,
+        "after": 60,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "telescope_02",
+        "before": 60,
+        "after": 60,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "traverse",
+        "before": 296,
+        "after": 296,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "boss",
+        "before": 6477,
+        "after": 6007,
+        "error": 0.029487695544958115,
+        "markedFaces": 714
+      },
+      {
+        "part": "boss",
+        "before": 317,
+        "after": 317,
+        "reason": "no safe collapse",
+        "markedFaces": 79
+      },
+      {
+        "part": "arm_01",
+        "before": 287,
+        "after": 285,
+        "error": 0.029276445508003235,
+        "markedFaces": 4
+      },
+      {
+        "part": "arm_02",
+        "before": 140,
+        "after": 140,
+        "reason": "no safe collapse",
+        "markedFaces": 11
+      },
+      {
+        "part": "arm_03",
+        "before": 374,
+        "after": 342,
+        "error": 0.028036456555128098,
+        "markedFaces": 4
+      },
+      {
+        "part": "boss",
+        "before": 5254,
+        "after": 5000,
+        "error": 0.029775071889162064,
+        "markedFaces": 439
       }
     ]
   },
   {
     "model": "激光护卫犬/激光护卫犬_背包.bbmodel",
     "before": 6332,
-    "after": 4318,
-    "reduction": 31.8,
+    "after": 5788,
+    "reduction": 8.6,
+    "panelPatches": 130,
     "parts": [
       {
         "part": "arm_01",
         "before": 321,
-        "after": 147
+        "after": 283
       },
       {
         "part": "arm_02",
         "before": 147,
-        "after": 85
+        "after": 140
       },
       {
         "part": "arm_03",
         "before": 397,
-        "after": 193
+        "after": 344
       },
       {
         "part": "boss",
         "before": 5467,
-        "after": 3893
+        "after": 5021
+      }
+    ],
+    "curvePass": [
+      {
+        "part": "arm_01",
+        "before": 287,
+        "after": 283,
+        "error": 0.02927635796368122,
+        "markedFaces": 4
+      },
+      {
+        "part": "arm_02",
+        "before": 140,
+        "after": 140,
+        "reason": "no safe collapse",
+        "markedFaces": 11
+      },
+      {
+        "part": "arm_03",
+        "before": 374,
+        "after": 344,
+        "error": 0.028091028332710266,
+        "markedFaces": 4
+      },
+      {
+        "part": "boss",
+        "before": 5255,
+        "after": 5021,
+        "error": 0.029371924698352814,
+        "markedFaces": 439
       }
     ]
   },
   {
     "model": "电护卫犬/电护卫犬_机身.bbmodel",
     "before": 19508,
-    "after": 19114,
-    "reduction": 2.0,
+    "after": 18437,
+    "reduction": 5.5,
+    "panelPatches": 297,
     "parts": [
       {
         "part": "boss",
         "before": 4091,
-        "after": 3991
+        "after": 3952
       },
       {
         "part": "elevation",
         "before": 400,
-        "after": 368
+        "after": 374
       },
       {
         "part": "engine_l_1",
         "before": 2240,
-        "after": 2226
+        "after": 2051
       },
       {
         "part": "engine_l_1_fold1",
         "before": 580,
-        "after": 526
+        "after": 530
       },
       {
         "part": "engine_l_1_rotor",
         "before": 201,
-        "after": 199
+        "after": 198
       },
       {
         "part": "engine_l_2",
         "before": 2232,
-        "after": 2220
+        "after": 2039
       },
       {
         "part": "engine_l_2_fold",
         "before": 542,
-        "after": 524
+        "after": 530
       },
       {
         "part": "engine_l_2_rotor",
@@ -892,27 +1943,27 @@
       {
         "part": "engine_r_1",
         "before": 2184,
-        "after": 2168
+        "after": 2044
       },
       {
         "part": "engine_r_1_fold",
         "before": 556,
-        "after": 542
+        "after": 544
       },
       {
         "part": "engine_r_1_rotor",
         "before": 205,
-        "after": 203
+        "after": 202
       },
       {
         "part": "engine_r_2",
         "before": 2360,
-        "after": 2342
+        "after": 2164
       },
       {
         "part": "engine_r_2_fold",
         "before": 381,
-        "after": 363
+        "after": 371
       },
       {
         "part": "engine_r_2_rotor",
@@ -932,7 +1983,7 @@
       {
         "part": "head",
         "before": 1562,
-        "after": 1478
+        "after": 1476
       },
       {
         "part": "hinge",
@@ -957,63 +2008,212 @@
       {
         "part": "traverse",
         "before": 300,
-        "after": 298
+        "after": 296
+      }
+    ],
+    "curvePass": [
+      {
+        "part": "boss",
+        "before": 3952,
+        "after": 3952,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "elevation",
+        "before": 374,
+        "after": 374,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_1",
+        "before": 2201,
+        "after": 2051,
+        "error": 0.029677120968699455,
+        "markedFaces": 340
+      },
+      {
+        "part": "engine_l_1_fold1",
+        "before": 530,
+        "after": 530,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_1_rotor",
+        "before": 198,
+        "after": 198,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_2",
+        "before": 2191,
+        "after": 2039,
+        "error": 0.02988136187195778,
+        "markedFaces": 338
+      },
+      {
+        "part": "engine_l_2_fold",
+        "before": 530,
+        "after": 530,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_2_rotor",
+        "before": 196,
+        "after": 196,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_1",
+        "before": 2146,
+        "after": 2044,
+        "error": 0.029893159866333008,
+        "markedFaces": 340
+      },
+      {
+        "part": "engine_r_1_fold",
+        "before": 544,
+        "after": 544,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_1_rotor",
+        "before": 202,
+        "after": 202,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_2",
+        "before": 2316,
+        "after": 2164,
+        "error": 0.029871724545955658,
+        "markedFaces": 370
+      },
+      {
+        "part": "engine_r_2_fold",
+        "before": 371,
+        "after": 371,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_2_rotor",
+        "before": 200,
+        "after": 200,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "gun_clamp_left",
+        "before": 191,
+        "after": 191,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "gun_clamp_right",
+        "before": 191,
+        "after": 191,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "head",
+        "before": 1476,
+        "after": 1476,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "hinge",
+        "before": 612,
+        "after": 612,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "swing_arm",
+        "before": 156,
+        "after": 156,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "telescope_01",
+        "before": 60,
+        "after": 60,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "telescope_02",
+        "before": 60,
+        "after": 60,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "traverse",
+        "before": 296,
+        "after": 296,
+        "reason": "rebuilt panel or authored mechanism protected"
       }
     ]
   },
   {
     "model": "电护卫犬/电护卫犬_武器.bbmodel",
     "before": 9922,
-    "after": 4828,
-    "reduction": 51.3,
+    "after": 8377,
+    "reduction": 15.6,
+    "panelPatches": 144,
     "parts": [
       {
         "part": "boss",
         "before": 9922,
-        "after": 4828
+        "after": 8377
+      }
+    ],
+    "curvePass": [
+      {
+        "part": "boss",
+        "before": 9591,
+        "after": 8377,
+        "error": 0.02970246598124504,
+        "markedFaces": 224
       }
     ]
   },
   {
     "model": "电护卫犬/电护卫犬_组合检查.bbmodel",
     "before": 39340,
-    "after": 30402,
-    "reduction": 22.7,
+    "after": 35959,
+    "reduction": 8.6,
+    "panelPatches": 603,
     "parts": [
       {
         "part": "boss",
         "before": 4091,
-        "after": 3991
+        "after": 3952
       },
       {
         "part": "elevation",
         "before": 400,
-        "after": 368
+        "after": 374
       },
       {
         "part": "engine_l_1",
         "before": 2240,
-        "after": 2226
+        "after": 2051
       },
       {
         "part": "engine_l_1_fold1",
         "before": 580,
-        "after": 526
+        "after": 530
       },
       {
         "part": "engine_l_1_rotor",
         "before": 201,
-        "after": 199
+        "after": 198
       },
       {
         "part": "engine_l_2",
         "before": 2232,
-        "after": 2220
+        "after": 2039
       },
       {
         "part": "engine_l_2_fold",
         "before": 542,
-        "after": 524
+        "after": 530
       },
       {
         "part": "engine_l_2_rotor",
@@ -1023,27 +2223,27 @@
       {
         "part": "engine_r_1",
         "before": 2184,
-        "after": 2168
+        "after": 2044
       },
       {
         "part": "engine_r_1_fold",
         "before": 556,
-        "after": 542
+        "after": 544
       },
       {
         "part": "engine_r_1_rotor",
         "before": 205,
-        "after": 203
+        "after": 202
       },
       {
         "part": "engine_r_2",
         "before": 2360,
-        "after": 2342
+        "after": 2164
       },
       {
         "part": "engine_r_2_fold",
         "before": 381,
-        "after": 363
+        "after": 371
       },
       {
         "part": "engine_r_2_rotor",
@@ -1063,7 +2263,7 @@
       {
         "part": "head",
         "before": 1562,
-        "after": 1478
+        "after": 1476
       },
       {
         "part": "hinge",
@@ -1088,103 +2288,308 @@
       {
         "part": "traverse",
         "before": 300,
-        "after": 298
+        "after": 296
       },
       {
         "part": "boss",
         "before": 9922,
-        "after": 4830
+        "after": 8405
       },
       {
         "part": "arm_01",
         "before": 384,
-        "after": 174
+        "after": 305
       },
       {
         "part": "arm_02",
         "before": 184,
-        "after": 86
+        "after": 170
       },
       {
         "part": "arm_03",
         "before": 406,
-        "after": 192
+        "after": 344
       },
       {
         "part": "boss",
         "before": 8936,
-        "after": 6006
+        "after": 8298
+      }
+    ],
+    "curvePass": [
+      {
+        "part": "boss",
+        "before": 3952,
+        "after": 3952,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "elevation",
+        "before": 374,
+        "after": 374,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_1",
+        "before": 2201,
+        "after": 2051,
+        "error": 0.029677120968699455,
+        "markedFaces": 340
+      },
+      {
+        "part": "engine_l_1_fold1",
+        "before": 530,
+        "after": 530,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_1_rotor",
+        "before": 198,
+        "after": 198,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_2",
+        "before": 2191,
+        "after": 2039,
+        "error": 0.02988136187195778,
+        "markedFaces": 338
+      },
+      {
+        "part": "engine_l_2_fold",
+        "before": 530,
+        "after": 530,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_2_rotor",
+        "before": 196,
+        "after": 196,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_1",
+        "before": 2146,
+        "after": 2044,
+        "error": 0.029893159866333008,
+        "markedFaces": 340
+      },
+      {
+        "part": "engine_r_1_fold",
+        "before": 544,
+        "after": 544,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_1_rotor",
+        "before": 202,
+        "after": 202,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_2",
+        "before": 2316,
+        "after": 2164,
+        "error": 0.029871724545955658,
+        "markedFaces": 370
+      },
+      {
+        "part": "engine_r_2_fold",
+        "before": 371,
+        "after": 371,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_2_rotor",
+        "before": 200,
+        "after": 200,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "gun_clamp_left",
+        "before": 191,
+        "after": 191,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "gun_clamp_right",
+        "before": 191,
+        "after": 191,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "head",
+        "before": 1476,
+        "after": 1476,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "hinge",
+        "before": 612,
+        "after": 612,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "swing_arm",
+        "before": 156,
+        "after": 156,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "telescope_01",
+        "before": 60,
+        "after": 60,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "telescope_02",
+        "before": 60,
+        "after": 60,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "traverse",
+        "before": 296,
+        "after": 296,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "boss",
+        "before": 9603,
+        "after": 8405,
+        "error": 0.029824726283550262,
+        "markedFaces": 224
+      },
+      {
+        "part": "arm_01",
+        "before": 327,
+        "after": 305,
+        "error": 0.021025899797677994,
+        "markedFaces": 6
+      },
+      {
+        "part": "arm_02",
+        "before": 170,
+        "after": 170,
+        "reason": "no safe collapse",
+        "markedFaces": 29
+      },
+      {
+        "part": "arm_03",
+        "before": 376,
+        "after": 344,
+        "error": 0.02812570333480835,
+        "markedFaces": 5
+      },
+      {
+        "part": "boss",
+        "before": 8678,
+        "after": 8298,
+        "error": 0.029537729918956757,
+        "markedFaces": 920
       }
     ]
   },
   {
     "model": "电护卫犬/电护卫犬_背包.bbmodel",
     "before": 9910,
-    "after": 8698,
-    "reduction": 12.2,
+    "after": 9125,
+    "reduction": 7.9,
+    "panelPatches": 161,
     "parts": [
       {
         "part": "arm_01",
         "before": 384,
-        "after": 174
+        "after": 305
       },
       {
         "part": "arm_02",
         "before": 184,
-        "after": 86
+        "after": 170
       },
       {
         "part": "arm_03",
         "before": 406,
-        "after": 192
+        "after": 340
       },
       {
         "part": "boss",
         "before": 8936,
-        "after": 8246
+        "after": 8310
+      }
+    ],
+    "curvePass": [
+      {
+        "part": "arm_01",
+        "before": 327,
+        "after": 305,
+        "error": 0.021024400368332863,
+        "markedFaces": 6
+      },
+      {
+        "part": "arm_02",
+        "before": 170,
+        "after": 170,
+        "reason": "no safe collapse",
+        "markedFaces": 29
+      },
+      {
+        "part": "arm_03",
+        "before": 376,
+        "after": 340,
+        "error": 0.027970556169748306,
+        "markedFaces": 5
+      },
+      {
+        "part": "boss",
+        "before": 8680,
+        "after": 8310,
+        "error": 0.029329270124435425,
+        "markedFaces": 920
       }
     ]
   },
   {
     "model": "火焰护卫犬/火焰护卫犬_机身.bbmodel",
     "before": 19508,
-    "after": 19114,
-    "reduction": 2.0,
+    "after": 18437,
+    "reduction": 5.5,
+    "panelPatches": 297,
     "parts": [
       {
         "part": "boss",
         "before": 4091,
-        "after": 3991
+        "after": 3952
       },
       {
         "part": "elevation",
         "before": 400,
-        "after": 368
+        "after": 374
       },
       {
         "part": "engine_l_1",
         "before": 2240,
-        "after": 2226
+        "after": 2051
       },
       {
         "part": "engine_l_1_fold1",
         "before": 580,
-        "after": 526
+        "after": 530
       },
       {
         "part": "engine_l_1_rotor",
         "before": 201,
-        "after": 199
+        "after": 198
       },
       {
         "part": "engine_l_2",
         "before": 2232,
-        "after": 2220
+        "after": 2039
       },
       {
         "part": "engine_l_2_fold",
         "before": 542,
-        "after": 524
+        "after": 530
       },
       {
         "part": "engine_l_2_rotor",
@@ -1194,27 +2599,27 @@
       {
         "part": "engine_r_1",
         "before": 2184,
-        "after": 2168
+        "after": 2044
       },
       {
         "part": "engine_r_1_fold",
         "before": 556,
-        "after": 542
+        "after": 544
       },
       {
         "part": "engine_r_1_rotor",
         "before": 205,
-        "after": 203
+        "after": 202
       },
       {
         "part": "engine_r_2",
         "before": 2360,
-        "after": 2342
+        "after": 2164
       },
       {
         "part": "engine_r_2_fold",
         "before": 381,
-        "after": 363
+        "after": 371
       },
       {
         "part": "engine_r_2_rotor",
@@ -1234,7 +2639,7 @@
       {
         "part": "head",
         "before": 1562,
-        "after": 1478
+        "after": 1476
       },
       {
         "part": "hinge",
@@ -1259,63 +2664,212 @@
       {
         "part": "traverse",
         "before": 300,
-        "after": 298
+        "after": 296
+      }
+    ],
+    "curvePass": [
+      {
+        "part": "boss",
+        "before": 3952,
+        "after": 3952,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "elevation",
+        "before": 374,
+        "after": 374,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_1",
+        "before": 2201,
+        "after": 2051,
+        "error": 0.029677120968699455,
+        "markedFaces": 340
+      },
+      {
+        "part": "engine_l_1_fold1",
+        "before": 530,
+        "after": 530,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_1_rotor",
+        "before": 198,
+        "after": 198,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_2",
+        "before": 2191,
+        "after": 2039,
+        "error": 0.02988136187195778,
+        "markedFaces": 338
+      },
+      {
+        "part": "engine_l_2_fold",
+        "before": 530,
+        "after": 530,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_2_rotor",
+        "before": 196,
+        "after": 196,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_1",
+        "before": 2146,
+        "after": 2044,
+        "error": 0.029893159866333008,
+        "markedFaces": 340
+      },
+      {
+        "part": "engine_r_1_fold",
+        "before": 544,
+        "after": 544,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_1_rotor",
+        "before": 202,
+        "after": 202,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_2",
+        "before": 2316,
+        "after": 2164,
+        "error": 0.029871724545955658,
+        "markedFaces": 370
+      },
+      {
+        "part": "engine_r_2_fold",
+        "before": 371,
+        "after": 371,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_2_rotor",
+        "before": 200,
+        "after": 200,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "gun_clamp_left",
+        "before": 191,
+        "after": 191,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "gun_clamp_right",
+        "before": 191,
+        "after": 191,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "head",
+        "before": 1476,
+        "after": 1476,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "hinge",
+        "before": 612,
+        "after": 612,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "swing_arm",
+        "before": 156,
+        "after": 156,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "telescope_01",
+        "before": 60,
+        "after": 60,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "telescope_02",
+        "before": 60,
+        "after": 60,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "traverse",
+        "before": 296,
+        "after": 296,
+        "reason": "rebuilt panel or authored mechanism protected"
       }
     ]
   },
   {
     "model": "火焰护卫犬/火焰护卫犬_武器.bbmodel",
     "before": 9530,
-    "after": 6876,
-    "reduction": 27.8,
+    "after": 8769,
+    "reduction": 8.0,
+    "panelPatches": 59,
     "parts": [
       {
         "part": "boss",
         "before": 9530,
-        "after": 6876
+        "after": 8769
+      }
+    ],
+    "curvePass": [
+      {
+        "part": "boss",
+        "before": 9445,
+        "after": 8769,
+        "error": 0.029452767223119736,
+        "markedFaces": 776
       }
     ]
   },
   {
     "model": "火焰护卫犬/火焰护卫犬_组合检查.bbmodel",
     "before": 47134,
-    "after": 39314,
-    "reduction": 16.6,
+    "after": 43903,
+    "reduction": 6.9,
+    "panelPatches": 617,
     "parts": [
       {
         "part": "boss",
         "before": 4091,
-        "after": 3991
+        "after": 3952
       },
       {
         "part": "elevation",
         "before": 400,
-        "after": 368
+        "after": 374
       },
       {
         "part": "engine_l_1",
         "before": 2240,
-        "after": 2226
+        "after": 2051
       },
       {
         "part": "engine_l_1_fold1",
         "before": 580,
-        "after": 526
+        "after": 530
       },
       {
         "part": "engine_l_1_rotor",
         "before": 201,
-        "after": 199
+        "after": 198
       },
       {
         "part": "engine_l_2",
         "before": 2232,
-        "after": 2220
+        "after": 2039
       },
       {
         "part": "engine_l_2_fold",
         "before": 542,
-        "after": 524
+        "after": 530
       },
       {
         "part": "engine_l_2_rotor",
@@ -1325,27 +2879,27 @@
       {
         "part": "engine_r_1",
         "before": 2184,
-        "after": 2168
+        "after": 2044
       },
       {
         "part": "engine_r_1_fold",
         "before": 556,
-        "after": 542
+        "after": 544
       },
       {
         "part": "engine_r_1_rotor",
         "before": 205,
-        "after": 203
+        "after": 202
       },
       {
         "part": "engine_r_2",
         "before": 2360,
-        "after": 2342
+        "after": 2164
       },
       {
         "part": "engine_r_2_fold",
         "before": 381,
-        "after": 363
+        "after": 371
       },
       {
         "part": "engine_r_2_rotor",
@@ -1365,7 +2919,7 @@
       {
         "part": "head",
         "before": 1562,
-        "after": 1478
+        "after": 1476
       },
       {
         "part": "hinge",
@@ -1390,12 +2944,12 @@
       {
         "part": "traverse",
         "before": 300,
-        "after": 298
+        "after": 296
       },
       {
         "part": "boss",
         "before": 9530,
-        "after": 6842
+        "after": 8775
       },
       {
         "part": "boss",
@@ -1405,198 +2959,555 @@
       {
         "part": "arm_01",
         "before": 291,
-        "after": 199
+        "after": 264
       },
       {
         "part": "arm_02",
         "before": 160,
-        "after": 142
+        "after": 155
       },
       {
         "part": "arm_03",
         "before": 345,
-        "after": 219
+        "after": 315
       },
       {
         "part": "boss",
         "before": 12261,
-        "after": 10317
+        "after": 11479
       },
       {
         "part": "feed_arm_l_01",
         "before": 937,
-        "after": 455
+        "after": 796
       },
       {
         "part": "feed_arm_l_02",
         "before": 179,
-        "after": 81
+        "after": 164
       },
       {
         "part": "feed_arm_l_03",
         "before": 412,
-        "after": 194
+        "after": 368
       },
       {
         "part": "feed_arm_r_01",
         "before": 942,
-        "after": 458
+        "after": 806
       },
       {
         "part": "feed_arm_r_02",
         "before": 179,
-        "after": 81
+        "after": 164
       },
       {
         "part": "feed_arm_r_03",
         "before": 404,
-        "after": 192
+        "after": 368
       },
       {
         "part": "piston_l",
         "before": 279,
-        "after": 133
+        "after": 267
       },
       {
         "part": "piston_r",
         "before": 272,
-        "after": 130
+        "after": 258
       },
       {
         "part": "sleeve_l",
         "before": 699,
-        "after": 349
-      },
-      {
-        "part": "sleeve_r",
-        "before": 724,
-        "after": 396
-      }
-    ]
-  },
-  {
-    "model": "火焰护卫犬/火焰护卫犬_背包.bbmodel",
-    "before": 18096,
-    "after": 14550,
-    "reduction": 19.6,
-    "parts": [
-      {
-        "part": "boss",
-        "before": 12,
-        "after": 12
-      },
-      {
-        "part": "arm_01",
-        "before": 291,
-        "after": 205
-      },
-      {
-        "part": "arm_02",
-        "before": 160,
-        "after": 142
-      },
-      {
-        "part": "arm_03",
-        "before": 345,
-        "after": 215
-      },
-      {
-        "part": "boss",
-        "before": 12261,
-        "after": 11251
-      },
-      {
-        "part": "feed_arm_l_01",
-        "before": 937,
-        "after": 455
-      },
-      {
-        "part": "feed_arm_l_02",
-        "before": 179,
-        "after": 81
-      },
-      {
-        "part": "feed_arm_l_03",
-        "before": 412,
-        "after": 194
-      },
-      {
-        "part": "feed_arm_r_01",
-        "before": 942,
-        "after": 458
-      },
-      {
-        "part": "feed_arm_r_02",
-        "before": 179,
-        "after": 81
-      },
-      {
-        "part": "feed_arm_r_03",
-        "before": 404,
-        "after": 192
-      },
-      {
-        "part": "piston_l",
-        "before": 279,
-        "after": 133
-      },
-      {
-        "part": "piston_r",
-        "before": 272,
-        "after": 130
-      },
-      {
-        "part": "sleeve_l",
-        "before": 699,
-        "after": 349
+        "after": 623
       },
       {
         "part": "sleeve_r",
         "before": 724,
         "after": 652
       }
+    ],
+    "curvePass": [
+      {
+        "part": "boss",
+        "before": 3952,
+        "after": 3952,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "elevation",
+        "before": 374,
+        "after": 374,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_1",
+        "before": 2201,
+        "after": 2051,
+        "error": 0.029677120968699455,
+        "markedFaces": 340
+      },
+      {
+        "part": "engine_l_1_fold1",
+        "before": 530,
+        "after": 530,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_1_rotor",
+        "before": 198,
+        "after": 198,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_2",
+        "before": 2191,
+        "after": 2039,
+        "error": 0.02988136187195778,
+        "markedFaces": 338
+      },
+      {
+        "part": "engine_l_2_fold",
+        "before": 530,
+        "after": 530,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_2_rotor",
+        "before": 196,
+        "after": 196,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_1",
+        "before": 2146,
+        "after": 2044,
+        "error": 0.029893159866333008,
+        "markedFaces": 340
+      },
+      {
+        "part": "engine_r_1_fold",
+        "before": 544,
+        "after": 544,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_1_rotor",
+        "before": 202,
+        "after": 202,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_2",
+        "before": 2316,
+        "after": 2164,
+        "error": 0.029871724545955658,
+        "markedFaces": 370
+      },
+      {
+        "part": "engine_r_2_fold",
+        "before": 371,
+        "after": 371,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_2_rotor",
+        "before": 200,
+        "after": 200,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "gun_clamp_left",
+        "before": 191,
+        "after": 191,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "gun_clamp_right",
+        "before": 191,
+        "after": 191,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "head",
+        "before": 1476,
+        "after": 1476,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "hinge",
+        "before": 612,
+        "after": 612,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "swing_arm",
+        "before": 156,
+        "after": 156,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "telescope_01",
+        "before": 60,
+        "after": 60,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "telescope_02",
+        "before": 60,
+        "after": 60,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "traverse",
+        "before": 296,
+        "after": 296,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "boss",
+        "before": 9455,
+        "after": 8775,
+        "error": 0.029339499771595,
+        "markedFaces": 776
+      },
+      {
+        "part": "boss",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "arm_01",
+        "before": 268,
+        "after": 264,
+        "error": 0.010568257421255112,
+        "markedFaces": 4
+      },
+      {
+        "part": "arm_02",
+        "before": 155,
+        "after": 155,
+        "reason": "no safe collapse",
+        "markedFaces": 14
+      },
+      {
+        "part": "arm_03",
+        "before": 321,
+        "after": 315,
+        "error": 0.027930578216910362,
+        "markedFaces": 6
+      },
+      {
+        "part": "boss",
+        "before": 12043,
+        "after": 11479,
+        "error": 0.029883768409490585,
+        "markedFaces": 952
+      },
+      {
+        "part": "feed_arm_l_01",
+        "before": 896,
+        "after": 796,
+        "error": 0.026509206742048264,
+        "markedFaces": 0
+      },
+      {
+        "part": "feed_arm_l_02",
+        "before": 166,
+        "after": 164,
+        "error": 0.0022392941173166037,
+        "markedFaces": 0
+      },
+      {
+        "part": "feed_arm_l_03",
+        "before": 388,
+        "after": 368,
+        "error": 0.01656150259077549,
+        "markedFaces": 0
+      },
+      {
+        "part": "feed_arm_r_01",
+        "before": 902,
+        "after": 806,
+        "error": 0.01976688764989376,
+        "markedFaces": 0
+      },
+      {
+        "part": "feed_arm_r_02",
+        "before": 166,
+        "after": 164,
+        "error": 0.0034177859779447317,
+        "markedFaces": 0
+      },
+      {
+        "part": "feed_arm_r_03",
+        "before": 384,
+        "after": 368,
+        "error": 0.011489477939903736,
+        "markedFaces": 0
+      },
+      {
+        "part": "piston_l",
+        "before": 267,
+        "after": 267,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "piston_r",
+        "before": 258,
+        "after": 258,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "sleeve_l",
+        "before": 699,
+        "after": 623,
+        "error": 0.017059102654457092,
+        "markedFaces": 0
+      },
+      {
+        "part": "sleeve_r",
+        "before": 724,
+        "after": 652,
+        "error": 0.01685686968266964,
+        "markedFaces": 0
+      }
+    ]
+  },
+  {
+    "model": "火焰护卫犬/火焰护卫犬_背包.bbmodel",
+    "before": 18096,
+    "after": 16688,
+    "reduction": 7.8,
+    "panelPatches": 267,
+    "parts": [
+      {
+        "part": "boss",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "arm_01",
+        "before": 291,
+        "after": 266
+      },
+      {
+        "part": "arm_02",
+        "before": 160,
+        "after": 155
+      },
+      {
+        "part": "arm_03",
+        "before": 345,
+        "after": 317
+      },
+      {
+        "part": "boss",
+        "before": 12261,
+        "after": 11476
+      },
+      {
+        "part": "feed_arm_l_01",
+        "before": 937,
+        "after": 796
+      },
+      {
+        "part": "feed_arm_l_02",
+        "before": 179,
+        "after": 164
+      },
+      {
+        "part": "feed_arm_l_03",
+        "before": 412,
+        "after": 366
+      },
+      {
+        "part": "feed_arm_r_01",
+        "before": 942,
+        "after": 804
+      },
+      {
+        "part": "feed_arm_r_02",
+        "before": 179,
+        "after": 164
+      },
+      {
+        "part": "feed_arm_r_03",
+        "before": 404,
+        "after": 368
+      },
+      {
+        "part": "piston_l",
+        "before": 279,
+        "after": 267
+      },
+      {
+        "part": "piston_r",
+        "before": 272,
+        "after": 258
+      },
+      {
+        "part": "sleeve_l",
+        "before": 699,
+        "after": 623
+      },
+      {
+        "part": "sleeve_r",
+        "before": 724,
+        "after": 652
+      }
+    ],
+    "curvePass": [
+      {
+        "part": "boss",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "arm_01",
+        "before": 268,
+        "after": 266,
+        "error": 0.010556312277913094,
+        "markedFaces": 4
+      },
+      {
+        "part": "arm_02",
+        "before": 155,
+        "after": 155,
+        "reason": "no safe collapse",
+        "markedFaces": 14
+      },
+      {
+        "part": "arm_03",
+        "before": 321,
+        "after": 317,
+        "error": 0.027930578216910362,
+        "markedFaces": 6
+      },
+      {
+        "part": "boss",
+        "before": 12042,
+        "after": 11476,
+        "error": 0.029780767858028412,
+        "markedFaces": 952
+      },
+      {
+        "part": "feed_arm_l_01",
+        "before": 896,
+        "after": 796,
+        "error": 0.027047812938690186,
+        "markedFaces": 0
+      },
+      {
+        "part": "feed_arm_l_02",
+        "before": 166,
+        "after": 164,
+        "error": 0.002357970690354705,
+        "markedFaces": 0
+      },
+      {
+        "part": "feed_arm_l_03",
+        "before": 388,
+        "after": 366,
+        "error": 0.016454258933663368,
+        "markedFaces": 0
+      },
+      {
+        "part": "feed_arm_r_01",
+        "before": 902,
+        "after": 804,
+        "error": 0.017782149836421013,
+        "markedFaces": 0
+      },
+      {
+        "part": "feed_arm_r_02",
+        "before": 166,
+        "after": 164,
+        "error": 0.005480853840708733,
+        "markedFaces": 0
+      },
+      {
+        "part": "feed_arm_r_03",
+        "before": 384,
+        "after": 368,
+        "error": 0.011271162889897823,
+        "markedFaces": 0
+      },
+      {
+        "part": "piston_l",
+        "before": 267,
+        "after": 267,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "piston_r",
+        "before": 258,
+        "after": 258,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "sleeve_l",
+        "before": 699,
+        "after": 623,
+        "error": 0.016963470727205276,
+        "markedFaces": 0
+      },
+      {
+        "part": "sleeve_r",
+        "before": 724,
+        "after": 652,
+        "error": 0.018234390765428543,
+        "markedFaces": 0
+      }
     ]
   },
   {
     "model": "毒气护卫犬/毒气护卫犬_机身.bbmodel",
     "before": 19508,
-    "after": 19114,
-    "reduction": 2.0,
+    "after": 18437,
+    "reduction": 5.5,
+    "panelPatches": 297,
     "parts": [
       {
         "part": "boss",
         "before": 4091,
-        "after": 3991
+        "after": 3952
       },
       {
         "part": "elevation",
         "before": 400,
-        "after": 368
+        "after": 374
       },
       {
         "part": "engine_l_1",
         "before": 2240,
-        "after": 2226
+        "after": 2051
       },
       {
         "part": "engine_l_1_fold1",
         "before": 580,
-        "after": 526
+        "after": 530
       },
       {
         "part": "engine_l_1_rotor",
         "before": 201,
-        "after": 199
+        "after": 198
       },
       {
         "part": "engine_l_2",
         "before": 2232,
-        "after": 2220
+        "after": 2039
       },
       {
         "part": "engine_l_2_fold",
         "before": 542,
-        "after": 524
+        "after": 530
       },
       {
         "part": "engine_l_2_rotor",
@@ -1606,27 +3517,27 @@
       {
         "part": "engine_r_1",
         "before": 2184,
-        "after": 2168
+        "after": 2044
       },
       {
         "part": "engine_r_1_fold",
         "before": 556,
-        "after": 542
+        "after": 544
       },
       {
         "part": "engine_r_1_rotor",
         "before": 205,
-        "after": 203
+        "after": 202
       },
       {
         "part": "engine_r_2",
         "before": 2360,
-        "after": 2342
+        "after": 2164
       },
       {
         "part": "engine_r_2_fold",
         "before": 381,
-        "after": 363
+        "after": 371
       },
       {
         "part": "engine_r_2_rotor",
@@ -1646,7 +3557,7 @@
       {
         "part": "head",
         "before": 1562,
-        "after": 1478
+        "after": 1476
       },
       {
         "part": "hinge",
@@ -1671,63 +3582,212 @@
       {
         "part": "traverse",
         "before": 300,
-        "after": 298
+        "after": 296
+      }
+    ],
+    "curvePass": [
+      {
+        "part": "boss",
+        "before": 3952,
+        "after": 3952,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "elevation",
+        "before": 374,
+        "after": 374,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_1",
+        "before": 2201,
+        "after": 2051,
+        "error": 0.029677120968699455,
+        "markedFaces": 340
+      },
+      {
+        "part": "engine_l_1_fold1",
+        "before": 530,
+        "after": 530,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_1_rotor",
+        "before": 198,
+        "after": 198,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_2",
+        "before": 2191,
+        "after": 2039,
+        "error": 0.02988136187195778,
+        "markedFaces": 338
+      },
+      {
+        "part": "engine_l_2_fold",
+        "before": 530,
+        "after": 530,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_2_rotor",
+        "before": 196,
+        "after": 196,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_1",
+        "before": 2146,
+        "after": 2044,
+        "error": 0.029893159866333008,
+        "markedFaces": 340
+      },
+      {
+        "part": "engine_r_1_fold",
+        "before": 544,
+        "after": 544,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_1_rotor",
+        "before": 202,
+        "after": 202,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_2",
+        "before": 2316,
+        "after": 2164,
+        "error": 0.029871724545955658,
+        "markedFaces": 370
+      },
+      {
+        "part": "engine_r_2_fold",
+        "before": 371,
+        "after": 371,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_2_rotor",
+        "before": 200,
+        "after": 200,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "gun_clamp_left",
+        "before": 191,
+        "after": 191,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "gun_clamp_right",
+        "before": 191,
+        "after": 191,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "head",
+        "before": 1476,
+        "after": 1476,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "hinge",
+        "before": 612,
+        "after": 612,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "swing_arm",
+        "before": 156,
+        "after": 156,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "telescope_01",
+        "before": 60,
+        "after": 60,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "telescope_02",
+        "before": 60,
+        "after": 60,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "traverse",
+        "before": 296,
+        "after": 296,
+        "reason": "rebuilt panel or authored mechanism protected"
       }
     ]
   },
   {
     "model": "毒气护卫犬/毒气护卫犬_武器.bbmodel",
     "before": 5008,
-    "after": 3694,
-    "reduction": 26.2,
+    "after": 4614,
+    "reduction": 7.9,
+    "panelPatches": 26,
     "parts": [
       {
         "part": "boss",
         "before": 5008,
-        "after": 3694
+        "after": 4614
+      }
+    ],
+    "curvePass": [
+      {
+        "part": "boss",
+        "before": 4968,
+        "after": 4614,
+        "error": 0.029430696740746498,
+        "markedFaces": 727
       }
     ]
   },
   {
     "model": "毒气护卫犬/毒气护卫犬_组合检查.bbmodel",
     "before": 42404,
-    "after": 36070,
-    "reduction": 14.9,
+    "after": 39755,
+    "reduction": 6.2,
+    "panelPatches": 530,
     "parts": [
       {
         "part": "boss",
         "before": 4091,
-        "after": 3991
+        "after": 3952
       },
       {
         "part": "elevation",
         "before": 400,
-        "after": 368
+        "after": 374
       },
       {
         "part": "engine_l_1",
         "before": 2240,
-        "after": 2226
+        "after": 2051
       },
       {
         "part": "engine_l_1_fold1",
         "before": 580,
-        "after": 526
+        "after": 530
       },
       {
         "part": "engine_l_1_rotor",
         "before": 201,
-        "after": 199
+        "after": 198
       },
       {
         "part": "engine_l_2",
         "before": 2232,
-        "after": 2220
+        "after": 2039
       },
       {
         "part": "engine_l_2_fold",
         "before": 542,
-        "after": 524
+        "after": 530
       },
       {
         "part": "engine_l_2_rotor",
@@ -1737,27 +3797,27 @@
       {
         "part": "engine_r_1",
         "before": 2184,
-        "after": 2168
+        "after": 2044
       },
       {
         "part": "engine_r_1_fold",
         "before": 556,
-        "after": 542
+        "after": 544
       },
       {
         "part": "engine_r_1_rotor",
         "before": 205,
-        "after": 203
+        "after": 202
       },
       {
         "part": "engine_r_2",
         "before": 2360,
-        "after": 2342
+        "after": 2164
       },
       {
         "part": "engine_r_2_fold",
         "before": 381,
-        "after": 363
+        "after": 371
       },
       {
         "part": "engine_r_2_rotor",
@@ -1777,7 +3837,7 @@
       {
         "part": "head",
         "before": 1562,
-        "after": 1478
+        "after": 1476
       },
       {
         "part": "hinge",
@@ -1802,12 +3862,12 @@
       {
         "part": "traverse",
         "before": 300,
-        "after": 298
+        "after": 296
       },
       {
         "part": "boss",
         "before": 5008,
-        "after": 3756
+        "after": 4606
       },
       {
         "part": "boss",
@@ -1817,178 +3877,535 @@
       {
         "part": "arm_01",
         "before": 327,
-        "after": 209
+        "after": 278
       },
       {
         "part": "arm_02",
         "before": 168,
-        "after": 94
+        "after": 158
       },
       {
         "part": "arm_03",
         "before": 266,
-        "after": 254
+        "after": 261
       },
       {
         "part": "boss",
         "before": 12232,
-        "after": 9582
+        "after": 11535
       },
       {
         "part": "feed_arm_l_01",
         "before": 925,
-        "after": 591
+        "after": 804
       },
       {
         "part": "feed_arm_l_02",
         "before": 161,
-        "after": 91
+        "after": 154
       },
       {
         "part": "feed_arm_l_03",
         "before": 380,
-        "after": 256
+        "after": 358
       },
       {
         "part": "feed_arm_r_01",
         "before": 922,
-        "after": 580
+        "after": 801
       },
       {
         "part": "feed_arm_r_02",
         "before": 161,
-        "after": 95
+        "after": 155
       },
       {
         "part": "feed_arm_r_03",
         "before": 380,
-        "after": 258
+        "after": 358
       },
       {
         "part": "piston_l",
         "before": 269,
-        "after": 161
+        "after": 267
       },
       {
         "part": "piston_r",
         "before": 265,
-        "after": 155
+        "after": 261
       },
       {
         "part": "sleeve_l",
         "before": 698,
-        "after": 402
-      },
-      {
-        "part": "sleeve_r",
-        "before": 722,
-        "after": 460
-      }
-    ]
-  },
-  {
-    "model": "毒气护卫犬/毒气护卫犬_背包.bbmodel",
-    "before": 17888,
-    "after": 13418,
-    "reduction": 25.0,
-    "parts": [
-      {
-        "part": "boss",
-        "before": 12,
-        "after": 12
-      },
-      {
-        "part": "arm_01",
-        "before": 327,
-        "after": 209
-      },
-      {
-        "part": "arm_02",
-        "before": 168,
-        "after": 94
-      },
-      {
-        "part": "arm_03",
-        "before": 266,
-        "after": 256
-      },
-      {
-        "part": "boss",
-        "before": 12232,
-        "after": 9534
-      },
-      {
-        "part": "feed_arm_l_01",
-        "before": 925,
-        "after": 655
-      },
-      {
-        "part": "feed_arm_l_02",
-        "before": 161,
-        "after": 91
-      },
-      {
-        "part": "feed_arm_l_03",
-        "before": 380,
-        "after": 256
-      },
-      {
-        "part": "feed_arm_r_01",
-        "before": 922,
-        "after": 582
-      },
-      {
-        "part": "feed_arm_r_02",
-        "before": 161,
-        "after": 95
-      },
-      {
-        "part": "feed_arm_r_03",
-        "before": 380,
-        "after": 256
-      },
-      {
-        "part": "piston_l",
-        "before": 269,
-        "after": 159
-      },
-      {
-        "part": "piston_r",
-        "before": 265,
-        "after": 155
-      },
-      {
-        "part": "sleeve_l",
-        "before": 698,
-        "after": 396
+        "after": 642
       },
       {
         "part": "sleeve_r",
         "before": 722,
         "after": 668
       }
+    ],
+    "curvePass": [
+      {
+        "part": "boss",
+        "before": 3952,
+        "after": 3952,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "elevation",
+        "before": 374,
+        "after": 374,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_1",
+        "before": 2201,
+        "after": 2051,
+        "error": 0.029677120968699455,
+        "markedFaces": 340
+      },
+      {
+        "part": "engine_l_1_fold1",
+        "before": 530,
+        "after": 530,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_1_rotor",
+        "before": 198,
+        "after": 198,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_2",
+        "before": 2191,
+        "after": 2039,
+        "error": 0.02988136187195778,
+        "markedFaces": 338
+      },
+      {
+        "part": "engine_l_2_fold",
+        "before": 530,
+        "after": 530,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_l_2_rotor",
+        "before": 196,
+        "after": 196,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_1",
+        "before": 2146,
+        "after": 2044,
+        "error": 0.029893159866333008,
+        "markedFaces": 340
+      },
+      {
+        "part": "engine_r_1_fold",
+        "before": 544,
+        "after": 544,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_1_rotor",
+        "before": 202,
+        "after": 202,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_2",
+        "before": 2316,
+        "after": 2164,
+        "error": 0.029871724545955658,
+        "markedFaces": 370
+      },
+      {
+        "part": "engine_r_2_fold",
+        "before": 371,
+        "after": 371,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "engine_r_2_rotor",
+        "before": 200,
+        "after": 200,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "gun_clamp_left",
+        "before": 191,
+        "after": 191,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "gun_clamp_right",
+        "before": 191,
+        "after": 191,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "head",
+        "before": 1476,
+        "after": 1476,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "hinge",
+        "before": 612,
+        "after": 612,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "swing_arm",
+        "before": 156,
+        "after": 156,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "telescope_01",
+        "before": 60,
+        "after": 60,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "telescope_02",
+        "before": 60,
+        "after": 60,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "traverse",
+        "before": 296,
+        "after": 296,
+        "reason": "rebuilt panel or authored mechanism protected"
+      },
+      {
+        "part": "boss",
+        "before": 4968,
+        "after": 4606,
+        "error": 0.029998132959008217,
+        "markedFaces": 767
+      },
+      {
+        "part": "boss",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "arm_01",
+        "before": 278,
+        "after": 278,
+        "reason": "no safe collapse",
+        "markedFaces": 4
+      },
+      {
+        "part": "arm_02",
+        "before": 158,
+        "after": 158,
+        "reason": "no safe collapse",
+        "markedFaces": 15
+      },
+      {
+        "part": "arm_03",
+        "before": 261,
+        "after": 261,
+        "reason": "no safe collapse",
+        "markedFaces": 4
+      },
+      {
+        "part": "boss",
+        "before": 12029,
+        "after": 11535,
+        "error": 0.029391206800937653,
+        "markedFaces": 1253
+      },
+      {
+        "part": "feed_arm_l_01",
+        "before": 900,
+        "after": 804,
+        "error": 0.022603195160627365,
+        "markedFaces": 137
+      },
+      {
+        "part": "feed_arm_l_02",
+        "before": 156,
+        "after": 154,
+        "error": 0.01314978301525116,
+        "markedFaces": 20
+      },
+      {
+        "part": "feed_arm_l_03",
+        "before": 376,
+        "after": 358,
+        "error": 0.024083692580461502,
+        "markedFaces": 59
+      },
+      {
+        "part": "feed_arm_r_01",
+        "before": 897,
+        "after": 801,
+        "error": 0.02158791571855545,
+        "markedFaces": 136
+      },
+      {
+        "part": "feed_arm_r_02",
+        "before": 157,
+        "after": 155,
+        "error": 0.005058313254266977,
+        "markedFaces": 21
+      },
+      {
+        "part": "feed_arm_r_03",
+        "before": 376,
+        "after": 358,
+        "error": 0.024107767269015312,
+        "markedFaces": 57
+      },
+      {
+        "part": "piston_l",
+        "before": 267,
+        "after": 267,
+        "reason": "no safe collapse",
+        "markedFaces": 83
+      },
+      {
+        "part": "piston_r",
+        "before": 261,
+        "after": 261,
+        "reason": "no safe collapse",
+        "markedFaces": 80
+      },
+      {
+        "part": "sleeve_l",
+        "before": 698,
+        "after": 642,
+        "error": 0.017673444002866745,
+        "markedFaces": 107
+      },
+      {
+        "part": "sleeve_r",
+        "before": 722,
+        "after": 668,
+        "error": 0.018929513171315193,
+        "markedFaces": 109
+      }
+    ]
+  },
+  {
+    "model": "毒气护卫犬/毒气护卫犬_背包.bbmodel",
+    "before": 17888,
+    "after": 16694,
+    "reduction": 6.7,
+    "panelPatches": 206,
+    "parts": [
+      {
+        "part": "boss",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "arm_01",
+        "before": 327,
+        "after": 272
+      },
+      {
+        "part": "arm_02",
+        "before": 168,
+        "after": 158
+      },
+      {
+        "part": "arm_03",
+        "before": 266,
+        "after": 259
+      },
+      {
+        "part": "boss",
+        "before": 12232,
+        "after": 11527
+      },
+      {
+        "part": "feed_arm_l_01",
+        "before": 925,
+        "after": 804
+      },
+      {
+        "part": "feed_arm_l_02",
+        "before": 161,
+        "after": 154
+      },
+      {
+        "part": "feed_arm_l_03",
+        "before": 380,
+        "after": 358
+      },
+      {
+        "part": "feed_arm_r_01",
+        "before": 922,
+        "after": 801
+      },
+      {
+        "part": "feed_arm_r_02",
+        "before": 161,
+        "after": 155
+      },
+      {
+        "part": "feed_arm_r_03",
+        "before": 380,
+        "after": 356
+      },
+      {
+        "part": "piston_l",
+        "before": 269,
+        "after": 267
+      },
+      {
+        "part": "piston_r",
+        "before": 265,
+        "after": 261
+      },
+      {
+        "part": "sleeve_l",
+        "before": 698,
+        "after": 642
+      },
+      {
+        "part": "sleeve_r",
+        "before": 722,
+        "after": 668
+      }
+    ],
+    "curvePass": [
+      {
+        "part": "boss",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "arm_01",
+        "before": 278,
+        "after": 272,
+        "error": 0.010556312277913094,
+        "markedFaces": 4
+      },
+      {
+        "part": "arm_02",
+        "before": 158,
+        "after": 158,
+        "reason": "no safe collapse",
+        "markedFaces": 15
+      },
+      {
+        "part": "arm_03",
+        "before": 261,
+        "after": 259,
+        "error": 0.0015371954068541527,
+        "markedFaces": 4
+      },
+      {
+        "part": "boss",
+        "before": 12027,
+        "after": 11527,
+        "error": 0.029920872300863266,
+        "markedFaces": 1253
+      },
+      {
+        "part": "feed_arm_l_01",
+        "before": 900,
+        "after": 804,
+        "error": 0.020413419231772423,
+        "markedFaces": 137
+      },
+      {
+        "part": "feed_arm_l_02",
+        "before": 156,
+        "after": 154,
+        "error": 0.007494442630559206,
+        "markedFaces": 20
+      },
+      {
+        "part": "feed_arm_l_03",
+        "before": 376,
+        "after": 358,
+        "error": 0.027401534840464592,
+        "markedFaces": 59
+      },
+      {
+        "part": "feed_arm_r_01",
+        "before": 897,
+        "after": 801,
+        "error": 0.020636403933167458,
+        "markedFaces": 136
+      },
+      {
+        "part": "feed_arm_r_02",
+        "before": 157,
+        "after": 155,
+        "error": 0.003874541027471423,
+        "markedFaces": 21
+      },
+      {
+        "part": "feed_arm_r_03",
+        "before": 376,
+        "after": 356,
+        "error": 0.01824774593114853,
+        "markedFaces": 57
+      },
+      {
+        "part": "piston_l",
+        "before": 267,
+        "after": 267,
+        "reason": "no safe collapse",
+        "markedFaces": 83
+      },
+      {
+        "part": "piston_r",
+        "before": 261,
+        "after": 261,
+        "reason": "no safe collapse",
+        "markedFaces": 80
+      },
+      {
+        "part": "sleeve_l",
+        "before": 698,
+        "after": 642,
+        "error": 0.0168371070176363,
+        "markedFaces": 107
+      },
+      {
+        "part": "sleeve_r",
+        "before": 722,
+        "after": 668,
+        "error": 0.01970800571143627,
+        "markedFaces": 109
+      }
     ]
   },
   {
     "model": "0.6生存机器/生物处理器_潜兵改编.bbmodel",
     "before": 20328,
-    "after": 18256,
-    "reduction": 10.2,
+    "after": 19375,
+    "reduction": 4.7,
+    "panelPatches": 405,
     "parts": [
       {
         "part": "原版完整结构_yellow",
         "before": 625,
-        "after": 611
+        "after": 619
       },
       {
         "part": "原版完整结构_armor",
         "before": 6848,
-        "after": 6464
+        "after": 6638
       },
       {
         "part": "原版完整结构_edge",
         "before": 10433,
-        "after": 9043
+        "after": 9698
       },
       {
         "part": "原版完整结构_window",
@@ -1998,7 +4415,7 @@
       {
         "part": "原版完整结构_black",
         "before": 1150,
-        "after": 1100
+        "after": 1148
       },
       {
         "part": "密封承重底座",
@@ -2118,7 +4535,7 @@
       {
         "part": "物料输入管路",
         "before": 188,
-        "after": 118
+        "after": 188
       },
       {
         "part": "物料输入管路_接口接头",
@@ -2143,7 +4560,7 @@
       {
         "part": "样本输出管路",
         "before": 188,
-        "after": 106
+        "after": 188
       },
       {
         "part": "样本输出管路_接口接头",
@@ -2168,7 +4585,7 @@
       {
         "part": "能量护套管路",
         "before": 188,
-        "after": 106
+        "after": 188
       },
       {
         "part": "能量护套管路_接口接头",
@@ -2190,38 +4607,315 @@
         "before": 28,
         "after": 28
       }
+    ],
+    "curvePass": [
+      {
+        "part": "原版完整结构_yellow",
+        "before": 623,
+        "after": 619,
+        "error": 0.02647588960826397,
+        "markedFaces": 193
+      },
+      {
+        "part": "原版完整结构_armor",
+        "before": 6722,
+        "after": 6638,
+        "error": 0.029630327597260475,
+        "markedFaces": 416
+      },
+      {
+        "part": "原版完整结构_edge",
+        "before": 9724,
+        "after": 9698,
+        "error": 0.02935096248984337,
+        "markedFaces": 219
+      },
+      {
+        "part": "原版完整结构_window",
+        "before": 48,
+        "after": 48,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "原版完整结构_black",
+        "before": 1148,
+        "after": 1148,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "密封承重底座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "装甲顶板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "黄色角护板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "黄色角护板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "黄色角护板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "黄色角护板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "完整输入接口面",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "输入接口承重盒",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "完整输出接口面",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "输出接口承重盒",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "完整供电接口面",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "供电接口承重盒",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "大罐连续承重座",
+        "before": 60,
+        "after": 60,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "小罐底部接合环",
+        "before": 60,
+        "after": 60,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "后侧横架落地立柱1",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "横架立柱底脚1",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "横架立柱顶部接合套1",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "后侧横架落地立柱2",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "横架立柱底脚2",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "横架立柱顶部接合套2",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "后侧横架落地立柱3",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "横架立柱底脚3",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "横架立柱顶部接合套3",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "物料输入管路",
+        "before": 188,
+        "after": 188,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "物料输入管路_接口接头",
+        "before": 28,
+        "after": 28,
+        "reason": "protected or small"
+      },
+      {
+        "part": "物料输入管路_罐底接头",
+        "before": 28,
+        "after": 28,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "物料输入管路_底座固定脚",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "物料输入管路_管路卡箍",
+        "before": 28,
+        "after": 28,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "样本输出管路",
+        "before": 188,
+        "after": 188,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "样本输出管路_接口接头",
+        "before": 28,
+        "after": 28,
+        "reason": "protected or small"
+      },
+      {
+        "part": "样本输出管路_罐底接头",
+        "before": 28,
+        "after": 28,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "样本输出管路_底座固定脚",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "样本输出管路_管路卡箍",
+        "before": 28,
+        "after": 28,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "能量护套管路",
+        "before": 188,
+        "after": 188,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "能量护套管路_接口接头",
+        "before": 28,
+        "after": 28,
+        "reason": "protected or small"
+      },
+      {
+        "part": "能量护套管路_罐底接头",
+        "before": 28,
+        "after": 28,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "能量护套管路_底座固定脚",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "能量护套管路_管路卡箍",
+        "before": 28,
+        "after": 28,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      }
     ]
   },
   {
     "model": "0.6生存机器/精炼厂_潜兵改编.bbmodel",
     "before": 72828,
-    "after": 58964,
-    "reduction": 19.0,
+    "after": 67917,
+    "reduction": 6.7,
+    "panelPatches": 566,
     "parts": [
       {
         "part": "原版完整结构_armor",
         "before": 42593,
-        "after": 31701
+        "after": 38977
       },
       {
         "part": "原版完整结构_edge",
         "before": 7972,
-        "after": 7072
+        "after": 7342
       },
       {
         "part": "原版完整结构_yellow",
         "before": 2289,
-        "after": 1869
+        "after": 2236
       },
       {
         "part": "原版完整结构_black",
         "before": 40,
-        "after": 40
+        "after": 32
       },
       {
         "part": "原版完整结构_light",
         "before": 18,
-        "after": 14
+        "after": 13
       },
       {
         "part": "侧面结构梁",
@@ -2356,17 +5050,17 @@
       {
         "part": "粉碎滚筒_左_edge",
         "before": 315,
-        "after": 315
+        "after": 293
       },
       {
         "part": "粉碎滚筒_左_yellow",
         "before": 1791,
-        "after": 1729
+        "after": 1736
       },
       {
         "part": "粉碎滚筒_左_black",
         "before": 7158,
-        "after": 6536
+        "after": 6930
       },
       {
         "part": "粉碎滚筒_右_armor",
@@ -2376,27 +5070,27 @@
       {
         "part": "粉碎滚筒_右_edge",
         "before": 208,
-        "after": 208
+        "after": 206
       },
       {
         "part": "粉碎滚筒_右_yellow",
         "before": 1776,
-        "after": 1700
+        "after": 1718
       },
       {
         "part": "粉碎滚筒_右_black",
         "before": 6804,
-        "after": 6262
+        "after": 6570
       },
       {
         "part": "侧面传动内轮_armor",
         "before": 620,
-        "after": 534
+        "after": 620
       },
       {
         "part": "侧面传动内轮_edge",
         "before": 116,
-        "after": 108
+        "after": 116
       },
       {
         "part": "侧面传动内轮_yellow",
@@ -2406,15 +5100,284 @@
       {
         "part": "侧面传动内轮_light",
         "before": 768,
-        "after": 516
+        "after": 768
+      }
+    ],
+    "curvePass": [
+      {
+        "part": "原版完整结构_armor",
+        "before": 42065,
+        "after": 38977,
+        "error": 0.02985011413693428,
+        "markedFaces": 948
+      },
+      {
+        "part": "原版完整结构_edge",
+        "before": 7760,
+        "after": 7342,
+        "error": 0.02797306329011917,
+        "markedFaces": 94
+      },
+      {
+        "part": "原版完整结构_yellow",
+        "before": 2280,
+        "after": 2236,
+        "error": 0.029759638011455536,
+        "markedFaces": 322
+      },
+      {
+        "part": "原版完整结构_black",
+        "before": 32,
+        "after": 32,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "原版完整结构_light",
+        "before": 13,
+        "after": 13,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面结构梁",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "黄色防撞护角",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "黄色防撞护角",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面结构梁",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "黄色防撞护角",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "黄色防撞护角",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "前方踏步1",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "前方踏步2",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "前方踏步3",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "基座底板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "前承重横梁",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "后承重横梁",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧承重箱梁",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧承重箱梁",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面装甲甲板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面装甲甲板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "前后装甲甲板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "前后装甲甲板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "填合侧面检修甲板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "填合侧面检修甲板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "正面物品输出接口",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "正面能量接口",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "正面物品输入接口",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "mesh",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "mesh",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "粉碎滚筒_左_armor",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "粉碎滚筒_左_edge",
+        "before": 293,
+        "after": 293,
+        "reason": "no safe collapse",
+        "markedFaces": 27
+      },
+      {
+        "part": "粉碎滚筒_左_yellow",
+        "before": 1736,
+        "after": 1736,
+        "reason": "no safe collapse",
+        "markedFaces": 262
+      },
+      {
+        "part": "粉碎滚筒_左_black",
+        "before": 6932,
+        "after": 6930,
+        "error": 0.005824241321533918,
+        "markedFaces": 932
+      },
+      {
+        "part": "粉碎滚筒_右_armor",
+        "before": 28,
+        "after": 28,
+        "reason": "no safe collapse",
+        "markedFaces": 14
+      },
+      {
+        "part": "粉碎滚筒_右_edge",
+        "before": 206,
+        "after": 206,
+        "reason": "no safe collapse",
+        "markedFaces": 14
+      },
+      {
+        "part": "粉碎滚筒_右_yellow",
+        "before": 1718,
+        "after": 1718,
+        "reason": "no safe collapse",
+        "markedFaces": 240
+      },
+      {
+        "part": "粉碎滚筒_右_black",
+        "before": 6570,
+        "after": 6570,
+        "reason": "no safe collapse",
+        "markedFaces": 934
+      },
+      {
+        "part": "侧面传动内轮_armor",
+        "before": 620,
+        "after": 620,
+        "reason": "no safe collapse",
+        "markedFaces": 16
+      },
+      {
+        "part": "侧面传动内轮_edge",
+        "before": 116,
+        "after": 116,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "侧面传动内轮_yellow",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面传动内轮_light",
+        "before": 768,
+        "after": 768,
+        "reason": "no safe collapse",
+        "markedFaces": 0
       }
     ]
   },
   {
     "model": "撤离信标/撤离信标.bbmodel",
     "before": 28857,
-    "after": 25513,
-    "reduction": 11.6,
+    "after": 28271,
+    "reduction": 2.0,
+    "panelPatches": 98,
     "parts": [
       {
         "part": "screen_swivel_g_landingzone_beacon_0",
@@ -2424,82 +5387,82 @@
       {
         "part": "arm_Xneg_01_g_landingzone_beacon_1",
         "before": 268,
-        "after": 250
+        "after": 268
       },
       {
         "part": "screen_swivel_g_landingzone_beacon_1",
         "before": 572,
-        "after": 460
+        "after": 559
       },
       {
         "part": "screen_stand_foot_g_landingzone_beacon_1",
         "before": 190,
-        "after": 180
+        "after": 190
       },
       {
         "part": "screen_stand_elbow_g_landingzone_beacon_1",
         "before": 120,
-        "after": 116
+        "after": 120
       },
       {
         "part": "screen_stand_elbow_2_g_landingzone_beacon_1",
         "before": 116,
-        "after": 106
+        "after": 115
       },
       {
         "part": "tier_3_g_landingzone_beacon_1",
         "before": 7846,
-        "after": 6646
+        "after": 7734
       },
       {
         "part": "boss_g_landingzone_beacon_1",
         "before": 7186,
-        "after": 6882
+        "after": 7095
       },
       {
         "part": "tier_2_g_landingzone_beacon_1",
         "before": 4668,
-        "after": 3992
+        "after": 4514
       },
       {
         "part": "arm_Xneg_02_g_landingzone_beacon_1",
         "before": 344,
-        "after": 324
+        "after": 344
       },
       {
         "part": "arm_Xpos_02_g_landingzone_beacon_1",
         "before": 340,
-        "after": 324
+        "after": 340
       },
       {
         "part": "arm_Xpos_01_g_landingzone_beacon_1",
         "before": 272,
-        "after": 260
+        "after": 272
       },
       {
         "part": "arm_Y_02_g_landingzone_beacon_1",
         "before": 344,
-        "after": 320
+        "after": 344
       },
       {
         "part": "arm_Y_01_g_landingzone_beacon_1",
         "before": 268,
-        "after": 250
+        "after": 268
       },
       {
         "part": "arm_Xneg_03_g_landingzone_beacon_1",
         "before": 1456,
-        "after": 1242
+        "after": 1392
       },
       {
         "part": "arm_Xpos_03_g_landingzone_beacon_1",
         "before": 1456,
-        "after": 1242
+        "after": 1375
       },
       {
         "part": "arm_Y_03_g_landingzone_beacon_1",
         "before": 1456,
-        "after": 1262
+        "after": 1396
       },
       {
         "part": "arm_Xpos_03_g_landingzone_beacon_2",
@@ -2509,7 +5472,7 @@
       {
         "part": "tier_3_g_landingzone_beacon_2",
         "before": 180,
-        "after": 138
+        "after": 174
       },
       {
         "part": "arm_Xneg_03_g_landingzone_beacon_2",
@@ -2524,20 +5487,183 @@
       {
         "part": "boss_底座洁净配色",
         "before": 1372,
-        "after": 1120
+        "after": 1372
       },
       {
         "part": "boss_仓口封闭上沿",
         "before": 64,
         "after": 60
       }
+    ],
+    "curvePass": [
+      {
+        "part": "screen_swivel_g_landingzone_beacon_0",
+        "before": 18,
+        "after": 18,
+        "reason": "protected or small"
+      },
+      {
+        "part": "arm_Xneg_01_g_landingzone_beacon_1",
+        "before": 268,
+        "after": 268,
+        "reason": "no safe collapse",
+        "markedFaces": 47
+      },
+      {
+        "part": "screen_swivel_g_landingzone_beacon_1",
+        "before": 559,
+        "after": 559,
+        "reason": "no safe collapse",
+        "markedFaces": 48
+      },
+      {
+        "part": "screen_stand_foot_g_landingzone_beacon_1",
+        "before": 190,
+        "after": 190,
+        "reason": "no safe collapse",
+        "markedFaces": 45
+      },
+      {
+        "part": "screen_stand_elbow_g_landingzone_beacon_1",
+        "before": 120,
+        "after": 120,
+        "reason": "no safe collapse",
+        "markedFaces": 42
+      },
+      {
+        "part": "screen_stand_elbow_2_g_landingzone_beacon_1",
+        "before": 115,
+        "after": 115,
+        "reason": "no safe collapse",
+        "markedFaces": 19
+      },
+      {
+        "part": "tier_3_g_landingzone_beacon_1",
+        "before": 7830,
+        "after": 7734,
+        "error": 0.029146501794457436,
+        "markedFaces": 1165
+      },
+      {
+        "part": "boss_g_landingzone_beacon_1",
+        "before": 7117,
+        "after": 7095,
+        "error": 0.02664092741906643,
+        "markedFaces": 1674
+      },
+      {
+        "part": "tier_2_g_landingzone_beacon_1",
+        "before": 4632,
+        "after": 4514,
+        "error": 0.029844393953680992,
+        "markedFaces": 1140
+      },
+      {
+        "part": "arm_Xneg_02_g_landingzone_beacon_1",
+        "before": 344,
+        "after": 344,
+        "reason": "no safe collapse",
+        "markedFaces": 59
+      },
+      {
+        "part": "arm_Xpos_02_g_landingzone_beacon_1",
+        "before": 340,
+        "after": 340,
+        "reason": "no safe collapse",
+        "markedFaces": 58
+      },
+      {
+        "part": "arm_Xpos_01_g_landingzone_beacon_1",
+        "before": 272,
+        "after": 272,
+        "reason": "no safe collapse",
+        "markedFaces": 46
+      },
+      {
+        "part": "arm_Y_02_g_landingzone_beacon_1",
+        "before": 344,
+        "after": 344,
+        "reason": "no safe collapse",
+        "markedFaces": 59
+      },
+      {
+        "part": "arm_Y_01_g_landingzone_beacon_1",
+        "before": 268,
+        "after": 268,
+        "reason": "no safe collapse",
+        "markedFaces": 40
+      },
+      {
+        "part": "arm_Xneg_03_g_landingzone_beacon_1",
+        "before": 1456,
+        "after": 1392,
+        "error": 0.029388708993792534,
+        "markedFaces": 388
+      },
+      {
+        "part": "arm_Xpos_03_g_landingzone_beacon_1",
+        "before": 1451,
+        "after": 1375,
+        "error": 0.029373833909630775,
+        "markedFaces": 388
+      },
+      {
+        "part": "arm_Y_03_g_landingzone_beacon_1",
+        "before": 1454,
+        "after": 1396,
+        "error": 0.02928837202489376,
+        "markedFaces": 389
+      },
+      {
+        "part": "arm_Xpos_03_g_landingzone_beacon_2",
+        "before": 107,
+        "after": 107,
+        "reason": "no safe collapse",
+        "markedFaces": 14
+      },
+      {
+        "part": "tier_3_g_landingzone_beacon_2",
+        "before": 180,
+        "after": 174,
+        "error": 0.02632281742990017,
+        "markedFaces": 32
+      },
+      {
+        "part": "arm_Xneg_03_g_landingzone_beacon_2",
+        "before": 107,
+        "after": 107,
+        "reason": "no safe collapse",
+        "markedFaces": 14
+      },
+      {
+        "part": "arm_Y_03_g_landingzone_beacon_2",
+        "before": 107,
+        "after": 107,
+        "reason": "no safe collapse",
+        "markedFaces": 14
+      },
+      {
+        "part": "boss_底座洁净配色",
+        "before": 1372,
+        "after": 1372,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "boss_仓口封闭上沿",
+        "before": 60,
+        "after": 60,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      }
     ]
   },
   {
     "model": "补给背包/补给背包.bbmodel",
     "before": 4944,
-    "after": 3062,
-    "reduction": 38.1,
+    "after": 4411,
+    "reduction": 10.8,
+    "panelPatches": 82,
     "parts": [
       {
         "part": "补给箱_左上",
@@ -2552,22 +5678,22 @@
       {
         "part": "补给箱_右下",
         "before": 74,
-        "after": 46
+        "after": 45
       },
       {
         "part": "补给箱_右上",
         "before": 48,
-        "after": 46
+        "after": 45
       },
       {
         "part": "背板与背带",
         "before": 1990,
-        "after": 1148
+        "after": 1790
       },
       {
         "part": "框架与提手",
         "before": 2638,
-        "after": 1650
+        "after": 2359
       },
       {
         "part": "框架内衬封闭壳",
@@ -2604,33 +5730,120 @@
         "before": 12,
         "after": 12
       }
+    ],
+    "curvePass": [
+      {
+        "part": "补给箱_左上",
+        "before": 44,
+        "after": 44,
+        "reason": "no safe collapse",
+        "markedFaces": 10
+      },
+      {
+        "part": "补给箱_左下",
+        "before": 44,
+        "after": 44,
+        "reason": "no safe collapse",
+        "markedFaces": 10
+      },
+      {
+        "part": "补给箱_右下",
+        "before": 45,
+        "after": 45,
+        "reason": "no safe collapse",
+        "markedFaces": 10
+      },
+      {
+        "part": "补给箱_右上",
+        "before": 45,
+        "after": 45,
+        "reason": "no safe collapse",
+        "markedFaces": 10
+      },
+      {
+        "part": "背板与背带",
+        "before": 1988,
+        "after": 1790,
+        "error": 0.02996167540550232,
+        "markedFaces": 0
+      },
+      {
+        "part": "框架与提手",
+        "before": 2537,
+        "after": 2359,
+        "error": 0.02985834889113903,
+        "markedFaces": 0
+      },
+      {
+        "part": "框架内衬封闭壳",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "中央竖梁接缝封口",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "下沿内侧封口",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "顶部铭牌封闭面",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "左背板连接封闭条",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "右背板连接封闭条",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "上方中央竖梁",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      }
     ]
   },
   {
     "model": "喷气背包/喷气背包.bbmodel",
     "before": 4414,
-    "after": 2590,
-    "reduction": 41.3,
+    "after": 3997,
+    "reduction": 9.4,
+    "panelPatches": 4,
     "parts": [
       {
         "part": "主机外壳",
         "before": 2782,
-        "after": 1562
+        "after": 2425
       },
       {
         "part": "背板与背带",
         "before": 1284,
-        "after": 742
+        "after": 1226
       },
       {
         "part": "左喷口",
         "before": 178,
-        "after": 140
+        "after": 178
       },
       {
         "part": "右喷口",
         "before": 134,
-        "after": 110
+        "after": 132
       },
       {
         "part": "侧壳方向标识",
@@ -2647,18 +5860,67 @@
         "before": 12,
         "after": 12
       }
+    ],
+    "curvePass": [
+      {
+        "part": "主机外壳",
+        "before": 2775,
+        "after": 2425,
+        "error": 0.029914258047938347,
+        "markedFaces": 0
+      },
+      {
+        "part": "背板与背带",
+        "before": 1284,
+        "after": 1226,
+        "error": 0.02984807826578617,
+        "markedFaces": 0
+      },
+      {
+        "part": "左喷口",
+        "before": 178,
+        "after": 178,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "右喷口",
+        "before": 134,
+        "after": 132,
+        "error": 0.02189885452389717,
+        "markedFaces": 0
+      },
+      {
+        "part": "侧壳方向标识",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧壳方向标识",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "中央警示铭牌",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      }
     ]
   },
   {
     "model": "战术终端/战术终端.bbmodel",
     "before": 9090,
-    "after": 6226,
-    "reduction": 31.5,
+    "after": 7954,
+    "reduction": 12.5,
+    "panelPatches": 29,
     "parts": [
       {
         "part": "g_generic_objective_terminal_01_fixed_终端外壳",
         "before": 6480,
-        "after": 3874
+        "after": 5510
       },
       {
         "part": "g_generic_objective_terminal_01_fixed_终端组件",
@@ -2668,7 +5930,7 @@
       {
         "part": "0x9127b234_fixed_终端外壳",
         "before": 1178,
-        "after": 1176
+        "after": 1174
       },
       {
         "part": "0x9127b234_fixed_终端组件",
@@ -2678,7 +5940,7 @@
       {
         "part": "0xb1a8ce5b_fixed_终端组件",
         "before": 232,
-        "after": 124
+        "after": 182
       },
       {
         "part": "0xa425f675_fixed_终端组件",
@@ -2693,22 +5955,100 @@
       {
         "part": "0x09413108_fixed_终端组件",
         "before": 62,
-        "after": 40
+        "after": 48
       },
       {
         "part": "0x8edc279f_fixed_终端外壳",
         "before": 136,
-        "after": 134
+        "after": 136
       },
       {
         "part": "0x8edc279f_fixed_终端组件",
         "before": 54,
-        "after": 36
+        "after": 46
       },
       {
         "part": "0xdffecf7f_fixed_终端组件",
         "before": 116,
-        "after": 100
+        "after": 116
+      }
+    ],
+    "curvePass": [
+      {
+        "part": "g_generic_objective_terminal_01_fixed_终端外壳",
+        "before": 6452,
+        "after": 5510,
+        "error": 0.029528815299272537,
+        "markedFaces": 1171
+      },
+      {
+        "part": "g_generic_objective_terminal_01_fixed_终端组件",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "0x9127b234_fixed_终端外壳",
+        "before": 1174,
+        "after": 1174,
+        "reason": "no safe collapse",
+        "markedFaces": 350
+      },
+      {
+        "part": "0x9127b234_fixed_终端组件",
+        "before": 174,
+        "after": 86,
+        "error": 0.029546787962317467,
+        "markedFaces": 0
+      },
+      {
+        "part": "0xb1a8ce5b_fixed_终端组件",
+        "before": 224,
+        "after": 182,
+        "error": 0.02949831634759903,
+        "markedFaces": 0
+      },
+      {
+        "part": "0xa425f675_fixed_终端组件",
+        "before": 33,
+        "after": 33,
+        "reason": "no safe collapse",
+        "markedFaces": 0
+      },
+      {
+        "part": "0x09413108_fixed_终端外壳",
+        "before": 615,
+        "after": 615,
+        "reason": "no safe collapse",
+        "markedFaces": 197
+      },
+      {
+        "part": "0x09413108_fixed_终端组件",
+        "before": 62,
+        "after": 48,
+        "error": 0.02876061201095581,
+        "markedFaces": 0
+      },
+      {
+        "part": "0x8edc279f_fixed_终端外壳",
+        "before": 136,
+        "after": 136,
+        "reason": "no safe collapse",
+        "markedFaces": 57
+      },
+      {
+        "part": "0x8edc279f_fixed_终端组件",
+        "before": 54,
+        "after": 46,
+        "error": 0.02498384565114975,
+        "markedFaces": 0
+      },
+      {
+        "part": "0xdffecf7f_fixed_终端组件",
+        "before": 116,
+        "after": 116,
+        "reason": "no safe collapse",
+        "markedFaces": 0
       }
     ]
   },
@@ -2717,6 +6057,7 @@
     "before": 1966,
     "after": 1966,
     "reduction": 0.0,
+    "panelPatches": 0,
     "parts": [
       {
         "part": "SBW_front_01",
@@ -3648,6 +6989,1124 @@
         "before": 12,
         "after": 12
       }
+    ],
+    "curvePass": [
+      {
+        "part": "SBW_front_01",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_front_02",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_front_03",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_front_04",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_front_05",
+        "before": 4,
+        "after": 4,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_front_06",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_front_07",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_front_08",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_front_09",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_front_10",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_front_11",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftr_12",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftr_13",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftr_14",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftr_15",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftr_16",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftr_17",
+        "before": 4,
+        "after": 4,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftr_18",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftr_19",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftr_20",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightl_21",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightl_22",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightl_23",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightl_24",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightl_25",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightl_26",
+        "before": 4,
+        "after": 4,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightl_27",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightl_28",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightl_29",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topb_30",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topb_31",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topb_32",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topb_33",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topb_34",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topb_35",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topb_36",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topb_37",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topb_38",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topb_39",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topb_40",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_back_41",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_back_42",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_back_43",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_back_44",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_back_45",
+        "before": 4,
+        "after": 4,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_back_46",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_back_47",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_back_48",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_back_49",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_back_50",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_back_51",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightr_52",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightr_53",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightr_54",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightr_55",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightr_56",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightr_57",
+        "before": 4,
+        "after": 4,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightr_58",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightr_59",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightr_60",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftl_61",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftl_62",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftl_63",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftl_64",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftl_65",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftl_66",
+        "before": 4,
+        "after": 4,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftl_67",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftl_68",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftl_69",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topf_70",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topf_71",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topf_72",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topf_73",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topf_74",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topf_75",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topf_76",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topf_77",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topf_78",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topf_79",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topf_80",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_bottom_81",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_bottom_82",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_bottom_83",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_bottom_84",
+        "before": 10,
+        "after": 10,
+        "reason": "protected or small"
+      },
+      {
+        "part": "装甲底座纵梁",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "装甲底座纵梁",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "底座黄色端梁",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "底座黄色端梁",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口装甲安装座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "空投喷口外壳",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口厚壁唇缘",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口内侧耐热衬层",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口深处遮光板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "底部承重着陆支脚",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "着陆支脚黄色护套",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口装甲安装座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "空投喷口外壳",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口厚壁唇缘",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口内侧耐热衬层",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口深处遮光板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "底部承重着陆支脚",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "着陆支脚黄色护套",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口装甲安装座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "空投喷口外壳",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口厚壁唇缘",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口内侧耐热衬层",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口深处遮光板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "底部承重着陆支脚",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "着陆支脚黄色护套",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口装甲安装座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "空投喷口外壳",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口厚壁唇缘",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口内侧耐热衬层",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口深处遮光板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "底部承重着陆支脚",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "着陆支脚黄色护套",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "横向装甲加强带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "展翼骷髅涂装底带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "绝地潜兵展翼骷髅标志",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "底缘危险警示带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "顶框黄色识别线",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "纵向黄色识别线",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "黄色防撞角护板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "上角吊装框",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "吊装方孔",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "机械锁扣底板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "机械锁扣钢销",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "黄色释放拨片",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "纵向黄色识别线",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "黄色防撞角护板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "上角吊装框",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "吊装方孔",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "机械锁扣底板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "机械锁扣钢销",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "黄色释放拨片",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "折叠底铰链钢销",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "折叠底铰链钢销",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "横向装甲加强带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "展翼骷髅涂装底带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "绝地潜兵展翼骷髅标志",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "底缘危险警示带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "顶框黄色识别线",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "纵向黄色识别线",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "黄色防撞角护板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "上角吊装框",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "吊装方孔",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "机械锁扣底板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "机械锁扣钢销",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "黄色释放拨片",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "纵向黄色识别线",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "黄色防撞角护板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "上角吊装框",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "吊装方孔",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "机械锁扣底板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "机械锁扣钢销",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "黄色释放拨片",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "折叠底铰链钢销",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "折叠底铰链钢销",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面分片装甲带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面展翼标志_分片",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面钢质加强横肋",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧角黄色护边",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面分片装甲带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面展翼标志_分片",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面钢质加强横肋",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧角黄色护边",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面分片装甲带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面展翼标志_分片",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面钢质加强横肋",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧角黄色护边",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面分片装甲带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面展翼标志_分片",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面钢质加强横肋",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧角黄色护边",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "顶盖横向装甲加强带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "顶盖中心合缝黄边",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "顶盖横向装甲加强带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "顶盖中心合缝黄边",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      }
     ]
   },
   {
@@ -3655,6 +8114,7 @@
     "before": 2038,
     "after": 2038,
     "reduction": 0.0,
+    "panelPatches": 0,
     "parts": [
       {
         "part": "SBW_front_01",
@@ -4615,6 +9075,1160 @@
         "part": "顶盖中心合缝黄边",
         "before": 12,
         "after": 12
+      }
+    ],
+    "curvePass": [
+      {
+        "part": "SBW_front_01",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_front_02",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_front_03",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_front_04",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_front_05",
+        "before": 4,
+        "after": 4,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_front_06",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_front_07",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_front_08",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_front_09",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_front_10",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_front_11",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftr_12",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftr_13",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftr_14",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftr_15",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftr_16",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftr_17",
+        "before": 4,
+        "after": 4,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftr_18",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftr_19",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftr_20",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightl_21",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightl_22",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightl_23",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightl_24",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightl_25",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightl_26",
+        "before": 4,
+        "after": 4,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightl_27",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightl_28",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightl_29",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topb_30",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topb_31",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topb_32",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topb_33",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topb_34",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topb_35",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topb_36",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topb_37",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topb_38",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topb_39",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topb_40",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_back_41",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_back_42",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_back_43",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_back_44",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_back_45",
+        "before": 4,
+        "after": 4,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_back_46",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_back_47",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_back_48",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_back_49",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_back_50",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_back_51",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightr_52",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightr_53",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightr_54",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightr_55",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightr_56",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightr_57",
+        "before": 4,
+        "after": 4,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightr_58",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightr_59",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_rightr_60",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftl_61",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftl_62",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftl_63",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftl_64",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftl_65",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftl_66",
+        "before": 4,
+        "after": 4,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftl_67",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftl_68",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_leftl_69",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topf_70",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topf_71",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topf_72",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topf_73",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topf_74",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topf_75",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topf_76",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topf_77",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topf_78",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topf_79",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_topf_80",
+        "before": 6,
+        "after": 6,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_bottom_81",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_bottom_82",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_bottom_83",
+        "before": 8,
+        "after": 8,
+        "reason": "protected or small"
+      },
+      {
+        "part": "SBW_bottom_84",
+        "before": 10,
+        "after": 10,
+        "reason": "protected or small"
+      },
+      {
+        "part": "装甲底座纵梁",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "装甲底座纵梁",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "底座黄色端梁",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "底座黄色端梁",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口装甲安装座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "空投喷口外壳",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口厚壁唇缘",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口内侧耐热衬层",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口深处遮光板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "底部承重着陆支脚",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "着陆支脚黄色护套",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口装甲安装座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "空投喷口外壳",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口厚壁唇缘",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口内侧耐热衬层",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口深处遮光板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "底部承重着陆支脚",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "着陆支脚黄色护套",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口装甲安装座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "空投喷口外壳",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口厚壁唇缘",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口内侧耐热衬层",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口深处遮光板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "底部承重着陆支脚",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "着陆支脚黄色护套",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口装甲安装座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "空投喷口外壳",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口厚壁唇缘",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口内侧耐热衬层",
+        "before": 16,
+        "after": 16,
+        "reason": "protected or small"
+      },
+      {
+        "part": "喷口深处遮光板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "底部承重着陆支脚",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "着陆支脚黄色护套",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "横向装甲加强带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "横向装甲加强带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "展翼骷髅涂装底带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "绝地潜兵展翼骷髅标志",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "底缘危险警示带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "顶框黄色识别线",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "纵向黄色识别线",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "黄色防撞角护板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "上角吊装框",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "吊装方孔",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "机械锁扣底板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "机械锁扣钢销",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "黄色释放拨片",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "纵向黄色识别线",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "黄色防撞角护板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "上角吊装框",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "吊装方孔",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "机械锁扣底板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "机械锁扣钢销",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "黄色释放拨片",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "折叠底铰链钢销",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "折叠底铰链钢销",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "横向装甲加强带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "横向装甲加强带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "展翼骷髅涂装底带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "绝地潜兵展翼骷髅标志",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "底缘危险警示带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "顶框黄色识别线",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "纵向黄色识别线",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "黄色防撞角护板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "上角吊装框",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "吊装方孔",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "机械锁扣底板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "机械锁扣钢销",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "黄色释放拨片",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "纵向黄色识别线",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "黄色防撞角护板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "上角吊装框",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "吊装方孔",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "机械锁扣底板",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "机械锁扣钢销",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "黄色释放拨片",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "折叠底铰链钢销",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "折叠底铰链钢销",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面分片装甲带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面展翼标志_分片",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面钢质加强横肋",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面钢质加强横肋",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧角黄色护边",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面分片装甲带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面展翼标志_分片",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面钢质加强横肋",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面钢质加强横肋",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧角黄色护边",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面分片装甲带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面展翼标志_分片",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面钢质加强横肋",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面钢质加强横肋",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧角黄色护边",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面分片装甲带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面展翼标志_分片",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面钢质加强横肋",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧面钢质加强横肋",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "侧角黄色护边",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "顶盖横向装甲加强带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "顶盖中心合缝黄边",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "顶盖横向装甲加强带",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
+      },
+      {
+        "part": "顶盖中心合缝黄边",
+        "before": 12,
+        "after": 12,
+        "reason": "protected or small"
       }
     ]
   }

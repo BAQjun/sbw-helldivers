@@ -140,47 +140,41 @@ do not establish an in-game frame-rate improvement.
 
 ## Editable equipment near-model candidates
 
-`equipment_sources.mjs` produces separate Blockbench review sources for the five
-Guard Dog variants, both production machines, deployment beacon, tactical
-terminal, Supply Pack and Jump Pack. The two existing deployment containers
-are retained at their already small geometry budgets. Reviewed files and matched
-views live under `art/models/装备与机器减面/`; default runtime resources are unchanged.
+The reviewed sources in `art/models/装备与机器减面/` cover five Guard Dog
+variants, both production machines, the deployment beacon, tactical terminal,
+Supply Pack, Jump Pack and two deployment containers. Runtime assets are unchanged.
 
 ```sh
-node tools/model_optimizer/equipment_sources.mjs --input <native-sorted-baseline> --output <candidate-directory> --manifest <relative-model-paths.json>
+python tools/model_optimizer/rebuild_equipment_panels.py --input <native-sorted-baseline> --output <rebuilt-panels> --manifest <relative-model-paths.json>
+node tools/model_optimizer/equipment_sources.mjs --input <rebuilt-panels> --output <candidate-directory> --manifest <relative-model-paths.json>
+python tools/model_optimizer/rebuild_equipment_panels_test.py
 ```
 
-The manifest is a JSON array of relative `.bbmodel` paths. Normalize source mesh
-face order first with Blockbench's `MeshFace.getSortedVertices()`. Input and
-output must be different directories, and a reviewed candidate must never be
-used as its own baseline. The candidate set also includes independently reviewed
-exact planar collapses from the same baseline, using the planar pass in
-`other_turrets.py`; choose the smaller valid result per element UUID.
+Normalize baseline mesh face order with Blockbench's `MeshFace.getSortedVertices()`.
+The manifest is a JSON array of relative `.bbmodel` paths. Keep source, intermediate
+and candidate directories separate; never repeatedly simplify an existing candidate.
+Python requires Pillow; Node dependencies are pinned in this directory's lockfile.
 
-The reducer locks textured markings, material/UV seams and open boundaries. It
-compares crease-preserving alternatives and selects only results within 0.05
-Blockbench model units. It retains original vertex positions, part names,
-transforms, rig, animations and texture images. UV coordinates may be collapsed
-to a constant color only after checking every texel in the face's original UV
-bounds. Every nonuniform textured triangle must survive that pass unchanged.
-Open and non-manifold edge positions must match before and after simplification.
+The panel pass reconstructs whole connected coplanar patches, respecting their
+boundary, winding, material and complete affine UV mapping. Mirrored UV folds
+must remain separate even when the endpoint UVs agree. Uniform-color patches may
+merge only after checking every texel within each original face's UV bounds.
+Holes, branched boundaries, warped surfaces and ambiguous patches are retained.
+Accepted replacements preserve area and surface plane; rebuilt flat panels receive
+separate vertices so smooth normals do not dent them. Untouched native quads and
+authored duplicate seam vertices are retained to preserve curved shading.
 
-Convex planar n-gon caps are triangulated: Blockbench's native mesh renderer
-supports triangles and quads, so leaving larger caps in the authored file can
-silently hide them. This repaired 28 existing caps on the Bio Processor.
+The restrained curve pass locks nonuniform textured triangles, seams, open boundaries
+and creases over 35 degrees, with a 0.03 Blockbench-unit surface error limit.
+On Guard Dog airframes it applies only to the four main engine housings; rebuilt
+body panels and authored moving mechanisms are protected in standalone and combined
+files. Other equipment receives the same constrained pass. Rig, locators, transforms,
+animations and texture images remain unchanged. The two low-budget containers retain
+their original structure. Unsupported n-gon caps are triangulated for native rendering.
 
-Validation opens all 28 files in Blockbench, checks actual native index counts
-against supported source faces, checks successful texture loading, and compares
-original/candidate views with identical cameras. Preserve element metadata,
-texture data, hierarchy and animation definitions exactly. Source triangle
-budgets include cubes; mesh-only native index counts are checked separately.
-These model checks do not establish an in-game frame-rate improvement.
-
-Guard Dog airframes are excluded from curved simplification, both in standalone
-body files and the body section of combined review models. A small positional
-error still changed surface normals enough to create visible dents. Their revised
-files retain the authored curves and use exact planar cleanup only.
-`repair_drone_surfaces.py --baseline <native-sorted-baseline> --planar <exact-planar-baseline> --models <candidate-directory> --report <report.json>`
-updates both views together, checks per-plane orientation, area and first moments
-and preserves all rig/texture metadata. Reject an inexact planar candidate by
-restoring that part from its original baseline.
+Regression fixtures cover mirrored UV folds, flat and warped panels, concave
+boundaries, native quads and authored normal seams. Native Blockbench review checks
+all 28 files for supported faces, actual rendered triangle counts, texture loading
+and matched-camera views, including close views of markings. Triangle budgets include
+cubes; native index checks cover meshes separately. These checks do not establish an
+in-game frame-rate improvement.
