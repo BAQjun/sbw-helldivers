@@ -137,3 +137,41 @@ parts, finite geometry and valid face UVs, and unchanged open/non-manifold edge
 positions for modified source meshes. New octagonal prisms must be closed. It
 renders two matched body views and reports actual triangle counts. These checks
 do not establish an in-game frame-rate improvement.
+
+## Editable equipment near-model candidates
+
+`equipment_sources.mjs` produces separate Blockbench review sources for the five
+Guard Dog variants, both production machines, deployment beacon, tactical
+terminal, Supply Pack and Jump Pack. The two existing deployment containers
+are retained at their already small geometry budgets. Reviewed files and matched
+views live under `art/models/装备与机器减面/`; default runtime resources are unchanged.
+
+```sh
+node tools/model_optimizer/equipment_sources.mjs --input <native-sorted-baseline> --output <candidate-directory> --manifest <relative-model-paths.json>
+```
+
+The manifest is a JSON array of relative `.bbmodel` paths. Normalize source mesh
+face order first with Blockbench's `MeshFace.getSortedVertices()`. Input and
+output must be different directories, and a reviewed candidate must never be
+used as its own baseline. The candidate set also includes independently reviewed
+exact planar collapses from the same baseline, using the planar pass in
+`other_turrets.py`; choose the smaller valid result per element UUID.
+
+The reducer locks textured markings, material/UV seams and open boundaries. It
+compares crease-preserving alternatives and selects only results within 0.05
+Blockbench model units. It retains original vertex positions, part names,
+transforms, rig, animations and texture images. UV coordinates may be collapsed
+to a constant color only after checking every texel in the face's original UV
+bounds. Every nonuniform textured triangle must survive that pass unchanged.
+Open and non-manifold edge positions must match before and after simplification.
+
+Convex planar n-gon caps are triangulated: Blockbench's native mesh renderer
+supports triangles and quads, so leaving larger caps in the authored file can
+silently hide them. This repaired 28 existing caps on the Bio Processor.
+
+Validation opens all 28 files in Blockbench, checks actual native index counts
+against supported source faces, checks successful texture loading, and compares
+original/candidate views with identical cameras. Preserve element metadata,
+texture data, hierarchy and animation definitions exactly. Source triangle
+budgets include cubes; mesh-only native index counts are checked separately.
+These model checks do not establish an in-game frame-rate improvement.

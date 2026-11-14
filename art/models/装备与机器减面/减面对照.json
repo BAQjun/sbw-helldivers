@@ -1,0 +1,4621 @@
+[
+  {
+    "model": "机枪护卫犬/机枪护卫犬_机身.bbmodel",
+    "before": 19530,
+    "after": 13884,
+    "reduction": 28.9,
+    "parts": [
+      {
+        "part": "boss",
+        "before": 4091,
+        "after": 2367
+      },
+      {
+        "part": "elevation",
+        "before": 342,
+        "after": 186
+      },
+      {
+        "part": "engine_l_1",
+        "before": 2240,
+        "after": 1784
+      },
+      {
+        "part": "engine_l_1_fold1",
+        "before": 580,
+        "after": 300
+      },
+      {
+        "part": "engine_l_1_rotor",
+        "before": 201,
+        "after": 199
+      },
+      {
+        "part": "engine_l_2",
+        "before": 2232,
+        "after": 1762
+      },
+      {
+        "part": "engine_l_2_fold",
+        "before": 542,
+        "after": 306
+      },
+      {
+        "part": "engine_l_2_rotor",
+        "before": 198,
+        "after": 196
+      },
+      {
+        "part": "engine_r_1",
+        "before": 2184,
+        "after": 1840
+      },
+      {
+        "part": "engine_r_1_fold",
+        "before": 556,
+        "after": 338
+      },
+      {
+        "part": "engine_r_1_rotor",
+        "before": 205,
+        "after": 203
+      },
+      {
+        "part": "engine_r_2",
+        "before": 2360,
+        "after": 1916
+      },
+      {
+        "part": "engine_r_2_fold",
+        "before": 381,
+        "after": 285
+      },
+      {
+        "part": "engine_r_2_rotor",
+        "before": 202,
+        "after": 200
+      },
+      {
+        "part": "head",
+        "before": 1562,
+        "after": 918
+      },
+      {
+        "part": "hinge",
+        "before": 612,
+        "after": 304
+      },
+      {
+        "part": "swing_arm",
+        "before": 744,
+        "after": 532
+      },
+      {
+        "part": "traverse",
+        "before": 298,
+        "after": 248
+      }
+    ]
+  },
+  {
+    "model": "机枪护卫犬/机枪护卫犬_武器.bbmodel",
+    "before": 5762,
+    "after": 3950,
+    "reduction": 31.4,
+    "parts": [
+      {
+        "part": "bolt",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "bolt_carrier",
+        "before": 346,
+        "after": 314
+      },
+      {
+        "part": "boss",
+        "before": 3422,
+        "after": 2524
+      },
+      {
+        "part": "boss",
+        "before": 456,
+        "after": 228
+      },
+      {
+        "part": "bullets",
+        "before": 1050,
+        "after": 544
+      },
+      {
+        "part": "boss",
+        "before": 480,
+        "after": 332
+      }
+    ]
+  },
+  {
+    "model": "机枪护卫犬/机枪护卫犬_组合检查.bbmodel",
+    "before": 45438,
+    "after": 30442,
+    "reduction": 33.0,
+    "parts": [
+      {
+        "part": "boss",
+        "before": 4091,
+        "after": 2367
+      },
+      {
+        "part": "elevation",
+        "before": 342,
+        "after": 186
+      },
+      {
+        "part": "engine_l_1",
+        "before": 2240,
+        "after": 1784
+      },
+      {
+        "part": "engine_l_1_fold1",
+        "before": 580,
+        "after": 300
+      },
+      {
+        "part": "engine_l_1_rotor",
+        "before": 201,
+        "after": 199
+      },
+      {
+        "part": "engine_l_2",
+        "before": 2232,
+        "after": 1762
+      },
+      {
+        "part": "engine_l_2_fold",
+        "before": 542,
+        "after": 306
+      },
+      {
+        "part": "engine_l_2_rotor",
+        "before": 198,
+        "after": 196
+      },
+      {
+        "part": "engine_r_1",
+        "before": 2184,
+        "after": 1840
+      },
+      {
+        "part": "engine_r_1_fold",
+        "before": 556,
+        "after": 338
+      },
+      {
+        "part": "engine_r_1_rotor",
+        "before": 205,
+        "after": 203
+      },
+      {
+        "part": "engine_r_2",
+        "before": 2360,
+        "after": 1916
+      },
+      {
+        "part": "engine_r_2_fold",
+        "before": 381,
+        "after": 285
+      },
+      {
+        "part": "engine_r_2_rotor",
+        "before": 202,
+        "after": 200
+      },
+      {
+        "part": "head",
+        "before": 1562,
+        "after": 918
+      },
+      {
+        "part": "hinge",
+        "before": 612,
+        "after": 304
+      },
+      {
+        "part": "swing_arm",
+        "before": 744,
+        "after": 532
+      },
+      {
+        "part": "traverse",
+        "before": 298,
+        "after": 248
+      },
+      {
+        "part": "bolt",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "bolt_carrier",
+        "before": 346,
+        "after": 168
+      },
+      {
+        "part": "boss",
+        "before": 3400,
+        "after": 1966
+      },
+      {
+        "part": "boss",
+        "before": 456,
+        "after": 222
+      },
+      {
+        "part": "bullets",
+        "before": 1050,
+        "after": 538
+      },
+      {
+        "part": "boss",
+        "before": 480,
+        "after": 332
+      },
+      {
+        "part": "arm_01",
+        "before": 321,
+        "after": 147
+      },
+      {
+        "part": "arm_02",
+        "before": 147,
+        "after": 87
+      },
+      {
+        "part": "arm_03",
+        "before": 397,
+        "after": 193
+      },
+      {
+        "part": "boss",
+        "before": 5088,
+        "after": 3800
+      },
+      {
+        "part": "loading_l_arm_01",
+        "before": 100,
+        "after": 72
+      },
+      {
+        "part": "loading_l_arm_01_extension",
+        "before": 80,
+        "after": 42
+      },
+      {
+        "part": "loading_l_arm_02",
+        "before": 174,
+        "after": 106
+      },
+      {
+        "part": "loading_l_arm_03",
+        "before": 72,
+        "after": 44
+      },
+      {
+        "part": "loading_r_arm_01",
+        "before": 100,
+        "after": 80
+      },
+      {
+        "part": "loading_r_arm_01_extension",
+        "before": 80,
+        "after": 40
+      },
+      {
+        "part": "loading_r_arm_02",
+        "before": 170,
+        "after": 90
+      },
+      {
+        "part": "loading_r_arm_03",
+        "before": 68,
+        "after": 40
+      },
+      {
+        "part": "mag_l_base",
+        "before": 97,
+        "after": 81
+      },
+      {
+        "part": "mag_l_base_rotate",
+        "before": 202,
+        "after": 98
+      },
+      {
+        "part": "mag_r_base",
+        "before": 97,
+        "after": 77
+      },
+      {
+        "part": "mag_r_base_rotate",
+        "before": 196,
+        "after": 92
+      },
+      {
+        "part": "mags_l_01_scale",
+        "before": 1510,
+        "after": 976
+      },
+      {
+        "part": "mags_l_02_scale",
+        "before": 1514,
+        "after": 980
+      },
+      {
+        "part": "mags_l_03_scale",
+        "before": 1514,
+        "after": 972
+      },
+      {
+        "part": "mags_l_04_scale",
+        "before": 1510,
+        "after": 974
+      },
+      {
+        "part": "mags_l_rail",
+        "before": 357,
+        "after": 227
+      },
+      {
+        "part": "mags_r_01_scale",
+        "before": 1504,
+        "after": 976
+      },
+      {
+        "part": "mags_r_02_scale",
+        "before": 1512,
+        "after": 974
+      },
+      {
+        "part": "mags_r_03_scale",
+        "before": 1512,
+        "after": 980
+      },
+      {
+        "part": "mags_r_04_scale",
+        "before": 1506,
+        "after": 976
+      },
+      {
+        "part": "mags_r_rail",
+        "before": 340,
+        "after": 200
+      }
+    ]
+  },
+  {
+    "model": "机枪护卫犬/机枪护卫犬_背包.bbmodel",
+    "before": 20168,
+    "after": 13790,
+    "reduction": 31.6,
+    "parts": [
+      {
+        "part": "arm_01",
+        "before": 321,
+        "after": 147
+      },
+      {
+        "part": "arm_02",
+        "before": 147,
+        "after": 85
+      },
+      {
+        "part": "arm_03",
+        "before": 397,
+        "after": 193
+      },
+      {
+        "part": "boss",
+        "before": 5088,
+        "after": 3772
+      },
+      {
+        "part": "loading_l_arm_01",
+        "before": 100,
+        "after": 72
+      },
+      {
+        "part": "loading_l_arm_01_extension",
+        "before": 80,
+        "after": 42
+      },
+      {
+        "part": "loading_l_arm_02",
+        "before": 174,
+        "after": 106
+      },
+      {
+        "part": "loading_l_arm_03",
+        "before": 72,
+        "after": 44
+      },
+      {
+        "part": "loading_r_arm_01",
+        "before": 100,
+        "after": 74
+      },
+      {
+        "part": "loading_r_arm_01_extension",
+        "before": 80,
+        "after": 40
+      },
+      {
+        "part": "loading_r_arm_02",
+        "before": 170,
+        "after": 84
+      },
+      {
+        "part": "loading_r_arm_03",
+        "before": 68,
+        "after": 42
+      },
+      {
+        "part": "mag_l_base",
+        "before": 97,
+        "after": 77
+      },
+      {
+        "part": "mag_l_base_rotate",
+        "before": 202,
+        "after": 100
+      },
+      {
+        "part": "mag_r_base",
+        "before": 97,
+        "after": 77
+      },
+      {
+        "part": "mag_r_base_rotate",
+        "before": 196,
+        "after": 92
+      },
+      {
+        "part": "mags_l_01_scale",
+        "before": 1510,
+        "after": 966
+      },
+      {
+        "part": "mags_l_02_scale",
+        "before": 1514,
+        "after": 976
+      },
+      {
+        "part": "mags_l_03_scale",
+        "before": 1514,
+        "after": 970
+      },
+      {
+        "part": "mags_l_04_scale",
+        "before": 1510,
+        "after": 976
+      },
+      {
+        "part": "mags_l_rail",
+        "before": 357,
+        "after": 233
+      },
+      {
+        "part": "mags_r_01_scale",
+        "before": 1504,
+        "after": 1482
+      },
+      {
+        "part": "mags_r_02_scale",
+        "before": 1512,
+        "after": 990
+      },
+      {
+        "part": "mags_r_03_scale",
+        "before": 1512,
+        "after": 978
+      },
+      {
+        "part": "mags_r_04_scale",
+        "before": 1506,
+        "after": 972
+      },
+      {
+        "part": "mags_r_rail",
+        "before": 340,
+        "after": 200
+      }
+    ]
+  },
+  {
+    "model": "激光护卫犬/激光护卫犬_机身.bbmodel",
+    "before": 19508,
+    "after": 13862,
+    "reduction": 28.9,
+    "parts": [
+      {
+        "part": "boss",
+        "before": 4091,
+        "after": 2367
+      },
+      {
+        "part": "elevation",
+        "before": 400,
+        "after": 262
+      },
+      {
+        "part": "engine_l_1",
+        "before": 2240,
+        "after": 1784
+      },
+      {
+        "part": "engine_l_1_fold1",
+        "before": 580,
+        "after": 300
+      },
+      {
+        "part": "engine_l_1_rotor",
+        "before": 201,
+        "after": 199
+      },
+      {
+        "part": "engine_l_2",
+        "before": 2232,
+        "after": 1762
+      },
+      {
+        "part": "engine_l_2_fold",
+        "before": 542,
+        "after": 306
+      },
+      {
+        "part": "engine_l_2_rotor",
+        "before": 198,
+        "after": 196
+      },
+      {
+        "part": "engine_r_1",
+        "before": 2184,
+        "after": 1840
+      },
+      {
+        "part": "engine_r_1_fold",
+        "before": 556,
+        "after": 338
+      },
+      {
+        "part": "engine_r_1_rotor",
+        "before": 205,
+        "after": 203
+      },
+      {
+        "part": "engine_r_2",
+        "before": 2360,
+        "after": 1916
+      },
+      {
+        "part": "engine_r_2_fold",
+        "before": 381,
+        "after": 285
+      },
+      {
+        "part": "engine_r_2_rotor",
+        "before": 202,
+        "after": 200
+      },
+      {
+        "part": "gun_clamp_left",
+        "before": 191,
+        "after": 125
+      },
+      {
+        "part": "gun_clamp_right",
+        "before": 191,
+        "after": 133
+      },
+      {
+        "part": "head",
+        "before": 1562,
+        "after": 918
+      },
+      {
+        "part": "hinge",
+        "before": 616,
+        "after": 306
+      },
+      {
+        "part": "swing_arm",
+        "before": 156,
+        "after": 124
+      },
+      {
+        "part": "telescope_01",
+        "before": 60,
+        "after": 60
+      },
+      {
+        "part": "telescope_02",
+        "before": 60,
+        "after": 60
+      },
+      {
+        "part": "traverse",
+        "before": 300,
+        "after": 178
+      }
+    ]
+  },
+  {
+    "model": "激光护卫犬/激光护卫犬_武器.bbmodel",
+    "before": 6871,
+    "after": 6131,
+    "reduction": 10.8,
+    "parts": [
+      {
+        "part": "boss",
+        "before": 6552,
+        "after": 5848
+      },
+      {
+        "part": "boss",
+        "before": 319,
+        "after": 283
+      }
+    ]
+  },
+  {
+    "model": "激光护卫犬/激光护卫犬_组合检查.bbmodel",
+    "before": 32714,
+    "after": 24288,
+    "reduction": 25.8,
+    "parts": [
+      {
+        "part": "boss",
+        "before": 4091,
+        "after": 2367
+      },
+      {
+        "part": "elevation",
+        "before": 400,
+        "after": 262
+      },
+      {
+        "part": "engine_l_1",
+        "before": 2240,
+        "after": 1784
+      },
+      {
+        "part": "engine_l_1_fold1",
+        "before": 580,
+        "after": 300
+      },
+      {
+        "part": "engine_l_1_rotor",
+        "before": 201,
+        "after": 199
+      },
+      {
+        "part": "engine_l_2",
+        "before": 2232,
+        "after": 1762
+      },
+      {
+        "part": "engine_l_2_fold",
+        "before": 542,
+        "after": 306
+      },
+      {
+        "part": "engine_l_2_rotor",
+        "before": 198,
+        "after": 196
+      },
+      {
+        "part": "engine_r_1",
+        "before": 2184,
+        "after": 1840
+      },
+      {
+        "part": "engine_r_1_fold",
+        "before": 556,
+        "after": 338
+      },
+      {
+        "part": "engine_r_1_rotor",
+        "before": 205,
+        "after": 203
+      },
+      {
+        "part": "engine_r_2",
+        "before": 2360,
+        "after": 1916
+      },
+      {
+        "part": "engine_r_2_fold",
+        "before": 381,
+        "after": 285
+      },
+      {
+        "part": "engine_r_2_rotor",
+        "before": 202,
+        "after": 200
+      },
+      {
+        "part": "gun_clamp_left",
+        "before": 191,
+        "after": 125
+      },
+      {
+        "part": "gun_clamp_right",
+        "before": 191,
+        "after": 133
+      },
+      {
+        "part": "head",
+        "before": 1562,
+        "after": 918
+      },
+      {
+        "part": "hinge",
+        "before": 616,
+        "after": 306
+      },
+      {
+        "part": "swing_arm",
+        "before": 156,
+        "after": 124
+      },
+      {
+        "part": "telescope_01",
+        "before": 60,
+        "after": 60
+      },
+      {
+        "part": "telescope_02",
+        "before": 60,
+        "after": 60
+      },
+      {
+        "part": "traverse",
+        "before": 300,
+        "after": 178
+      },
+      {
+        "part": "boss",
+        "before": 6555,
+        "after": 5853
+      },
+      {
+        "part": "boss",
+        "before": 319,
+        "after": 283
+      },
+      {
+        "part": "arm_01",
+        "before": 321,
+        "after": 147
+      },
+      {
+        "part": "arm_02",
+        "before": 147,
+        "after": 87
+      },
+      {
+        "part": "arm_03",
+        "before": 397,
+        "after": 193
+      },
+      {
+        "part": "boss",
+        "before": 5467,
+        "after": 3863
+      }
+    ]
+  },
+  {
+    "model": "激光护卫犬/激光护卫犬_背包.bbmodel",
+    "before": 6332,
+    "after": 4318,
+    "reduction": 31.8,
+    "parts": [
+      {
+        "part": "arm_01",
+        "before": 321,
+        "after": 147
+      },
+      {
+        "part": "arm_02",
+        "before": 147,
+        "after": 85
+      },
+      {
+        "part": "arm_03",
+        "before": 397,
+        "after": 193
+      },
+      {
+        "part": "boss",
+        "before": 5467,
+        "after": 3893
+      }
+    ]
+  },
+  {
+    "model": "电护卫犬/电护卫犬_机身.bbmodel",
+    "before": 19508,
+    "after": 13874,
+    "reduction": 28.9,
+    "parts": [
+      {
+        "part": "boss",
+        "before": 4091,
+        "after": 2367
+      },
+      {
+        "part": "elevation",
+        "before": 400,
+        "after": 274
+      },
+      {
+        "part": "engine_l_1",
+        "before": 2240,
+        "after": 1784
+      },
+      {
+        "part": "engine_l_1_fold1",
+        "before": 580,
+        "after": 300
+      },
+      {
+        "part": "engine_l_1_rotor",
+        "before": 201,
+        "after": 199
+      },
+      {
+        "part": "engine_l_2",
+        "before": 2232,
+        "after": 1762
+      },
+      {
+        "part": "engine_l_2_fold",
+        "before": 542,
+        "after": 306
+      },
+      {
+        "part": "engine_l_2_rotor",
+        "before": 198,
+        "after": 196
+      },
+      {
+        "part": "engine_r_1",
+        "before": 2184,
+        "after": 1840
+      },
+      {
+        "part": "engine_r_1_fold",
+        "before": 556,
+        "after": 338
+      },
+      {
+        "part": "engine_r_1_rotor",
+        "before": 205,
+        "after": 203
+      },
+      {
+        "part": "engine_r_2",
+        "before": 2360,
+        "after": 1916
+      },
+      {
+        "part": "engine_r_2_fold",
+        "before": 381,
+        "after": 285
+      },
+      {
+        "part": "engine_r_2_rotor",
+        "before": 202,
+        "after": 200
+      },
+      {
+        "part": "gun_clamp_left",
+        "before": 191,
+        "after": 135
+      },
+      {
+        "part": "gun_clamp_right",
+        "before": 191,
+        "after": 129
+      },
+      {
+        "part": "head",
+        "before": 1562,
+        "after": 918
+      },
+      {
+        "part": "hinge",
+        "before": 616,
+        "after": 306
+      },
+      {
+        "part": "swing_arm",
+        "before": 156,
+        "after": 120
+      },
+      {
+        "part": "telescope_01",
+        "before": 60,
+        "after": 60
+      },
+      {
+        "part": "telescope_02",
+        "before": 60,
+        "after": 60
+      },
+      {
+        "part": "traverse",
+        "before": 300,
+        "after": 176
+      }
+    ]
+  },
+  {
+    "model": "电护卫犬/电护卫犬_武器.bbmodel",
+    "before": 9922,
+    "after": 4828,
+    "reduction": 51.3,
+    "parts": [
+      {
+        "part": "boss",
+        "before": 9922,
+        "after": 4828
+      }
+    ]
+  },
+  {
+    "model": "电护卫犬/电护卫犬_组合检查.bbmodel",
+    "before": 39340,
+    "after": 25162,
+    "reduction": 36.0,
+    "parts": [
+      {
+        "part": "boss",
+        "before": 4091,
+        "after": 2367
+      },
+      {
+        "part": "elevation",
+        "before": 400,
+        "after": 274
+      },
+      {
+        "part": "engine_l_1",
+        "before": 2240,
+        "after": 1784
+      },
+      {
+        "part": "engine_l_1_fold1",
+        "before": 580,
+        "after": 300
+      },
+      {
+        "part": "engine_l_1_rotor",
+        "before": 201,
+        "after": 199
+      },
+      {
+        "part": "engine_l_2",
+        "before": 2232,
+        "after": 1762
+      },
+      {
+        "part": "engine_l_2_fold",
+        "before": 542,
+        "after": 306
+      },
+      {
+        "part": "engine_l_2_rotor",
+        "before": 198,
+        "after": 196
+      },
+      {
+        "part": "engine_r_1",
+        "before": 2184,
+        "after": 1840
+      },
+      {
+        "part": "engine_r_1_fold",
+        "before": 556,
+        "after": 338
+      },
+      {
+        "part": "engine_r_1_rotor",
+        "before": 205,
+        "after": 203
+      },
+      {
+        "part": "engine_r_2",
+        "before": 2360,
+        "after": 1916
+      },
+      {
+        "part": "engine_r_2_fold",
+        "before": 381,
+        "after": 285
+      },
+      {
+        "part": "engine_r_2_rotor",
+        "before": 202,
+        "after": 200
+      },
+      {
+        "part": "gun_clamp_left",
+        "before": 191,
+        "after": 135
+      },
+      {
+        "part": "gun_clamp_right",
+        "before": 191,
+        "after": 129
+      },
+      {
+        "part": "head",
+        "before": 1562,
+        "after": 918
+      },
+      {
+        "part": "hinge",
+        "before": 616,
+        "after": 306
+      },
+      {
+        "part": "swing_arm",
+        "before": 156,
+        "after": 120
+      },
+      {
+        "part": "telescope_01",
+        "before": 60,
+        "after": 60
+      },
+      {
+        "part": "telescope_02",
+        "before": 60,
+        "after": 60
+      },
+      {
+        "part": "traverse",
+        "before": 300,
+        "after": 176
+      },
+      {
+        "part": "boss",
+        "before": 9922,
+        "after": 4830
+      },
+      {
+        "part": "arm_01",
+        "before": 384,
+        "after": 174
+      },
+      {
+        "part": "arm_02",
+        "before": 184,
+        "after": 86
+      },
+      {
+        "part": "arm_03",
+        "before": 406,
+        "after": 192
+      },
+      {
+        "part": "boss",
+        "before": 8936,
+        "after": 6006
+      }
+    ]
+  },
+  {
+    "model": "电护卫犬/电护卫犬_背包.bbmodel",
+    "before": 9910,
+    "after": 8698,
+    "reduction": 12.2,
+    "parts": [
+      {
+        "part": "arm_01",
+        "before": 384,
+        "after": 174
+      },
+      {
+        "part": "arm_02",
+        "before": 184,
+        "after": 86
+      },
+      {
+        "part": "arm_03",
+        "before": 406,
+        "after": 192
+      },
+      {
+        "part": "boss",
+        "before": 8936,
+        "after": 8246
+      }
+    ]
+  },
+  {
+    "model": "火焰护卫犬/火焰护卫犬_机身.bbmodel",
+    "before": 19508,
+    "after": 13874,
+    "reduction": 28.9,
+    "parts": [
+      {
+        "part": "boss",
+        "before": 4091,
+        "after": 2367
+      },
+      {
+        "part": "elevation",
+        "before": 400,
+        "after": 274
+      },
+      {
+        "part": "engine_l_1",
+        "before": 2240,
+        "after": 1784
+      },
+      {
+        "part": "engine_l_1_fold1",
+        "before": 580,
+        "after": 300
+      },
+      {
+        "part": "engine_l_1_rotor",
+        "before": 201,
+        "after": 199
+      },
+      {
+        "part": "engine_l_2",
+        "before": 2232,
+        "after": 1762
+      },
+      {
+        "part": "engine_l_2_fold",
+        "before": 542,
+        "after": 306
+      },
+      {
+        "part": "engine_l_2_rotor",
+        "before": 198,
+        "after": 196
+      },
+      {
+        "part": "engine_r_1",
+        "before": 2184,
+        "after": 1840
+      },
+      {
+        "part": "engine_r_1_fold",
+        "before": 556,
+        "after": 338
+      },
+      {
+        "part": "engine_r_1_rotor",
+        "before": 205,
+        "after": 203
+      },
+      {
+        "part": "engine_r_2",
+        "before": 2360,
+        "after": 1916
+      },
+      {
+        "part": "engine_r_2_fold",
+        "before": 381,
+        "after": 285
+      },
+      {
+        "part": "engine_r_2_rotor",
+        "before": 202,
+        "after": 200
+      },
+      {
+        "part": "gun_clamp_left",
+        "before": 191,
+        "after": 125
+      },
+      {
+        "part": "gun_clamp_right",
+        "before": 191,
+        "after": 139
+      },
+      {
+        "part": "head",
+        "before": 1562,
+        "after": 918
+      },
+      {
+        "part": "hinge",
+        "before": 616,
+        "after": 306
+      },
+      {
+        "part": "swing_arm",
+        "before": 156,
+        "after": 120
+      },
+      {
+        "part": "telescope_01",
+        "before": 60,
+        "after": 60
+      },
+      {
+        "part": "telescope_02",
+        "before": 60,
+        "after": 60
+      },
+      {
+        "part": "traverse",
+        "before": 300,
+        "after": 176
+      }
+    ]
+  },
+  {
+    "model": "火焰护卫犬/火焰护卫犬_武器.bbmodel",
+    "before": 9530,
+    "after": 6876,
+    "reduction": 27.8,
+    "parts": [
+      {
+        "part": "boss",
+        "before": 9530,
+        "after": 6876
+      }
+    ]
+  },
+  {
+    "model": "火焰护卫犬/火焰护卫犬_组合检查.bbmodel",
+    "before": 47134,
+    "after": 34074,
+    "reduction": 27.7,
+    "parts": [
+      {
+        "part": "boss",
+        "before": 4091,
+        "after": 2367
+      },
+      {
+        "part": "elevation",
+        "before": 400,
+        "after": 274
+      },
+      {
+        "part": "engine_l_1",
+        "before": 2240,
+        "after": 1784
+      },
+      {
+        "part": "engine_l_1_fold1",
+        "before": 580,
+        "after": 300
+      },
+      {
+        "part": "engine_l_1_rotor",
+        "before": 201,
+        "after": 199
+      },
+      {
+        "part": "engine_l_2",
+        "before": 2232,
+        "after": 1762
+      },
+      {
+        "part": "engine_l_2_fold",
+        "before": 542,
+        "after": 306
+      },
+      {
+        "part": "engine_l_2_rotor",
+        "before": 198,
+        "after": 196
+      },
+      {
+        "part": "engine_r_1",
+        "before": 2184,
+        "after": 1840
+      },
+      {
+        "part": "engine_r_1_fold",
+        "before": 556,
+        "after": 338
+      },
+      {
+        "part": "engine_r_1_rotor",
+        "before": 205,
+        "after": 203
+      },
+      {
+        "part": "engine_r_2",
+        "before": 2360,
+        "after": 1916
+      },
+      {
+        "part": "engine_r_2_fold",
+        "before": 381,
+        "after": 285
+      },
+      {
+        "part": "engine_r_2_rotor",
+        "before": 202,
+        "after": 200
+      },
+      {
+        "part": "gun_clamp_left",
+        "before": 191,
+        "after": 125
+      },
+      {
+        "part": "gun_clamp_right",
+        "before": 191,
+        "after": 139
+      },
+      {
+        "part": "head",
+        "before": 1562,
+        "after": 918
+      },
+      {
+        "part": "hinge",
+        "before": 616,
+        "after": 306
+      },
+      {
+        "part": "swing_arm",
+        "before": 156,
+        "after": 120
+      },
+      {
+        "part": "telescope_01",
+        "before": 60,
+        "after": 60
+      },
+      {
+        "part": "telescope_02",
+        "before": 60,
+        "after": 60
+      },
+      {
+        "part": "traverse",
+        "before": 300,
+        "after": 176
+      },
+      {
+        "part": "boss",
+        "before": 9530,
+        "after": 6842
+      },
+      {
+        "part": "boss",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "arm_01",
+        "before": 291,
+        "after": 199
+      },
+      {
+        "part": "arm_02",
+        "before": 160,
+        "after": 142
+      },
+      {
+        "part": "arm_03",
+        "before": 345,
+        "after": 219
+      },
+      {
+        "part": "boss",
+        "before": 12261,
+        "after": 10317
+      },
+      {
+        "part": "feed_arm_l_01",
+        "before": 937,
+        "after": 455
+      },
+      {
+        "part": "feed_arm_l_02",
+        "before": 179,
+        "after": 81
+      },
+      {
+        "part": "feed_arm_l_03",
+        "before": 412,
+        "after": 194
+      },
+      {
+        "part": "feed_arm_r_01",
+        "before": 942,
+        "after": 458
+      },
+      {
+        "part": "feed_arm_r_02",
+        "before": 179,
+        "after": 81
+      },
+      {
+        "part": "feed_arm_r_03",
+        "before": 404,
+        "after": 192
+      },
+      {
+        "part": "piston_l",
+        "before": 279,
+        "after": 133
+      },
+      {
+        "part": "piston_r",
+        "before": 272,
+        "after": 130
+      },
+      {
+        "part": "sleeve_l",
+        "before": 699,
+        "after": 349
+      },
+      {
+        "part": "sleeve_r",
+        "before": 724,
+        "after": 396
+      }
+    ]
+  },
+  {
+    "model": "火焰护卫犬/火焰护卫犬_背包.bbmodel",
+    "before": 18096,
+    "after": 14550,
+    "reduction": 19.6,
+    "parts": [
+      {
+        "part": "boss",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "arm_01",
+        "before": 291,
+        "after": 205
+      },
+      {
+        "part": "arm_02",
+        "before": 160,
+        "after": 142
+      },
+      {
+        "part": "arm_03",
+        "before": 345,
+        "after": 215
+      },
+      {
+        "part": "boss",
+        "before": 12261,
+        "after": 11251
+      },
+      {
+        "part": "feed_arm_l_01",
+        "before": 937,
+        "after": 455
+      },
+      {
+        "part": "feed_arm_l_02",
+        "before": 179,
+        "after": 81
+      },
+      {
+        "part": "feed_arm_l_03",
+        "before": 412,
+        "after": 194
+      },
+      {
+        "part": "feed_arm_r_01",
+        "before": 942,
+        "after": 458
+      },
+      {
+        "part": "feed_arm_r_02",
+        "before": 179,
+        "after": 81
+      },
+      {
+        "part": "feed_arm_r_03",
+        "before": 404,
+        "after": 192
+      },
+      {
+        "part": "piston_l",
+        "before": 279,
+        "after": 133
+      },
+      {
+        "part": "piston_r",
+        "before": 272,
+        "after": 130
+      },
+      {
+        "part": "sleeve_l",
+        "before": 699,
+        "after": 349
+      },
+      {
+        "part": "sleeve_r",
+        "before": 724,
+        "after": 652
+      }
+    ]
+  },
+  {
+    "model": "毒气护卫犬/毒气护卫犬_机身.bbmodel",
+    "before": 19508,
+    "after": 13882,
+    "reduction": 28.8,
+    "parts": [
+      {
+        "part": "boss",
+        "before": 4091,
+        "after": 2367
+      },
+      {
+        "part": "elevation",
+        "before": 400,
+        "after": 274
+      },
+      {
+        "part": "engine_l_1",
+        "before": 2240,
+        "after": 1784
+      },
+      {
+        "part": "engine_l_1_fold1",
+        "before": 580,
+        "after": 300
+      },
+      {
+        "part": "engine_l_1_rotor",
+        "before": 201,
+        "after": 199
+      },
+      {
+        "part": "engine_l_2",
+        "before": 2232,
+        "after": 1762
+      },
+      {
+        "part": "engine_l_2_fold",
+        "before": 542,
+        "after": 306
+      },
+      {
+        "part": "engine_l_2_rotor",
+        "before": 198,
+        "after": 196
+      },
+      {
+        "part": "engine_r_1",
+        "before": 2184,
+        "after": 1840
+      },
+      {
+        "part": "engine_r_1_fold",
+        "before": 556,
+        "after": 338
+      },
+      {
+        "part": "engine_r_1_rotor",
+        "before": 205,
+        "after": 203
+      },
+      {
+        "part": "engine_r_2",
+        "before": 2360,
+        "after": 1916
+      },
+      {
+        "part": "engine_r_2_fold",
+        "before": 381,
+        "after": 285
+      },
+      {
+        "part": "engine_r_2_rotor",
+        "before": 202,
+        "after": 200
+      },
+      {
+        "part": "gun_clamp_left",
+        "before": 191,
+        "after": 127
+      },
+      {
+        "part": "gun_clamp_right",
+        "before": 191,
+        "after": 145
+      },
+      {
+        "part": "head",
+        "before": 1562,
+        "after": 918
+      },
+      {
+        "part": "hinge",
+        "before": 616,
+        "after": 306
+      },
+      {
+        "part": "swing_arm",
+        "before": 156,
+        "after": 120
+      },
+      {
+        "part": "telescope_01",
+        "before": 60,
+        "after": 60
+      },
+      {
+        "part": "telescope_02",
+        "before": 60,
+        "after": 60
+      },
+      {
+        "part": "traverse",
+        "before": 300,
+        "after": 176
+      }
+    ]
+  },
+  {
+    "model": "毒气护卫犬/毒气护卫犬_武器.bbmodel",
+    "before": 5008,
+    "after": 3694,
+    "reduction": 26.2,
+    "parts": [
+      {
+        "part": "boss",
+        "before": 5008,
+        "after": 3694
+      }
+    ]
+  },
+  {
+    "model": "毒气护卫犬/毒气护卫犬_组合检查.bbmodel",
+    "before": 42404,
+    "after": 30838,
+    "reduction": 27.3,
+    "parts": [
+      {
+        "part": "boss",
+        "before": 4091,
+        "after": 2367
+      },
+      {
+        "part": "elevation",
+        "before": 400,
+        "after": 274
+      },
+      {
+        "part": "engine_l_1",
+        "before": 2240,
+        "after": 1784
+      },
+      {
+        "part": "engine_l_1_fold1",
+        "before": 580,
+        "after": 300
+      },
+      {
+        "part": "engine_l_1_rotor",
+        "before": 201,
+        "after": 199
+      },
+      {
+        "part": "engine_l_2",
+        "before": 2232,
+        "after": 1762
+      },
+      {
+        "part": "engine_l_2_fold",
+        "before": 542,
+        "after": 306
+      },
+      {
+        "part": "engine_l_2_rotor",
+        "before": 198,
+        "after": 196
+      },
+      {
+        "part": "engine_r_1",
+        "before": 2184,
+        "after": 1840
+      },
+      {
+        "part": "engine_r_1_fold",
+        "before": 556,
+        "after": 338
+      },
+      {
+        "part": "engine_r_1_rotor",
+        "before": 205,
+        "after": 203
+      },
+      {
+        "part": "engine_r_2",
+        "before": 2360,
+        "after": 1916
+      },
+      {
+        "part": "engine_r_2_fold",
+        "before": 381,
+        "after": 285
+      },
+      {
+        "part": "engine_r_2_rotor",
+        "before": 202,
+        "after": 200
+      },
+      {
+        "part": "gun_clamp_left",
+        "before": 191,
+        "after": 127
+      },
+      {
+        "part": "gun_clamp_right",
+        "before": 191,
+        "after": 145
+      },
+      {
+        "part": "head",
+        "before": 1562,
+        "after": 918
+      },
+      {
+        "part": "hinge",
+        "before": 616,
+        "after": 306
+      },
+      {
+        "part": "swing_arm",
+        "before": 156,
+        "after": 120
+      },
+      {
+        "part": "telescope_01",
+        "before": 60,
+        "after": 60
+      },
+      {
+        "part": "telescope_02",
+        "before": 60,
+        "after": 60
+      },
+      {
+        "part": "traverse",
+        "before": 300,
+        "after": 176
+      },
+      {
+        "part": "boss",
+        "before": 5008,
+        "after": 3756
+      },
+      {
+        "part": "boss",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "arm_01",
+        "before": 327,
+        "after": 209
+      },
+      {
+        "part": "arm_02",
+        "before": 168,
+        "after": 94
+      },
+      {
+        "part": "arm_03",
+        "before": 266,
+        "after": 254
+      },
+      {
+        "part": "boss",
+        "before": 12232,
+        "after": 9582
+      },
+      {
+        "part": "feed_arm_l_01",
+        "before": 925,
+        "after": 591
+      },
+      {
+        "part": "feed_arm_l_02",
+        "before": 161,
+        "after": 91
+      },
+      {
+        "part": "feed_arm_l_03",
+        "before": 380,
+        "after": 256
+      },
+      {
+        "part": "feed_arm_r_01",
+        "before": 922,
+        "after": 580
+      },
+      {
+        "part": "feed_arm_r_02",
+        "before": 161,
+        "after": 95
+      },
+      {
+        "part": "feed_arm_r_03",
+        "before": 380,
+        "after": 258
+      },
+      {
+        "part": "piston_l",
+        "before": 269,
+        "after": 161
+      },
+      {
+        "part": "piston_r",
+        "before": 265,
+        "after": 155
+      },
+      {
+        "part": "sleeve_l",
+        "before": 698,
+        "after": 402
+      },
+      {
+        "part": "sleeve_r",
+        "before": 722,
+        "after": 460
+      }
+    ]
+  },
+  {
+    "model": "毒气护卫犬/毒气护卫犬_背包.bbmodel",
+    "before": 17888,
+    "after": 13418,
+    "reduction": 25.0,
+    "parts": [
+      {
+        "part": "boss",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "arm_01",
+        "before": 327,
+        "after": 209
+      },
+      {
+        "part": "arm_02",
+        "before": 168,
+        "after": 94
+      },
+      {
+        "part": "arm_03",
+        "before": 266,
+        "after": 256
+      },
+      {
+        "part": "boss",
+        "before": 12232,
+        "after": 9534
+      },
+      {
+        "part": "feed_arm_l_01",
+        "before": 925,
+        "after": 655
+      },
+      {
+        "part": "feed_arm_l_02",
+        "before": 161,
+        "after": 91
+      },
+      {
+        "part": "feed_arm_l_03",
+        "before": 380,
+        "after": 256
+      },
+      {
+        "part": "feed_arm_r_01",
+        "before": 922,
+        "after": 582
+      },
+      {
+        "part": "feed_arm_r_02",
+        "before": 161,
+        "after": 95
+      },
+      {
+        "part": "feed_arm_r_03",
+        "before": 380,
+        "after": 256
+      },
+      {
+        "part": "piston_l",
+        "before": 269,
+        "after": 159
+      },
+      {
+        "part": "piston_r",
+        "before": 265,
+        "after": 155
+      },
+      {
+        "part": "sleeve_l",
+        "before": 698,
+        "after": 396
+      },
+      {
+        "part": "sleeve_r",
+        "before": 722,
+        "after": 668
+      }
+    ]
+  },
+  {
+    "model": "0.6生存机器/生物处理器_潜兵改编.bbmodel",
+    "before": 20328,
+    "after": 18256,
+    "reduction": 10.2,
+    "parts": [
+      {
+        "part": "原版完整结构_yellow",
+        "before": 625,
+        "after": 611
+      },
+      {
+        "part": "原版完整结构_armor",
+        "before": 6848,
+        "after": 6464
+      },
+      {
+        "part": "原版完整结构_edge",
+        "before": 10433,
+        "after": 9043
+      },
+      {
+        "part": "原版完整结构_window",
+        "before": 48,
+        "after": 48
+      },
+      {
+        "part": "原版完整结构_black",
+        "before": 1150,
+        "after": 1100
+      },
+      {
+        "part": "密封承重底座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "装甲顶板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "黄色角护板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "黄色角护板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "黄色角护板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "黄色角护板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "完整输入接口面",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "输入接口承重盒",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "完整输出接口面",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "输出接口承重盒",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "完整供电接口面",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "供电接口承重盒",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "大罐连续承重座",
+        "before": 60,
+        "after": 60
+      },
+      {
+        "part": "小罐底部接合环",
+        "before": 60,
+        "after": 60
+      },
+      {
+        "part": "后侧横架落地立柱1",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "横架立柱底脚1",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "横架立柱顶部接合套1",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "后侧横架落地立柱2",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "横架立柱底脚2",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "横架立柱顶部接合套2",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "后侧横架落地立柱3",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "横架立柱底脚3",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "横架立柱顶部接合套3",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "物料输入管路",
+        "before": 188,
+        "after": 118
+      },
+      {
+        "part": "物料输入管路_接口接头",
+        "before": 28,
+        "after": 28
+      },
+      {
+        "part": "物料输入管路_罐底接头",
+        "before": 28,
+        "after": 28
+      },
+      {
+        "part": "物料输入管路_底座固定脚",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "物料输入管路_管路卡箍",
+        "before": 28,
+        "after": 28
+      },
+      {
+        "part": "样本输出管路",
+        "before": 188,
+        "after": 106
+      },
+      {
+        "part": "样本输出管路_接口接头",
+        "before": 28,
+        "after": 28
+      },
+      {
+        "part": "样本输出管路_罐底接头",
+        "before": 28,
+        "after": 28
+      },
+      {
+        "part": "样本输出管路_底座固定脚",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "样本输出管路_管路卡箍",
+        "before": 28,
+        "after": 28
+      },
+      {
+        "part": "能量护套管路",
+        "before": 188,
+        "after": 106
+      },
+      {
+        "part": "能量护套管路_接口接头",
+        "before": 28,
+        "after": 28
+      },
+      {
+        "part": "能量护套管路_罐底接头",
+        "before": 28,
+        "after": 28
+      },
+      {
+        "part": "能量护套管路_底座固定脚",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "能量护套管路_管路卡箍",
+        "before": 28,
+        "after": 28
+      }
+    ]
+  },
+  {
+    "model": "0.6生存机器/精炼厂_潜兵改编.bbmodel",
+    "before": 72828,
+    "after": 58964,
+    "reduction": 19.0,
+    "parts": [
+      {
+        "part": "原版完整结构_armor",
+        "before": 42593,
+        "after": 31701
+      },
+      {
+        "part": "原版完整结构_edge",
+        "before": 7972,
+        "after": 7072
+      },
+      {
+        "part": "原版完整结构_yellow",
+        "before": 2289,
+        "after": 1869
+      },
+      {
+        "part": "原版完整结构_black",
+        "before": 40,
+        "after": 40
+      },
+      {
+        "part": "原版完整结构_light",
+        "before": 18,
+        "after": 14
+      },
+      {
+        "part": "侧面结构梁",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "黄色防撞护角",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "黄色防撞护角",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面结构梁",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "黄色防撞护角",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "黄色防撞护角",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "前方踏步1",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "前方踏步2",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "前方踏步3",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "基座底板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "前承重横梁",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "后承重横梁",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧承重箱梁",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧承重箱梁",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面装甲甲板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面装甲甲板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "前后装甲甲板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "前后装甲甲板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "填合侧面检修甲板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "填合侧面检修甲板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "正面物品输出接口",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "正面能量接口",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "正面物品输入接口",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "mesh",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "mesh",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "粉碎滚筒_左_armor",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "粉碎滚筒_左_edge",
+        "before": 315,
+        "after": 315
+      },
+      {
+        "part": "粉碎滚筒_左_yellow",
+        "before": 1791,
+        "after": 1729
+      },
+      {
+        "part": "粉碎滚筒_左_black",
+        "before": 7158,
+        "after": 6536
+      },
+      {
+        "part": "粉碎滚筒_右_armor",
+        "before": 28,
+        "after": 28
+      },
+      {
+        "part": "粉碎滚筒_右_edge",
+        "before": 208,
+        "after": 208
+      },
+      {
+        "part": "粉碎滚筒_右_yellow",
+        "before": 1776,
+        "after": 1700
+      },
+      {
+        "part": "粉碎滚筒_右_black",
+        "before": 6804,
+        "after": 6262
+      },
+      {
+        "part": "侧面传动内轮_armor",
+        "before": 620,
+        "after": 534
+      },
+      {
+        "part": "侧面传动内轮_edge",
+        "before": 116,
+        "after": 108
+      },
+      {
+        "part": "侧面传动内轮_yellow",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "侧面传动内轮_light",
+        "before": 768,
+        "after": 516
+      }
+    ]
+  },
+  {
+    "model": "撤离信标/撤离信标.bbmodel",
+    "before": 28857,
+    "after": 25513,
+    "reduction": 11.6,
+    "parts": [
+      {
+        "part": "screen_swivel_g_landingzone_beacon_0",
+        "before": 18,
+        "after": 18
+      },
+      {
+        "part": "arm_Xneg_01_g_landingzone_beacon_1",
+        "before": 268,
+        "after": 250
+      },
+      {
+        "part": "screen_swivel_g_landingzone_beacon_1",
+        "before": 572,
+        "after": 460
+      },
+      {
+        "part": "screen_stand_foot_g_landingzone_beacon_1",
+        "before": 190,
+        "after": 180
+      },
+      {
+        "part": "screen_stand_elbow_g_landingzone_beacon_1",
+        "before": 120,
+        "after": 116
+      },
+      {
+        "part": "screen_stand_elbow_2_g_landingzone_beacon_1",
+        "before": 116,
+        "after": 106
+      },
+      {
+        "part": "tier_3_g_landingzone_beacon_1",
+        "before": 7846,
+        "after": 6646
+      },
+      {
+        "part": "boss_g_landingzone_beacon_1",
+        "before": 7186,
+        "after": 6882
+      },
+      {
+        "part": "tier_2_g_landingzone_beacon_1",
+        "before": 4668,
+        "after": 3992
+      },
+      {
+        "part": "arm_Xneg_02_g_landingzone_beacon_1",
+        "before": 344,
+        "after": 324
+      },
+      {
+        "part": "arm_Xpos_02_g_landingzone_beacon_1",
+        "before": 340,
+        "after": 324
+      },
+      {
+        "part": "arm_Xpos_01_g_landingzone_beacon_1",
+        "before": 272,
+        "after": 260
+      },
+      {
+        "part": "arm_Y_02_g_landingzone_beacon_1",
+        "before": 344,
+        "after": 320
+      },
+      {
+        "part": "arm_Y_01_g_landingzone_beacon_1",
+        "before": 268,
+        "after": 250
+      },
+      {
+        "part": "arm_Xneg_03_g_landingzone_beacon_1",
+        "before": 1456,
+        "after": 1242
+      },
+      {
+        "part": "arm_Xpos_03_g_landingzone_beacon_1",
+        "before": 1456,
+        "after": 1242
+      },
+      {
+        "part": "arm_Y_03_g_landingzone_beacon_1",
+        "before": 1456,
+        "after": 1262
+      },
+      {
+        "part": "arm_Xpos_03_g_landingzone_beacon_2",
+        "before": 107,
+        "after": 107
+      },
+      {
+        "part": "tier_3_g_landingzone_beacon_2",
+        "before": 180,
+        "after": 138
+      },
+      {
+        "part": "arm_Xneg_03_g_landingzone_beacon_2",
+        "before": 107,
+        "after": 107
+      },
+      {
+        "part": "arm_Y_03_g_landingzone_beacon_2",
+        "before": 107,
+        "after": 107
+      },
+      {
+        "part": "boss_底座洁净配色",
+        "before": 1372,
+        "after": 1120
+      },
+      {
+        "part": "boss_仓口封闭上沿",
+        "before": 64,
+        "after": 60
+      }
+    ]
+  },
+  {
+    "model": "补给背包/补给背包.bbmodel",
+    "before": 4944,
+    "after": 3062,
+    "reduction": 38.1,
+    "parts": [
+      {
+        "part": "补给箱_左上",
+        "before": 58,
+        "after": 44
+      },
+      {
+        "part": "补给箱_左下",
+        "before": 52,
+        "after": 44
+      },
+      {
+        "part": "补给箱_右下",
+        "before": 74,
+        "after": 46
+      },
+      {
+        "part": "补给箱_右上",
+        "before": 48,
+        "after": 46
+      },
+      {
+        "part": "背板与背带",
+        "before": 1990,
+        "after": 1148
+      },
+      {
+        "part": "框架与提手",
+        "before": 2638,
+        "after": 1650
+      },
+      {
+        "part": "框架内衬封闭壳",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "中央竖梁接缝封口",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "下沿内侧封口",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "顶部铭牌封闭面",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "左背板连接封闭条",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "右背板连接封闭条",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "上方中央竖梁",
+        "before": 12,
+        "after": 12
+      }
+    ]
+  },
+  {
+    "model": "喷气背包/喷气背包.bbmodel",
+    "before": 4414,
+    "after": 2590,
+    "reduction": 41.3,
+    "parts": [
+      {
+        "part": "主机外壳",
+        "before": 2782,
+        "after": 1562
+      },
+      {
+        "part": "背板与背带",
+        "before": 1284,
+        "after": 742
+      },
+      {
+        "part": "左喷口",
+        "before": 178,
+        "after": 140
+      },
+      {
+        "part": "右喷口",
+        "before": 134,
+        "after": 110
+      },
+      {
+        "part": "侧壳方向标识",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧壳方向标识",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "中央警示铭牌",
+        "before": 12,
+        "after": 12
+      }
+    ]
+  },
+  {
+    "model": "战术终端/战术终端.bbmodel",
+    "before": 9090,
+    "after": 6226,
+    "reduction": 31.5,
+    "parts": [
+      {
+        "part": "g_generic_objective_terminal_01_fixed_终端外壳",
+        "before": 6480,
+        "after": 3874
+      },
+      {
+        "part": "g_generic_objective_terminal_01_fixed_终端组件",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "0x9127b234_fixed_终端外壳",
+        "before": 1178,
+        "after": 1176
+      },
+      {
+        "part": "0x9127b234_fixed_终端组件",
+        "before": 176,
+        "after": 86
+      },
+      {
+        "part": "0xb1a8ce5b_fixed_终端组件",
+        "before": 232,
+        "after": 124
+      },
+      {
+        "part": "0xa425f675_fixed_终端组件",
+        "before": 33,
+        "after": 33
+      },
+      {
+        "part": "0x09413108_fixed_终端外壳",
+        "before": 615,
+        "after": 615
+      },
+      {
+        "part": "0x09413108_fixed_终端组件",
+        "before": 62,
+        "after": 40
+      },
+      {
+        "part": "0x8edc279f_fixed_终端外壳",
+        "before": 136,
+        "after": 134
+      },
+      {
+        "part": "0x8edc279f_fixed_终端组件",
+        "before": 54,
+        "after": 36
+      },
+      {
+        "part": "0xdffecf7f_fixed_终端组件",
+        "before": 116,
+        "after": 100
+      }
+    ]
+  },
+  {
+    "model": "0.6生存机器/部署集装箱/生物处理器_部署集装箱.bbmodel",
+    "before": 1966,
+    "after": 1966,
+    "reduction": 0.0,
+    "parts": [
+      {
+        "part": "SBW_front_01",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_front_02",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_front_03",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_front_04",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_front_05",
+        "before": 4,
+        "after": 4
+      },
+      {
+        "part": "SBW_front_06",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_front_07",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_front_08",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_front_09",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_front_10",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_front_11",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_leftr_12",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_leftr_13",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_leftr_14",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_leftr_15",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_leftr_16",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_leftr_17",
+        "before": 4,
+        "after": 4
+      },
+      {
+        "part": "SBW_leftr_18",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_leftr_19",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_leftr_20",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_rightl_21",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_rightl_22",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_rightl_23",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_rightl_24",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_rightl_25",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_rightl_26",
+        "before": 4,
+        "after": 4
+      },
+      {
+        "part": "SBW_rightl_27",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_rightl_28",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_rightl_29",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_topb_30",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_topb_31",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_topb_32",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_topb_33",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_topb_34",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_topb_35",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_topb_36",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_topb_37",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_topb_38",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_topb_39",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_topb_40",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_back_41",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_back_42",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_back_43",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_back_44",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_back_45",
+        "before": 4,
+        "after": 4
+      },
+      {
+        "part": "SBW_back_46",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_back_47",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_back_48",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_back_49",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_back_50",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_back_51",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_rightr_52",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_rightr_53",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_rightr_54",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_rightr_55",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_rightr_56",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_rightr_57",
+        "before": 4,
+        "after": 4
+      },
+      {
+        "part": "SBW_rightr_58",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_rightr_59",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_rightr_60",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_leftl_61",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_leftl_62",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_leftl_63",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_leftl_64",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_leftl_65",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_leftl_66",
+        "before": 4,
+        "after": 4
+      },
+      {
+        "part": "SBW_leftl_67",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_leftl_68",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_leftl_69",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_topf_70",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_topf_71",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_topf_72",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_topf_73",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_topf_74",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_topf_75",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_topf_76",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_topf_77",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_topf_78",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_topf_79",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_topf_80",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_bottom_81",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_bottom_82",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_bottom_83",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_bottom_84",
+        "before": 10,
+        "after": 10
+      },
+      {
+        "part": "装甲底座纵梁",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "装甲底座纵梁",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "底座黄色端梁",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "底座黄色端梁",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "喷口装甲安装座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "空投喷口外壳",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "喷口厚壁唇缘",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "喷口内侧耐热衬层",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "喷口深处遮光板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "底部承重着陆支脚",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "着陆支脚黄色护套",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "喷口装甲安装座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "空投喷口外壳",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "喷口厚壁唇缘",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "喷口内侧耐热衬层",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "喷口深处遮光板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "底部承重着陆支脚",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "着陆支脚黄色护套",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "喷口装甲安装座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "空投喷口外壳",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "喷口厚壁唇缘",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "喷口内侧耐热衬层",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "喷口深处遮光板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "底部承重着陆支脚",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "着陆支脚黄色护套",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "喷口装甲安装座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "空投喷口外壳",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "喷口厚壁唇缘",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "喷口内侧耐热衬层",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "喷口深处遮光板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "底部承重着陆支脚",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "着陆支脚黄色护套",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "横向装甲加强带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "展翼骷髅涂装底带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "绝地潜兵展翼骷髅标志",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "底缘危险警示带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "顶框黄色识别线",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "纵向黄色识别线",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "黄色防撞角护板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "上角吊装框",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "吊装方孔",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "机械锁扣底板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "机械锁扣钢销",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "黄色释放拨片",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "纵向黄色识别线",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "黄色防撞角护板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "上角吊装框",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "吊装方孔",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "机械锁扣底板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "机械锁扣钢销",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "黄色释放拨片",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "折叠底铰链钢销",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "折叠底铰链钢销",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "横向装甲加强带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "展翼骷髅涂装底带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "绝地潜兵展翼骷髅标志",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "底缘危险警示带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "顶框黄色识别线",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "纵向黄色识别线",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "黄色防撞角护板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "上角吊装框",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "吊装方孔",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "机械锁扣底板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "机械锁扣钢销",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "黄色释放拨片",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "纵向黄色识别线",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "黄色防撞角护板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "上角吊装框",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "吊装方孔",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "机械锁扣底板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "机械锁扣钢销",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "黄色释放拨片",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "折叠底铰链钢销",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "折叠底铰链钢销",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面分片装甲带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面展翼标志_分片",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面钢质加强横肋",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧角黄色护边",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面分片装甲带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面展翼标志_分片",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面钢质加强横肋",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧角黄色护边",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面分片装甲带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面展翼标志_分片",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面钢质加强横肋",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧角黄色护边",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面分片装甲带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面展翼标志_分片",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面钢质加强横肋",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧角黄色护边",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "顶盖横向装甲加强带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "顶盖中心合缝黄边",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "顶盖横向装甲加强带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "顶盖中心合缝黄边",
+        "before": 12,
+        "after": 12
+      }
+    ]
+  },
+  {
+    "model": "0.6生存机器/部署集装箱/精炼厂_部署集装箱.bbmodel",
+    "before": 2038,
+    "after": 2038,
+    "reduction": 0.0,
+    "parts": [
+      {
+        "part": "SBW_front_01",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_front_02",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_front_03",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_front_04",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_front_05",
+        "before": 4,
+        "after": 4
+      },
+      {
+        "part": "SBW_front_06",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_front_07",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_front_08",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_front_09",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_front_10",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_front_11",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_leftr_12",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_leftr_13",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_leftr_14",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_leftr_15",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_leftr_16",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_leftr_17",
+        "before": 4,
+        "after": 4
+      },
+      {
+        "part": "SBW_leftr_18",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_leftr_19",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_leftr_20",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_rightl_21",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_rightl_22",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_rightl_23",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_rightl_24",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_rightl_25",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_rightl_26",
+        "before": 4,
+        "after": 4
+      },
+      {
+        "part": "SBW_rightl_27",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_rightl_28",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_rightl_29",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_topb_30",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_topb_31",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_topb_32",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_topb_33",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_topb_34",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_topb_35",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_topb_36",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_topb_37",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_topb_38",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_topb_39",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_topb_40",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_back_41",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_back_42",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_back_43",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_back_44",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_back_45",
+        "before": 4,
+        "after": 4
+      },
+      {
+        "part": "SBW_back_46",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_back_47",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_back_48",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_back_49",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_back_50",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_back_51",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_rightr_52",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_rightr_53",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_rightr_54",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_rightr_55",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_rightr_56",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_rightr_57",
+        "before": 4,
+        "after": 4
+      },
+      {
+        "part": "SBW_rightr_58",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_rightr_59",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_rightr_60",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_leftl_61",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_leftl_62",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_leftl_63",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_leftl_64",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_leftl_65",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_leftl_66",
+        "before": 4,
+        "after": 4
+      },
+      {
+        "part": "SBW_leftl_67",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_leftl_68",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_leftl_69",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_topf_70",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_topf_71",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_topf_72",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_topf_73",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_topf_74",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_topf_75",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_topf_76",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_topf_77",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_topf_78",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_topf_79",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_topf_80",
+        "before": 6,
+        "after": 6
+      },
+      {
+        "part": "SBW_bottom_81",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "SBW_bottom_82",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_bottom_83",
+        "before": 8,
+        "after": 8
+      },
+      {
+        "part": "SBW_bottom_84",
+        "before": 10,
+        "after": 10
+      },
+      {
+        "part": "装甲底座纵梁",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "装甲底座纵梁",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "底座黄色端梁",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "底座黄色端梁",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "喷口装甲安装座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "空投喷口外壳",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "喷口厚壁唇缘",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "喷口内侧耐热衬层",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "喷口深处遮光板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "底部承重着陆支脚",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "着陆支脚黄色护套",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "喷口装甲安装座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "空投喷口外壳",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "喷口厚壁唇缘",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "喷口内侧耐热衬层",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "喷口深处遮光板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "底部承重着陆支脚",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "着陆支脚黄色护套",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "喷口装甲安装座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "空投喷口外壳",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "喷口厚壁唇缘",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "喷口内侧耐热衬层",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "喷口深处遮光板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "底部承重着陆支脚",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "着陆支脚黄色护套",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "喷口装甲安装座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "空投喷口外壳",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "喷口厚壁唇缘",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "喷口内侧耐热衬层",
+        "before": 16,
+        "after": 16
+      },
+      {
+        "part": "喷口深处遮光板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "底部承重着陆支脚",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "着陆支脚黄色护套",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "横向装甲加强带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "横向装甲加强带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "展翼骷髅涂装底带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "绝地潜兵展翼骷髅标志",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "底缘危险警示带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "顶框黄色识别线",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "纵向黄色识别线",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "黄色防撞角护板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "上角吊装框",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "吊装方孔",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "机械锁扣底板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "机械锁扣钢销",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "黄色释放拨片",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "纵向黄色识别线",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "黄色防撞角护板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "上角吊装框",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "吊装方孔",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "机械锁扣底板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "机械锁扣钢销",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "黄色释放拨片",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "折叠底铰链钢销",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "折叠底铰链钢销",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "横向装甲加强带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "横向装甲加强带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "展翼骷髅涂装底带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "绝地潜兵展翼骷髅标志",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "底缘危险警示带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "顶框黄色识别线",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "纵向黄色识别线",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "黄色防撞角护板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "上角吊装框",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "吊装方孔",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "机械锁扣底板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "机械锁扣钢销",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "黄色释放拨片",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "纵向黄色识别线",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "黄色防撞角护板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "上角吊装框",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "吊装方孔",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "机械锁扣底板",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "机械锁扣钢销",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "黄色释放拨片",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "折叠底铰链钢销",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "折叠底铰链钢销",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "折叠底铰链座",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面分片装甲带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面展翼标志_分片",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面钢质加强横肋",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面钢质加强横肋",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧角黄色护边",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面分片装甲带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面展翼标志_分片",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面钢质加强横肋",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面钢质加强横肋",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧角黄色护边",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面分片装甲带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面展翼标志_分片",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面钢质加强横肋",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面钢质加强横肋",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧角黄色护边",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面分片装甲带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面展翼标志_分片",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面钢质加强横肋",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧面钢质加强横肋",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "侧角黄色护边",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "顶盖横向装甲加强带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "顶盖中心合缝黄边",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "顶盖横向装甲加强带",
+        "before": 12,
+        "after": 12
+      },
+      {
+        "part": "顶盖中心合缝黄边",
+        "before": 12,
+        "after": 12
+      }
+    ]
+  }
+]
