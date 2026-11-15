@@ -1,0 +1,279 @@
+{
+  "version": "0.7.4-perf.2",
+  "base": "0.7.4-perf.1 plus previously verified alignment fixes",
+  "models": [
+    {
+      "model": "amg43_hellpod_v3",
+      "before": 25356,
+      "after": 25572,
+      "replaced_bones": 23,
+      "atlas": {
+        "model": "amg43_hellpod_v3",
+        "before": [
+          8187,
+          4535
+        ],
+        "after": [
+          2048,
+          4408
+        ],
+        "patches": 5326
+      },
+      "sha256": "f80f20c77874de5a9a99828e496b3a195b178a04ec05dd5b7013e8bdb0fb1ca0",
+      "source": "art/models/炮台减面修正版/机枪炮台_修正.bbmodel",
+      "source_sha256": "75406c56245af822767113460e2aa99102171c8135f60d11a7984558901b6cf1"
+    },
+    {
+      "model": "gatling_hellpod_v3",
+      "before": 26156,
+      "after": 26576,
+      "replaced_bones": 8,
+      "atlas": {
+        "model": "gatling_hellpod_v3",
+        "before": [
+          8187,
+          4535
+        ],
+        "after": [
+          2048,
+          4651
+        ],
+        "patches": 5410
+      },
+      "sha256": "2ff688baf9b0b0f34f9c52a45c78ae2c7e4ee52cafc20d78d510b61f1c442087",
+      "source": "art/models/炮台减面修正版/加特林炮台_修正.bbmodel",
+      "source_sha256": "4b57b8118f64581894e4156ad6bd6aa77721b20dbb3ba8685623d2d2fd389658"
+    },
+    {
+      "model": "autocannon_hellpod_v1",
+      "before": 26908,
+      "after": 26908,
+      "replaced_bones": 18,
+      "atlas": {
+        "model": "autocannon_hellpod_v1",
+        "before": [
+          8187,
+          4535
+        ],
+        "after": [
+          2048,
+          4529
+        ],
+        "patches": 5242
+      },
+      "sha256": "8125135538db01c5f73b197639504aad9f53fd7b094efc88ba8afb414c8ba050",
+      "source": "art/models/炮台减面修正版/机炮炮台_修正.bbmodel",
+      "source_sha256": "ee018d970833b8b04beee97dedebcc1e2e080df1f89908beb09be27dd160f9d4"
+    },
+    {
+      "model": "rocket_hellpod_v1",
+      "before": 29912,
+      "after": 31556,
+      "replaced_bones": 26,
+      "atlas": {
+        "model": "rocket_hellpod_v1",
+        "before": [
+          8187,
+          4535
+        ],
+        "after": [
+          2048,
+          4603
+        ],
+        "patches": 5231
+      },
+      "sha256": "e79fb77b02088834ab58e9fa18895068b3e94726f163aad57f2c0232f7905c04",
+      "source": "art/models/炮台减面修正版/火箭炮台_修正.bbmodel",
+      "source_sha256": "3b8b374f9d33a1dbdb0d60435ade4cd6cf63d731041819fd825df940cf605abb"
+    },
+    {
+      "model": "flame_hellpod_v1",
+      "before": 37996,
+      "after": 39886,
+      "replaced_bones": 11,
+      "atlas": {
+        "model": "flame_hellpod_v1",
+        "before": [
+          4877,
+          4535
+        ],
+        "after": [
+          1024,
+          2546
+        ],
+        "patches": 1177
+      },
+      "sha256": "17f0ddd20f49d4f8e17c59e4f858d89009ea3e49712988d9cb22006b221668f4",
+      "source": "art/models/炮台减面修正版/火焰炮台_修正.bbmodel",
+      "source_sha256": "07207d125fe64b6ed299dc44f4837fc5484511d13a6611bd256e399b6dfa524c"
+    },
+    {
+      "model": "mortar_hellpod_v1",
+      "before": 41042,
+      "after": 45282,
+      "replaced_bones": 15,
+      "atlas": {
+        "model": "mortar_hellpod_v1",
+        "before": [
+          8185,
+          10328
+        ],
+        "after": [
+          4096,
+          7365
+        ],
+        "patches": 14151
+      },
+      "sha256": "d9d1387f6de89562546e9bac45b113d0df6976673f7cb230654106616a8775d2",
+      "source": "art/models/炮台减面修正版/迫击炮哨戒炮_修正.bbmodel",
+      "source_sha256": "7e68fddb750399633bfeb700fc779bcfeb83a51ba94b9d2a47874a0244c987db"
+    },
+    {
+      "model": "ems_mortar_hellpod_v1",
+      "before": 41022,
+      "after": 45198,
+      "replaced_bones": 15,
+      "atlas": {
+        "model": "ems_mortar_hellpod_v1",
+        "before": [
+          8185,
+          10306
+        ],
+        "after": [
+          4096,
+          7459
+        ],
+        "patches": 13808
+      },
+      "sha256": "d711971c2b1d4987d14acf9ece9b1d49628cb3c4130512b6ee7dc9f57e422330",
+      "source": "art/models/炮台减面修正版/电磁迫击炮哨戒炮_修正.bbmodel",
+      "source_sha256": "dfb5894d584e93ef515f9f3c6e98bbfa6689ede87577ae8110b928ca5399969a"
+    },
+    {
+      "model": "gas_mortar_hellpod_v1",
+      "before": 40796,
+      "after": 44972,
+      "replaced_bones": 15,
+      "atlas": {
+        "model": "gas_mortar_hellpod_v1",
+        "before": [
+          8185,
+          10316
+        ],
+        "after": [
+          4096,
+          7464
+        ],
+        "patches": 13600
+      },
+      "sha256": "96237181d2a041a9407bc22fd04ca87847c0ddcabc56482025c4d5faa12b4a23",
+      "source": "art/models/炮台减面修正版/毒气迫击炮哨戒炮_修正.bbmodel",
+      "source_sha256": "00267932ca6d96f6818ca30d453a99b263db83799eff2c30f8ffac956489abf9"
+    },
+    {
+      "model": "tesla_hellpod_v1",
+      "before": 32684,
+      "after": 32684,
+      "replaced_bones": 133,
+      "atlas": {
+        "model": "tesla_hellpod_v1",
+        "before": [
+          1772,
+          1157
+        ],
+        "after": [
+          1024,
+          1157
+        ],
+        "patches": 1209
+      },
+      "sha256": "a00eee0390e4913c45811d2f1db87793676675bb604c27073991cc312b480e23",
+      "source": "art/models/炮台减面修正版/特斯拉电塔_修正.bbmodel",
+      "source_sha256": "3d20b47e887c944b6f2eac36ae5332b7783aa05fdc1d148b3d50e774a540c4cd"
+    },
+    {
+      "model": "shield_hellpod_v1",
+      "before": 53350,
+      "after": 43376,
+      "replaced_bones": 8,
+      "atlas": {
+        "model": "shield_hellpod_v1",
+        "before": [
+          3072,
+          4608
+        ],
+        "after": [
+          1024,
+          664
+        ],
+        "patches": 1554
+      },
+      "sha256": "e2553a97c28238c34d96698a707986b8e9c77300b4fa4e89913e0704ae191b1c",
+      "source": "art/models/防护罩与操作炮台减面/防护罩生成器/空投与护罩/防护罩生成器与空投仓.bbmodel",
+      "source_sha256": "c8e47f412971d4ff93ad9f717023cbd24ac3d3ebba8b70597b877ad8328219d4"
+    },
+    {
+      "model": "hmg_hellpod_v1",
+      "before": 40576,
+      "after": 38396,
+      "replaced_bones": 17,
+      "atlas": {
+        "model": "hmg_hellpod_v1",
+        "before": [
+          2906,
+          4608
+        ],
+        "after": [
+          1024,
+          823
+        ],
+        "patches": 2413
+      },
+      "sha256": "9275daf593b4ed79f24d91a481e911b4e644d2c66078816674e5baf96ddf5835",
+      "source": "art/models/防护罩与操作炮台减面/重机枪支架/空投与首次登乘/重机枪支架与空投仓.bbmodel",
+      "source_sha256": "3330d9177529e7a817664720a3280b7c3a0521f2d14720ccf659d2a05e7b4e86"
+    },
+    {
+      "model": "at_emplacement_hellpod_v1",
+      "before": 51491,
+      "after": 44983,
+      "replaced_bones": 27,
+      "atlas": {
+        "model": "at_emplacement_hellpod_v1",
+        "before": [
+          4094,
+          4608
+        ],
+        "after": [
+          1024,
+          1413
+        ],
+        "patches": 3307
+      },
+      "sha256": "3c8673be701d04c8929bf1699e561821c385cd958a7c8672d3808c5f059d00d9",
+      "source": "art/models/防护罩与操作炮台减面/反坦克支架/空投与供弹/反坦克支架与空投仓.bbmodel",
+      "source_sha256": "9be97384e9ad46b02b1abecb7a5fe743cb653a79f393be2dc336c8d17eeb9611"
+    },
+    {
+      "model": "grenadier_hellpod_v1",
+      "before": 45694,
+      "after": 44355,
+      "replaced_bones": 30,
+      "atlas": {
+        "model": "grenadier_hellpod_v1",
+        "before": [
+          6530,
+          4608
+        ],
+        "after": [
+          1024,
+          3432
+        ],
+        "patches": 6912
+      },
+      "sha256": "d074ed183fb9a32a8b7c6a9762d2518aa46569dba5e16ade576062aeda6234b2",
+      "source": "art/models/防护罩与操作炮台减面/掷弹兵榴弹墙/空投与供弹/掷弹兵榴弹墙与空投仓.bbmodel",
+      "source_sha256": "ec59a284dd901748831e04795f446c7ec40449904cb41e9b34c86a15f4138f94"
+    }
+  ]
+}

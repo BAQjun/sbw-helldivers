@@ -57,13 +57,15 @@ object TurretPerformanceClientTest {
     private val frames=mutableMapOf<Int,MutableList<Double>>()
     private val firing=mutableMapOf<Int,Int>()
     private val targets=mutableListOf<Husk>()
-    private val pods=mutableListOf<SentryHellpodEntity>()
+    private val pods=mutableListOf<AbstractHellpodEntity>()
     private val types by lazy { listOf(ModEntities.MACHINE_GUN_SENTRY,ModEntities.GATLING_SENTRY,
         ModEntities.AUTOCANNON_SENTRY,ModEntities.ROCKET_SENTRY,ModEntities.MORTAR_SENTRY,
         ModEntities.GAS_MORTAR_SENTRY,ModEntities.EMS_MORTAR_SENTRY,ModEntities.FLAME_SENTRY,
-        ModEntities.LASER_SENTRY,ModEntities.TESLA_TOWER) }
+        ModEntities.LASER_SENTRY,ModEntities.TESLA_TOWER,ModEntities.HMG_EMPLACEMENT,
+        ModEntities.ANTI_TANK_EMPLACEMENT,ModEntities.GRENADIER_BATTLEMENT,ModEntities.SHIELD_GENERATOR) }
     private val names=listOf("empty","mixed-idle","machine-gun","gatling","autocannon","rocket",
-        "mortar","gas-mortar","ems-mortar","flame","laser","tesla","mixed-active")
+        "mortar","gas-mortar","ems-mortar","flame","laser","tesla",
+        "hmg-emplacement","anti-tank-emplacement","grenadier-battlement","shield-generator","mixed-active")
 
     private val laserNames=listOf("empty","laser-idle","laser-active","four-laser-idle","four-laser-active","eight-laser-idle","eight-laser-active")
     private fun label(i:Int)=if(laserOnly)laserNames[i] else names[i]
@@ -75,7 +77,7 @@ object TurretPerformanceClientTest {
         try {
             val level=server.overworld();age++
             for(target in targets)if(target.isAlive){target.health=target.maxHealth;target.clearFire()}
-            if(scenario>=2) firing[scenario]=pods.sumOf{it.shotSerial+it.teslaArcData.getInt("Serial")}
+            if(scenario>=2) firing[scenario]=pods.sumOf{it.shotSerial+(if(it is SentryHellpodEntity)it.teslaArcData.getInt("Serial")else 0)}
             if(autocannonOnly && scenario==4) {
                 if(age in listOf(90,160,230)) {
                     val height=when(age){90->6.0;160->0.0;else->3.0}
@@ -87,11 +89,27 @@ object TurretPerformanceClientTest {
                     data.putInt("HellpodPhaseTicks",0);pod.load(data)
                 }
             }
-            if(age>=if(autocannonOnly && scenario==4)400 else 240){
+            if(!autocannonOnly && !laserOnly && scenario in 12..15) {
+                val p=server.playerList.getPlayer(playerId!!)!!
+                val emplacement=pods.firstOrNull() as? HmgEmplacementEntity
+                if(emplacement!=null && emplacement.phase==AbstractHellpodEntity.Phase.ACTIVE && age in 120..270) {
+                    if(!p.isPassenger)p.startRiding(emplacement,true)
+                    val target=targets.first().position().add(0.0,1.0,0.0)
+                    val aim=emplacement.aimAnglesAt(target)
+                    emplacement.acceptInput(p,aim.x,aim.y,true,target)
+                }
+                if(age==290) {
+                    p.stopRiding()
+                    if(emplacement!=null)check(emplacement.shotSerial>0){"Manned fixture never fired: ${label(scenario)}"}
+                    LOGGER.info("MANNED_PERF_OPERATED {} shots={}",label(scenario),emplacement?.shotSerial?:0)
+                }
+                if(age==310)pods.forEach{pod->val data=CompoundTag();pod.saveWithoutId(data);data.putInt("HellpodPhase",AbstractHellpodEntity.Phase.RETRACTING.ordinal);data.putInt("HellpodPhaseTicks",0);pod.load(data)}
+            }
+            if(age>=if((autocannonOnly && scenario==4)||(!laserOnly && scenario in 12..15))400 else 240){
                 if(scenario==(if(autocannonOnly)4 else if(laserOnly)6 else if(rocketOnly)5 else names.lastIndex)){done=true;return}
                 level.getAllEntities().toList().filter{it !is net.minecraft.world.entity.player.Player}.forEach{it.discard()}
                 targets.clear();pods.clear();scenario++;age=0
-                val indices=if(laserOnly)when(scenario){0->emptyList();1,2->listOf(8);3,4->List(4){8};else->List(8){8}}else when(scenario){0->emptyList();1,12->types.indices.toList();else->listOf(scenario-2)}
+                val indices=if(laserOnly)when(scenario){0->emptyList();1,2->listOf(8);3,4->List(4){8};else->List(8){8}}else when(scenario){0->emptyList();1,16->types.indices.toList();else->listOf(scenario-2)}
                 for((slot,index) in indices.withIndex()){
                     val x=if(indices.size==1)0.5 else if(laserOnly)(slot%4)*3.0-4.0 else (slot%5-2)*4.0+.5
                     val z=if(indices.size==1)0.5 else if(laserOnly)slot/4*3.0+.5 else slot/5*4.0+.5
@@ -99,7 +117,7 @@ object TurretPerformanceClientTest {
                     pod.moveTo(x,80.0,z,180f,0f);pod.setOwnerUUID(playerId!!)
                     val data=CompoundTag();pod.saveWithoutId(data)
                     data.putInt("HellpodPhase",AbstractHellpodEntity.Phase.DEPLOYING.ordinal)
-                    data.putInt("HellpodPhaseTicks",if(autocannonOnly)0 else pod.deployTicks-1);data.putBoolean("HellpodCapReleased",true)
+                    data.putInt("HellpodPhaseTicks",if(autocannonOnly || index>=10)0 else pod.deployTicks-1);data.putBoolean("HellpodCapReleased",true)
                     data.putDouble("HellpodRestY",80.0);pod.load(data)
                     check(level.addFreshEntity(pod));pods.add(pod)
                     if(if(laserOnly)scenario==2||scenario==4||scenario==6 else scenario>=2){
@@ -177,9 +195,9 @@ object TurretPerformanceClientTest {
             }}
             if(!ready)return
             // Keep single turrets close enough to inspect their visible surfaces; retain the overview for groups.
-            val close = !laserOnly && scenario in 2..11
+            val close = !laserOnly && scenario in 2..15
             player.setPos(if(close)2.5 else 5.5,80.0,if(close)-3.5 else -7.5);player.yRot=30f;player.yRotO=30f;player.xRot=-6f;player.xRotO=-6f
-            if(close && age>=214) {
+            if(close && age>=if(scenario in 12..15)295 else 214) {
                 player.setPos(-2.5,80.0,4.5);player.yRot=210f;player.yRotO=210f
                 if(reverseCaptured!=scenario && age>=225) {
                     reverseCaptured=scenario
@@ -189,6 +207,8 @@ object TurretPerformanceClientTest {
             if(scenario!=captured && age in 170..210 && scenario>=0){
                 captured=scenario;Screenshot.grab(mc.gameDirectory,"turret-perf-${label(scenario)}.png",mc.mainRenderTarget){LOGGER.info("TURRET_PERF_SCREENSHOT {}",label(scenario))}
             }
+            if(!autocannonOnly && !laserOnly && scenario in 12..15 && age in listOf(35,105,250,335))
+                Screenshot.grab(mc.gameDirectory,"manned-${label(scenario)}-$age.png",mc.mainRenderTarget){}
             if(autocannonOnly && scenario==4) {
                 val section=when{age<80->0;age<140->1;age<210->2;age<300->3;else->4}
                 val camera=when(section){0,1,4->doubleArrayOf(2.8,79.9,-.6);2->doubleArrayOf(-2.1,80.1,2.1);else->doubleArrayOf(1.3,82.4,-2.0)}
@@ -239,7 +259,7 @@ object TurretPerformanceClientTest {
                 }
                 val lines=mutableListOf("scenario,frames,median_ms,p95_ms,shots_or_arcs")
                 for(i in if(laserOnly)(0..6).toList()else if(rocketOnly)listOf(5)else names.indices.toList()){
-                    if(if(laserOnly)i==2||i==4||i==6 else i>=2)check((firing[i]?:0)>0){"No actual shots from ${names[i]}"}
+                    if(if(laserOnly)i==2||i==4||i==6 else i>=2 && i!=15)check((firing[i]?:0)>0){"No actual shots from ${names[i]}"}
                     val values=frames[i].orEmpty().sorted();check(values.size>=30){"Insufficient frames ${names[i]}: ${values.size}"}
                     val label=label(i)
                     val row="$label,${values.size},${values[values.size/2]},${values[(values.size*.95).toInt().coerceAtMost(values.lastIndex)]},${firing[i]?:0}"
