@@ -1,6 +1,6 @@
 {
   "version": "0.7.4-perf.1",
-  "scope": "Existing in-game models only; original rigs, gameplay and socket transforms retained. Close-range atlas patches are repacked without resampling; distant and low-quality atlases retain their original UV layout at quarter resolution.",
+  "scope": "Existing in-game models only; existing rigs and gameplay retained, with the legacy autocannon gun/axle misalignment and firing sockets corrected. Close-range atlas patches are repacked without resampling; distant and low-quality atlases retain their original UV layout at quarter resolution.",
   "mesh_models": [
     {
       "model": "flame_guard_dog",
@@ -187,9 +187,9 @@
     {
       "model": "autocannon_hellpod_v1",
       "before": 31612,
-      "after": 26548,
+      "after": 26908,
       "replaced_bones": 18,
-      "source": "art/models/炮台修复进行中/机炮炮台_减面_共用部件初步修复.bbmodel",
+      "source": "art/models/炮台减面修正版/机炮炮台_修正.bbmodel",
       "resource": "models/bedrock/vehicle/autocannon_hellpod_v1.geo.json",
       "texture_before": [
         2048,
@@ -197,10 +197,12 @@
       ],
       "texture_after": [
         2048,
-        4268
+        4529
       ],
-      "sha256": "2686e2b145a9925428c90033ffdb3647da25df2c0af473eb530e24e015261567",
-      "reduction_percent": 16.02
+      "sha256": "991940fe4d0c3a3807d3d6e9a8f6165cd5b3a13aa2a1498dcc70c4305e1eccc2",
+      "reduction_percent": 14.88,
+      "source_sha256": "ee018d970833b8b04beee97dedebcc1e2e080df1f89908beb09be27dd160f9d4",
+      "alignment_fix": "Apply the pod bind-space displacement to the complete gun assembly, ejector hinge and firing sockets."
     },
     {
       "model": "rocket_hellpod_v1",

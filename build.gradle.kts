@@ -481,6 +481,7 @@ if(providers.gradleProperty("nearModelTests").isPresent){
  minecraft.runs.named("client"){
   workingDirectory(project.file(".codex/near-model/client"))
   property("sbw_helldiver.turretPerformanceTests","true")
+  if(providers.gradleProperty("autocannonAlignmentTests").isPresent) property("sbw_helldiver.autocannonAlignmentTests","true")
   mods.named(project.property("mod_id").toString()){source(sampleTest)}
   jvmArgs("-Xms512m","-Xmx3G","-XX:ActiveProcessorCount=4")
   args("--width","1280","--height","720")

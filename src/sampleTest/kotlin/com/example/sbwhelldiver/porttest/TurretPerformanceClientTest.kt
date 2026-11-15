@@ -30,13 +30,14 @@ import kotlin.math.*
 @EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
 object TurretPerformanceClientTest {
     private val enabled=java.lang.Boolean.getBoolean("sbw_helldiver.turretPerformanceTests")
+    private val autocannonOnly=java.lang.Boolean.getBoolean("sbw_helldiver.autocannonAlignmentTests")
     private val rocketOnly=java.lang.Boolean.getBoolean("sbw_helldiver.perfRocketOnly")
     private val laserOnly=java.lang.Boolean.getBoolean("sbw_helldiver.perfLaserOnly")
     private var started=0L
     private var prepared=false
     @Volatile private var ready=false
     @Volatile private var failure:Throwable?=null
-    @Volatile private var scenario=if(rocketOnly)4 else -1
+    @Volatile private var scenario=if(autocannonOnly)3 else if(rocketOnly)4 else -1
     @Volatile private var age=0
     @Volatile private var done=false
     private var playerId:java.util.UUID?=null
@@ -49,6 +50,10 @@ object TurretPerformanceClientTest {
     private var qualityFrames=0
     private var qualityReload:java.util.concurrent.CompletableFuture<Void>?=null
     private var diggingPodId=-1
+    private var axisChecks=0
+    private var maximumAxisGap=0f
+    private var gunAxis=org.joml.Vector3f()
+    private val alignmentCaptures=mutableSetOf<Int>()
     private val frames=mutableMapOf<Int,MutableList<Double>>()
     private val firing=mutableMapOf<Int,Int>()
     private val targets=mutableListOf<Husk>()
@@ -71,8 +76,19 @@ object TurretPerformanceClientTest {
             val level=server.overworld();age++
             for(target in targets)if(target.isAlive){target.health=target.maxHealth;target.clearFire()}
             if(scenario>=2) firing[scenario]=pods.sumOf{it.shotSerial+it.teslaArcData.getInt("Serial")}
-            if(age>=240){
-                if(scenario==(if(laserOnly)6 else if(rocketOnly)5 else names.lastIndex)){done=true;return}
+            if(autocannonOnly && scenario==4) {
+                if(age in listOf(90,160,230)) {
+                    val height=when(age){90->6.0;160->0.0;else->3.0}
+                    targets.forEach{it.setPos(if(age==160)4.5 else .5,80.0+height,9.5)}
+                }
+                if(age==300) pods.forEach{pod->
+                    val data=CompoundTag();pod.saveWithoutId(data)
+                    data.putInt("HellpodPhase",AbstractHellpodEntity.Phase.RETRACTING.ordinal)
+                    data.putInt("HellpodPhaseTicks",0);pod.load(data)
+                }
+            }
+            if(age>=if(autocannonOnly && scenario==4)400 else 240){
+                if(scenario==(if(autocannonOnly)4 else if(laserOnly)6 else if(rocketOnly)5 else names.lastIndex)){done=true;return}
                 level.getAllEntities().toList().filter{it !is net.minecraft.world.entity.player.Player}.forEach{it.discard()}
                 targets.clear();pods.clear();scenario++;age=0
                 val indices=if(laserOnly)when(scenario){0->emptyList();1,2->listOf(8);3,4->List(4){8};else->List(8){8}}else when(scenario){0->emptyList();1,12->types.indices.toList();else->listOf(scenario-2)}
@@ -83,7 +99,7 @@ object TurretPerformanceClientTest {
                     pod.moveTo(x,80.0,z,180f,0f);pod.setOwnerUUID(playerId!!)
                     val data=CompoundTag();pod.saveWithoutId(data)
                     data.putInt("HellpodPhase",AbstractHellpodEntity.Phase.DEPLOYING.ordinal)
-                    data.putInt("HellpodPhaseTicks",pod.deployTicks-1);data.putBoolean("HellpodCapReleased",true)
+                    data.putInt("HellpodPhaseTicks",if(autocannonOnly)0 else pod.deployTicks-1);data.putBoolean("HellpodCapReleased",true)
                     data.putDouble("HellpodRestY",80.0);pod.load(data)
                     check(level.addFreshEntity(pod));pods.add(pod)
                     if(if(laserOnly)scenario==2||scenario==4||scenario==6 else scenario>=2){
@@ -102,6 +118,18 @@ object TurretPerformanceClientTest {
     @SubscribeEvent fun frame(e:TickEvent.RenderTickEvent){
         if(e.phase!=TickEvent.Phase.END)return
         if(!enabled||!ready||done||scenario<0)return
+        if(autocannonOnly && scenario==4 && age in 65..295)try {
+            val mc=Minecraft.getInstance()
+            val pod=mc.level?.entitiesForRendering()?.filterIsInstance<SentryHellpodEntity>()?.firstOrNull()
+            if(pod!=null && pod.phase==AbstractHellpodEntity.Phase.ACTIVE){
+                val renderer=mc.entityRenderDispatcher.getRenderer(pod) as com.example.sbwhelldiver.client.HellpodRenderer
+                val instance=renderer.getCurrentModelEntry(com.mojang.blaze3d.vertex.PoseStack(),pod)!!.instance
+                val moving=instance.getGlobalTransform(instance.getIndex("pitch_mount")).transformPosition(org.joml.Vector3f(gunAxis))
+                val fixed=instance.getGlobalTransform(instance.getIndex("cradle")).transformPosition(org.joml.Vector3f(5.33f/16f,26.91787f/16f,2.11158f/16f))
+                val gap=moving.distance(fixed);maximumAxisGap=maxOf(maximumAxisGap,gap)
+                check(gap<.001f){"Autocannon trunnion separated from fixed axle: $gap blocks"};axisChecks++
+            }
+        }catch(t:Throwable){failure=t}
         val now=System.nanoTime()
         if(renderScenario==scenario && age in 80..230 && Minecraft.getInstance().screen==null && lastFrame!=0L)
             frames.getOrPut(scenario){mutableListOf()}.add((now-lastFrame)/1e6)
@@ -126,6 +154,15 @@ object TurretPerformanceClientTest {
                 val id=net.minecraft.resources.ResourceLocation(MOD_ID,"models/bedrock/vehicle/laser_hellpod_v1.geo.json")
                 val resource=mc.resourceManager.getResource(id).orElseThrow()
                 val sha=resource.open().use{java.security.MessageDigest.getInstance("SHA-256").digest(it.readBytes()).joinToString(""){b->"%02x".format(b)}}
+                if(autocannonOnly) {
+                    val modelId=net.minecraft.resources.ResourceLocation(MOD_ID,"models/bedrock/vehicle/autocannon_hellpod_v1.geo.json")
+                    val doc=mc.resourceManager.getResource(modelId).orElseThrow().openAsReader().use{com.google.gson.JsonParser.parseReader(it).asJsonObject}
+                    val bones=doc["minecraft:geometry"].asJsonArray[0].asJsonObject["bones"].asJsonArray
+                    val mount=bones.first{it.asJsonObject["name"].asString=="pitch_mount"}.asJsonObject
+                    val shaft=mount["poly_mesh"].asJsonObject["positions"].asJsonArray.map{it.asJsonArray.map{v->v.asFloat}}
+                        .filter{minOf(abs(abs(it[0])-2.67f),abs(abs(it[0])-5.33f))<.001f}
+                    gunAxis=org.joml.Vector3f(5.33f/16f,(shaft.minOf{it[1]}+shaft.maxOf{it[1]})/32f,(shaft.minOf{it[2]}+shaft.maxOf{it[2]})/32f)
+                }
                 LOGGER.info("TURRET_PERF_MODEL_RESOURCE source={} sha256={}",resource.sourcePackId(),sha)
                 server.execute{
                 try{
@@ -151,6 +188,22 @@ object TurretPerformanceClientTest {
             }
             if(scenario!=captured && age in 170..210 && scenario>=0){
                 captured=scenario;Screenshot.grab(mc.gameDirectory,"turret-perf-${label(scenario)}.png",mc.mainRenderTarget){LOGGER.info("TURRET_PERF_SCREENSHOT {}",label(scenario))}
+            }
+            if(autocannonOnly && scenario==4) {
+                val section=when{age<80->0;age<140->1;age<210->2;age<300->3;else->4}
+                val camera=when(section){0,1,4->doubleArrayOf(2.8,79.9,-.6);2->doubleArrayOf(-2.1,80.1,2.1);else->doubleArrayOf(1.3,82.4,-2.0)}
+                player.setPos(camera[0],camera[1],camera[2]);val dx=.5-player.x;val dz=.5-player.z;val dy=81.75-player.eyeY
+                player.yRot=Math.toDegrees(atan2(-dx,dz)).toFloat();player.yRotO=player.yRot
+                player.xRot=(-Math.toDegrees(atan2(dy,sqrt(dx*dx+dz*dz)))).toFloat();player.xRotO=player.xRot
+                if(age in listOf(35,110,180,260,325) && alignmentCaptures.add(age))
+                    Screenshot.grab(mc.gameDirectory,"autocannon-alignment-$age.png",mc.mainRenderTarget){}
+                if(done){
+                    check(axisChecks>100){"Insufficient animated axis checks: $axisChecks"}
+                    check((firing[4]?:0)>0){"Autocannon never fired"}
+                    LOGGER.info("AUTOCANNON_ALIGNMENT_PASSED checks={} maximumGap={} shots={} captures={}",axisChecks,maximumAxisGap,firing[4],alignmentCaptures.size)
+                    mc.stop()
+                }
+                return
             }
             if(done){
                 if(digWait==0){
