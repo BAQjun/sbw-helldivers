@@ -61,6 +61,11 @@ object ModelLod:ResourceManagerReloadListener {
         }
         return count
     }
+    // Near atlases may be repacked. Keep the distant mesh on its own compatible atlas.
+    private fun reducedTexture(texture:ResourceLocation):ResourceLocation {
+        val candidate=ResourceLocation(texture.namespace,texture.path.replace("textures/bedrock/vehicle/","textures/bedrock/vehicle/lod/"))
+        return if(net.minecraft.client.Minecraft.getInstance().resourceManager.getResource(candidate).isPresent) candidate else texture
+    }
     fun entry(entity:AbstractHellpodEntity):VehicleModelEntry? {
         if(!reduced(entity.position().distanceToSqr(net.minecraft.client.Minecraft.getInstance().gameRenderer.mainCamera.position)))return null
         // First-person operators always keep their original sight and geometry.
@@ -68,7 +73,7 @@ object ModelLod:ResourceManagerReloadListener {
         return entries.getOrPut(entity){
             val pojo=VehicleResource.compute(entity).getModels().firstOrNull()?:return null
             val model=models[pojo.model]?:return null
-            VehicleModelEntry(VehicleModelInstance(model),pojo.texture?:return null,pojo.emissiveTexture,0)
+            VehicleModelEntry(VehicleModelInstance(model),reducedTexture(pojo.texture?:return null),pojo.emissiveTexture?.let(::reducedTexture),0)
         }
     }
 }
