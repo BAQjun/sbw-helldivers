@@ -12,7 +12,7 @@ import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener
 import org.joml.Vector3f
 
-/** Both source halves use one continuous skin field; their seam cannot pull apart. */
+/** Draw the flexible feed once; runtime belt bones contain no rigid duplicate surfaces. */
 object HmgFeedRenderer: ResourceManagerReloadListener {
     private data class Corner(val position: Int,val uv: Int)
     private data class Mesh(val positions: Array<Vector3f>,val weights: FloatArray,

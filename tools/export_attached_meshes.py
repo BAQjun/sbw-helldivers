@@ -5,7 +5,9 @@ import json
 def export(assets):
  g=json.loads((assets/'models/bedrock/vehicle/hmg_hellpod_v1.geo.json').read_bytes())['minecraft:geometry'][0]
  names={'l_ammo_01','r_ammo_01','l_ammo_02','r_ammo_02'}
- meshes=[{'bone':b['name'],'poly_mesh':b['poly_mesh']}for b in g['bones']if b['name']in names]
+ previous=assets/'helldivers/hmg_feed.json'
+ old={m['bone']:m for m in json.loads(previous.read_bytes())['meshes']} if previous.exists() else {}
+ meshes=[{'bone':b['name'],'poly_mesh':b['poly_mesh']} if b.get('poly_mesh') else old[b['name']] for b in g['bones']if b['name']in names]
  assert len(meshes)==4
  assert all(not m['poly_mesh'].get('normalized_uvs',False) for m in meshes),'HMG renderer expects texel UVs'
  assert all(len(p)==3 or p[2]==p[3] for m in meshes for p in m['poly_mesh']['polys']),'Export triangulated attachment meshes'
