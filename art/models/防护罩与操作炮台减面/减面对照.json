@@ -55,19 +55,29 @@
       "model": "反坦克支架/反坦克支架.bbmodel",
       "source": "反坦克支架/反坦克支架.bbmodel",
       "source_sha256": "9c0a828a871873a63a79a82c4079d60f007a94870413f40ed61567e608854167",
-      "candidate_sha256": "9f8af2d71bcd1368869babee92506fb7ea90e18eeb954734c9430982b624832e",
+      "candidate_sha256": "cfa18f97b29afd63dab689139d3a6e8b26bac4e2d12c9b484f1c2d2b07dd83a7",
       "before": 33219,
-      "after": 24391,
-      "reduction_percent": 26.6
+      "after": 26326,
+      "reduction_percent": 20.8,
+      "protected_parts": [
+        "scope_arm_01",
+        "scope_arm_02",
+        "scope_arm_03"
+      ]
     },
     {
       "model": "反坦克支架/空投与供弹/反坦克支架与空投仓.bbmodel",
       "source": "反坦克支架/空投与供弹/反坦克支架与空投仓.bbmodel",
       "source_sha256": "1cd5f4a5230ffb2d1ebef712e90580d75dd808f705e6a3b737a08345be1e760d",
-      "candidate_sha256": "d668edd6a08753d1e3942be6353520ff95a84dc06080822c39dc026a5f17f462",
+      "candidate_sha256": "9be97384e9ad46b02b1abecb7a5fe743cb653a79f393be2dc336c8d17eeb9611",
       "before": 53953,
-      "after": 45376,
-      "reduction_percent": 15.9
+      "after": 47317,
+      "reduction_percent": 12.3,
+      "protected_parts": [
+        "scope_arm_01",
+        "scope_arm_02",
+        "scope_arm_03"
+      ]
     },
     {
       "model": "掷弹兵榴弹墙/掷弹兵榴弹墙.bbmodel",
