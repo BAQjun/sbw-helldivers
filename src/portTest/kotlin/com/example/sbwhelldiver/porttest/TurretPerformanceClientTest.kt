@@ -23,7 +23,7 @@ import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.neoforge.client.event.*
-import net.neoforged.neoforge.event.tick.ServerTickEvent
+import net.neoforged.neoforge.event.tick.LevelTickEvent
 import java.nio.file.Files
 import kotlin.math.*
 
@@ -33,12 +33,13 @@ object TurretPerformanceClientTest {
     private val enabled=java.lang.Boolean.getBoolean("sbw_helldiver.turretPerformanceTests")
     private val autocannonOnly=java.lang.Boolean.getBoolean("sbw_helldiver.autocannonAlignmentTests")
     private val rocketOnly=java.lang.Boolean.getBoolean("sbw_helldiver.perfRocketOnly")
+    private val panelsOnly=java.lang.Boolean.getBoolean("sbw_helldiver.perfPanelsOnly")
     private val laserOnly=java.lang.Boolean.getBoolean("sbw_helldiver.perfLaserOnly")
     private var started=0L
     private var prepared=false
     @Volatile private var ready=false
     @Volatile private var failure:Throwable?=null
-    @Volatile private var scenario=if(autocannonOnly)3 else if(rocketOnly)4 else -1
+    @Volatile private var scenario=if(panelsOnly)5 else if(autocannonOnly)3 else if(rocketOnly)4 else -1
     @Volatile private var age=0
     @Volatile private var done=false
     private var playerId:java.util.UUID?=null
@@ -72,10 +73,12 @@ object TurretPerformanceClientTest {
     private val laserNames=listOf("empty","laser-idle","laser-active","four-laser-idle","four-laser-active","eight-laser-idle","eight-laser-active")
     private fun label(i:Int)=if(laserOnly)laserNames[i] else names[i]
 
-    @SubscribeEvent fun serverTick(e:ServerTickEvent.Post) {
+    @SubscribeEvent fun serverTick(e:LevelTickEvent.Pre) {
+        if(e.level.isClientSide || e.level.dimension()!=Level.OVERWORLD)return
+        val server=e.level.server?:return
         if(!enabled||!ready||done||failure!=null)return
         try {
-            val level=e.server.overworld();age++
+            val level=server.overworld();age++
             for(target in targets)if(target.isAlive){target.health=target.maxHealth;target.clearFire()}
             if(scenario>=2) firing[scenario]=pods.sumOf{it.shotSerial+(if(it is SentryHellpodEntity)it.teslaArcData.getInt("Serial")else 0)}
             if(autocannonOnly && scenario==4) {
@@ -90,10 +93,20 @@ object TurretPerformanceClientTest {
                 }
             }
             if(!autocannonOnly && !laserOnly && scenario in 12..15) {
-                val p=e.server.playerList.getPlayer(playerId!!)!!
+                val p=server.playerList.getPlayer(playerId!!)!!
                 val emplacement=pods.firstOrNull() as? HmgEmplacementEntity
                 if(emplacement!=null && emplacement.phase==AbstractHellpodEntity.Phase.ACTIVE && age in 120..270) {
-                    if(!p.isPassenger)p.startRiding(emplacement,true)
+                    if(scenario==12 && age>=151) {
+                        p.stopRiding()
+                        if(age in listOf(151,165,220)) {
+                            val pose=CompoundTag();emplacement.saveWithoutId(pose)
+                            pose.putFloat("HmgPitch",when{age<165->0f;age<220->-65f;else->47f})
+                            pose.putBoolean("HmgHasBeenMounted",true);pose.putInt("HmgFirstMountTicksRemaining",0)
+                            emplacement.load(pose)
+                        }
+                    } else if(!p.isPassenger)p.startRiding(emplacement,true)
+                    if(scenario==12)targets.first().setPos(.5,80.0+when{age<165->0.0;age<220->24.0;else->-3.0},if(age<220)9.5 else 4.5)
+                    if(scenario==12 && age in listOf(155,200,250))LOGGER.info("HMG_FEED_ANGLE age={} pitch={}",age,emplacement.weaponPitch)
                     if(scenario==13)targets.first().setPos(.5+sin(age*.055)*6.0,80.0,9.5)
                     val target=targets.first().position().add(0.0,1.0,0.0)
                     val aim=emplacement.aimAnglesAt(target)
@@ -107,7 +120,7 @@ object TurretPerformanceClientTest {
                 if(age==310)pods.forEach{pod->val data=CompoundTag();pod.saveWithoutId(data);data.putInt("HellpodPhase",AbstractHellpodEntity.Phase.RETRACTING.ordinal);data.putInt("HellpodPhaseTicks",0);pod.load(data)}
             }
             if(age>=if((autocannonOnly && scenario==4)||(!laserOnly && scenario in 12..15))400 else 240){
-                if(scenario==(if(autocannonOnly)4 else if(laserOnly)6 else if(rocketOnly)5 else names.lastIndex)){done=true;return}
+                if(scenario==(if(panelsOnly)10 else if(autocannonOnly)4 else if(laserOnly)6 else if(rocketOnly)5 else names.lastIndex)){done=true;return}
                 level.getAllEntities().toList().filter{it !is net.minecraft.world.entity.player.Player}.forEach{it.discard()}
                 targets.clear();pods.clear();scenario++;age=0
                 val indices=if(laserOnly)when(scenario){0->emptyList();1,2->listOf(8);3,4->List(4){8};else->List(8){8}}else when(scenario){0->emptyList();1,16->types.indices.toList();else->listOf(scenario-2)}
@@ -205,10 +218,11 @@ object TurretPerformanceClientTest {
             if(!ready)return
             // Keep single turrets close enough to inspect their visible surfaces; retain the overview for groups.
             val close = !laserOnly && scenario in 2..15
+            mc.options.cameraType=CameraType.FIRST_PERSON
             player.setPos(if(close)2.5 else 5.5,80.0,if(close)-3.5 else -7.5);player.yRot=30f;player.yRotO=30f;player.xRot=-6f;player.xRotO=-6f
             if(close && age>=if(scenario in 12..15)295 else 214) {
                 player.setPos(-2.5,80.0,4.5);player.yRot=210f;player.yRotO=210f
-                if(reverseCaptured!=scenario && age>=225) {
+                if(reverseCaptured!=scenario && age>=if(scenario in 12..15)305 else 225) {
                     reverseCaptured=scenario
                     Screenshot.grab(mc.gameDirectory,"turret-perf-${label(scenario)}-reverse.png",mc.mainRenderTarget){}
                 }
@@ -221,10 +235,21 @@ object TurretPerformanceClientTest {
                 player.xRot=(-Math.toDegrees(atan2(dy,sqrt(dx*dx+dz*dz)))).toFloat();player.xRotO=player.xRot
                 if(age==100)Screenshot.grab(mc.gameDirectory,"detail-${label(scenario)}.png",mc.mainRenderTarget){}
             }
+            if(panelsOnly || scenario in 6..10) {
+                mc.options.fov().set(60)
+                val near=age<140 || age>=200
+                val back=age>=200
+                val cx=if(back)-2.0 else if(near)2.0 else 3.5
+                val cz=if(back)1.7 else if(near)-.7 else -2.0
+                player.setPos(cx,80.0,cz)
+                player.yRot=Math.toDegrees(atan2(cx-.5,.5-cz)).toFloat();player.yRotO=player.yRot
+                player.xRot=4f;player.xRotO=4f
+                if(age in listOf(110,175,225))Screenshot.grab(mc.gameDirectory,"panel-${label(scenario)}-$age.png",mc.mainRenderTarget){}
+            }
             if(scenario!=captured && age in 170..210 && scenario>=0){
                 captured=scenario;Screenshot.grab(mc.gameDirectory,"turret-perf-${label(scenario)}.png",mc.mainRenderTarget){LOGGER.info("TURRET_PERF_SCREENSHOT {}",label(scenario))}
             }
-            if(!autocannonOnly && !laserOnly && scenario in 12..15 && age in listOf(35,105,250,335))
+            if(!autocannonOnly && !laserOnly && scenario in 12..15 && age in listOf(35,105,155,200,250,335))
                 Screenshot.grab(mc.gameDirectory,"manned-${label(scenario)}-$age.png",mc.mainRenderTarget){}
             if(autocannonOnly && scenario==4) {
                 val section=when{age<80->0;age<140->1;age<210->2;age<300->3;else->4}
@@ -243,6 +268,7 @@ object TurretPerformanceClientTest {
                 return
             }
             if(done){
+                if(panelsOnly){LOGGER.info("PANEL_VIEWS_PASSED");mc.stop();return}
                 if(digWait==0){
                     val pod=mc.level!!.entitiesForRendering().filterIsInstance<SentryHellpodEntity>().first()
                     check(com.example.sbwhelldiver.client.TerrainMeshOcclusion.volume(pod)!=null){"No buried hull volume before digging"}

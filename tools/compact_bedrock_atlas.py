@@ -12,6 +12,13 @@ def compact(assets, name):
     tp=assets/f'textures/bedrock/vehicle/{name}.png'
     d=json.loads(gp.read_bytes());g=d['minecraft:geometry'][0]
     im=Image.open(tp).convert('RGBA');width,height=im.size
+    detached=[]
+    if name=='hmg_hellpod_v1':
+        feed=assets/'helldivers/hmg_feed.json'
+        saved={m['bone']:m['poly_mesh'] for m in json.loads(feed.read_bytes())['meshes']} if feed.exists() else {}
+        for b in g['bones']:
+            if b['name'] in saved and not b.get('poly_mesh'):
+                b['poly_mesh']=saved[b['name']];detached.append(b)
     ep=tp.with_stem(tp.stem+'_emissive');em=Image.open(ep).convert('RGBA') if ep.exists() else None
     patches=[];unique={};bounds={};bindings=[]
     def patch(coords):
@@ -81,6 +88,8 @@ def compact(assets, name):
         pm=b.get('poly_mesh')
         if pm:pm['uvs']=uv_lists[id(pm)][0]
     g['description']['texture_width']=nw;g['description']['texture_height']=nh
+    if detached:
+        feed.write_text(json.dumps(dict(texture_width=nw,texture_height=nh,meshes=[dict(bone=b['name'],poly_mesh=b.pop('poly_mesh')) for b in detached]),separators=(',',':'))+'\n','utf8')
     gp.write_text(json.dumps(d,separators=(',',':')),'utf8')
     atlas.save(tp)
     if ea:ea.save(ep)

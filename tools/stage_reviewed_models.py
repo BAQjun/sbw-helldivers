@@ -13,7 +13,7 @@ from fix_autocannon_alignment import repair_runtime
 def count(doc):
  return sum(sum(len(c['uv'])*2 if isinstance(c.get('uv'),dict) else 12 for c in b.get('cubes',[]))+sum(len(set(tuple(x)for x in f))-2 for f in b.get('poly_mesh',{}).get('polys',[]))for b in doc['minecraft:geometry'][0]['bones'])
 
-def stage(assets,export,name,combined=False):
+def stage(assets,export,name,combined=False,include_pod=False):
  p=assets/f'models/bedrock/vehicle/{name}.geo.json';tp=assets/f'textures/bedrock/vehicle/{name}.png'
  original=json.loads(p.read_bytes());doc=copy.deepcopy(original);geo=doc['minecraft:geometry'][0];bones={b['name']:b for b in geo['bones']}
  src=json.loads(export.read_bytes());sb={b['name']:b for b in src['bones']}
@@ -22,12 +22,16 @@ def stage(assets,export,name,combined=False):
  for ti,t in enumerate(src['textures']):
   image=Image.open(io.BytesIO(base64.b64decode(t['source'].split(',',1)[1])))
   assert image.convert('RGBA').getextrema()[3][1]>0, f'Transparent native texture {ti}: export the embedded source PNG'
-  sx,sy=image.width/t['w'],image.height/t['h']
+  tw,th=t['w'],t['h']
+  if not tw or not th:
+   assert all(lo==hi for lo,hi in image.convert('RGBA').getextrema()), 'Missing logical dimensions on a non-uniform texture'
+   tw,th=image.size
+  sx,sy=image.width/tw,image.height/th
   for tris in src['rows'].values():
    for tri in tris:
     for v in tri:
-     if v['ti']==ti:v['uv']=[v['uv'][0]*sx,v['uv'][1]*sy]
- rows={k:v for k,v in src['rows'].items()if not k.startswith('pod_')}
+     if v['ti']==ti:v['uv']=[max(.001,min(image.width-.001,v['uv'][0]*sx)),max(.001,min(image.height-.001,v['uv'][1]*sy))]
+ rows={k:v for k,v in src['rows'].items()if include_pod or not k.startswith('pod_')}
  assert not(rows.keys()-bones.keys()),rows.keys()-bones.keys()
  if combined:
   assert all(all(sb[k].get(v)==bones[k].get(v)for v in ('parent','pivot','rotation'))for k in rows)
