@@ -44,7 +44,11 @@ object TurretPerformanceClientTest {
     private var renderScenario=-1
     private var lastFrame=0L
     private var captured=-1
+    private var reverseCaptured=-1
     private var digWait=0
+    private var qualityStage=0
+    private var qualityFrames=0
+    private var qualityReload:java.util.concurrent.CompletableFuture<Void>?=null
     private var diggingPodId=-1
     private val frames=mutableMapOf<Int,MutableList<Double>>()
     private val firing=mutableMapOf<Int,Int>()
@@ -132,8 +136,16 @@ object TurretPerformanceClientTest {
                 }catch(t:Throwable){failure=t}
             }}
             if(!ready)return
-            // Approximately nine blocks from the primary model; never switch to reduced models.
-            player.setPos(5.5,80.0,-7.5);player.yRot=30f;player.yRotO=30f;player.xRot=-6f;player.xRotO=-6f
+            // Keep single turrets close enough to inspect their visible surfaces; retain the overview for groups.
+            val close = !laserOnly && scenario in 2..11
+            player.setPos(if(close)2.5 else 5.5,80.0,if(close)-3.5 else -7.5);player.yRot=30f;player.yRotO=30f;player.xRot=-6f;player.xRotO=-6f
+            if(close && age>=214) {
+                player.setPos(-2.5,80.0,4.5);player.yRot=210f;player.yRotO=210f
+                if(reverseCaptured!=scenario && age>=225) {
+                    reverseCaptured=scenario
+                    Screenshot.grab(mc.gameDirectory,"turret-perf-${label(scenario)}-reverse.png",mc.mainRenderTarget){}
+                }
+            }
             if(scenario!=captured && age in 170..210 && scenario>=0){
                 captured=scenario;Screenshot.grab(mc.gameDirectory,"turret-perf-${label(scenario)}.png",mc.mainRenderTarget){LOGGER.info("TURRET_PERF_SCREENSHOT {}",label(scenario))}
             }
@@ -148,7 +160,27 @@ object TurretPerformanceClientTest {
                 if(digWait++<12)return
                 val pod=mc.level!!.getEntity(diggingPodId) as SentryHellpodEntity
                 check(com.example.sbwhelldiver.client.TerrainMeshOcclusion.volume(pod)==null){"Digging did not expose retained hull"}
-                LOGGER.info("TURRET_PERF_DIG_EXPOSURE_PASSED")
+                if(qualityStage==0) {
+                    LOGGER.info("TURRET_PERF_DIG_EXPOSURE_PASSED")
+                    ClientModelConfig.lowQualityModels.set(true)
+                    for(visible in mc.level!!.entitiesForRendering().filterIsInstance<SentryHellpodEntity>()) {
+                        val distant=com.example.sbwhelldiver.client.ModelLod.entry(visible)!!
+                        check(distant.texture.path.contains("/lod/")){"Distant mesh retained repacked near UV atlas"}
+                        check(com.example.sbwhelldiver.client.BinaryEntityTextures.contains(distant.texture)){"Distant texture lost binary-alpha fast path"}
+                    }
+                    Screenshot.grab(mc.gameDirectory,"turret-perf-distant-atlases.png",mc.mainRenderTarget){}
+                    qualityStage=1;qualityReload=mc.reloadResourcePacks();return
+                }
+                if(qualityStage==1) {
+                    if(qualityReload?.isDone!=true || mc.overlay!=null || qualityFrames++<30)return
+                    qualityReload!!.join()
+                    val texture=net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(MOD_ID,"textures/bedrock/vehicle/laser_hellpod_v1.png")
+                    check(com.example.sbwhelldiver.client.BinaryEntityTextures.contains(texture)){"Low-quality overlay lost compatible texture hash"}
+                    check(com.example.sbwhelldiver.client.ModelLod.verifySkeletons()>0)
+                    Screenshot.grab(mc.gameDirectory,"turret-perf-low-quality-atlases.png",mc.mainRenderTarget){}
+                    LOGGER.info("TURRET_PERF_QUALITY_ATLASES_PASSED")
+                    qualityStage=2
+                }
                 val lines=mutableListOf("scenario,frames,median_ms,p95_ms,shots_or_arcs")
                 for(i in if(laserOnly)(0..6).toList()else if(rocketOnly)listOf(5)else names.indices.toList()){
                     if(if(laserOnly)i==2||i==4||i==6 else i>=2)check((firing[i]?:0)>0){"No actual shots from ${names[i]}"}

@@ -1,0 +1,332 @@
+{
+  "version": "0.7.4-perf.1",
+  "scope": "Existing in-game models only; original rigs, gameplay and socket transforms retained. Close-range atlas patches are repacked without resampling; distant and low-quality atlases retain their original UV layout at quarter resolution.",
+  "mesh_models": [
+    {
+      "model": "flame_guard_dog",
+      "before": 29038,
+      "after": 27212,
+      "rig_preserved": true,
+      "resource": "models/mesh/flame_guard_dog.mesh.json.gz",
+      "sha256": "b636c8ddd939f9ea80274865e92b3b7707f37649b16196218557d0d60cc5c1a8",
+      "reduction_percent": 6.29
+    },
+    {
+      "model": "flame_guard_dog_backpack",
+      "before": 18096,
+      "after": 16688,
+      "rig_preserved": true,
+      "resource": "models/mesh/flame_guard_dog_backpack.mesh.json.gz",
+      "sha256": "1ed42442c7866d7c135974adf1bca467dcf213e468d394e249cc916506022030",
+      "reduction_percent": 7.78
+    },
+    {
+      "model": "gas_guard_dog",
+      "before": 24516,
+      "after": 23043,
+      "rig_preserved": true,
+      "resource": "models/mesh/gas_guard_dog.mesh.json.gz",
+      "sha256": "f622d40d563a35e1fe4beb83dc7e8c9c978bd05f53be093948dda6b97de07ccd",
+      "reduction_percent": 6.01
+    },
+    {
+      "model": "gas_guard_dog_backpack",
+      "before": 17888,
+      "after": 16694,
+      "rig_preserved": true,
+      "resource": "models/mesh/gas_guard_dog_backpack.mesh.json.gz",
+      "sha256": "2992af408c1d161a31952ed641589ac8fa29315e1de0ec1398284570196644ab",
+      "reduction_percent": 6.67
+    },
+    {
+      "model": "guard_dog",
+      "before": 25270,
+      "after": 23130,
+      "rig_preserved": true,
+      "resource": "models/mesh/guard_dog.mesh.json.gz",
+      "sha256": "31524faa397b8569e7240ef05c60a4a04fec9d8a4b8918428ebb8eeb46f6d713",
+      "reduction_percent": 8.47
+    },
+    {
+      "model": "guard_dog_backpack",
+      "before": 20168,
+      "after": 15870,
+      "rig_preserved": true,
+      "resource": "models/mesh/guard_dog_backpack.mesh.json.gz",
+      "sha256": "d073eabfbccb9a467e627d8d541d8ff03d807efa60872e358793b9cacd3ddc61",
+      "reduction_percent": 21.31
+    },
+    {
+      "model": "laser_guard_dog",
+      "before": 26382,
+      "after": 24759,
+      "rig_preserved": true,
+      "resource": "models/mesh/laser_guard_dog.mesh.json.gz",
+      "sha256": "16b71ee43cf7b9d450c34671d92809030e6e17b880795271709a2cec468ec7d9",
+      "reduction_percent": 6.15
+    },
+    {
+      "model": "laser_guard_dog_backpack",
+      "before": 6332,
+      "after": 5788,
+      "rig_preserved": true,
+      "resource": "models/mesh/laser_guard_dog_backpack.mesh.json.gz",
+      "sha256": "618d5e4d22969a37ddd37650fd17c85691926db4b5c04bec55d07140ccbd0a43",
+      "reduction_percent": 8.59
+    },
+    {
+      "model": "stun_guard_dog",
+      "before": 29430,
+      "after": 26842,
+      "rig_preserved": true,
+      "resource": "models/mesh/stun_guard_dog.mesh.json.gz",
+      "sha256": "93e983b1b30c0722ec67924a3d9887d4dd936e8b5d3b477d2fafb558cfa75cfb",
+      "reduction_percent": 8.79
+    },
+    {
+      "model": "stun_guard_dog_backpack",
+      "before": 9910,
+      "after": 9125,
+      "rig_preserved": true,
+      "resource": "models/mesh/stun_guard_dog_backpack.mesh.json.gz",
+      "sha256": "798bd22439dc7a10e31b733bbbd37fb162f751af430cac48ba6a31d952d3f936",
+      "reduction_percent": 7.92
+    },
+    {
+      "model": "bioprocessor",
+      "before": 20328,
+      "after": 19375,
+      "rig_preserved": true,
+      "resource": "models/mesh/bioprocessor.mesh.json.gz",
+      "sha256": "4138f2f780d7f8e5253e7572b4cd0c7c28fbd0bd9439a8c390cfb4a70085215f",
+      "reduction_percent": 4.69
+    },
+    {
+      "model": "refinery",
+      "before": 72828,
+      "after": 67917,
+      "rig_preserved": true,
+      "resource": "models/mesh/refinery.mesh.json.gz",
+      "sha256": "0e8bc9a36c9a302d53fcb5fb5b454d5baecfcd8d061815a8b418a40d2a59d3e5",
+      "reduction_percent": 6.74
+    },
+    {
+      "model": "tactical_terminal",
+      "before": 9090,
+      "after": 7954,
+      "rig_preserved": true,
+      "resource": "models/mesh/tactical_terminal.mesh.json.gz",
+      "sha256": "0dde0d6e8f1682a5b508274a72813d58357052f8623539b93e451d3e6a0eb97b",
+      "reduction_percent": 12.5
+    },
+    {
+      "model": "equipment_beacon",
+      "before": 49591,
+      "after": 49005,
+      "rig_preserved": true,
+      "resource": "models/mesh/equipment_beacon.mesh.json.gz",
+      "sha256": "3090d3e4b5a7a19e0c3e0734473acf63880f8d1f308569e0ae8c0b0588e23cf7",
+      "reduction_percent": 1.18
+    },
+    {
+      "model": "bioprocessor_container",
+      "before": 1966,
+      "after": 1966,
+      "rig_preserved": true,
+      "resource": "models/mesh/bioprocessor_container.mesh.json.gz",
+      "sha256": "b4f4e932b92b510a028283c969333ed5f4b6f68a1ebf03474d7352c8330c00d5",
+      "reduction_percent": 0.0
+    },
+    {
+      "model": "refinery_container",
+      "before": 2038,
+      "after": 2038,
+      "rig_preserved": true,
+      "resource": "models/mesh/refinery_container.mesh.json.gz",
+      "sha256": "b7ef1089cfc5f8cecd8d031d8e5436702e23eb80fa3d1ec44235f1d403913253",
+      "reduction_percent": 0.0
+    }
+  ],
+  "sentries": [
+    {
+      "model": "amg43_hellpod_v3",
+      "before": 30064,
+      "after": 25356,
+      "replaced_bones": 23,
+      "source": "art/models/炮台修复进行中/机枪炮台_枪体减面_共用部件初步修复.bbmodel",
+      "resource": "models/bedrock/vehicle/amg43_hellpod_v3.geo.json",
+      "texture_before": [
+        2048,
+        4608
+      ],
+      "texture_after": [
+        2048,
+        4192
+      ],
+      "sha256": "303d7918f1670eaeb8e1946fbbe5fddb3f7be18fb53d833d1cbc7653b8341a80",
+      "reduction_percent": 15.66
+    },
+    {
+      "model": "gatling_hellpod_v3",
+      "before": 31364,
+      "after": 26156,
+      "replaced_bones": 8,
+      "source": "art/models/炮台修复进行中/加特林炮台_枪体减面_共用部件初步修复.bbmodel",
+      "resource": "models/bedrock/vehicle/gatling_hellpod_v3.geo.json",
+      "texture_before": [
+        2048,
+        4608
+      ],
+      "texture_after": [
+        2048,
+        4351
+      ],
+      "sha256": "9002fb50e011640eb652b6beed48f2870911bfd0d6ffedb8314a87c51b5e2cbc",
+      "reduction_percent": 16.61
+    },
+    {
+      "model": "autocannon_hellpod_v1",
+      "before": 31612,
+      "after": 26548,
+      "replaced_bones": 18,
+      "source": "art/models/炮台修复进行中/机炮炮台_减面_共用部件初步修复.bbmodel",
+      "resource": "models/bedrock/vehicle/autocannon_hellpod_v1.geo.json",
+      "texture_before": [
+        2048,
+        4608
+      ],
+      "texture_after": [
+        2048,
+        4268
+      ],
+      "sha256": "2686e2b145a9925428c90033ffdb3647da25df2c0af473eb530e24e015261567",
+      "reduction_percent": 16.02
+    },
+    {
+      "model": "rocket_hellpod_v1",
+      "before": 38592,
+      "after": 29912,
+      "replaced_bones": 26,
+      "source": "art/models/炮台修复进行中/火箭炮台_减面_共用部件初步修复.bbmodel",
+      "resource": "models/bedrock/vehicle/rocket_hellpod_v1.geo.json",
+      "texture_before": [
+        2048,
+        4608
+      ],
+      "texture_after": [
+        2048,
+        4265
+      ],
+      "sha256": "76dcab01371d80b016d9dbd97111841c27afe763553f11a2066a543a0d6d115c",
+      "reduction_percent": 22.49
+    },
+    {
+      "model": "flame_hellpod_v1",
+      "before": 49745,
+      "after": 37996,
+      "replaced_bones": 11,
+      "source": "art/models/炮台修复进行中/火焰炮台_减面_共用部件初步修复.bbmodel",
+      "resource": "models/bedrock/vehicle/flame_hellpod_v1.geo.json",
+      "texture_before": [
+        6144,
+        4608
+      ],
+      "texture_after": [
+        1024,
+        4308
+      ],
+      "sha256": "c700e13a31b9b8a0e968c08090992e81fffe888440f6888ea8808318d69ba346",
+      "reduction_percent": 23.62
+    },
+    {
+      "model": "mortar_hellpod_v1",
+      "before": 48002,
+      "after": 41042,
+      "replaced_bones": 12,
+      "source": "art/models/其它炮台减面第二轮/迫击炮哨戒炮_减面.bbmodel",
+      "resource": "models/bedrock/vehicle/mortar_hellpod_v1.geo.json",
+      "texture_before": [
+        4096,
+        4608
+      ],
+      "texture_after": [
+        4096,
+        5793
+      ],
+      "sha256": "5b5c17c1ec4ddd1413b486a510defc8fb2f5c87f6acc226975a2d69145f410e1",
+      "reduction_percent": 14.5
+    },
+    {
+      "model": "ems_mortar_hellpod_v1",
+      "before": 48002,
+      "after": 41022,
+      "replaced_bones": 12,
+      "source": "art/models/其它炮台减面第二轮/电磁迫击炮哨戒炮_减面.bbmodel",
+      "resource": "models/bedrock/vehicle/ems_mortar_hellpod_v1.geo.json",
+      "texture_before": [
+        4096,
+        4608
+      ],
+      "texture_after": [
+        4096,
+        5771
+      ],
+      "sha256": "a913bc89a6ef7db79a05f50b043dda0b790dabe59b89acdeb48b7b4c85178e12",
+      "reduction_percent": 14.54
+    },
+    {
+      "model": "gas_mortar_hellpod_v1",
+      "before": 48002,
+      "after": 40796,
+      "replaced_bones": 12,
+      "source": "art/models/其它炮台减面第二轮/毒气迫击炮哨戒炮_减面.bbmodel",
+      "resource": "models/bedrock/vehicle/gas_mortar_hellpod_v1.geo.json",
+      "texture_before": [
+        4096,
+        4608
+      ],
+      "texture_after": [
+        4096,
+        5781
+      ],
+      "sha256": "650eeee3af6c7a38119aa57ffa219ca77e87499440d4155a4adc2b43a4cdcdc0",
+      "reduction_percent": 15.01
+    },
+    {
+      "model": "tesla_hellpod_v1",
+      "before": 47880,
+      "after": 32684,
+      "replaced_bones": 133,
+      "source": "art/models/其它炮台减面第二轮/特斯拉电塔_减面.bbmodel",
+      "resource": "models/bedrock/vehicle/tesla_hellpod_v1.geo.json",
+      "texture_before": [
+        6144,
+        4608
+      ],
+      "texture_after": [
+        1024,
+        1157
+      ],
+      "sha256": "2d4d228f75d623bbe6afdf3659710e908e5b7d4ed0993a46a2ffc45e3d9b3755",
+      "reduction_percent": 31.74
+    },
+    {
+      "model": "laser_hellpod_v1",
+      "before": 49954,
+      "after": 38090,
+      "replaced_bones": 9,
+      "source": "art/models/激光炮台减面测试/激光炮台_侧板与冷却组件修正.bbmodel",
+      "resource": "models/bedrock/vehicle/laser_hellpod_v1.geo.json",
+      "texture_before": [
+        6144,
+        4608
+      ],
+      "texture_after": [
+        2048,
+        4746
+      ],
+      "sha256": "ac87f4f6b4d10ae2bca754c713519eeb7c072b7934b07a19a53869ce98efa48b",
+      "reduction_percent": 23.75
+    }
+  ]
+}

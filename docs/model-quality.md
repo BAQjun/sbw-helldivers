@@ -15,3 +15,8 @@ Alternatively, close the game and edit `lowQualityModels` in `config/sbw_helldiv
 落地空投仓会根据当前地形跳过完全埋在实心方块内的几何。这些部分仍保存在完整模型中；挖开地面后会在下一次绘制时恢复显示。空投下落、光影阴影通道以及观察者位于遮挡体积内时不使用这项跳过规则。
 
 Landed Hellpods skip geometry fully enclosed by the current solid terrain. The complete geometry remains in the model and is rendered again on the next render pass after excavation. This rule does not apply during descent, in shader shadow passes, or when the camera is inside the occluding volume.
+
+
+0.7.4 性能测试版将已修正的减面模型用于默认近景显示。近景炮台图集保持原像素，远距离和低画质模型使用保持原 UV 布局的四分之一尺寸图集，避免与重排后的近景贴图混用。
+
+The 0.7.4 performance test uses the revised reduced-polygon models for default close-range rendering. Close-range sentry atlases retain their original pixels. Distant and low-quality models use quarter-size atlases with the original UV layout, keeping them separate from repacked close-range textures.

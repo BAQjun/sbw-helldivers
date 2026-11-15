@@ -82,7 +82,7 @@ object MachineClientTests {
         if(ticks==120){
             check(mc.level!!.getBlockEntity(roots[0])==null){"Machine appeared inside closed container"}
             val audio=com.example.sbwhelldiver.client.SoundTimeline
-            check(audio.startedCount("sfx_hellpod_entry_layer_03")>=2&&audio.startedCount("sfx_hellpod_retro_start")>=2&&audio.startedCount("sfx_hellpod_impact")>=2){"Delivery flight audio missing: ${audio.debugReport()}"}
+            check(listOf("sfx_hellpod_entry_layer_03","sfx_hellpod_entry_layer_01","sfx_hellpod_entry_layer_02","sfx_hellpod_impact").all { audio.startedCount(it)>=2 }&&audio.startedCount("sfx_hellpod_retro_start")==0){"Delivery flight audio missing: ${audio.debugReport()}"}
             check(com.example.sbwhelldiver.client.HellpodJetParticle.rendered>0){"Container nozzle flames never rendered"}
             check(com.example.sbwhelldiver.client.DeliveryFlightVisuals.containerJetFrames>0){"Attached container nozzle flames never rendered"}
             LOGGER.info("MACHINE_FLIGHT_AUDIO_AND_JETS_VERIFIED")
@@ -113,7 +113,7 @@ object MachineClientTests {
             LOGGER.info("MACHINE_WORKING_WITHOUT_GUI")
         }
         if(ticks==245){
-            val iris=Class.forName("net.irisshaders.iris.Iris").getMethod("isPackInUseQuick").invoke(null)
+            val iris=com.example.sbwhelldiver.client.ShaderPackCompat.active()
             LOGGER.info("MACHINE_IRIS_SHADER_ACTIVE={}",iris)
             capture("machine-working.png")
             val mesh=com.example.sbwhelldiver.client.MachineMesh
