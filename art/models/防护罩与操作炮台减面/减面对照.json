@@ -2,7 +2,7 @@
   "curve_error_model_units": 0.08,
   "crease_angle_degrees": 60,
   "requested_ratio": 0.35,
-  "runtime_replaced": false,
+  "runtime_replaced": true,
   "textures_unchanged": true,
   "hidden_face_culling": false,
   "models": [
@@ -97,5 +97,6 @@
       "after": 46689,
       "reduction_percent": 3.5
     }
-  ]
+  ],
+  "runtime_version": "0.7.4-perf.2"
 }
