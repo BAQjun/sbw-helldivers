@@ -1,0 +1,91 @@
+{
+  "curve_error_model_units": 0.08,
+  "crease_angle_degrees": 60,
+  "requested_ratio": 0.35,
+  "runtime_replaced": false,
+  "textures_unchanged": true,
+  "hidden_face_culling": false,
+  "models": [
+    {
+      "model": "防护罩生成器/空投与护罩/防护罩生成器与空投仓.bbmodel",
+      "source": "防护罩生成器/空投与护罩/防护罩生成器与空投仓.bbmodel",
+      "source_sha256": "273b4135ca0ff78510f34f09242da5786b5a114f5a8eff8ebdea2a84e85c66ce",
+      "candidate_sha256": "c8e47f412971d4ff93ad9f717023cbd24ac3d3ebba8b70597b877ad8328219d4",
+      "before": 55684,
+      "after": 45710,
+      "reduction_percent": 17.9
+    },
+    {
+      "model": "防护罩生成器/防护罩生成器.bbmodel",
+      "source": "防护罩生成器/防护罩生成器.bbmodel",
+      "source_sha256": "902c25a9f0be91ac37dd5f63e64a7f1539894661c22453df5f3bcd51777efb6d",
+      "candidate_sha256": "14345fdf2479bc762bb1067b65256c19d87c54c4f4cedb445e3eebd97766e219",
+      "before": 34950,
+      "after": 24951,
+      "reduction_percent": 28.6
+    },
+    {
+      "model": "重机枪支架/空投与首次登乘/重机枪支架与空投仓.bbmodel",
+      "source": "重机枪支架/空投与首次登乘/重机枪支架与空投仓.bbmodel",
+      "source_sha256": "bc87a09de4f3c09d95b8a07853ac0864d2f5d6916bd9ceb7c85a339a3f194abf",
+      "candidate_sha256": "3330d9177529e7a817664720a3280b7c3a0521f2d14720ccf659d2a05e7b4e86",
+      "before": 44710,
+      "after": 40730,
+      "reduction_percent": 8.9
+    },
+    {
+      "model": "重机枪支架/重机枪支架.bbmodel",
+      "source": "重机枪支架/重机枪支架.bbmodel",
+      "source_sha256": "4ffde686c225ff97984b3ec5661d36087914802c347f66c42f936b420df2081d",
+      "candidate_sha256": "ce8deae87f5ccb3f59be9a1b689e6d36f769e9cf86139532c446fff62ec1a881",
+      "before": 23880,
+      "after": 19860,
+      "reduction_percent": 16.8
+    },
+    {
+      "model": "重机枪支架/重机枪支架_游戏适配版.bbmodel",
+      "source": "重机枪支架/重机枪支架_游戏适配版.bbmodel",
+      "source_sha256": "ba9ae34995931e06eebc2a86ba6bdf50cd3c238e049496b502df3299c16b9d93",
+      "candidate_sha256": "82da42c65303922e4c6c654c040835dff2d737948ffb0a80203cc942a2151430",
+      "before": 23976,
+      "after": 19996,
+      "reduction_percent": 16.6
+    },
+    {
+      "model": "反坦克支架/反坦克支架.bbmodel",
+      "source": "反坦克支架/反坦克支架.bbmodel",
+      "source_sha256": "9c0a828a871873a63a79a82c4079d60f007a94870413f40ed61567e608854167",
+      "candidate_sha256": "9f8af2d71bcd1368869babee92506fb7ea90e18eeb954734c9430982b624832e",
+      "before": 33219,
+      "after": 24391,
+      "reduction_percent": 26.6
+    },
+    {
+      "model": "反坦克支架/空投与供弹/反坦克支架与空投仓.bbmodel",
+      "source": "反坦克支架/空投与供弹/反坦克支架与空投仓.bbmodel",
+      "source_sha256": "1cd5f4a5230ffb2d1ebef712e90580d75dd808f705e6a3b737a08345be1e760d",
+      "candidate_sha256": "d668edd6a08753d1e3942be6353520ff95a84dc06080822c39dc026a5f17f462",
+      "before": 53953,
+      "after": 45376,
+      "reduction_percent": 15.9
+    },
+    {
+      "model": "掷弹兵榴弹墙/掷弹兵榴弹墙.bbmodel",
+      "source": "掷弹兵榴弹墙/掷弹兵榴弹墙.bbmodel",
+      "source_sha256": "13071646d74183f731acbbafaea19bf821dd8ac07ddfde5771538768bb2004a6",
+      "candidate_sha256": "6e46125e379b3bf4af5ef0aea9d3e5180ace7e98b78994a436ba02e2621f8159",
+      "before": 27630,
+      "after": 25953,
+      "reduction_percent": 6.1
+    },
+    {
+      "model": "掷弹兵榴弹墙/空投与供弹/掷弹兵榴弹墙与空投仓.bbmodel",
+      "source": "掷弹兵榴弹墙/空投与供弹/掷弹兵榴弹墙与空投仓.bbmodel",
+      "source_sha256": "b6e19c4555ff2994bf8e8f156929d1a67cff1e97a65c8dd5276910879a049be3",
+      "candidate_sha256": "ec59a284dd901748831e04795f446c7ec40449904cb41e9b34c86a15f4138f94",
+      "before": 48364,
+      "after": 46689,
+      "reduction_percent": 3.5
+    }
+  ]
+}
