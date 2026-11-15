@@ -8,11 +8,13 @@ await S.ready;
 const args=process.argv.slice(2),opt=Object.fromEntries(args.filter((_,i)=>i%2===0).map((k,i)=>[k.slice(2),args[2*i+1]]));
 if(!opt.input||!opt.output||!opt.manifest)throw Error('--input --output --manifest required');
 if(path.resolve(opt.input)===path.resolve(opt.output))throw Error('Keep reviewed sources separate');
+const curveError=Number(opt['curve-error']??.03),curveCrease=Number(opt['curve-crease']??35),curveRatio=Number(opt['curve-ratio']??.50);
+if(!(curveError>0&&curveError<=.08&&curveCrease>0&&curveCrease<=60&&curveRatio>=.25&&curveRatio<=1))throw Error('Unsafe curve settings');
 const sub=(a,b)=>a.map((x,i)=>x-b[i]),dot=(a,b)=>a.reduce((n,x,i)=>n+x*b[i],0),cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],pk=p=>JSON.stringify(p),count=e=>e.type==='mesh'?Object.values(e.faces).reduce((n,f)=>n+f.vertices.length-2,0):e.type==='cube'?Object.values(e.faces).filter(f=>f.texture!==null).length*2:0;
 const edgeKey=(a,b)=>[a,b].sort().join('|'),cache=new Map(),report=[];
 const boundary=(edges)=>new Map([...edges].filter(([k,a])=>a.length!==2).map(([k,a])=>[k,a.length]));
 function optimize(e,images,texWidths,errorLimit,crease=75){
- if(e.type!=='mesh'||Object.keys(e.faces).length<20||/标志|标识|屏幕|接口|skull|badge|heat_|lens|glow/i.test(e.name))return {element:e,reason:'protected or small'};
+ if(e.type!=='mesh'||Object.keys(e.faces).length<20||/标志|标识|屏幕|接口|供弹链|镜片|光学|skull|badge|heat_|lens|glow|optic/i.test(e.name))return {element:e,reason:'protected or small'};
  const key=crypto.createHash('sha256').update(JSON.stringify([e.vertices,e.faces,errorLimit,crease,images.map(t=>t.hash)])).digest('hex');
  if(cache.has(key))return {...cache.get(key),element:{...e,...structuredClone(cache.get(key).geometry)}};
  const refs=[],pos=[],attrs=[],indices=[],markedTriangles=[],unique=new Map(),locations=new Map(),edges=new Map(),pal=new Map();let marked=0;
@@ -50,7 +52,7 @@ function optimize(e,images,texWidths,errorLimit,crease=75){
  for(let i=0;i<refs.length;i++)if(refs[i].marked)locks[i]=1;
  for(const ids of locations.values())if(ids.length>1)for(const i of ids)locks[i]=1;
  for(const a of edges.values())if(a.length!==2||dot(a[0].n,a[1].n)<Math.cos(crease*Math.PI/180))for(const r of a)for(const i of r.ids)locks[i]=1;
- const [chosen,error]=S.simplifyWithAttributes(Uint32Array.from(indices),Float32Array.from(pos),3,Float32Array.from(attrs),2,[1,1],locks,Math.floor(indices.length*.50/3)*3,errorLimit,['LockBorder','ErrorAbsolute','PreserveFolds']);
+ const [chosen,error]=S.simplifyWithAttributes(Uint32Array.from(indices),Float32Array.from(pos),3,Float32Array.from(attrs),2,[1,1],locks,Math.floor(indices.length*curveRatio/3)*3,errorLimit,['LockBorder','ErrorAbsolute','PreserveFolds']);
  if(chosen.length>=indices.length)return {element:e,reason:'no safe collapse',marked};
  const vertices={},faces={},incidence=new Map();
  for(let j=0;j<chosen.length;j+=3){
@@ -95,7 +97,7 @@ for(const rel of JSON.parse(fs.readFileSync(opt.manifest,'utf8'))){
    if(body.elements.some((e,i)=>d.elements[i]?.name!==e.name))throw Error('Drone body ordering changed; identify body parts before simplifying');
   }
  }
- const parts=[];d.elements=d.elements.map((e,i)=>{if(i<bodyCount&&!/^engine_[lr]_[12]$/.test(e.name)){parts.push({part:e.name,before:count(e),after:count(e),reason:'rebuilt panel or authored mechanism protected'});return e}const choices=[35].map(a=>optimize(e,images,dims,.03,a));const row=choices.reduce((a,b)=>count(a.element)<=count(b.element)?a:b);parts.push({part:e.name,before:count(e),after:count(row.element),error:row.error,reason:row.reason,markedFaces:row.marked});return row.element});
+ const parts=[];d.elements=d.elements.map((e,i)=>{if(i<bodyCount&&!/^engine_[lr]_[12]$/.test(e.name)){parts.push({part:e.name,before:count(e),after:count(e),reason:'rebuilt panel or authored mechanism protected'});return e}const choices=[curveCrease].map(a=>optimize(e,images,dims,curveError,a));const row=choices.reduce((a,b)=>count(a.element)<=count(b.element)?a:b);parts.push({part:e.name,before:count(e),after:count(row.element),error:row.error,reason:row.reason,markedFaces:row.marked});return row.element});
  for(const k of ['groups','outliner','animations','textures'])if(JSON.stringify(d[k])!==JSON.stringify(original[k]))throw Error(k+' changed');
  d.name=d.name.replace(/_近景减面$/,'')+'_近景减面';
  const dest=path.join(opt.output,rel);fs.mkdirSync(path.dirname(dest),{recursive:true});fs.writeFileSync(dest,JSON.stringify(d));

@@ -178,3 +178,22 @@ all 28 files for supported faces, actual rendered triangle counts, texture loadi
 and matched-camera views, including close views of markings. Triangle budgets include
 cubes; native index checks cover meshes separately. These checks do not establish an
 in-game frame-rate improvement.
+
+## Shield generator and manned emplacements
+
+The separate candidates in `art/models/防护罩与操作炮台减面/` include the Shield
+Generator Relay, HMG Emplacement, Anti-Tank Emplacement and Grenadier Battlement.
+Their standalone and Hellpod versions retain their original rig, locators,
+transforms, texture images and animation records. The HMG game-adapted standalone
+version is included as well. Original accepted model folders remain intact;
+these candidates have not replaced the runtime resources.
+
+Normalize source face order through Blockbench before the planar reconstruction
+pass. Run `rebuild_equipment_panels.py` on that separate baseline, then run
+`equipment_sources.mjs` on the reconstructed output with `--curve-error 0.08
+--curve-crease 60 --curve-ratio 0.35`. These options bound surface error in model
+units, retain creases above 60 degrees, and request a per-part target rather than
+forcing that triangle count. The default equipment settings remain unchanged.
+Nonuniform textured triangles, seams, open borders, optics and flexible feed
+chains are protected. No hidden-face culling is used. Counts and source hashes
+are recorded in the candidate directory's `减面对照.json`.
