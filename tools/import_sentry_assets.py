@@ -131,10 +131,10 @@ for entity,model in PROFILES.items():
  definitions.setdefault(entity,{})
  geometry_path=ASSETS/f'models/bedrock/vehicle/{model}.geo.json';doc=load(geometry_path)
  bones={b['name']:b for b in doc['minecraft:geometry'][0]['bones']}
- # The rebuilt cannon has its bore at y=31.1; its inherited old marker was 3.85 units too low.
+ # The pod assembly, including the rebuilt bore, shares the -3.85-unit bind-space offset.
  if entity=='autocannon_sentry':
   for b in bones.values():
-   if 'muzzle_exit' in b.get('locators',{}):b['locators']['muzzle_exit'][1]=31.1
+   if 'muzzle_exit' in b.get('locators',{}):b['locators']['muzzle_exit'][1]=27.25
   # The rebuilt receiver moved the ejection hatch to its top; its old marker stayed inside the magazine.
   hatch=bones['ejector']['cubes'][0]
   top=max(c['origin'][1]+c['size'][1] for c in bones['ejector']['cubes'])

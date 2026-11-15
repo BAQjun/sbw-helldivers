@@ -9,7 +9,6 @@ MORTAR_MOVING_PARTS = frozenset({
     "barrel", "receiver", "feed_round", "recoil_tube", "muzzle_tube",
     "feed_cradle", "feed_cup", "feed_slider", "feed_arm", "ammunition_column",
 })
-AUTOCANNON_SHARED_PARTS = frozenset({"base", "base_lower_sleeve", "cradle"})
 
 
 def runtime_vertex(model, bone, value, *, source_pivot, runtime_pivot,
@@ -27,10 +26,11 @@ def runtime_vertex(model, bone, value, *, source_pivot, runtime_pivot,
             # rest-pose transform, applied to the authored standalone meshes.
             return [x, z + py - pz, -y + pz + py + 3.85]
         return [x, y, z] if normal else [x, y - 3.85, z]
-    if model == "autocannon_hellpod_v1" and bone not in AUTOCANNON_SHARED_PARTS:
-        # The autocannon's combined sources moved pivots, but retained gun
-        # vertices in their original coordinates (fix_autocannon_fittings.py).
-        return [x, y, z]
+    if model == "autocannon_hellpod_v1":
+        # The standalone assembly is 3.85 units above the pod's bind space.
+        # Apply the same displacement to the complete assembly: retaining the
+        # old gun vertices separated its trunnions from the fixed axle housing.
+        return [x, y, z] if normal else [x, y - 3.85, z]
     if normal:
         return [x, y, z]
     return [v + b - a for v, a, b in zip(value, source_pivot, runtime_pivot)]

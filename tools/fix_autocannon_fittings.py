@@ -36,8 +36,8 @@ def repair_source(path):
         assert attach(model["outliner"])
     # The hatch sits on the middle toggle and pivots on its rear hinge pin.
     # Keep that fixed pin attached while the cover opens and the toggle recoils.
-    # Combined sources offset bone pivots, but keep cube vertices in the same coordinates.
-    shift = 0.0
+    # Combined pod sources lower both the pivot and the rebuilt geometry by 3.85.
+    shift = -3.85 if "\u7a7a\u6295" in path.stem else 0.0
     ejector = next(g for g in model["groups"] if g["name"] == "ejector")
     middle = next(g for g in model["groups"] if g["name"] == "toggle_mid")
     ejector["origin"] = [.1342, 31.98+shift, 7.9]
@@ -85,13 +85,13 @@ def repair_source(path):
 def repair_runtime(path):
     model = load(path)
     bones = {b["name"]: b for b in model["minecraft:geometry"][0]["bones"]}
-    shift = 0.0
+    shift = -3.85 if "hellpod" in path.stem else 0.0
     sensor = bones["sensor"]["cubes"]
     for cube in sensor:
         if abs(cube["origin"][1] - (36.01+shift)) < 1e-4:
             cube["size"][1] = .505
     barrel = bones["barrel"]["cubes"]
-    template = next(c for c in barrel if c["origin"] == [-3.58, 34.77, 0])
+    template = next(c for c in barrel if c["origin"] == [-3.58, round(34.77+shift, 5), 0])
     barrel[:] = [c for c in barrel if c.get("size") != [1.8, .32, 4.3]]
     origin = [-3.45, round(34.5+shift, 5), .6]
     if not any(c.get("origin") == origin for c in barrel):
