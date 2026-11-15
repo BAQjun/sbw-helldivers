@@ -52,6 +52,7 @@ object TurretPerformanceClientTest {
     private var qualityReload:java.util.concurrent.CompletableFuture<Void>?=null
     private var diggingPodId=-1
     private var axisChecks=0
+    private var traverseSamples=0
     private var maximumAxisGap=0f
     private var gunAxis=org.joml.Vector3f()
     private val alignmentCaptures=mutableSetOf<Int>()
@@ -93,6 +94,7 @@ object TurretPerformanceClientTest {
                 val emplacement=pods.firstOrNull() as? HmgEmplacementEntity
                 if(emplacement!=null && emplacement.phase==AbstractHellpodEntity.Phase.ACTIVE && age in 120..270) {
                     if(!p.isPassenger)p.startRiding(emplacement,true)
+                    if(scenario==13)targets.first().setPos(.5+sin(age*.055)*6.0,80.0,9.5)
                     val target=targets.first().position().add(0.0,1.0,0.0)
                     val aim=emplacement.aimAnglesAt(target)
                     emplacement.acceptInput(p,aim.x,aim.y,true,target)
@@ -144,6 +146,16 @@ object TurretPerformanceClientTest {
                 val fixed=instance.getGlobalTransform(instance.getIndex("cradle")).transformPosition(org.joml.Vector3f(5.33f/16f,26.91787f/16f,2.11158f/16f))
                 val gap=moving.distance(fixed);maximumAxisGap=maxOf(maximumAxisGap,gap)
                 check(gap<.001f){"Autocannon trunnion separated from fixed axle: $gap blocks"};axisChecks++
+            }
+        }catch(t:Throwable){failure=t}
+        if(scenario==13 && age in 140..260)try {
+            val pod=Minecraft.getInstance().level?.entitiesForRendering()?.filterIsInstance<HmgEmplacementEntity>()?.firstOrNull()
+            if(pod!=null){
+                val start=pod.interpolatedYaw(0f);val end=pod.interpolatedYaw(1f)
+                if(abs(end-start)>.01f){
+                    check(abs(pod.interpolatedYaw(.5f)-(start+end)*.5f)<.001f){"Traverse interpolation discontinuity"}
+                    traverseSamples++
+                }
             }
         }catch(t:Throwable){failure=t}
         val now=System.nanoTime()
@@ -200,6 +212,14 @@ object TurretPerformanceClientTest {
                     reverseCaptured=scenario
                     Screenshot.grab(mc.gameDirectory,"turret-perf-${label(scenario)}-reverse.png",mc.mainRenderTarget){}
                 }
+            }
+            if(close && age in 85..105) {
+                val y=when(scenario){11->80.15;10->81.1;12->81.0;else->80.55}
+                player.setPos(2.2,y,1.8)
+                val dx=.5-player.x;val dz=.5-player.z;val dy=(if(scenario==11)81.6 else 82.1)-player.eyeY
+                player.yRot=Math.toDegrees(atan2(-dx,dz)).toFloat();player.yRotO=player.yRot
+                player.xRot=(-Math.toDegrees(atan2(dy,sqrt(dx*dx+dz*dz)))).toFloat();player.xRotO=player.xRot
+                if(age==100)Screenshot.grab(mc.gameDirectory,"detail-${label(scenario)}.png",mc.mainRenderTarget){}
             }
             if(scenario!=captured && age in 170..210 && scenario>=0){
                 captured=scenario;Screenshot.grab(mc.gameDirectory,"turret-perf-${label(scenario)}.png",mc.mainRenderTarget){LOGGER.info("TURRET_PERF_SCREENSHOT {}",label(scenario))}
@@ -266,6 +286,8 @@ object TurretPerformanceClientTest {
                 LOGGER.info("NEAR_MESH_COMPILED triangles={} submittedQuads={} enabled={}",com.example.sbwhelldiver.client.PlanarMeshQuads.inputTriangles,com.example.sbwhelldiver.client.PlanarMeshQuads.outputQuads,com.example.sbwhelldiver.client.PlanarMeshQuads.ENABLED)
                 for(name in listOf("guard_dog","laser_guard_dog","stun_guard_dog","flame_guard_dog","gas_guard_dog").flatMap{listOf(it,it+"_backpack")})
                     LOGGER.info("NEAR_MESH_MODEL {} faces={}",name,com.example.sbwhelldiver.client.MachineMesh.faceCounts(name))
+                check(traverseSamples>100){"Insufficient smooth moving-target traverse frames: $traverseSamples"}
+                LOGGER.info("TRAVERSE_INTERPOLATION_PASSED samples={}",traverseSamples)
                 LOGGER.info("TURRET_PERF_PASSED shader={} fullDetail=true lod=false",ShaderPackCompat.active());mc.stop()
             }
         }catch(t:Throwable){LOGGER.error("TURRET_PERF_FAILED",t);done=true;mc.stop()}

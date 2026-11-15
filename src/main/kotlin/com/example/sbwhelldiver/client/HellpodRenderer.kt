@@ -153,6 +153,12 @@ class HellpodRenderer(context: EntityRendererProvider.Context) : BasicAutoAimabl
                 it.xScale=scale;it.yScale=scale;it.zScale=scale
             }
         }
+        if(pod.profile.id=="hmg_emplacement") {
+            // The continuous skinned belt is drawn once by HmgFeedRenderer.
+            // Collapse the rigid authored copies in every native mesh pass.
+            for(name in arrayOf("l_ammo_01","r_ammo_01","l_ammo_02","r_ammo_02"))
+                instance.getBone(name)?.let { it.visible=false;it.xScale=0f;it.yScale=0f;it.zScale=0f }
+        }
         instance.getBone("pod_root")?.visible = !pod.isWreck
         instance.getBone("deployment_lift")?.visible = pod.phase != AbstractHellpodEntity.Phase.SPENT
         if (java.lang.Boolean.getBoolean("sbw_helldiver.beaconSmokeTest") &&

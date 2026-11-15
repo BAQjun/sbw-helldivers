@@ -88,6 +88,7 @@ function preserveMesh(m){
 }
 function subtract(r,cover){const [a,b,c,d]=r,[x,y,z,w]=cover;const l=Math.max(a,x),t=Math.max(b,y),rr=Math.min(c,z),bb=Math.min(d,w);if(l>=rr-1e-7||t>=bb-1e-7)return [r];const rows=[];if(a<l-1e-7)rows.push([a,b,l,d]);if(rr<c-1e-7)rows.push([rr,b,c,d]);if(b<t-1e-7)rows.push([l,b,rr,t]);if(bb<d-1e-7)rows.push([l,bb,rr,d]);return rows;}
 function cullInternalFaces(bone,image){
+ if(bone.name.startsWith("pod_flap_"))return 0; // Hinged panels expose every side during deployment.
  const cubes=bone.cubes??[],boxes=cubes.map(cubeBox),opaque=cubes.map((c,i)=>boxes[i]&&opaqueCube(c,image));let removed=0;
  for(let i=0;i<cubes.length;i++){const cube=cubes[i],box=boxes[i];if(!box||!cube.uv||Array.isArray(cube.uv))continue;
   for(const face of Object.keys(cube.uv)){

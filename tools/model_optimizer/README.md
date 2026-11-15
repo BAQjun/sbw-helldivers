@@ -197,3 +197,15 @@ forcing that triangle count. The default equipment settings remain unchanged.
 Nonuniform textured triangles, seams, open borders, optics and flexible feed
 chains are protected. No hidden-face culling is used. Counts and source hashes
 are recorded in the candidate directory's `减面对照.json`.
+
+
+## Runtime attachment and deployment surfaces
+
+After final atlas packing, run `tools/export_attached_meshes.py` to regenerate
+laser-display and HMG-belt UV coordinates from the final runtime geometry.
+Do not reuse attachment UVs from an earlier atlas. HMG rigid belt bones are
+suppressed by the renderer while the continuous skinned belt is rendered once.
+Hinged Hellpod flaps keep all authored faces throughout optimization because
+surfaces hidden in the bind pose become visible during deployment.
+Standalone mortar rig parents intentionally contain no geometry; staging clears
+their obsolete aggregate meshes to prevent overlap with the replacement children.

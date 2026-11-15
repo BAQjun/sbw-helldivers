@@ -53,6 +53,9 @@ open class HmgEmplacementEntity(type: EntityType<*>, level: Level): AbstractHell
     val handlingPitch get() = entityData.get(HANDLING_PITCH)
     val recoilYaw get() = entityData.get(RECOIL_YAW)
     val recoilPitch get() = entityData.get(RECOIL_PITCH)
+    private var clientAimInitialized=false
+    private var clientWeaponYaw=0f
+    private var clientWeaponPitch=0f
     private var previousHandlingYaw=0f
     private var previousHandlingPitch=0f
     private var previousRecoilYaw=0f
@@ -135,10 +138,16 @@ open class HmgEmplacementEntity(type: EntityType<*>, level: Level): AbstractHell
         trigger=fire;inputAt=level().gameTime
     }
     override fun tick() {
-        previousWeaponYaw=weaponYaw;previousWeaponPitch=weaponPitch
+        // Synced data arrives before the client tick. Retain the previous visual
+        // sample instead of copying the newly received endpoint into both ends.
+        previousWeaponYaw=if(level().isClientSide && clientAimInitialized)clientWeaponYaw else weaponYaw
+        previousWeaponPitch=if(level().isClientSide && clientAimInitialized)clientWeaponPitch else weaponPitch
         previousHandlingYaw=handlingYaw;previousHandlingPitch=handlingPitch
         previousRecoilYaw=recoilYaw;previousRecoilPitch=recoilPitch
         super.tick()
+        if(level().isClientSide) {
+            clientWeaponYaw=weaponYaw;clientWeaponPitch=weaponPitch;clientAimInitialized=true
+        }
         if(!level().isClientSide && operator==null)decayAimRecoil()
         // This fixed stand is grounded after deployment, even though its buried hull bypasses move().
         // SBW asks for a second dismount press when a vehicle is airborne or moving.
@@ -252,8 +261,8 @@ open class HmgEmplacementEntity(type: EntityType<*>, level: Level): AbstractHell
         !(HelldiversConfig.infiniteTurretAmmo.get() && ammunitionCapacity > 0) &&
         (!waitForManualDismount || passengers.isEmpty())
     override fun onRetracting() { trigger=false;operatorId=-1;ejectPassengers() }
-    open fun interpolatedYaw(partial: Float) = previousWeaponYaw+Mth.wrapDegrees(weaponYaw-previousWeaponYaw)*partial
-    open fun interpolatedPitch(partial: Float) = Mth.lerp(partial,previousWeaponPitch,weaponPitch)
+    open fun interpolatedYaw(partial: Float) = previousWeaponYaw+Mth.wrapDegrees((if(level().isClientSide && clientAimInitialized)clientWeaponYaw else weaponYaw)-previousWeaponYaw)*partial
+    open fun interpolatedPitch(partial: Float) = Mth.lerp(partial,previousWeaponPitch,if(level().isClientSide && clientAimInitialized)clientWeaponPitch else weaponPitch)
     fun boreDirection(partial: Float=1f): Vec3 {
         val yaw=Math.toRadians(interpolatedYaw(partial).toDouble());val pitch=Math.toRadians(interpolatedPitch(partial).toDouble())
         return Vec3(-sin(yaw)*cos(pitch),-sin(pitch),cos(yaw)*cos(pitch))
