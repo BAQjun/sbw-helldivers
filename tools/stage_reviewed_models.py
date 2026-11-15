@@ -67,6 +67,12 @@ def stage(assets,export,name,combined=False):
     i=cache[key];face.append([i,i,i])
    face.append(face[-1]);pm['polys'].append(face)
   b.pop('cubes',None);b['poly_mesh']=pm
+ # Standalone mortar sources intentionally keep their rig parents empty.
+ # Retaining the old aggregate meshes doubles their visible side panels.
+ if name in ('mortar_hellpod_v1','ems_mortar_hellpod_v1','gas_mortar_hellpod_v1'):
+  for parent in ('turret','barrel'):
+   if not rows.get(parent):
+    bones[parent].pop('cubes',None);bones[parent].pop('poly_mesh',None)
  geo['description']['texture_width']=width;geo['description']['texture_height']=h
  rig=lambda d:[{k:v for k,v in b.items()if k not in('cubes','poly_mesh')}for b in d['minecraft:geometry'][0]['bones']]
  assert rig(doc)==rig(original)

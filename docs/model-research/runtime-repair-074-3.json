@@ -1,0 +1,211 @@
+{
+  "version": "0.7.4-perf.3",
+  "base": "0.7.4-perf.2",
+  "models": [
+    {
+      "model": "amg43_hellpod_v3",
+      "flap_faces_restored": 45,
+      "cleared_aggregate_bones": [],
+      "sha256": "8f502334be46619ecb952bce3f62a06bb75efa5094a9b90be53645567e0b31e5",
+      "source": "art/models/炮台减面修正版/机枪炮台_修正.bbmodel",
+      "source_sha256": "75406c56245af822767113460e2aa99102171c8135f60d11a7984558901b6cf1",
+      "before": 25572,
+      "after": 25662
+    },
+    {
+      "model": "anti_tank_mine_hellpod_v1",
+      "flap_faces_restored": 45,
+      "cleared_aggregate_bones": [],
+      "sha256": "c591fa17e208813269ccfaa4cd47defb46690f98869382858a2e879f6d5a8a9e",
+      "before": 42832,
+      "after": 42922
+    },
+    {
+      "model": "ap_mine_hellpod_v1",
+      "flap_faces_restored": 45,
+      "cleared_aggregate_bones": [],
+      "sha256": "86ea399cbf9976bf9e8c45277bd0a614d4ce6c06ad875b275958ba17eb981184",
+      "before": 44592,
+      "after": 44682
+    },
+    {
+      "model": "at_emplacement_hellpod_v1",
+      "flap_faces_restored": 45,
+      "cleared_aggregate_bones": [],
+      "sha256": "ce23532e3dbccd74b4252ebdc894b598684611d0f934cf2d7129358b23a17b1d",
+      "source": "art/models/防护罩与操作炮台减面/反坦克支架/空投与供弹/反坦克支架与空投仓.bbmodel",
+      "source_sha256": "9be97384e9ad46b02b1abecb7a5fe743cb653a79f393be2dc336c8d17eeb9611",
+      "before": 44983,
+      "after": 45073
+    },
+    {
+      "model": "autocannon_hellpod_v1",
+      "flap_faces_restored": 45,
+      "cleared_aggregate_bones": [],
+      "sha256": "72923ce9fc456525fc5d42c6d243c9a8c9d6986f4739406a7062debb9ec6497d",
+      "source": "art/models/炮台减面修正版/机炮炮台_修正.bbmodel",
+      "source_sha256": "ee018d970833b8b04beee97dedebcc1e2e080df1f89908beb09be27dd160f9d4",
+      "before": 26908,
+      "after": 26998
+    },
+    {
+      "model": "ems_mortar_hellpod_v1",
+      "flap_faces_restored": 45,
+      "cleared_aggregate_bones": [
+        [
+          "turret",
+          "poly_mesh"
+        ],
+        [
+          "barrel",
+          "poly_mesh"
+        ]
+      ],
+      "sha256": "b7b9ea7059e849623bdce229746a5c2d5b09367305d165168c8c61314e69d689",
+      "source": "art/models/炮台减面修正版/电磁迫击炮哨戒炮_修正.bbmodel",
+      "source_sha256": "dfb5894d584e93ef515f9f3c6e98bbfa6689ede87577ae8110b928ca5399969a",
+      "before": 45198,
+      "after": 39030
+    },
+    {
+      "model": "flame_hellpod_v1",
+      "flap_faces_restored": 45,
+      "cleared_aggregate_bones": [],
+      "sha256": "968c41a37ec8f424911a117d76761760bd4a0eb64d1b7398e960de7ab709d36c",
+      "source": "art/models/炮台减面修正版/火焰炮台_修正.bbmodel",
+      "source_sha256": "ce20d34d51594aee395a8714d98d4ab4a37b79cf0fd29cce8a971e0ae7af29a4",
+      "before": 39886,
+      "after": 39809
+    },
+    {
+      "model": "gas_mine_hellpod_v1",
+      "flap_faces_restored": 45,
+      "cleared_aggregate_bones": [],
+      "sha256": "b535c6e0a11184b08217eeaffb23eed4c24987b43e829af2093a981410c524bb",
+      "before": 44592,
+      "after": 44682
+    },
+    {
+      "model": "gas_mortar_hellpod_v1",
+      "flap_faces_restored": 45,
+      "cleared_aggregate_bones": [
+        [
+          "turret",
+          "poly_mesh"
+        ],
+        [
+          "barrel",
+          "poly_mesh"
+        ]
+      ],
+      "sha256": "4338d70b0f92182b25c2c73cef45835be28af7a305863e7bce5a7e89989babb8",
+      "source": "art/models/炮台减面修正版/毒气迫击炮哨戒炮_修正.bbmodel",
+      "source_sha256": "00267932ca6d96f6818ca30d453a99b263db83799eff2c30f8ffac956489abf9",
+      "before": 44972,
+      "after": 38804
+    },
+    {
+      "model": "gatling_hellpod_v3",
+      "flap_faces_restored": 45,
+      "cleared_aggregate_bones": [],
+      "sha256": "63aa1db539a2e0cf0ea057d8fd6afff3c4231e5feacef936e1252b2a974bb23e",
+      "source": "art/models/炮台减面修正版/加特林炮台_修正.bbmodel",
+      "source_sha256": "4b57b8118f64581894e4156ad6bd6aa77721b20dbb3ba8685623d2d2fd389658",
+      "before": 26576,
+      "after": 26666
+    },
+    {
+      "model": "grenadier_hellpod_v1",
+      "flap_faces_restored": 45,
+      "cleared_aggregate_bones": [],
+      "sha256": "6b4e0e8303ae90b44ac148995d5e8238e43cbd9e55d2bbe220249c7588d08c81",
+      "source": "art/models/防护罩与操作炮台减面/掷弹兵榴弹墙/空投与供弹/掷弹兵榴弹墙与空投仓.bbmodel",
+      "source_sha256": "ec59a284dd901748831e04795f446c7ec40449904cb41e9b34c86a15f4138f94",
+      "before": 44355,
+      "after": 44445
+    },
+    {
+      "model": "hellpod_v3",
+      "flap_faces_restored": 45,
+      "cleared_aggregate_bones": [],
+      "sha256": "3dac48c44d3832c5fb06ccfdd48761bc8dbf42d06bbd36c70b9991be24ababc9",
+      "before": 18430,
+      "after": 18520
+    },
+    {
+      "model": "hmg_hellpod_v1",
+      "flap_faces_restored": 45,
+      "cleared_aggregate_bones": [],
+      "sha256": "6d6f2dbd4b21ecf99274c06a0a16944591fe5352c2701e97e791282ab4a84189",
+      "source": "art/models/防护罩与操作炮台减面/重机枪支架/空投与首次登乘/重机枪支架与空投仓.bbmodel",
+      "source_sha256": "3330d9177529e7a817664720a3280b7c3a0521f2d14720ccf659d2a05e7b4e86",
+      "before": 38396,
+      "after": 38486
+    },
+    {
+      "model": "incendiary_mine_hellpod_v1",
+      "flap_faces_restored": 45,
+      "cleared_aggregate_bones": [],
+      "sha256": "62a6180c3eb2f213c9dc7e331f1d0cd8289747e863c65fbd4fe06532861d668a",
+      "before": 44592,
+      "after": 44682
+    },
+    {
+      "model": "laser_hellpod_v1",
+      "flap_faces_restored": 45,
+      "cleared_aggregate_bones": [],
+      "sha256": "b6d0a9fb41e1a9981623c3a270cff223ea8dd1ab85bd9db98a0c0b7940db8f2c",
+      "before": 38090,
+      "after": 38180
+    },
+    {
+      "model": "mortar_hellpod_v1",
+      "flap_faces_restored": 45,
+      "cleared_aggregate_bones": [
+        [
+          "turret",
+          "poly_mesh"
+        ],
+        [
+          "barrel",
+          "poly_mesh"
+        ]
+      ],
+      "sha256": "4e8e39541ccee29bdb3d2c285d77e6014c92231d35bdbf70d10adf5aade27ec3",
+      "source": "art/models/炮台减面修正版/迫击炮哨戒炮_修正.bbmodel",
+      "source_sha256": "7e68fddb750399633bfeb700fc779bcfeb83a51ba94b9d2a47874a0244c987db",
+      "before": 45282,
+      "after": 39050
+    },
+    {
+      "model": "rocket_hellpod_v1",
+      "flap_faces_restored": 45,
+      "cleared_aggregate_bones": [],
+      "sha256": "e5a4fe336f0d9ad72ae3acc78646ff04b92be0e45af8e9c1447a22201f3b81c0",
+      "source": "art/models/炮台减面修正版/火箭炮台_修正.bbmodel",
+      "source_sha256": "3b8b374f9d33a1dbdb0d60435ade4cd6cf63d731041819fd825df940cf605abb",
+      "before": 31556,
+      "after": 31646
+    },
+    {
+      "model": "shield_hellpod_v1",
+      "flap_faces_restored": 45,
+      "cleared_aggregate_bones": [],
+      "sha256": "c0857b362ee4a5a97e336a8d85d3be0248c39431ac4ab40855b7bead1f386492",
+      "source": "art/models/防护罩与操作炮台减面/防护罩生成器/空投与护罩/防护罩生成器与空投仓.bbmodel",
+      "source_sha256": "c8e47f412971d4ff93ad9f717023cbd24ac3d3ebba8b70597b877ad8328219d4",
+      "before": 43376,
+      "after": 43466
+    },
+    {
+      "model": "tesla_hellpod_v1",
+      "flap_faces_restored": 45,
+      "cleared_aggregate_bones": [],
+      "sha256": "11d82a173a2ed44e47feb77518773df80199c5ee3c6671eb79030a0c1b078ca0",
+      "source": "art/models/炮台减面修正版/特斯拉电塔_修正.bbmodel",
+      "source_sha256": "bf492049334402143646cdc1cc86816dc9fe72634a9a010f0bd8e8a1b5d33b21",
+      "before": 32684,
+      "after": 33630
+    }
+  ]
+}

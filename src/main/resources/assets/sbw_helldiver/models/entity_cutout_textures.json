@@ -8,7 +8,7 @@
   "sbw_helldiver:textures/bedrock/vehicle/autocannon_sentry_v1.png": "7cd04041ca443bbff321d1283244f97d3c61efd2b81c4faaa4b94b8d6b36efca",
   "sbw_helldiver:textures/bedrock/vehicle/ems_mortar_hellpod_v1.png": "2d4e34905696bb905ba7057fb8141d4d04ac41248aa3b374e3f6b9217a680b5f",
   "sbw_helldiver:textures/bedrock/vehicle/ems_mortar_sentry_v1.png": "a441df0e2b17738ebb1640ff5bd7112c09924fd78761f28c734757f18a7801a0",
-  "sbw_helldiver:textures/bedrock/vehicle/flame_hellpod_v1.png": "83c0d748ff0b4f650f993d4748ddb709eb7aa5e67f83e2df84cf7a7a3175d437",
+  "sbw_helldiver:textures/bedrock/vehicle/flame_hellpod_v1.png": "6a7b5d4869d7f759d4db3c23f0830e94dbbcff3a7d8f5f803b7ffabd1d8192c8",
   "sbw_helldiver:textures/bedrock/vehicle/gas_mine_hellpod_v1.png": "9480b27b43d4c334510ffa54810864c0d7a043c14e83a07d4da78a5a0e826918",
   "sbw_helldiver:textures/bedrock/vehicle/gas_mortar_hellpod_v1.png": "cd0423a39847d78fd84d545eae166478455ce7a03f97be9cb94fd1a355df6413",
   "sbw_helldiver:textures/bedrock/vehicle/gas_mortar_sentry_v1.png": "e96eb866747260365020d2480c5956c0b68198d84402fc12b3d117e4070b8c8c",
@@ -24,7 +24,7 @@
   "sbw_helldiver:textures/bedrock/vehicle/lod/at_emplacement_hellpod_v1.png": "4bfb04897ab83051f4b86655eb273b57b3ed806c304180c6151b3799d832c86e",
   "sbw_helldiver:textures/bedrock/vehicle/lod/autocannon_hellpod_v1.png": "4282fff52c6207f290a66560b1d2bba3ebcaf05694c5bc6a5e385589825e9ba2",
   "sbw_helldiver:textures/bedrock/vehicle/lod/ems_mortar_hellpod_v1.png": "cbb4588d36d6e2e721baa05857850be2bb4922fd2c4dc02a65b7f2beffc18340",
-  "sbw_helldiver:textures/bedrock/vehicle/lod/flame_hellpod_v1.png": "26cc91d43012428dbd78b0c8208113018a904955930e155e7f5e802e73b488fc",
+  "sbw_helldiver:textures/bedrock/vehicle/lod/flame_hellpod_v1.png": "3139d819d627801a5423081278772d17f28b23e0c80feb324b3744ddb23a0084",
   "sbw_helldiver:textures/bedrock/vehicle/lod/gas_mortar_hellpod_v1.png": "407158c4064cf5c2c3db879e5f3970a7031c465680b1bed7d6d07f358fe4d5b7",
   "sbw_helldiver:textures/bedrock/vehicle/lod/gatling_hellpod_v3.png": "f24134125c1a7a7e612811bc28dfbe4b321222bc87632467ba142b8440c03744",
   "sbw_helldiver:textures/bedrock/vehicle/lod/grenadier_hellpod_v1.png": "b9e65f415e3f26739b63f89b5588626c5324fea0b280a0f6e3d9a49b20552e68",
@@ -34,11 +34,11 @@
   "sbw_helldiver:textures/bedrock/vehicle/lod/mortar_hellpod_v1.png": "428aa2d8016a3c8afb27711d593d6989a6451f03feda6ab0725a08e174b95583",
   "sbw_helldiver:textures/bedrock/vehicle/lod/rocket_hellpod_v1.png": "ef9c607b680a95ea9add3ae932c2e351b9975619f2e576bda1fd0d594689af8d",
   "sbw_helldiver:textures/bedrock/vehicle/lod/shield_hellpod_v1.png": "bcad318096a7cb520f60d1720d2fb7ebad7f2964174623604d6b33a4eb39b59f",
-  "sbw_helldiver:textures/bedrock/vehicle/lod/tesla_hellpod_v1.png": "7258b80294edae19398f0af9782e6dc393e65d18f229bf350fd1778fa71b981c",
+  "sbw_helldiver:textures/bedrock/vehicle/lod/tesla_hellpod_v1.png": "500378a481cfe9b7cee724bd85d5784608b7af063b2ca97bfc04f315aa71f2df",
   "sbw_helldiver:textures/bedrock/vehicle/mortar_hellpod_v1.png": "cf1e4489ae9c33ef633ff7c5f27dfc9e4ae5b941b42b9c5c26060ae3d2689ecd",
   "sbw_helldiver:textures/bedrock/vehicle/mortar_sentry_v1.png": "feb06447b1efb2175536ba82d18a63cae73855191cd4395174f45e0e6210f087",
   "sbw_helldiver:textures/bedrock/vehicle/rocket_hellpod_v1.png": "db18a70f77fd32d58c305351787a54f99ab5f12985935f4a164b9f6d8fc79ca5",
   "sbw_helldiver:textures/bedrock/vehicle/rocket_sentry_v1.png": "4e479a395cfe019bcc173d7e869f31eb71ddaf4be5e81f0026f604c151f972b7",
   "sbw_helldiver:textures/bedrock/vehicle/shield_hellpod_v1.png": "a223af85ce86a431da463a868404182e119362db9cd859b01f7dab1a7358a58f",
-  "sbw_helldiver:textures/bedrock/vehicle/tesla_hellpod_v1.png": "03608a8493ec1681a1b699c0d69bd4eca6bdfffd8af00dd2c4a41b05414dc5fc"
+  "sbw_helldiver:textures/bedrock/vehicle/tesla_hellpod_v1.png": "3dd760bdd0ef76d7559c321626b5edff1cd694ebdb2ae1c62b2693450d228aa8"
 }
