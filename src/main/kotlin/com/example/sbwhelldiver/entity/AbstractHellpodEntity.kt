@@ -20,7 +20,7 @@ import net.minecraft.world.level.levelgen.Heightmap
 import net.minecraft.world.phys.Vec3
 
 /** The entity origin is the pod rim. The buried hull never changes terrain. */
-abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAimableEntity(type, level) {
+abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAimableEntity(type, level), HellpodDelivery {
     enum class Phase { FALLING, IMPACT, DEPLOYING, ACTIVE, RETRACTING, DONE, DESTROYED, SPENT }
 
     val profile get() = AssetCatalog.profile(type)
@@ -74,8 +74,10 @@ abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAi
     var flightSampleTime = Double.NaN
         private set
 
-    fun scheduleArrival(surfaceY: Double, arrivalGameTime: Long) {
-        restY = surfaceY - HelldiversConfig.effectiveBurialDepth() + profile.podHeight
+    override fun setDeliveryOwner(owner: java.util.UUID?) { owner?.let(::setOwnerUUID) }
+
+    override fun scheduleArrival(surfaceY: Double, arrivalGameTime: Long) {
+        restY = HellpodDeployment.landingHeight(surfaceY, profile.podHeight)
         entityData.set(DATA_REST_Y, restY.toFloat())
         scheduledStartY = y
         scheduledLaunch = level().gameTime
@@ -84,7 +86,7 @@ abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAi
     }
 
     protected fun retargetSurface(surfaceY:Double){
-        restY=surfaceY-HelldiversConfig.effectiveBurialDepth()+profile.podHeight
+        restY=HellpodDeployment.landingHeight(surfaceY,profile.podHeight)
         entityData.set(DATA_REST_Y,restY.toFloat())
     }
 
@@ -199,22 +201,15 @@ abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAi
             deltaMovement = Vec3.ZERO
             if (y != restY) setPos(x, restY, z)
         }
-        when (phase) {
-            Phase.FALLING -> tickFalling()
-            Phase.IMPACT -> if (phaseTicks >= 10) enterPhase(Phase.DEPLOYING)
-            Phase.DEPLOYING -> {
-                releaseCap()
-                if (phaseTicks >= deployTicks) enterPhase(Phase.ACTIVE)
-            }
+        if (!HellpodDeployment.tick(phase, phaseTicks, deployTicks, retractTicks,
+                ::tickFalling, ::enterPhase, ::releaseCap, ::discard)) when (phase) {
             Phase.ACTIVE -> {
                 activeTicks++
                 tickActive()
                 if (automaticRetractionEnabled() && shouldRetract()) enterPhase(Phase.RETRACTING)
             }
-            Phase.RETRACTING -> if (phaseTicks >= retractTicks) enterPhase(Phase.DONE)
-            Phase.DONE -> if (phaseTicks >= CLOSED_LINGER_TICKS) discard()
-            Phase.DESTROYED -> Unit // SBW drains the 1-HP wreck and detonates it.
             Phase.SPENT -> if (phaseTicks >= DESTROY_CLOSE_TICKS + CLOSED_LINGER_TICKS) discard()
+            else -> Unit // SBW drains the destroyed wreck and detonates it.
         }
     }
 
@@ -236,30 +231,20 @@ abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAi
     }
 
     private fun tickScheduledFall() {
-        val duration = (scheduledArrival - scheduledLaunch).coerceAtLeast(1)
-        val age = (level().gameTime - scheduledLaunch).coerceIn(0, duration)
-        val brakeTicks = minOf(scheduledBrakingTicks.toLong(), maxOf(1L, duration - 1))
-        val fastTicks = duration - brakeTicks
-        if (age >= fastTicks) {
-            if (!braking) {
-                entityData.set(DATA_BRAKING, true)
-                entityData.set(DATA_BRAKE_START, level().gameTime)
-            }
-        }
-        deltaMovement = Vec3.ZERO
-        setPos(x, if (age >= duration) restY else scheduledHeight(level().gameTime.toDouble()), z)
-        if (age >= duration) {
-            noPhysics = false
-            HellpodImpact.apply(this,restY + HelldiversConfig.effectiveBurialDepth() - profile.podHeight)
-            onImpact()
-            enterPhase(Phase.IMPACT)
-        }
+        HellpodDeployment.fall(this, scheduledLaunch, scheduledArrival, restY,
+            restY + HelldiversConfig.effectiveBurialDepth() - profile.podHeight,
+            scheduledBrakingTicks, ::scheduledHeight, {
+                if (!braking) {
+                    entityData.set(DATA_BRAKING, true)
+                    entityData.set(DATA_BRAKE_START, level().gameTime)
+                }
+            }, {
+                onImpact()
+                enterPhase(Phase.IMPACT)
+            })
     }
 
-    protected open fun onImpact() {
-        val server = level() as? ServerLevel ?: return
-        server.sendParticles(ParticleTypes.CLOUD, x, y + 0.05, z, 32, 0.8, 0.12, 0.8, 0.04)
-    }
+    protected open fun onImpact() {}
     protected open fun onActivated() {}
     protected open fun onRetracting() {}
     protected open fun tickActive() {}
@@ -271,11 +256,8 @@ abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAi
         return lifetimeExpired()
     }
 
-    private fun releaseCap() {
-        if (capReleased) return
-        val cap = ModEntities.HELLPOD_CAP.get().create(level()) ?: return
-        cap.ejectFrom(this)
-        if (level().addFreshEntity(cap)) entityData.set(DATA_CAP_RELEASED, true)
+    private fun releaseCap() = HellpodDeployment.releaseCap(this, capReleased) {
+        entityData.set(DATA_CAP_RELEASED, true)
     }
 
     protected fun enterPhase(next: Phase) {
@@ -285,7 +267,6 @@ abstract class AbstractHellpodEntity(type: EntityType<*>, level: Level) : AutoAi
         phaseStartedAt = level().gameTime
         entityData.set(DATA_PHASE_START, phaseStartedAt)
         active = next == Phase.ACTIVE
-        if (next == Phase.DEPLOYING) releaseCap()
         if (next == Phase.ACTIVE) { activeTicks = 0; onActivated() }
         if (next == Phase.RETRACTING || next == Phase.DESTROYED || next == Phase.SPENT) {
             entityData.set(DATA_FIRING, false)

@@ -33,13 +33,14 @@ object TurretPerformanceClientTest {
     private val enabled=java.lang.Boolean.getBoolean("sbw_helldiver.turretPerformanceTests")
     private val autocannonOnly=java.lang.Boolean.getBoolean("sbw_helldiver.autocannonAlignmentTests")
     private val rocketOnly=java.lang.Boolean.getBoolean("sbw_helldiver.perfRocketOnly")
+    private val hmgOnly=java.lang.Boolean.getBoolean("sbw_helldiver.hmgFeedTests")
     private val panelsOnly=java.lang.Boolean.getBoolean("sbw_helldiver.perfPanelsOnly")
     private val laserOnly=java.lang.Boolean.getBoolean("sbw_helldiver.perfLaserOnly")
     private var started=0L
     private var prepared=false
     @Volatile private var ready=false
     @Volatile private var failure:Throwable?=null
-    @Volatile private var scenario=if(panelsOnly)5 else if(autocannonOnly)3 else if(rocketOnly)4 else -1
+    @Volatile private var scenario=if(hmgOnly)11 else if(panelsOnly)5 else if(autocannonOnly)3 else if(rocketOnly)4 else -1
     @Volatile private var age=0
     @Volatile private var done=false
     private var playerId:java.util.UUID?=null
@@ -120,7 +121,7 @@ object TurretPerformanceClientTest {
                 if(age==310)pods.forEach{pod->val data=CompoundTag();pod.saveWithoutId(data);data.putInt("HellpodPhase",AbstractHellpodEntity.Phase.RETRACTING.ordinal);data.putInt("HellpodPhaseTicks",0);pod.load(data)}
             }
             if(age>=if((autocannonOnly && scenario==4)||(!laserOnly && scenario in 12..15))400 else 240){
-                if(scenario==(if(panelsOnly)10 else if(autocannonOnly)4 else if(laserOnly)6 else if(rocketOnly)5 else names.lastIndex)){done=true;return}
+                if(scenario==(if(hmgOnly)12 else if(panelsOnly)10 else if(autocannonOnly)4 else if(laserOnly)6 else if(rocketOnly)5 else names.lastIndex)){done=true;return}
                 level.getAllEntities().toList().filter{it !is net.minecraft.world.entity.player.Player}.forEach{it.discard()}
                 targets.clear();pods.clear();scenario++;age=0
                 val indices=if(laserOnly)when(scenario){0->emptyList();1,2->listOf(8);3,4->List(4){8};else->List(8){8}}else when(scenario){0->emptyList();1,16->types.indices.toList();else->listOf(scenario-2)}
@@ -246,6 +247,15 @@ object TurretPerformanceClientTest {
                 player.xRot=4f;player.xRotO=4f
                 if(age in listOf(110,175,225))Screenshot.grab(mc.gameDirectory,"panel-${label(scenario)}-$age.png",mc.mainRenderTarget){}
             }
+            if(hmgOnly && age in 152..285) {
+                mc.options.fov().set(55)
+                val reverse=age>=260
+                val cx=if(reverse)-1.7 else 1.8;val cz=if(reverse)2.8 else 2.3
+                player.setPos(cx,81.1,cz)
+                val dx=.5-player.x;val dz=.5-player.z;val dy=81.7-player.eyeY
+                player.yRot=Math.toDegrees(atan2(-dx,dz)).toFloat();player.yRotO=player.yRot
+                player.xRot=(-Math.toDegrees(atan2(dy,sqrt(dx*dx+dz*dz)))).toFloat();player.xRotO=player.xRot
+            }
             if(scenario!=captured && age in 170..210 && scenario>=0){
                 captured=scenario;Screenshot.grab(mc.gameDirectory,"turret-perf-${label(scenario)}.png",mc.mainRenderTarget){LOGGER.info("TURRET_PERF_SCREENSHOT {}",label(scenario))}
             }
@@ -268,6 +278,7 @@ object TurretPerformanceClientTest {
                 return
             }
             if(done){
+                if(hmgOnly){check((firing[12]?:0)>0){"HMG did not fire"};LOGGER.info("HMG_FEED_VIEWS_PASSED shots={}",firing[12]);mc.stop();return}
                 if(panelsOnly){LOGGER.info("PANEL_VIEWS_PASSED");mc.stop();return}
                 if(digWait==0){
                     val pod=mc.level!!.entitiesForRendering().filterIsInstance<SentryHellpodEntity>().first()

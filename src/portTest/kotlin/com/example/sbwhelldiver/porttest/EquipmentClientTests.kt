@@ -27,6 +27,7 @@ import org.lwjgl.glfw.GLFW
 object EquipmentClientTests {
     private var started=false;private var ticks=0;private val launched=System.currentTimeMillis()
     private var device=java.util.UUID(0,0)
+    private var standardPod=java.util.UUID(0,0)
     private val arrivalSounds=mutableListOf<String>()
     private val mechanicalSounds=mutableListOf<String>()
     private val flashRuns=mutableMapOf<Long,Int>()
@@ -42,11 +43,12 @@ object EquipmentClientTests {
     private var flashCaptureName=""
     @SubscribeEvent fun sound(event:net.neoforged.neoforge.client.event.sound.PlaySoundEvent) {
         if(java.lang.Boolean.getBoolean("sbw_helldiver.equipmentRegression"))event.sound?.location?.path?.let {
-            val e=Minecraft.getInstance().level?.entitiesForRendering()?.filterIsInstance<EquipmentDeploymentBeaconEntity>()?.firstOrNull{b->b.uuid==device}
-            if(e!=null&&e.phase in listOf(EquipmentDeploymentBeaconEntity.PACKED,EquipmentDeploymentBeaconEntity.IMPACT,EquipmentDeploymentBeaconEntity.DEPLOYING)&&it.startsWith("sfx_hellpod_")){
+            val beacons=Minecraft.getInstance().level?.entitiesForRendering()?.filterIsInstance<EquipmentDeploymentBeaconEntity>()
+            val e=beacons?.firstOrNull{b->b.uuid==device}?:beacons?.firstOrNull()
+            if(e!=null&&e.phase in listOf(EquipmentDeploymentBeaconEntity.PACKED,EquipmentDeploymentBeaconEntity.IMPACT,EquipmentDeploymentBeaconEntity.DEPLOYING)&&it.startsWith("sfx_hellpod_")&&kotlin.math.abs(event.sound!!.x-e.x)<.2&&kotlin.math.abs(event.sound!!.z-e.z)<.2){
                 arrivalSounds.add(it)
-                if(it=="sfx_hellpod_impact"&&!java.lang.Boolean.getBoolean("sbw_helldiver.equipmentCollisionOnly"))check(kotlin.math.abs(e.level().gameTime-e.flightArrival)<=2){"Landing sound missed contact: age=${e.level().gameTime-e.flightArrival}, phase=${e.phase}"}
-                if(it=="sfx_hellpod_cap_release"&&!java.lang.Boolean.getBoolean("sbw_helldiver.equipmentCollisionOnly"))check(e.level().gameTime-e.flightArrival>=10){"Cap sound precedes the impact pause"}
+                if(it=="sfx_hellpod_impact"&&!java.lang.Boolean.getBoolean("sbw_helldiver.equipmentCollisionOnly"))check(e.phase==EquipmentDeploymentBeaconEntity.IMPACT&&kotlin.math.abs(e.phaseStart-e.flightArrival)<=1 || kotlin.math.abs(e.level().gameTime-e.flightArrival)<=2){"Landing sound missed both synchronized impact and trajectory contact: phase=${e.phase}"}
+                if(it=="sfx_hellpod_cap_release"&&!java.lang.Boolean.getBoolean("sbw_helldiver.equipmentCollisionOnly"))check(e.phase==EquipmentDeploymentBeaconEntity.DEPLOYING&&e.phaseStart-e.flightArrival>=10 || e.level().gameTime-e.flightArrival>=10){"Cap sound precedes the impact pause"}
                 check(!it.startsWith("sfx_hellpod_retro")&&!it.startsWith("sfx_hellpod_thruster")){"Equipment entry layers extra player retro audio"}
                 LOGGER.info("EQUIPMENT_SHARED_POD_AUDIO {} phase={} arrivalAge={}",it,e.phase,e.level().gameTime-e.flightArrival)
             }
@@ -70,7 +72,7 @@ object EquipmentClientTests {
             mc.createWorldOpenFlows().createFreshLevel("port-client-test",LevelSettings("Equipment beacon verification",GameType.CREATIVE,false,Difficulty.PEACEFUL,true,GameRules(),WorldDataConfiguration.DEFAULT),WorldOptions(1,false,false),{a->a.registryOrThrow(Registries.WORLD_PRESET).getHolderOrThrow(WorldPresets.FLAT).value().createWorldDimensions()},mc.screen!!)
             return
         }
-        val player=mc.player?:return;val server=mc.singleplayerServer?:return;ticks++
+        val player=mc.player?:return;val server=mc.singleplayerServer?:return;ticks++;val frame=ticks
         if(ticks==1)server.execute {
             val l=server.overworld();l.gameRules.getRule(GameRules.RULE_DOMOBSPAWNING).set(false,server);l.gameRules.getRule(GameRules.RULE_DAYLIGHT).set(false,server);l.dayTime=6000
             for(x in -10..10)for(z in -20..12)for(y in 73..79)l.setBlock(BlockPos(x,y,z),if(y==79)Blocks.SMOOTH_STONE.defaultBlockState()else Blocks.STONE.defaultBlockState(),3)
@@ -83,8 +85,24 @@ object EquipmentClientTests {
             val l=server.overworld();val p=server.playerList.getPlayer(player.uuid)!!
             val e=ModEntities.EQUIPMENT_BEACON.get().create(l)!!;val landing=net.minecraft.world.phys.Vec3(.5,80.0,.5)
             e.moveTo(.5,80.0,.5,EquipmentBeaconGeometry.deploymentYaw(p.position(),landing,p.yRot),0f);e.configure(80.0,l.gameTime+35,p.uuid);l.addFreshEntity(e);device=e.uuid
+            val normal=ModEntities.SUPPLY_HELLPOD.get().create(l)!!
+            normal.moveTo(8.5,com.example.sbwhelldiver.entity.HellpodDeployment.spawnHeight(80.0),.5,0f,0f)
+            normal.scheduleArrival(80.0,e.flightArrival);l.addFreshEntity(normal);standardPod=normal.uuid
             checkTickOptimizer(e,"server/high-altitude")
             LOGGER.info("EQUIPMENT_FIXTURE_READY")
+        }
+        if(ticks in 62..108)server.execute {
+            val l=server.overworld()
+            val beacon=l.getEntity(device) as EquipmentDeploymentBeaconEntity
+            val normal=l.getEntity(standardPod) as com.example.sbwhelldiver.entity.AbstractHellpodEntity
+            check(kotlin.math.abs(beacon.y-normal.y)<.0002){"Equipment flight differs from standard pod: ${beacon.y} vs ${normal.y}"}
+            val expected=when(normal.phase){
+                com.example.sbwhelldiver.entity.AbstractHellpodEntity.Phase.FALLING->EquipmentDeploymentBeaconEntity.PACKED
+                com.example.sbwhelldiver.entity.AbstractHellpodEntity.Phase.IMPACT->EquipmentDeploymentBeaconEntity.IMPACT
+                else->EquipmentDeploymentBeaconEntity.DEPLOYING
+            }
+            check(beacon.phase==expected&&beacon.capReleased==normal.capReleased){"Equipment deployment diverged: ${beacon.phase} vs ${normal.phase}"}
+            if(frame==108){normal.discard();LOGGER.info("EQUIPMENT_STANDARD_POD_FLIGHT_AND_PHASES_MATCH")}
         }
         val collisionOnly=java.lang.Boolean.getBoolean("sbw_helldiver.equipmentCollisionOnly")
         if(ticks==154&&collisionOnly)mc.entityRenderDispatcher.setRenderHitBoxes(true)
@@ -206,7 +224,32 @@ object EquipmentClientTests {
             server.execute {check(server.overworld().getBlockEntity(BlockPos(0,80,0)) is SampleMachineBlockEntity);LOGGER.info("EQUIPMENT_MACHINE_OPENED")}
             capture("equipment-machine-deployed.png")
         }
-        if(ticks==660){LOGGER.info("EQUIPMENT_CLIENT_COMPLETED");mc.stop()}
+        if(ticks==660)server.execute {
+            val l=server.overworld();val marker=ModEntities.STRATAGEM_MARKER.get().create(l)!!
+            marker.setPos(8.5,80.0,.5)
+            marker.configure(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("sbw_helldiver","machine_deployment_beacon"),75,player.uuid,groundY=80.0)
+            l.addFreshEntity(marker)
+        }
+        if(ticks==815)server.execute {
+            val l=server.overworld();val e=l.allEntities.filterIsInstance<EquipmentDeploymentBeaconEntity>().single()
+            check(e.phase==EquipmentDeploymentBeaconEntity.ACTIVE&&e.owner==player.uuid){"Shared marker did not deploy the equipment beacon"}
+            val saved=net.minecraft.nbt.CompoundTag();e.saveWithoutId(saved)
+            val restored=ModEntities.EQUIPMENT_BEACON.get().create(l)!!;restored.load(saved)
+            check(restored.phase==e.phase&&restored.capReleased==e.capReleased&&restored.owner==e.owner){"Shared deployment save roundtrip failed"}
+            restored.discard()
+            val p=server.playerList.getPlayer(player.uuid)!!
+            val eye=e.screenCenter().add(e.screenNormal().scale(1.1));val d=e.screenCenter().subtract(eye)
+            p.teleportTo(l,eye.x,eye.y-p.eyeHeight,eye.z,Math.toDegrees(kotlin.math.atan2(-d.x,d.z)).toFloat(),(-Math.toDegrees(kotlin.math.atan2(d.y,d.horizontalDistance()))).toFloat())
+            check(e.openTerminal(p))
+            device=e.uuid
+            LOGGER.info("EQUIPMENT_COMMON_MARKER_LAUNCH_AND_SAVE_VERIFIED")
+        }
+        if(ticks in 825..845&&(ticks-825)%4==0)key(3)
+        if(ticks==915)server.execute {
+            check(server.overworld().getEntity(device)==null){"Six-left recall left a beacon behind"}
+            LOGGER.info("EQUIPMENT_COMMON_RECALL_VERIFIED")
+        }
+        if(ticks==925){LOGGER.info("EQUIPMENT_CLIENT_COMPLETED");mc.stop()}
     }
     private fun checkTickOptimizer(entity:net.minecraft.world.entity.Entity,stage:String) {
         val contract=runCatching{Class.forName("me.kall.doespotatotick.ext.Tickable")}.getOrNull()?:return

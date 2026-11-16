@@ -60,7 +60,8 @@ object HmgFeedRenderer: ResourceManagerReloadListener {
                 val p0=deformed[face[0].position];val p1=deformed[face[1].position];val p2=deformed[face[2].position]
                 edge.set(p1).sub(p0);normal.set(p2).sub(p0);edge.cross(normal,normal)
                 if(normal.lengthSquared()<1e-12f)continue
-                normal.normalize()
+                // Mirroring Bedrock X reverses winding; match the authored outward normals.
+                normal.negate().normalize()
                 // The entity render type consumes quads; repeat the triangle's last corner.
                 for(i in 0..3) {
                     val corner=face[minOf(i,2)];val p=deformed[corner.position];val uv=mesh.uvs[corner.uv]
