@@ -1,5 +1,8 @@
 package com.example.sbwhelldiver.survival
 
+import com.example.sbwhelldiver.entity.HellpodDeployment
+import com.example.sbwhelldiver.entity.HellpodDelivery
+import com.example.sbwhelldiver.entity.AbstractHellpodEntity.Phase as PodPhase
 import com.example.sbwhelldiver.init.ModSounds
 import com.example.sbwhelldiver.network.*
 import com.example.sbwhelldiver.stratagem.Stratagems
@@ -21,7 +24,7 @@ import java.util.UUID
 import kotlin.math.abs
 
 /** Terminal session, payment and the saved ten-second equipment delivery reservation. */
-class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBeaconEntity>,level:Level):Entity(type,level) {
+class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBeaconEntity>,level:Level):Entity(type,level),HellpodDelivery {
     // Deployment deadlines must keep advancing while the delivery is above a player's activation range.
     // Use the vanilla contract also respected by entity-tick optimizers, without a mod-specific dependency.
     override fun isAlwaysTicking()=true
@@ -44,6 +47,7 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
     private var groundY=0.0
     private var arrival=0L
     private var born=0L
+    private var clientFlightClock=Double.NaN
     private var reservedFacing=net.minecraft.core.Direction.NORTH
     private var containerSent=false
     private lateinit var collisionParts:Array<EquipmentBeaconCollisionPart>
@@ -94,19 +98,42 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
         entityData.define(DEPLOYMENT_END,-1L)
     }
     fun configure(surface:Double,arrivalTime:Long,caller:UUID?) {
-        groundY=surface;arrival=arrivalTime;born=level().gameTime;owner=caller
-        entityData.set(GROUND,surface.toFloat());entityData.set(ARRIVAL,arrival);entityData.set(BORN,born)
-        transition(PACKED,born)
-        setPos(x,heightAt(born.toDouble()),z)
+        owner=caller
+        setPos(x,HellpodDeployment.spawnHeight(surface),z)
+        scheduleArrival(surface,arrivalTime)
     }
+    override fun setDeliveryOwner(owner:UUID?) { this.owner=owner }
+    override fun scheduleArrival(surfaceY:Double,arrivalGameTime:Long) {
+        groundY=surfaceY;born=level().gameTime;arrival=arrivalGameTime.coerceAtLeast(born+1)
+        entityData.set(GROUND,surfaceY.toFloat());entityData.set(ARRIVAL,arrival);entityData.set(BORN,born)
+        transition(PACKED,born)
+    }
+    private fun landingY()=HellpodDeployment.landingHeight(entityData.get(GROUND).toDouble(),com.example.sbwhelldiver.asset.AssetCatalog.profiles.getValue("supply_hellpod").podHeight)
     private fun heightAt(now:Double):Double {
-        val landing=entityData.get(GROUND)+.0956
-        return com.example.sbwhelldiver.entity.HellpodFlight.height(now,entityData.get(BORN),entityData.get(ARRIVAL),landing+com.example.sbwhelldiver.entity.AbstractHellpodEntity.descentSpawnHeight()+5.45,landing,com.example.sbwhelldiver.entity.AbstractHellpodEntity.descentBrakeHeight())
+        val landing=landingY()
+        return com.example.sbwhelldiver.entity.HellpodFlight.height(now,entityData.get(BORN),entityData.get(ARRIVAL),HellpodDeployment.spawnHeight(entityData.get(GROUND).toDouble()),landing,com.example.sbwhelldiver.entity.AbstractHellpodEntity.descentBrakeHeight())
     }
     val flightLaunch get()=entityData.get(BORN)
     val flightArrival get()=entityData.get(ARRIVAL)
     val flightBraking get()=level().gameTime>=com.example.sbwhelldiver.entity.HellpodFlight.brakeStart(entityData.get(BORN),flightArrival)
-    fun sampleClientFlight(){if(phase==PACKED){xo=x;yo=y;zo=z;setPos(x,heightAt(level().gameTime.toDouble()),z)};updateCollisionParts()}
+    fun sampleClientFlight(){
+        if(phase==PACKED){
+            val now=level().gameTime.toDouble()
+            if(clientFlightClock.isNaN()||now>clientFlightClock){
+                clientFlightClock=if(clientFlightClock.isNaN())now else maxOf(now,clientFlightClock)
+                xo=x;yo=y;zo=z;setPos(x,heightAt(clientFlightClock),z)
+            }
+        }else if(phaseStart>=0)setPos(x,landingY(),z)
+        updateCollisionParts()
+    }
+    // Scheduled flight owns Y on both sides; movement packets cannot pull it off the path.
+    override fun lerpTo(x:Double,y:Double,z:Double,yaw:Float,pitch:Float,steps:Int,teleport:Boolean) {
+        if(flightArrival<0){super.lerpTo(x,y,z,yaw,pitch,steps,teleport);return}
+        setPos(x,if(phase==PACKED)heightAt(maxOf(level().gameTime.toDouble(),clientFlightClock.takeUnless{it.isNaN()}?:0.0))else landingY(),z)
+        setRot(yaw,pitch)
+    }
+    override fun shouldRenderAtSqrDistance(distance:Double)=
+        if(phase==PACKED)distance<1024.0*1024.0 else super.shouldRenderAtSqrDistance(distance)
     fun localToWorld(v:Vec3)=v.yRot(-yRot*(Math.PI/180).toFloat()).add(position())
     fun screenCenter()=localToWorld(EquipmentBeaconGeometry.center)
     fun screenNormal()=EquipmentBeaconGeometry.normal.yRot(-yRot*(Math.PI/180).toFloat())
@@ -222,7 +249,6 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
         super.tick()
         if(phaseStart<0)return
         if(level().isClientSide)return
-        if(phase==PACKED)setPos(x,heightAt(level().gameTime.toDouble()),z)
         if(!Stratagems.dimensionAllowed(level().dimension().location().toString())){closeTerminal();discard();return}
         val now=level().gameTime
         if((phase==COUNTDOWN||phase==RETRACTING)&&!containerSent)sendContainer()
@@ -230,23 +256,22 @@ class EquipmentDeploymentBeaconEntity(type:EntityType<out EquipmentDeploymentBea
             val p=(level() as ServerLevel).server.playerList.getPlayer(operator!!)
             if(p==null||nonce==null||!valid(p,nonce!!))closeTerminal()
         }
-        when(phase) {
-            PACKED->if(now>=arrival){setPos(x,groundY+.0956,z);transition(IMPACT,arrival)}
-            IMPACT->if(now-phaseStart>=10){transition(DEPLOYING,arrival+10);releaseCap()}
-            DEPLOYING->if(now-phaseStart>=44)transition(ACTIVE,now)
-            COUNTDOWN->if(now>=deploymentEnd-60)transition(RETRACTING,deploymentEnd-60)
-            RETRACTING->if(now>=deploymentEnd){transition(FINISHED,now);discard();return}
-            FINISHED->{discard();return}
+        if(phase==COUNTDOWN&&now>=deploymentEnd-60)transition(RETRACTING,deploymentEnd-60)
+        val podPhase=when(phase){
+            PACKED->PodPhase.FALLING;IMPACT->PodPhase.IMPACT;DEPLOYING->PodPhase.DEPLOYING
+            RETRACTING->PodPhase.RETRACTING;FINISHED->PodPhase.DONE;else->PodPhase.ACTIVE
         }
+        HellpodDeployment.tick(podPhase,(now-phaseStart).coerceIn(0,Int.MAX_VALUE.toLong()).toInt(),44,60,
+            {HellpodDeployment.fall(this,born,arrival,landingY(),groundY,
+                height=::heightAt,brake={},landed={transition(IMPACT,now)})},
+            {next->transition(when(next){PodPhase.IMPACT->IMPACT;PodPhase.DEPLOYING->DEPLOYING
+                PodPhase.ACTIVE->ACTIVE;PodPhase.DONE->FINISHED;else->error("Unexpected deployment phase $next")},now)
+                if(next==PodPhase.DONE)discard()},
+            ::releaseCap,::discard,closedTicks=0)
         updateCollisionParts()
     }
 
-    private fun releaseCap(){
-        if(capReleased)return
-        val cap=com.example.sbwhelldiver.init.ModEntities.HELLPOD_CAP.get().create(level())?:return
-        cap.ejectFrom(this)
-        if(level().addFreshEntity(cap))entityData.set(CAP_RELEASED,true)
-    }
+    private fun releaseCap()=HellpodDeployment.releaseCap(this,capReleased){entityData.set(CAP_RELEASED,true)}
     override fun readAdditionalSaveData(n:CompoundTag) {
         groundY=n.getDouble("Ground");arrival=n.getLong("Arrival");born=n.getLong("Born")
         reservedFacing=net.minecraft.core.Direction.from2DDataValue(n.getInt("ReservedFacing"));containerSent=n.getBoolean("ContainerSent")

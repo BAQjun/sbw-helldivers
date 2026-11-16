@@ -14,7 +14,7 @@ object HellpodImpact {
     const val DAMAGE=400f
     const val HULL_RADIUS=1.325
     private val TYPE=ResourceKey.create(Registries.DAMAGE_TYPE,ResourceLocation(MOD_ID,"hellpod_impact"))
-    fun apply(pod:AbstractHellpodEntity,surfaceY:Double) {
+    fun apply(pod:Entity,surfaceY:Double) {
         val world=pod.level() as? ServerLevel?:return
         val source=DamageSource(world.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(TYPE),pod)
         val bounds=AABB(pod.x-HULL_RADIUS*2,surfaceY-.5,pod.z-HULL_RADIUS*2,

@@ -379,17 +379,9 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     private fun spawnHellpod(): Boolean {
         val server = level() as? ServerLevel ?: return false
         val id = dropTypeId ?: return false
-        if(id.path=="machine_deployment_beacon") {
-            val pod=com.example.sbwhelldiver.init.ModEntities.EQUIPMENT_BEACON.get().create(server)?:return false
-            pod.moveTo(x,surfaceY,z,yRot,0f)
-            val arrival=maxOf(arrivalDeadline,server.gameTime+AbstractHellpodEntity.FALL_TICKS)
-            entityData.set(DURATION,(arrival-startedAt-landingGraceTicks).toInt())
-            entityData.set(LEFT,(duration-elapsedTicks).coerceAtLeast(0))
-            pod.configure(surfaceY,arrival,ownerUuid)
-            if(!server.addFreshEntity(pod))return false
-            podUUID=pod.uuid;return true
-        }
-        val pod = if (id.path in setOf("guard_dog", "laser_guard_dog", "stun_guard_dog", "flame_guard_dog", "gas_guard_dog")) {
+        val pod = if(id.path=="machine_deployment_beacon") {
+            com.example.sbwhelldiver.init.ModEntities.EQUIPMENT_BEACON.get().create(server) ?: return false
+        } else if (id.path in setOf("guard_dog", "laser_guard_dog", "stun_guard_dog", "flame_guard_dog", "gas_guard_dog")) {
             val pack = net.minecraft.world.item.ItemStack(when (id.path) {
                 "stun_guard_dog" -> com.example.sbwhelldiver.init.ModItems.STUN_GUARD_DOG_BACKPACK.get()
                 "gas_guard_dog" -> com.example.sbwhelldiver.init.ModItems.GAS_GUARD_DOG_BACKPACK.get()
@@ -402,16 +394,17 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         } else {
             BuiltInRegistries.ENTITY_TYPE.getOptional(id).orElse(null)?.create(server) as? AbstractHellpodEntity ?: return false
         }
-        val spawnY = surfaceY + AbstractHellpodEntity.descentSpawnHeight() + AbstractHellpodEntity.ORIGIN_ABOVE_BOTTOM
+        val delivery = pod as? HellpodDelivery ?: return false
+        val spawnY = HellpodDeployment.spawnHeight(surfaceY)
         pod.moveTo(x, spawnY, z, yRot, 0f)
         (pod as? GrenadierBattlementEntity)?.setDeploymentHeading(yRot)
-        ownerUuid?.let(pod::setOwnerUUID)
+        delivery.setDeliveryOwner(ownerUuid)
         // Always allow the full flight duration, including a call first ticked late.
         val arrival = maxOf(arrivalDeadline, server.gameTime + AbstractHellpodEntity.FALL_TICKS)
         // A late restored call gets a full flight and keeps the one-second gap after zero.
         entityData.set(DURATION, (arrival - startedAt - landingGraceTicks).toInt())
         entityData.set(LEFT, (duration - elapsedTicks).coerceAtLeast(0))
-        pod.scheduleArrival(surfaceY, arrival)
+        delivery.scheduleArrival(surfaceY, arrival)
         if (!server.addFreshEntity(pod)) return false
         podUUID = pod.uuid
         return true
