@@ -20,7 +20,7 @@ public final class MineGlowGeometry {
         }
     }
     static void release(){if(program!=0)glDeleteProgram(program);if(vao!=0)glDeleteVertexArrays(vao);if(vbo!=0)glDeleteBuffers(vbo);program=vao=vbo=0;}
-    static void draw(Matrix4f projection,int w,int h)throws java.io.IOException{
+    static void draw(Matrix4f projection,float depthJitterScale)throws java.io.IOException{
         if(count==0)return;
         if(program==0){
             int vs=FieldVolumeRenderer.shader(GL_VERTEX_SHADER,FieldVolumeRenderer.source("mine.vsh")),fs=0,candidate=0;
@@ -30,7 +30,7 @@ public final class MineGlowGeometry {
         }
         glUseProgram(program);glBindVertexArray(vao);glBindBuffer(GL_ARRAY_BUFFER,vbo);
         var view=data.duplicate();view.flip();glBufferData(GL_ARRAY_BUFFER,view,GL_STREAM_DRAW);
-        glUniform1i(glGetUniformLocation(program,"SceneDepth"),0);glUniform2f(glGetUniformLocation(program,"Viewport"),w,h);
+        glUniform1i(glGetUniformLocation(program,"SceneDepth"),0);glUniform1f(glGetUniformLocation(program,"DepthJitterScale"),depthJitterScale);
         try(var stack=MemoryStack.stackPush()){glUniformMatrix4fv(glGetUniformLocation(program,"Projection"),false,projection.get(stack.mallocFloat(16)));}
         glBlendFuncSeparate(GL_ONE,GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA);glDrawArrays(GL_TRIANGLES,0,count);
     }

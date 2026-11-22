@@ -148,7 +148,6 @@ public final class FieldVolumeRenderer {
 
     public static void render(RenderLevelStageEvent event) {
         if(event.getStage()==RenderLevelStageEvent.Stage.AFTER_SKY&&!ShaderPackCompat.INSTANCE.shadowPass()) {
-            MineGlowGeometry.beginFrame();
             GuardDogThrusters.INSTANCE.beginFrame();
             BeaconBeamVisual.INSTANCE.beginFrame();
         }
@@ -351,7 +350,12 @@ public final class FieldVolumeRenderer {
                 glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,depth);
                 // 1.21 entity poses contain camera-relative positions, without camera rotation.
                 // Use the same view matrix as the base mesh for the depth-tested lamp pass.
-                if(MineGlowGeometry.vertexCount()>0)FlameGlow.render(w,h,.28f,()->MineGlowGeometry.draw(new Matrix4f(event.getProjectionMatrix()).mul(event.getModelViewMatrix()),w,h));
+                if(MineGlowGeometry.vertexCount()>0) {
+                    Matrix4f projection=event.getProjectionMatrix();
+                    float depthJitterScale=shaderPack?Math.abs(projection.m32())*.5f/8f:0f;
+                    Matrix4f clip=new Matrix4f(projection).mul(event.getModelViewMatrix());
+                    FlameGlow.render(w,h,.28f,()->MineGlowGeometry.draw(clip,depthJitterScale));
+                }
                 if(Boolean.getBoolean("sbw_helldiver.energyShaderSmokeTest")||Boolean.getBoolean("sbw_helldiver.shaderFieldSmokeTest")||Boolean.getBoolean("sbw_helldiver.flameVolumeSmokeTest")||Boolean.getBoolean("sbw_helldiver.laserShaderSmokeTest")) {
                     int error=glGetError();if(error!=GL_NO_ERROR)throw new IllegalStateException("Volume GL error "+error);
                 }

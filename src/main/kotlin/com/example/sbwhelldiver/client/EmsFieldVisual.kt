@@ -97,5 +97,8 @@ object EmsFieldVisual {
 @net.neoforged.fml.common.EventBusSubscriber(modid="sbw_helldiver",value=[net.neoforged.api.distmarker.Dist.CLIENT])
 object FieldVolumePass {
     @net.neoforged.bus.api.SubscribeEvent
+    fun beginFrame(event:net.neoforged.neoforge.client.event.RenderFrameEvent.Pre) { MineGlowGeometry.beginFrame() }
+
+    @net.neoforged.bus.api.SubscribeEvent
     fun render(event:net.neoforged.neoforge.client.event.RenderLevelStageEvent) { FieldVolumeRenderer.render(event) }
 }

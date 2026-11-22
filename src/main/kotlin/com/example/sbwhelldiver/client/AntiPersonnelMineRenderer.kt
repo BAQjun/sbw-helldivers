@@ -6,14 +6,12 @@ import com.github.mcmodderanchor.simplebedrockmodel.v1.common.resource.pojo.Bedr
 import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.baked.BakerOptions
 import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.baked.BedrockModelBaker
 import com.github.mcmodderanchor.simplebedrockmodel.v2.common.model.runtime.BakedModelInstance
-import com.github.mcmodderanchor.simplebedrockmodel.v1.client.renderer.BedrockModelRenderTypes
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.entity.EntityRenderer
 import net.minecraft.client.renderer.entity.EntityRendererProvider
-import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener
@@ -34,10 +32,8 @@ class AntiPersonnelMineRenderer(context: EntityRendererProvider.Context): Entity
     object Model: ResourceManagerReloadListener {
         val textures=AntiPersonnelMineEntity.Kind.entries.associateWith{kind->ResourceLocation.fromNamespaceAndPath(MOD_ID,"textures/bedrock/misc/"+when(kind){AntiPersonnelMineEntity.Kind.PERSONNEL->"contact_mine";AntiPersonnelMineEntity.Kind.INCENDIARY->"incendiary_mine";AntiPersonnelMineEntity.Kind.GAS->"gas_mine";else->"anti_tank_mine"}+".png")}
         val meshes=mutableMapOf<Triple<AntiPersonnelMineEntity.Kind,Int,Boolean>,CachedMineMesh>()
-        val instances=mutableMapOf<AntiPersonnelMineEntity.Kind,BakedModelInstance>()
-        val lods=mutableMapOf<Pair<Int,AntiPersonnelMineEntity.Kind>,BakedModelInstance>()
         override fun onResourceManagerReload(resources: ResourceManager) {
-            instances.clear();lods.clear();meshes.clear();MountedMineRenderer.reload(resources)
+            meshes.clear();MountedMineRenderer.reload(resources)
             for((kind,name) in listOf(AntiPersonnelMineEntity.Kind.PERSONNEL to "contact_mine",AntiPersonnelMineEntity.Kind.INCENDIARY to "incendiary_mine",AntiPersonnelMineEntity.Kind.GAS to "gas_mine",AntiPersonnelMineEntity.Kind.ANTI_TANK to "anti_tank_mine")) {
                 resources.open(textures.getValue(kind)).use{input->com.mojang.blaze3d.platform.NativeImage.read(input).use{image->
                     for(tier in 0..2){
@@ -46,11 +42,16 @@ class AntiPersonnelMineRenderer(context: EntityRendererProvider.Context): Entity
                         val model=resources.openAsReader(ResourceLocation.fromNamespaceAndPath(MOD_ID,"models/bedrock/misc/$name$suffix.geo.json")).use{
                             BakedModelInstance(BedrockModelBaker.bake(GsonUtil.CLIENT_GSON.fromJson(it,BedrockModelPOJO::class.java),options))
                         }
-                        if(tier==0)instances[kind]=model else lods[tier to kind]=model
-                        for(armed in listOf(false,true)){
-                            for(i in 1..4)model.getBone("trigger_rod_$i")?.visible=armed
-                            meshes[Triple(kind,tier,armed)]=CachedMineMesh.bake(model,image,kind.ordinal)
+                        val triggerRods=(1..4).mapNotNull{model.getBone("trigger_rod_$it")}
+                        triggerRods.forEach{it.visible=false}
+                        val unarmedMesh=CachedMineMesh.bake(model,image,kind.ordinal)
+                        meshes[Triple(kind,tier,false)]=unarmedMesh
+
+                        val armedMesh=if(triggerRods.isEmpty())unarmedMesh else {
+                            triggerRods.forEach{it.visible=true}
+                            CachedMineMesh.bake(model,image,kind.ordinal)
                         }
+                        meshes[Triple(kind,tier,true)]=armedMesh
                     }
                 }}
             }

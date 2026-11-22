@@ -21,8 +21,14 @@ public final class CachedMineMesh {
         recorder.flush();return new CachedMineMesh(recorder.data.finish(),recorder.glow.finish());
     }
     public void render(PoseStack pose,VertexConsumer out,int light,boolean glow){
-        var p=pose.last().pose();var n=pose.last().normal();
         var bulk=PackedEntityVertices.create(out);
+        render(pose,out,light,glow,bulk);
+        if(bulk!=null)bulk.flush();
+    }
+
+    /** The caller can share a writer across consecutive instances in the same buffer. */
+    public void render(PoseStack pose,VertexConsumer out,int light,boolean glow,PackedEntityVertices bulk){
+        var p=pose.last().pose();var n=pose.last().normal();
         for(int i=0;i<vertices.length;i+=8){
             float x=vertices[i],y=vertices[i+1],z=vertices[i+2],nx=vertices[i+5],ny=vertices[i+6],nz=vertices[i+7];
             float px=p.m00()*x+p.m10()*y+p.m20()*z+p.m30(),py=p.m01()*x+p.m11()*y+p.m21()*z+p.m31(),pz=p.m02()*x+p.m12()*y+p.m22()*z+p.m32();
@@ -30,7 +36,6 @@ public final class CachedMineMesh {
             if(bulk!=null)bulk.vertex(px,py,pz,-1,vertices[i+3],vertices[i+4],OverlayTexture.NO_OVERLAY,light,xx,yy,zz);
             else out.addVertex(px,py,pz,-1,vertices[i+3],vertices[i+4],OverlayTexture.NO_OVERLAY,light,xx,yy,zz);
         }
-        if(bulk!=null)bulk.flush();
         if(glow&&!ShaderPackCompat.INSTANCE.shadowPass())MineGlowGeometry.capture(emission,p);
     }
     private static final class Floats{
