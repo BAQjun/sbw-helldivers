@@ -97,5 +97,10 @@ object EmsFieldVisual {
 @net.minecraftforge.fml.common.Mod.EventBusSubscriber(modid="sbw_helldiver",value=[net.minecraftforge.api.distmarker.Dist.CLIENT])
 object FieldVolumePass {
     @net.minecraftforge.eventbus.api.SubscribeEvent
+    fun beginFrame(event:net.minecraftforge.event.TickEvent.RenderTickEvent) {
+        if(event.phase==net.minecraftforge.event.TickEvent.Phase.START) MineGlowGeometry.beginFrame()
+    }
+
+    @net.minecraftforge.eventbus.api.SubscribeEvent
     fun render(event:net.minecraftforge.client.event.RenderLevelStageEvent) { FieldVolumeRenderer.render(event) }
 }

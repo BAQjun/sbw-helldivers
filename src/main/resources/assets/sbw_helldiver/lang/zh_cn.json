@@ -367,5 +367,10 @@
   "entity.sbw_helldiver.supply_case": "补给箱",
   "jei.sbw_helldiver.output_range": "产量：%s–%s（等概率）",
   "gui.sbw_helldiver.resupply_refill": "重新补给（%s/%s）",
-  "subtitles.sbw_helldiver.supply_pickup": "领取补给"
+  "subtitles.sbw_helldiver.supply_pickup": "领取补给",
+  "tooltip.sbw_helldiver.beacon_curio": "装入专属饰品栏后按 %s 选中信标快捷位",
+  "tooltip.sbw_helldiver.sample_curio": "装入专属饰品栏后按 %s 存取样本",
+  "key.sbw_helldiver.sample_container": "使用饰品栏中的样本容器",
+  "curios.identifier.sbw_sample_container": "样本容器",
+  "curios.identifier.sbw_stratagem_beacon": "信标球"
 }

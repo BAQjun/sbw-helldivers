@@ -47,9 +47,11 @@ class BeaconItem(properties: Properties) : Item(properties) {
                 BeaconData.ensureIdentity(stack)
                 BeaconData.clear(stack)
                 BeaconInput.reset(player.uuid)
+                val source = if (hand == InteractionHand.MAIN_HAND && BeaconQuickSlot.selected(player) === stack)
+                    ItemSource.CURIO else ItemSource.of(hand)
                 NetworkHooks.openScreen(player, SimpleMenuProvider({ id, inventory, _ ->
-                    BeaconLoadoutMenu(id, inventory, hand)
-                }, Component.translatable("screen.sbw_helldiver.loadout"))) { it.writeEnum(hand) }
+                    BeaconLoadoutMenu(id, inventory, source)
+                }, Component.translatable("screen.sbw_helldiver.loadout"))) { it.writeEnum(source) }
             }
             return InteractionResultHolder.sidedSuccess(stack, level.isClientSide)
         }
@@ -91,6 +93,8 @@ class BeaconItem(properties: Properties) : Item(properties) {
     override fun appendHoverText(stack: ItemStack, level: Level?, tooltip: MutableList<Component>, flag: TooltipFlag) {
         tooltip.add(Component.translatable("tooltip.sbw_helldiver.beacon_energy",com.example.sbwhelldiver.survival.BeaconEnergy.stored(stack),getMaxEnergy(stack)))
         tooltip.add(Component.translatable("tooltip.sbw_helldiver.beacon_controls"))
+        if (StratagemBackpacks.usesCurios)
+            tooltip.add(Component.translatable("tooltip.sbw_helldiver.beacon_curio", Component.keybind("key.sbw_helldiver.stratagem")))
         for (def in BeaconData.loadout(stack).filterNotNull()) tooltip.add(Component.translatable(def.translation))
         BeaconData.selected(stack)?.let { tooltip.add(Component.translatable("tooltip.sbw_helldiver.beacon_ready", Component.translatable(it.translation))) }
     }

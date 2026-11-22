@@ -9,7 +9,8 @@ import com.example.sbwhelldiver.init.ModEntities
 import com.google.gson.JsonParser
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.Minecraft
-import net.minecraft.client.renderer.*
+import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.client.renderer.RenderType
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.packs.resources.ResourceManager
 import org.joml.Matrix4f
@@ -20,7 +21,7 @@ import java.util.WeakHashMap
  * Once opened, immutable bind-space meshes are shared by every dispenser. */
 object MountedMineRenderer {
     private data class Mount(val parent:String,val transform:Matrix4f)
-    private data class Slot(val parent:Int,val inverseBind:Matrix4f,val transform:Matrix4f)
+    private data class Slot(val parent:Int,val inverseBind:Matrix4f,val transform:Matrix4f,val normal:Matrix3f)
     private val mounts=mutableMapOf<String,List<Mount>>()
     private val models=WeakHashMap<BakedBedrockModel,List<Slot>>()
     fun reload(resources:ResourceManager){
@@ -60,28 +61,42 @@ object MountedMineRenderer {
             mounts.getValue(name).map{mount->
                 val parent=bind.getIndex(mount.parent)
                 check(parent>=0){"Missing mine dispenser panel ${mount.parent}"}
-                Slot(parent,Matrix4f(bind.getGlobalTransform(parent)).invert(),mount.transform)
+                Slot(parent,Matrix4f(bind.getGlobalTransform(parent)).invert(),mount.transform,
+                    normalTransform(mount.transform,Matrix3f()))
             }
         }
         val distance=pod.position().distanceToSqr(Minecraft.getInstance().gameRenderer.mainCamera.position)
         val mesh=AntiPersonnelMineRenderer.Model.meshes[Triple(kind,ModelLod.mineTier(distance),false)]?:return
         val texture=AntiPersonnelMineRenderer.Model.textures.getValue(kind)
         val out=buffers.getBuffer(RenderType.entityCutoutNoCull(texture))
+        val bulk=PackedEntityVertices.create(out)
+        val delta=Matrix4f()
+        val transform=Matrix4f()
+        val panelNormal=Matrix3f()
+        val normal=Matrix3f()
+        val remainingWave=pod.releasedWaves.coerceAtLeast(0)
         for(panel in 0 until 6){
-            val slot=slots[panel*pod.minesPerPanel]
-            val delta=Matrix4f(model.getGlobalTransform(slot.parent)).mul(slot.inverseBind)
-            for(index in panel*pod.minesPerPanel until (panel+1)*pod.minesPerPanel)if(visible(pod,index)){
+            val panelStart=panel*pod.minesPerPanel
+            val first=slots[panelStart]
+            delta.set(model.getGlobalTransform(first.parent)).mul(first.inverseBind)
+            normalTransform(delta,panelNormal)
+            for(index in panelStart+remainingWave until panelStart+pod.minesPerPanel){
+                val slot=slots[index]
                 pose.pushPose()
-                val transform=Matrix4f(delta).mul(slots[index].transform)
-                pose.mulPoseMatrix(transform)
-                // Authored mounts uniformly scale the mine. Remove that scale
-                // from normals before their components are packed into bytes.
-                val normal=Matrix3f(transform).invert().transpose()
-                normal.scale(Math.cbrt(kotlin.math.abs(transform.determinant().toDouble())).toFloat())
-                pose.last().normal().mul(normal)
-                mesh.render(pose,out,light,true)
+                pose.mulPoseMatrix(delta.mul(slot.transform,transform))
+                // The inverse transpose of panel * mount is the product of
+                // their inverse transposes in the same order.
+                pose.last().normal().mul(panelNormal.mul(slot.normal,normal))
+                mesh.render(pose,out,light,true,bulk)
                 pose.popPose()
             }
         }
+        bulk?.flush()
+    }
+
+    private fun normalTransform(transform:Matrix4f,result:Matrix3f):Matrix3f {
+        // The authored mount scale belongs to its positions only.
+        val scale=Math.cbrt(kotlin.math.abs(transform.determinant().toDouble())).toFloat()
+        return result.set(transform).invert().transpose().scale(scale)
     }
 }

@@ -1,6 +1,11 @@
 package com.example.sbwhelldiver.client
 
 import com.example.sbwhelldiver.MOD_ID
+import com.example.sbwhelldiver.item.BeaconQuickSlot
+import com.example.sbwhelldiver.item.StratagemBackpacks
+import com.example.sbwhelldiver.item.UtilitySlot
+import com.example.sbwhelldiver.network.BeaconQuickSlotPacket
+import com.example.sbwhelldiver.network.OpenSampleContainerPacket
 import com.example.sbwhelldiver.item.BeaconItem
 import com.example.sbwhelldiver.network.BeaconKeyPacket
 import com.example.sbwhelldiver.network.BeaconThrowPacket
@@ -8,7 +13,11 @@ import com.example.sbwhelldiver.network.BeaconNetwork
 import com.example.sbwhelldiver.stratagem.BeaconData
 import com.example.sbwhelldiver.stratagem.Stratagems
 import com.example.sbwhelldiver.stratagem.StratagemDefinition
+import net.minecraft.client.AttackIndicatorStatus
 import net.minecraft.client.KeyMapping
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.entity.HumanoidArm
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
@@ -34,6 +43,9 @@ object StratagemClient {
         override fun conflicts(other: IKeyConflictContext) = other === this || other === KeyConflictContext.IN_GAME
     }
     val ALT = KeyMapping("key.sbw_helldiver.stratagem", onFootContext, com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, "key.categories.sbw_helldiver")
+    private val widgets = ResourceLocation("textures/gui/widgets.png")
+    private val sampleContainer = KeyMapping("key.sbw_helldiver.sample_container", KeyConflictContext.IN_GAME,
+        com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_K, "key.categories.sbw_helldiver")
     val prefix = mutableListOf<Int>()
     private var identity: UUID? = null
     private var previousHand: InteractionHand? = null
@@ -141,6 +153,12 @@ object StratagemClient {
         }
         val down = holdingAlt()
         if (down && !altWasDown && mc.screen == null && player != null && !player.isSpectator) {
+            if (BeaconQuickSlot.selected(player) == null && UtilitySlot.BEACON.equipped(player) != null) {
+                altWasDown = true
+                prefix.clear()
+                BeaconNetwork.CHANNEL.sendToServer(BeaconQuickSlotPacket(player.inventory.selected))
+                return
+            }
             if (player.mainHandItem.item !is BeaconItem) {
                 val slot = (0..8).firstOrNull { player.inventory.getItem(it).item is BeaconItem }
                 if (slot != null) {
@@ -173,6 +191,9 @@ object StratagemClient {
         prefix.clear()
     }
     @SubscribeEvent fun key(event: InputEvent.Key) {
+        val mc = Minecraft.getInstance()
+        if (event.action == GLFW.GLFW_PRESS && mc.screen == null &&
+            mc.options.keyHotbarSlots.any { it.matches(event.key, event.scanCode) }) deselectBeaconSlot()
         updateAlt()
         if (event.action != GLFW.GLFW_PRESS || Minecraft.getInstance().screen != null || !holdingAlt()) return
         val direction = when (event.key) {
@@ -184,6 +205,21 @@ object StratagemClient {
         }
         input(direction)
     }
+    @SubscribeEvent fun scroll(event: InputEvent.MouseScrollingEvent) {
+        if (event.scrollDelta != 0.0 && !event.isCanceled) deselectBeaconSlot()
+    }
+
+    private fun deselectBeaconSlot() {
+        val player = Minecraft.getInstance().player ?: return
+        if (BeaconQuickSlot.selected(player) == null) return
+        BeaconQuickSlot.deselect(player)
+        BeaconNetwork.CHANNEL.sendToServer(BeaconQuickSlotPacket(-1))
+    }
+
+    fun updateBeaconSlot(slot: Int) {
+        Minecraft.getInstance().player?.let { BeaconQuickSlot.updateClient(it, slot) }
+    }
+
     var destroyerStage=0;private set
     fun destroyerMenu(stage:Int){destroyerStage=stage;prefix.clear();lastInput=Minecraft.getInstance().level?.gameTime?:0}
     fun input(direction: Int) {
@@ -225,6 +261,13 @@ object StratagemClient {
         StratagemNotifications.tick(automaticLoadout)
         failures.entries.removeIf { it.value <= (mc.level?.gameTime ?: Long.MAX_VALUE) }
         updateAlt()
+        if (StratagemBackpacks.usesCurios) {
+            var requested = false
+            while (sampleContainer.consumeClick()) requested = true
+            val player = mc.player
+            if (requested && mc.screen == null && player != null && !player.isSpectator && UtilitySlot.SAMPLES.equipped(player) != null)
+                BeaconNetwork.CHANNEL.sendToServer(OpenSampleContainerPacket)
+        }
         val hand = held()
         val slot = mc.player?.inventory?.selected ?: -1
         if (previousSlot >= 0 && slot != previousSlot) clearInventorySelections()
@@ -441,10 +484,32 @@ object StratagemClient {
         gui.pose().popPose()
     }
 
+    private fun drawBeaconSlot(gui: GuiGraphics) {
+        val mc = Minecraft.getInstance()
+        val player = mc.player ?: return
+        if (player.isSpectator || mc.options.hideGui || mc.cameraEntity !== player) return
+        val beacon = UtilitySlot.BEACON.equipped(player) ?: return
+        val center = gui.guiWidth() / 2
+        val right = player.mainArm == HumanoidArm.RIGHT
+        val gap = if (mc.options.attackIndicator().get() == AttackIndicatorStatus.HOTBAR) 26 else 4
+        val sideX = if (right) center + 91 + gap else center - 91 - gap - 22
+        val fits = sideX >= 1 && sideX + 23 <= gui.guiWidth()
+        val x = if (fits) sideX else if (right) center + 68 else center - 90
+        val y = gui.guiHeight() - if (fits) 22 else 46
+        gui.blit(widgets, x, y, 0, 0, 11, 22)
+        gui.blit(widgets, x + 11, y, 171, 0, 11, 22)
+        if (BeaconQuickSlot.selected(player) != null) gui.blit(widgets, x - 1, y - 1, 0, 22, 24, 22)
+        gui.renderItem(player, beacon, x + 3, y + 3, 0)
+    }
+
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
     object Registration {
-        @SubscribeEvent fun keys(event: RegisterKeyMappingsEvent) { event.register(ALT) }
+        @SubscribeEvent fun keys(event: RegisterKeyMappingsEvent) {
+            event.register(ALT)
+            if (StratagemBackpacks.usesCurios) event.register(sampleContainer)
+        }
         @SubscribeEvent fun overlay(event: RegisterGuiOverlaysEvent) {
+            event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "beacon_quick_slot") { _, gui, _, _, _ -> drawBeaconSlot(gui) }
             event.registerAboveAll("stratagems") { _, gui, partial, _, _ -> hud(gui, partial) }
             event.registerAboveAll("beacon_call") { _, gui, partial, _, _ -> BeaconCallHud.draw(gui, partial) }
         }

@@ -1,0 +1,10 @@
+{
+  "size": 1,
+  "order": 210,
+  "icon": "sbw_helldiver:slot/stratagem_beacon",
+  "use_native_gui": true,
+  "add_cosmetic": false,
+  "validators": [
+    "curios:tag"
+  ]
+}

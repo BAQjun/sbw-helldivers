@@ -3,6 +3,10 @@ package com.example.sbwhelldiver.network
 import com.example.sbwhelldiver.MOD_ID
 import com.example.sbwhelldiver.stratagem.BeaconInput
 import com.example.sbwhelldiver.item.BeaconItem
+import com.example.sbwhelldiver.item.BeaconQuickSlot
+import com.example.sbwhelldiver.item.ItemSource
+import com.example.sbwhelldiver.item.UtilitySlot
+import com.example.sbwhelldiver.survival.SampleContainerItem
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.InteractionHand
@@ -39,6 +43,54 @@ data class BeaconThrowPacket(val hand: InteractionHand, val identity: UUID) {
     }
 }
 
+data class BeaconQuickSlotPacket(val slot: Int) {
+    fun encode(buffer: FriendlyByteBuf) { buffer.writeByte(slot) }
+
+    companion object {
+        fun decode(buffer: FriendlyByteBuf) = BeaconQuickSlotPacket(buffer.readByte().toInt())
+
+        fun handle(message: BeaconQuickSlotPacket, supplier: Supplier<NetworkEvent.Context>) {
+            val context = supplier.get()
+            context.enqueueWork {
+                val player = context.sender ?: return@enqueueWork
+                if (message.slot == -1) BeaconQuickSlot.deselect(player) else BeaconQuickSlot.select(player, message.slot)
+            }
+            context.packetHandled = true
+        }
+    }
+}
+
+data class BeaconSlotStatePacket(val slot: Int) {
+    fun encode(buffer: FriendlyByteBuf) { buffer.writeByte(slot) }
+
+    companion object {
+        fun decode(buffer: FriendlyByteBuf) = BeaconSlotStatePacket(buffer.readByte().toInt())
+
+        fun handle(message: BeaconSlotStatePacket, supplier: Supplier<NetworkEvent.Context>) {
+            val context = supplier.get()
+            context.enqueueWork {
+                net.minecraftforge.fml.DistExecutor.unsafeRunWhenOn(net.minecraftforge.api.distmarker.Dist.CLIENT) {
+                    Runnable { com.example.sbwhelldiver.client.StratagemClient.updateBeaconSlot(message.slot) }
+                }
+            }
+            context.packetHandled = true
+        }
+    }
+}
+
+object OpenSampleContainerPacket {
+    fun handle(supplier: Supplier<NetworkEvent.Context>) {
+        val context = supplier.get()
+        context.enqueueWork {
+            val player = context.sender ?: return@enqueueWork
+            if (!player.isAlive || player.isSpectator || player.containerMenu !== player.inventoryMenu) return@enqueueWork
+            val stack = UtilitySlot.SAMPLES.equipped(player) ?: return@enqueueWork
+            (stack.item as SampleContainerItem).open(player, ItemSource.CURIO)
+        }
+        context.packetHandled = true
+    }
+}
+
 /** Owner-only result; exactly four slots retain their original order. */
 data class BeaconFailurePacket(val stratagemId: String, val loadoutIds: List<String>) {
     fun encode(buffer: FriendlyByteBuf) {
@@ -60,8 +112,14 @@ data class BeaconFailurePacket(val stratagemId: String, val loadoutIds: List<Str
 }
 
 object BeaconNetwork {
-    val CHANNEL = NetworkRegistry.newSimpleChannel(ResourceLocation(MOD_ID, "beacon"), { "14" }, { it == "14" }, { it == "14" })
+    val CHANNEL = NetworkRegistry.newSimpleChannel(ResourceLocation(MOD_ID, "beacon"), { "15" }, { it == "15" }, { it == "15" })
     fun register() {
+        CHANNEL.registerMessage(30, OpenSampleContainerPacket::class.java, { _, _ -> }, { OpenSampleContainerPacket },
+            { _, context -> OpenSampleContainerPacket.handle(context) }, Optional.of(NetworkDirection.PLAY_TO_SERVER))
+        CHANNEL.registerMessage(31, BeaconQuickSlotPacket::class.java, BeaconQuickSlotPacket::encode,
+            BeaconQuickSlotPacket::decode, BeaconQuickSlotPacket::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER))
+        CHANNEL.registerMessage(32, BeaconSlotStatePacket::class.java, BeaconSlotStatePacket::encode,
+            BeaconSlotStatePacket::decode, BeaconSlotStatePacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(29, GuardDogTogglePacket::class.java, { _, _ -> }, { GuardDogTogglePacket },
             { _, context -> GuardDogTogglePacket.handle(context) }, Optional.of(NetworkDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(28,TacticalTerminalResultPacket::class.java,{p,b->p.encode(b)},TacticalTerminalResultPacket::decode,TacticalTerminalResultPacket::handle,Optional.of(NetworkDirection.PLAY_TO_CLIENT))

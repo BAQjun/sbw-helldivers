@@ -149,7 +149,6 @@ public final class FieldVolumeRenderer {
 
     public static void render(RenderLevelStageEvent event) {
         if(event.getStage()==RenderLevelStageEvent.Stage.AFTER_SKY&&!ShaderPackCompat.INSTANCE.shadowPass()) {
-            MineGlowGeometry.beginFrame();
             GuardDogThrusters.INSTANCE.beginFrame();
             BeaconBeamVisual.INSTANCE.beginFrame();
         }
@@ -354,7 +353,11 @@ public final class FieldVolumeRenderer {
                 glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,depth);
                 EnergyEffectGeometry.draw(energy,event.getPartialTick(),camera,event.getProjectionMatrix(),new Matrix3f(RenderSystem.getInverseViewRotationMatrix()),w,h);
                 glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,depth);
-                if(MineGlowGeometry.vertexCount()>0)FlameGlow.render(w,h,.28f,()->MineGlowGeometry.draw(event.getProjectionMatrix(),w,h));
+                if(MineGlowGeometry.vertexCount()>0) {
+                    Matrix4f projection=event.getProjectionMatrix();
+                    float depthJitterScale=shaderPack?Math.abs(projection.m32())*.5f/8f:0f;
+                    FlameGlow.render(w,h,.28f,()->MineGlowGeometry.draw(projection,depthJitterScale));
+                }
                 if(Boolean.getBoolean("sbw_helldiver.energyShaderSmokeTest")||Boolean.getBoolean("sbw_helldiver.shaderFieldSmokeTest")||Boolean.getBoolean("sbw_helldiver.flameVolumeSmokeTest")||Boolean.getBoolean("sbw_helldiver.laserShaderSmokeTest")) {
                     int error=glGetError();if(error!=GL_NO_ERROR)throw new IllegalStateException("Volume GL error "+error);
                 }

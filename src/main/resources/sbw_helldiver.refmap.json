@@ -35,6 +35,17 @@
     "com/example/sbwhelldiver/mixin/GuardDogTrackingMixin": {
       "handleMoveEntity": "Lnet/minecraft/client/multiplayer/ClientPacketListener;m_7865_(Lnet/minecraft/network/protocol/game/ClientboundMoveEntityPacket;)V",
       "Lnet/minecraft/world/entity/Entity;lerpTo(DDDFFIZ)V": "Lnet/minecraft/world/entity/Entity;m_6453_(DDDFFIZ)V"
+    },
+    "com/example/sbwhelldiver/mixin/BeaconInventoryMixin": {
+      "getSelected": "Lnet/minecraft/world/entity/player/Inventory;m_36056_()Lnet/minecraft/world/item/ItemStack;",
+      "removeFromSelected": "Lnet/minecraft/world/entity/player/Inventory;m_182403_(Z)Lnet/minecraft/world/item/ItemStack;"
+    },
+    "com/example/sbwhelldiver/mixin/BeaconPlayerMixin": {
+      "setItemSlot": "Lnet/minecraft/world/entity/player/Player;m_8061_(Lnet/minecraft/world/entity/EquipmentSlot;Lnet/minecraft/world/item/ItemStack;)V"
+    },
+    "com/example/sbwhelldiver/mixin/BeaconHotbarMixin": {
+      "renderHotbar": "Lnet/minecraft/client/gui/Gui;m_280518_(FLnet/minecraft/client/gui/GuiGraphics;)V",
+      "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIIII)V": "Lnet/minecraft/client/gui/GuiGraphics;m_280218_(Lnet/minecraft/resources/ResourceLocation;IIIIII)V"
     }
   },
   "data": {
@@ -74,6 +85,17 @@
       "com/example/sbwhelldiver/mixin/GuardDogTrackingMixin": {
         "handleMoveEntity": "Lnet/minecraft/client/multiplayer/ClientPacketListener;m_7865_(Lnet/minecraft/network/protocol/game/ClientboundMoveEntityPacket;)V",
         "Lnet/minecraft/world/entity/Entity;lerpTo(DDDFFIZ)V": "Lnet/minecraft/world/entity/Entity;m_6453_(DDDFFIZ)V"
+      },
+      "com/example/sbwhelldiver/mixin/BeaconInventoryMixin": {
+        "getSelected": "Lnet/minecraft/world/entity/player/Inventory;m_36056_()Lnet/minecraft/world/item/ItemStack;",
+        "removeFromSelected": "Lnet/minecraft/world/entity/player/Inventory;m_182403_(Z)Lnet/minecraft/world/item/ItemStack;"
+      },
+      "com/example/sbwhelldiver/mixin/BeaconPlayerMixin": {
+        "setItemSlot": "Lnet/minecraft/world/entity/player/Player;m_8061_(Lnet/minecraft/world/entity/EquipmentSlot;Lnet/minecraft/world/item/ItemStack;)V"
+      },
+      "com/example/sbwhelldiver/mixin/BeaconHotbarMixin": {
+        "renderHotbar": "Lnet/minecraft/client/gui/Gui;m_280518_(FLnet/minecraft/client/gui/GuiGraphics;)V",
+        "Lnet/minecraft/client/gui/GuiGraphics;blit(Lnet/minecraft/resources/ResourceLocation;IIIIII)V": "Lnet/minecraft/client/gui/GuiGraphics;m_280218_(Lnet/minecraft/resources/ResourceLocation;IIIIII)V"
       }
     }
   }

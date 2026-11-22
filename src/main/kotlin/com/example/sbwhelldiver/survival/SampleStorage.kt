@@ -2,6 +2,7 @@ package com.example.sbwhelldiver.survival
 
 import com.example.sbwhelldiver.init.ModItems
 import net.minecraft.nbt.CompoundTag
+import com.example.sbwhelldiver.item.UtilitySlot
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Item
@@ -40,7 +41,14 @@ object SampleStorage {
     fun matches(stack:ItemStack,id:UUID)=isContainer(stack)&&data(stack).getCompound(KEY).let{it.hasUUID("Id")&&it.getUUID("Id")==id}
     fun automatic(stack:ItemStack)=data(stack).getCompound(KEY).getBoolean("Automatic")
     fun toggle(stack:ItemStack):Boolean {val enabled=!automatic(stack);change(stack){it.putBoolean("Automatic",enabled)};return enabled}
-    fun carried(player:Player)=(0 until player.inventory.containerSize).map{player.inventory.getItem(it)}.filter(::isContainer)
+    fun carried(player:Player):List<ItemStack> = buildList {
+        val equipped = UtilitySlot.SAMPLES.equipped(player)
+        if (equipped != null) add(equipped)
+        for (slot in 0 until player.inventory.containerSize) {
+            val stack = player.inventory.getItem(slot)
+            if (stack !== equipped && isContainer(stack)) add(stack)
+        }
+    }
     fun collect(player:Player,container:ItemStack):Boolean {
         var changed=false
         for(slot in 0 until player.inventory.containerSize){

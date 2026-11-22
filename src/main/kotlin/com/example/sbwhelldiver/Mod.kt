@@ -69,8 +69,11 @@ class Mod {
                 .filter { it.key.path == "supply_hellpod_stratagem" }.forEach { it.ignore() }
         }
 
-        if (com.example.sbwhelldiver.item.StratagemBackpacks.usesCurios)
+        com.example.sbwhelldiver.item.BeaconQuickSlot.register()
+        if (com.example.sbwhelldiver.item.StratagemBackpacks.usesCurios) {
             com.example.sbwhelldiver.item.BackpackCurios.register()
+            com.example.sbwhelldiver.item.UtilityCurios.register()
+        }
         // 服务端配置：索敌规则、空投延迟、埋深、存活时间等。
         // 用 SERVER 类型而不是 COMMON —— 这些参数会同步到客户端，
         // 且必须在客户端与服务端之间保持一致，否则空投落点会两边算得不一样。

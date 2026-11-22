@@ -7,6 +7,8 @@
     "tacz.TaczEntityUtilMixin",
     "tacz.TaczBulletMixin",
     "AttackGoalAccess",
+    "BeaconInventoryMixin",
+    "BeaconPlayerMixin",
     "CreativeHostilityPlayerMixin",
     "CreativeHostilityServerPlayerMixin",
     "MobTargetSelectorAccess",
@@ -20,6 +22,7 @@
     "StratagemExplosionBuilderMixin"
   ],
   "client": [
+    "BeaconHotbarMixin",
     "EagleProjectileRenderMixin",
     "HellpodMeshRenderMixin",
     "tacz.TaczInputMixin",
