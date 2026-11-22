@@ -367,5 +367,10 @@
   "entity.sbw_helldiver.supply_case": "Supply Box",
   "jei.sbw_helldiver.output_range": "Output: %s–%s (equal chance)",
   "gui.sbw_helldiver.resupply_refill": "Resupply (%s/%s)",
-  "subtitles.sbw_helldiver.supply_pickup": "Supplies collected"
+  "subtitles.sbw_helldiver.supply_pickup": "Supplies collected",
+  "curios.identifier.sbw_stratagem_beacon": "Stratagem Beacon",
+  "curios.identifier.sbw_sample_container": "Sample Container",
+  "key.sbw_helldiver.sample_container": "Use Equipped Sample Container",
+  "tooltip.sbw_helldiver.beacon_curio": "Press %s to draw the beacon from its Curios slot",
+  "tooltip.sbw_helldiver.sample_curio": "In its Curios slot, press %s to access samples"
 }

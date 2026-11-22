@@ -83,12 +83,15 @@ class BeaconItem(properties: Properties) : Item(properties), com.atsuishio.super
         player.inventory.setChanged()
         player.containerMenu.broadcastChanges()
         player.awardStat(net.minecraft.stats.Stats.ITEM_USED.get(this))
+        if (hand == InteractionHand.MAIN_HAND) BeaconDraw.afterThrow(player, identity)
         return true
     }
 
     override fun appendHoverText(stack: ItemStack, context: Item.TooltipContext, tooltip: MutableList<Component>, flag: TooltipFlag) {
         tooltip.add(Component.translatable("tooltip.sbw_helldiver.beacon_energy",com.example.sbwhelldiver.survival.BeaconEnergy.stored(stack),getMaxEnergy(stack)))
         tooltip.add(Component.translatable("tooltip.sbw_helldiver.beacon_controls"))
+        if (StratagemBackpacks.usesCurios)
+            tooltip.add(Component.translatable("tooltip.sbw_helldiver.beacon_curio", Component.keybind("key.sbw_helldiver.stratagem")))
         for (def in BeaconData.loadout(stack).filterNotNull()) tooltip.add(Component.translatable(def.translation))
         BeaconData.selected(stack)?.let { tooltip.add(Component.translatable("tooltip.sbw_helldiver.beacon_ready", Component.translatable(it.translation))) }
     }

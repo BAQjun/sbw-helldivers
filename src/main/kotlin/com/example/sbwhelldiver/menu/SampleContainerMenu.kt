@@ -1,6 +1,8 @@
 package com.example.sbwhelldiver.menu
 
 import com.example.sbwhelldiver.init.ModMenus
+import com.example.sbwhelldiver.item.ItemSource
+import com.example.sbwhelldiver.item.UtilitySlot
 import com.example.sbwhelldiver.survival.SampleStorage
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.player.Inventory
@@ -8,10 +10,12 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.*
 import net.minecraft.world.item.ItemStack
 
-class SampleContainerMenu(id:Int,val inventory:Inventory,val hand:InteractionHand):AbstractContainerMenu(ModMenus.SAMPLE_CONTAINER.get(),id){
-    private val sourceSlot=if(hand==InteractionHand.MAIN_HAND)inventory.selected else 40
-    private val opened=inventory.getItem(sourceSlot)
-    val container get()=inventory.getItem(sourceSlot)
+class SampleContainerMenu(id:Int,val inventory:Inventory,private val source:ItemSource):AbstractContainerMenu(ModMenus.SAMPLE_CONTAINER.get(),id){
+    constructor(id:Int,inventory:Inventory,hand:InteractionHand):this(id,inventory,ItemSource.of(hand))
+
+    private val sourceSlot=source.inventoryIndex(inventory.player)
+    val container get()=sourceSlot?.let(inventory::getItem) ?: source.stack(inventory.player, UtilitySlot.SAMPLES)
+    private val opened=container
     init {
         for(row in 0..2)for(col in 0..8)addSlot(playerSlot(9+row*9+col,8+col*18,124+row*18))
         for(col in 0..8)addSlot(playerSlot(col,8+col*18,182))

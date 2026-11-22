@@ -1,0 +1,9 @@
+{
+  "entities": [
+    "minecraft:player"
+  ],
+  "slots": [
+    "sbw_stratagem_beacon",
+    "sbw_sample_container"
+  ]
+}

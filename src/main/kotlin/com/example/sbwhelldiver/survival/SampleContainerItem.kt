@@ -1,6 +1,9 @@
 package com.example.sbwhelldiver.survival
 
 import com.example.sbwhelldiver.menu.SampleContainerMenu
+import com.example.sbwhelldiver.item.ItemSource
+import com.example.sbwhelldiver.item.StratagemBackpacks
+import com.example.sbwhelldiver.item.UtilitySlot
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.*
@@ -19,9 +22,10 @@ class SampleContainerItem(properties:Properties):Item(properties) {
     override fun use(level:Level,player:Player,hand:InteractionHand):InteractionResultHolder<ItemStack> {
         val stack=player.getItemInHand(hand)
         if(player is ServerPlayer){
-            SampleStorage.identity(stack)
-            if(player.isShiftKeyDown)toggle(player,stack)
-            else player.openMenu(SimpleMenuProvider({id,inventory,_->SampleContainerMenu(id,inventory,hand)},stack.hoverName)){it.writeEnum(hand)}
+            if(player.isShiftKeyDown){
+                SampleStorage.identity(stack)
+                toggle(player,stack)
+            }else open(player,ItemSource.of(hand))
         }
         return InteractionResultHolder.sidedSuccess(stack,level.isClientSide)
     }
@@ -39,16 +43,31 @@ class SampleContainerItem(properties:Properties):Item(properties) {
         }
         return InteractionResult.sidedSuccess(context.level.isClientSide)
     }
+    fun open(player: ServerPlayer, source: ItemSource) {
+        val stack = source.stack(player, UtilitySlot.SAMPLES)
+        if (stack.item !== this) return
+        SampleStorage.identity(stack)
+        player.openMenu(SimpleMenuProvider({ id, inventory, _ ->
+            SampleContainerMenu(id, inventory, source)
+        }, stack.hoverName)) { it.writeEnum(source) }
+    }
+
     private fun toggle(player:Player,stack:ItemStack){
         val on=SampleStorage.toggle(stack)
         player.displayClientMessage(Component.translatable(if(on)"message.sbw_helldiver.sample_auto_on" else "message.sbw_helldiver.sample_auto_off"),true)
         if(on)SampleStorage.collect(player,stack)
     }
     override fun inventoryTick(stack:ItemStack,level:Level,entity:Entity,slot:Int,selected:Boolean){
-        if(entity is ServerPlayer&&level.gameTime%10L==0L&&SampleStorage.automatic(stack))SampleStorage.collect(entity,stack)
+        if(entity is ServerPlayer && level.gameTime % 10L == 0L) collectAutomatically(entity, stack)
+    }
+    internal fun collectAutomatically(player: ServerPlayer, stack: ItemStack) {
+        if (SampleStorage.automatic(stack) && (player.containerMenu as? SampleContainerMenu)?.container !== stack)
+            SampleStorage.collect(player, stack)
     }
     override fun appendHoverText(stack:ItemStack,context:TooltipContext,lines:MutableList<Component>,flag:TooltipFlag){
         for(i in 0..2)lines.add(Component.translatable("tooltip.sbw_helldiver.sample_count",SampleStorage.type(i).description,SampleStorage.count(stack,i).toString()))
         lines.add(Component.translatable("tooltip.sbw_helldiver.sample_controls"))
+        if (StratagemBackpacks.usesCurios)
+            lines.add(Component.translatable("tooltip.sbw_helldiver.sample_curio", Component.keybind("key.sbw_helldiver.sample_container")))
     }
 }

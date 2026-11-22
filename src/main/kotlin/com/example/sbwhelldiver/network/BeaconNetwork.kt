@@ -2,7 +2,11 @@ package com.example.sbwhelldiver.network
 
 import com.example.sbwhelldiver.MOD_ID
 import com.example.sbwhelldiver.stratagem.BeaconInput
+import com.example.sbwhelldiver.item.BeaconDraw
 import com.example.sbwhelldiver.item.BeaconItem
+import com.example.sbwhelldiver.item.ItemSource
+import com.example.sbwhelldiver.item.UtilitySlot
+import com.example.sbwhelldiver.survival.SampleContainerItem
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.InteractionHand
@@ -38,6 +42,29 @@ data class BeaconThrowPacket(val hand: InteractionHand, val identity: UUID) {
     }
 }
 
+data class DrawBeaconPacket(val slot: Int) {
+    fun encode(buffer: RegistryFriendlyByteBuf) { buffer.writeByte(slot) }
+
+    companion object {
+        fun decode(buffer: RegistryFriendlyByteBuf) = DrawBeaconPacket(buffer.readByte().toInt())
+
+        fun handle(message: DrawBeaconPacket, context: IPayloadContext) {
+            context.enqueueWork { context.sender?.let { BeaconDraw.draw(it, message.slot) } }
+        }
+    }
+}
+
+object OpenSampleContainerPacket {
+    fun handle(context: IPayloadContext) {
+        context.enqueueWork {
+            val player = context.sender ?: return@enqueueWork
+            if (!player.isAlive || player.isSpectator || player.containerMenu !== player.inventoryMenu) return@enqueueWork
+            val item = UtilitySlot.SAMPLES.equipped(player)?.item as? SampleContainerItem ?: return@enqueueWork
+            item.open(player, ItemSource.CURIO)
+        }
+    }
+}
+
 /** Owner-only result; exactly four slots retain their original order. */
 data class BeaconFailurePacket(val stratagemId: String, val loadoutIds: List<String>) {
     fun encode(buffer: RegistryFriendlyByteBuf) {
@@ -61,6 +88,10 @@ data class BeaconFailurePacket(val stratagemId: String, val loadoutIds: List<Str
 object BeaconNetwork {
     val CHANNEL = PacketChannel()
     fun register() {
+        CHANNEL.registerMessage(31, DrawBeaconPacket::class.java, DrawBeaconPacket::encode,
+            DrawBeaconPacket::decode, DrawBeaconPacket::handle, Optional.of(PacketDirection.PLAY_TO_SERVER))
+        CHANNEL.registerMessage(30, OpenSampleContainerPacket::class.java, { _, _ -> }, { OpenSampleContainerPacket },
+            { _, context -> OpenSampleContainerPacket.handle(context) }, Optional.of(PacketDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(29, GuardDogTogglePacket::class.java, { _, _ -> }, { GuardDogTogglePacket },
             { _, context -> GuardDogTogglePacket.handle(context) }, Optional.of(PacketDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(28,TacticalTerminalResultPacket::class.java,{p,b->p.encode(b)},TacticalTerminalResultPacket::decode,TacticalTerminalResultPacket::handle,Optional.of(PacketDirection.PLAY_TO_CLIENT))

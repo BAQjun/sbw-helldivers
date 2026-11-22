@@ -1,0 +1,10 @@
+{
+  "size": 1,
+  "order": 211,
+  "icon": "sbw_helldiver:slot/sample_container",
+  "use_native_gui": true,
+  "add_cosmetic": false,
+  "validators": [
+    "curios:tag"
+  ]
+}

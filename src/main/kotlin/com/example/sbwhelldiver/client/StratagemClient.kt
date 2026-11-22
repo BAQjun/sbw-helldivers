@@ -1,7 +1,12 @@
 package com.example.sbwhelldiver.client
 
 import com.example.sbwhelldiver.MOD_ID
+import com.example.sbwhelldiver.item.BeaconDraw
 import com.example.sbwhelldiver.item.BeaconItem
+import com.example.sbwhelldiver.item.StratagemBackpacks
+import com.example.sbwhelldiver.item.UtilitySlot
+import com.example.sbwhelldiver.network.DrawBeaconPacket
+import com.example.sbwhelldiver.network.OpenSampleContainerPacket
 import com.example.sbwhelldiver.network.BeaconKeyPacket
 import com.example.sbwhelldiver.network.BeaconThrowPacket
 import com.example.sbwhelldiver.network.BeaconNetwork
@@ -34,6 +39,8 @@ object StratagemClient {
         override fun conflicts(other: IKeyConflictContext) = other === this || other === KeyConflictContext.IN_GAME
     }
     val ALT = KeyMapping("key.sbw_helldiver.stratagem", onFootContext, com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, "key.categories.sbw_helldiver")
+    private val sampleContainer = KeyMapping("key.sbw_helldiver.sample_container", KeyConflictContext.IN_GAME,
+        com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_K, "key.categories.sbw_helldiver")
     val prefix = mutableListOf<Int>()
     private var identity: UUID? = null
     private var previousHand: InteractionHand? = null
@@ -62,6 +69,7 @@ object StratagemClient {
     private fun observeAutomaticLoadout() {
         val player = Minecraft.getInstance().player ?: return
         val stack = listOf(player.mainHandItem, player.offhandItem).firstOrNull { it.item is BeaconItem }
+            ?: UtilitySlot.BEACON.equipped(player)
             ?: (0 until player.inventory.containerSize).asSequence().map(player.inventory::getItem).firstOrNull { it.item is BeaconItem }
         automaticSelected = stack?.let(BeaconData::selected)
         // Keep pending calls visible when the player switches away or drops the beacon.
@@ -142,12 +150,19 @@ object StratagemClient {
         val down = holdingAlt()
         if (down && !altWasDown && mc.screen == null && player != null && !player.isSpectator) {
             if (player.mainHandItem.item !is BeaconItem) {
+                if (UtilitySlot.BEACON.equipped(player) != null) {
+                    requestBeaconDraw(player.inventory.selected)
+                    return
+                }
                 val slot = (0..8).firstOrNull { player.inventory.getItem(it).item is BeaconItem }
                 if (slot != null) {
                     player.inventory.selected = slot
                     mc.connection?.send(ServerboundSetCarriedItemPacket(slot))
                     clearInventorySelections()
                     previousSlot = slot
+                } else if (player.offhandItem.item !is BeaconItem && BeaconDraw.hasInBackpack(player)) {
+                    requestBeaconDraw(player.inventory.selected)
+                    return
                 }
             }
             held()?.let { hand ->
@@ -161,6 +176,12 @@ object StratagemClient {
             }
         }
         altWasDown = down
+    }
+
+    private fun requestBeaconDraw(slot: Int) {
+        altWasDown = true
+        prefix.clear()
+        BeaconNetwork.CHANNEL.sendToServer(DrawBeaconPacket(slot))
     }
 
     private fun clearInventorySelections() {
@@ -224,6 +245,13 @@ object StratagemClient {
         StratagemNotifications.tick(automaticLoadout)
         failures.entries.removeIf { it.value <= (mc.level?.gameTime ?: Long.MAX_VALUE) }
         updateAlt()
+        if (StratagemBackpacks.usesCurios) {
+            var requested = false
+            while (sampleContainer.consumeClick()) requested = true
+            val player = mc.player
+            if (requested && mc.screen == null && player != null && !player.isSpectator && UtilitySlot.SAMPLES.equipped(player) != null)
+                BeaconNetwork.CHANNEL.sendToServer(OpenSampleContainerPacket)
+        }
         val hand = held()
         val slot = mc.player?.inventory?.selected ?: -1
         if (previousSlot >= 0 && slot != previousSlot) clearInventorySelections()
@@ -442,7 +470,10 @@ object StratagemClient {
 
     @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
     object Registration {
-        @SubscribeEvent fun keys(event: RegisterKeyMappingsEvent) { event.register(ALT) }
+        @SubscribeEvent fun keys(event: RegisterKeyMappingsEvent) {
+            event.register(ALT)
+            if (StratagemBackpacks.usesCurios) event.register(sampleContainer)
+        }
         @SubscribeEvent fun overlay(event: RegisterGuiLayersEvent) {
             event.registerAboveAll(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(MOD_ID,"stratagems")) { gui, timer -> hud(gui, timer.getGameTimeDeltaPartialTick(false)) }
             event.registerAboveAll(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(MOD_ID,"beacon_call")) { gui, timer -> BeaconCallHud.draw(gui, timer.getGameTimeDeltaPartialTick(false)) }
