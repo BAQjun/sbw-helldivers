@@ -11,12 +11,12 @@ import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.TickEvent
 import net.minecraftforge.event.entity.living.LivingSwapItemsEvent
 import net.minecraftforge.network.PacketDistributor
-import java.util.Collections
-import java.util.WeakHashMap
+import com.google.common.collect.MapMaker
 
 /** Curios owns the stack. Only the player's active hotbar selection changes. */
 object BeaconQuickSlot {
-    private val activeSlots = Collections.synchronizedMap(WeakHashMap<Player, Int>())
+    // Integrated play has client and server player instances with the same entity ID.
+    private val activeSlots = MapMaker().weakKeys().makeMap<Player, Int>()
 
     fun register() {
         MinecraftForge.EVENT_BUS.addListener(::tick)
