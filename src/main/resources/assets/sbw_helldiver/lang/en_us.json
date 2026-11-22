@@ -371,6 +371,6 @@
   "curios.identifier.sbw_stratagem_beacon": "Stratagem Beacon",
   "curios.identifier.sbw_sample_container": "Sample Container",
   "key.sbw_helldiver.sample_container": "Use Equipped Sample Container",
-  "tooltip.sbw_helldiver.beacon_curio": "Press %s to draw the beacon from its Curios slot",
+  "tooltip.sbw_helldiver.beacon_curio": "Equip in its Curios slot, then press %s to select the beacon hotbar slot",
   "tooltip.sbw_helldiver.sample_curio": "In its Curios slot, press %s to access samples"
 }

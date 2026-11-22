@@ -371,6 +371,6 @@
   "curios.identifier.sbw_stratagem_beacon": "信标球",
   "curios.identifier.sbw_sample_container": "样本容器",
   "key.sbw_helldiver.sample_container": "使用饰品栏中的样本容器",
-  "tooltip.sbw_helldiver.beacon_curio": "装入专属饰品栏后按 %s 将信标切到主手",
+  "tooltip.sbw_helldiver.beacon_curio": "装入专属饰品栏后按 %s 选中信标快捷位",
   "tooltip.sbw_helldiver.sample_curio": "装入专属饰品栏后按 %s 存取样本"
 }

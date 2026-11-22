@@ -2,7 +2,7 @@ package com.example.sbwhelldiver.network
 
 import com.example.sbwhelldiver.MOD_ID
 import com.example.sbwhelldiver.stratagem.BeaconInput
-import com.example.sbwhelldiver.item.BeaconDraw
+import com.example.sbwhelldiver.item.BeaconQuickSlot
 import com.example.sbwhelldiver.item.BeaconItem
 import com.example.sbwhelldiver.item.ItemSource
 import com.example.sbwhelldiver.item.UtilitySlot
@@ -42,14 +42,17 @@ data class BeaconThrowPacket(val hand: InteractionHand, val identity: UUID) {
     }
 }
 
-data class DrawBeaconPacket(val slot: Int) {
+data class BeaconQuickSlotPacket(val slot: Int) {
     fun encode(buffer: RegistryFriendlyByteBuf) { buffer.writeByte(slot) }
 
     companion object {
-        fun decode(buffer: RegistryFriendlyByteBuf) = DrawBeaconPacket(buffer.readByte().toInt())
+        fun decode(buffer: RegistryFriendlyByteBuf) = BeaconQuickSlotPacket(buffer.readByte().toInt())
 
-        fun handle(message: DrawBeaconPacket, context: IPayloadContext) {
-            context.enqueueWork { context.sender?.let { BeaconDraw.draw(it, message.slot) } }
+        fun handle(message: BeaconQuickSlotPacket, context: IPayloadContext) {
+            context.enqueueWork {
+                val player = context.sender ?: return@enqueueWork
+                if (message.slot == -1) BeaconQuickSlot.deselect(player) else BeaconQuickSlot.select(player, message.slot)
+            }
         }
     }
 }
@@ -88,8 +91,8 @@ data class BeaconFailurePacket(val stratagemId: String, val loadoutIds: List<Str
 object BeaconNetwork {
     val CHANNEL = PacketChannel()
     fun register() {
-        CHANNEL.registerMessage(31, DrawBeaconPacket::class.java, DrawBeaconPacket::encode,
-            DrawBeaconPacket::decode, DrawBeaconPacket::handle, Optional.of(PacketDirection.PLAY_TO_SERVER))
+        CHANNEL.registerMessage(31, BeaconQuickSlotPacket::class.java, BeaconQuickSlotPacket::encode,
+            BeaconQuickSlotPacket::decode, BeaconQuickSlotPacket::handle, Optional.of(PacketDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(30, OpenSampleContainerPacket::class.java, { _, _ -> }, { OpenSampleContainerPacket },
             { _, context -> OpenSampleContainerPacket.handle(context) }, Optional.of(PacketDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(29, GuardDogTogglePacket::class.java, { _, _ -> }, { GuardDogTogglePacket },

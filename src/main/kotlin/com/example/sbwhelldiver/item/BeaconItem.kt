@@ -45,9 +45,11 @@ class BeaconItem(properties: Properties) : Item(properties), com.atsuishio.super
                 BeaconData.ensureIdentity(stack)
                 BeaconData.clear(stack)
                 BeaconInput.reset(player.uuid)
+                val source = if (hand == InteractionHand.MAIN_HAND && BeaconQuickSlot.selected(player) === stack)
+                    ItemSource.CURIO else ItemSource.of(hand)
                 player.openMenu(SimpleMenuProvider({ id, inventory, _ ->
-                    BeaconLoadoutMenu(id, inventory, hand)
-                }, Component.translatable("screen.sbw_helldiver.loadout"))) { it.writeEnum(hand) }
+                    BeaconLoadoutMenu(id, inventory, source)
+                }, Component.translatable("screen.sbw_helldiver.loadout"))) { it.writeEnum(source) }
             }
             return InteractionResultHolder.sidedSuccess(stack, level.isClientSide)
         }
@@ -83,7 +85,6 @@ class BeaconItem(properties: Properties) : Item(properties), com.atsuishio.super
         player.inventory.setChanged()
         player.containerMenu.broadcastChanges()
         player.awardStat(net.minecraft.stats.Stats.ITEM_USED.get(this))
-        if (hand == InteractionHand.MAIN_HAND) BeaconDraw.afterThrow(player, identity)
         return true
     }
 

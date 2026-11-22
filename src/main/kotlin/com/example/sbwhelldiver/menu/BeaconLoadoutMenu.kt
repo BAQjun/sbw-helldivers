@@ -2,6 +2,8 @@ package com.example.sbwhelldiver.menu
 
 import com.example.sbwhelldiver.init.ModMenus
 import com.example.sbwhelldiver.item.BeaconItem
+import com.example.sbwhelldiver.item.ItemSource
+import com.example.sbwhelldiver.item.UtilitySlot
 import com.example.sbwhelldiver.stratagem.BeaconData
 import com.example.sbwhelldiver.stratagem.Stratagems
 import net.minecraft.world.InteractionHand
@@ -13,9 +15,12 @@ import net.minecraft.world.inventory.ClickType
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 
-class BeaconLoadoutMenu(id: Int, val inventory: Inventory, val hand: InteractionHand) : AbstractContainerMenu(ModMenus.BEACON_LOADOUT.get(), id) {
-    private val source = inventory.player.getItemInHand(hand)
-    private val sourceSlot = if (hand == InteractionHand.MAIN_HAND) inventory.selected else 40
+class BeaconLoadoutMenu(id: Int, val inventory: Inventory, private val itemSource: ItemSource) : AbstractContainerMenu(ModMenus.BEACON_LOADOUT.get(), id) {
+    constructor(id: Int, inventory: Inventory, hand: InteractionHand) : this(id, inventory, ItemSource.of(hand))
+
+    private val sourceSlot = itemSource.inventoryIndex(inventory.player)
+    private fun current() = sourceSlot?.let(inventory::getItem) ?: itemSource.stack(inventory.player, UtilitySlot.BEACON)
+    private val source = current()
     private var loading = true
     val cards = object : SimpleContainer(4) {
         override fun setChanged() {
@@ -43,7 +48,7 @@ class BeaconLoadoutMenu(id: Int, val inventory: Inventory, val hand: Interaction
         override fun mayPickup(player: Player) = index != sourceSlot && super.mayPickup(player)
         override fun mayPlace(stack: ItemStack) = index != sourceSlot && super.mayPlace(stack)
     }
-    override fun stillValid(player: Player) = player.isAlive && inventory.getItem(sourceSlot) === source && source.item is BeaconItem
+    override fun stillValid(player: Player) = player.isAlive && current() === source && source.item is BeaconItem
     override fun clicked(slotId: Int, button: Int, type: ClickType, player: Player) {
         if (type == ClickType.SWAP && button == sourceSlot) return
         super.clicked(slotId, button, type, player)

@@ -63,17 +63,16 @@ internal object UtilityCurios {
     private fun slots(player: Player, slot: UtilitySlot) =
         CuriosApi.getCuriosInventory(player).orElse(null)?.getStacksHandler(slot.id)?.orElse(null)?.stacks
 
-    fun takeBeacon(player: ServerPlayer): ItemStack? {
-        val slots = slots(player, UtilitySlot.BEACON) ?: return null
-        val index = (0 until slots.slots).firstOrNull { UtilitySlot.BEACON.accepts(slots.getStackInSlot(it)) } ?: return null
-        return slots.extractItem(index, 1, false).takeUnless(ItemStack::isEmpty)
+    fun takeBeacon(player: Player, beacon: ItemStack): ItemStack {
+        val slots = slots(player, UtilitySlot.BEACON) ?: return ItemStack.EMPTY
+        val index = (0 until slots.slots).firstOrNull { slots.getStackInSlot(it) === beacon } ?: return ItemStack.EMPTY
+        return slots.extractItem(index, 1, false)
     }
 
-    fun returnBeacon(player: ServerPlayer, beacon: ItemStack): Boolean {
-        val slots = slots(player, UtilitySlot.BEACON) ?: return false
-        val index = (0 until slots.slots).firstOrNull { slots.getStackInSlot(it).isEmpty } ?: return false
-        slots.setStackInSlot(index, beacon)
-        return true
+    fun replaceBeacon(player: Player, beacon: ItemStack, replacement: ItemStack) {
+        val slots = slots(player, UtilitySlot.BEACON) ?: return
+        val index = (0 until slots.slots).firstOrNull { slots.getStackInSlot(it) === beacon } ?: return
+        slots.setStackInSlot(index, replacement)
     }
 
     private fun restrictUtilitySlots(event: CurioCanEquipEvent) {

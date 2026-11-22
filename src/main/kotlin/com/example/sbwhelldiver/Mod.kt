@@ -59,7 +59,7 @@ class Mod(container: net.neoforged.fml.ModContainer) {
         com.example.sbwhelldiver.survival.MachineRegistry.BLOCK_ENTITIES.register(bus)
         bus.addListener<net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent>(com.example.sbwhelldiver.survival.MachineRegistry::capabilities)
         com.example.sbwhelldiver.survival.MachineDeployment.checkCodes()
-        com.example.sbwhelldiver.item.BeaconDraw.register(bus)
+        com.example.sbwhelldiver.item.BeaconQuickSlot.register(bus)
         com.example.sbwhelldiver.network.BeaconNetwork.register()
         if (com.example.sbwhelldiver.item.StratagemBackpacks.usesCurios) {
             com.example.sbwhelldiver.item.BackpackCurios.register()
