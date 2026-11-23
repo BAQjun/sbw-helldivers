@@ -1,0 +1,68 @@
+package com.example.sbwhelldiver.client
+
+import com.example.sbwhelldiver.MOD_ID
+import com.example.sbwhelldiver.item.GuardDogBackpack
+import com.example.sbwhelldiver.item.HoverPack
+import com.example.sbwhelldiver.item.HoverPackFlight
+import com.example.sbwhelldiver.item.JumpPack
+import com.example.sbwhelldiver.item.JumpPackFlight
+import com.example.sbwhelldiver.item.StratagemBackpacks
+import com.example.sbwhelldiver.item.SupplyBackpack
+import com.example.sbwhelldiver.item.WarpPack
+import com.example.sbwhelldiver.item.WarpPackFlight
+import net.minecraft.client.Minecraft
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraftforge.api.distmarker.Dist
+import net.minecraftforge.client.event.RenderGuiEvent
+import net.minecraftforge.eventbus.api.SubscribeEvent
+import net.minecraftforge.fml.common.Mod
+import kotlin.math.roundToInt
+
+@Mod.EventBusSubscriber(modid = MOD_ID, value = [Dist.CLIENT])
+object BackpackStatusHud {
+    private const val ICON_SIZE = 18
+    private const val MARGIN = 8
+    private const val BAR_WIDTH = 3
+    private const val LOW_COLOR = 0xFF4949
+
+    @SubscribeEvent
+    fun draw(event: RenderGuiEvent.Post) {
+        val mc = Minecraft.getInstance()
+        val player = mc.player ?: return
+        if (mc.options.hideGui || mc.screen != null || !player.isAlive || player.isSpectator) return
+        val stack = StratagemBackpacks.equipped(player) ?: return
+        val item = stack.item
+        val gameTime = player.level().gameTime
+        val partial = event.partialTick
+        val remaining = when (item) {
+            is GuardDogBackpack -> if (GuardDogBackpack.isEnergy(stack)) 1f else {
+                val maximum = GuardDogBackpack.reserveCapacity(stack)
+                if (maximum == 0) 0f else GuardDogBackpack.spareMags(stack).toFloat() / maximum
+            }
+            is SupplyBackpack -> SupplyBackpack.cases(stack).toFloat() / SupplyBackpack.CAPACITY
+            is WarpPack -> WarpPackVisual.displayEnergy(stack).toFloat() / WarpPackFlight.FULL
+            is JumpPack -> charge(JumpPackFlight.readyAt(stack), JumpPackFlight.RECHARGE_TICKS, gameTime, partial)
+            is HoverPack -> charge(HoverPackFlight.readyAt(stack), HoverPackFlight.COOLDOWN_TICKS, gameTime, partial)
+            else -> return
+        }
+
+        val itemId = BuiltInRegistries.ITEM.getKey(item).path
+        val iconId = if (item is GuardDogBackpack) itemId.removeSuffix("_backpack") else itemId
+        val gui = event.guiGraphics
+        val top = gui.guiHeight() - MARGIN - ICON_SIZE
+        val bottom = top + ICON_SIZE
+        val low = remaining < .5f
+        val tint = if (low) LOW_COLOR else 0xFFFFFF
+        if (!BeaconCallHud.drawWhiteIcon(gui, iconId, MARGIN, top, ICON_SIZE, tint)) return
+
+        val left = MARGIN + ICON_SIZE + 3
+        val right = left + BAR_WIDTH
+        gui.fill(left - 1, top - 1, right + 1, bottom + 1, 0x80000000.toInt())
+        gui.fill(left, top, right, bottom, 0x60000000 or tint)
+        val filled = (ICON_SIZE * remaining).roundToInt()
+        if (filled > 0) gui.fill(left, bottom - filled, right, bottom, 0xFF000000.toInt() or tint)
+    }
+
+    private fun charge(readyAt: Long, duration: Int, gameTime: Long, partial: Float): Float =
+        1f - ((readyAt - gameTime - partial) / duration).coerceIn(0f, 1f)
+}

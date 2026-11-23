@@ -46,7 +46,7 @@ object BeaconCallHud : ResourceManagerReloadListener {
         val mc = Minecraft.getInstance()
         whiteIcons.values.forEach { mc.textureManager.release(it) }
         whiteIcons.clear(); monochromeIconCount = 0
-        // Derive a white silhouette only for this label; preserve coloured inventory/loadout cards.
+        // Derive the shared HUD silhouette while preserving coloured inventory and loadout cards.
         val sources=(Stratagems.definitions+Stratagems.equipmentDeployment+Stratagems.resupply).map{it.id to it.icon}
         sources.distinctBy{it.first}.forEach { (id,texture) ->
             manager.getResource(texture).orElseThrow().open().use { stream ->
@@ -54,9 +54,8 @@ object BeaconCallHud : ResourceManagerReloadListener {
                     val mask = NativeImage(source.width, source.height, false)
                     for (y in 0 until source.height) for (x in 0 until source.width) {
                         val pixel = source.getPixelRGBA(x, y)
-                        val alpha = (((pixel ushr 24) and 255) * .65f).toInt()
                         val lit = max(max(pixel and 255, (pixel ushr 8) and 255), (pixel ushr 16) and 255) >= 80
-                        mask.setPixelRGBA(x, y, if (lit) (alpha shl 24) or 0xDADADA else 0)
+                        mask.setPixelRGBA(x, y, if (lit) (pixel and 0xFF000000.toInt()) or 0xFFFFFF else 0)
                     }
                     val location = ResourceLocation(MOD_ID, "dynamic/call_icon/$id")
                     mc.textureManager.register(location, DynamicTexture(mask))
@@ -111,6 +110,22 @@ object BeaconCallHud : ResourceManagerReloadListener {
         }
     }
 
+    internal fun drawWhiteIcon(gui: GuiGraphics, key: String, x: Int, y: Int, size: Int, tint: Int): Boolean {
+        val icon = whiteIcons[key] ?: return false
+        blitWhiteIcon(gui, icon, x, y, size, tint, 1f)
+        return true
+    }
+
+    private fun blitWhiteIcon(gui: GuiGraphics, icon: ResourceLocation, x: Int, y: Int, size: Int, tint: Int, opacity: Float) {
+        gui.flush()
+        RenderSystem.enableBlend()
+        RenderSystem.defaultBlendFunc()
+        gui.setColor(((tint ushr 16) and 255) / 255f, ((tint ushr 8) and 255) / 255f, (tint and 255) / 255f, opacity)
+        gui.blit(icon, x, y, size, size, 0f, 0f, 1, 1, 1, 1)
+        gui.setColor(1f, 1f, 1f, 1f)
+        RenderSystem.disableBlend()
+    }
+
     fun draw(gui: GuiGraphics, partial: Float) {
         val mc = Minecraft.getInstance()
         val current = label ?: return
@@ -120,11 +135,7 @@ object BeaconCallHud : ResourceManagerReloadListener {
         val x = current.x + 10
         val y = current.y - ICON_SIZE / 2
         gui.fill(x - 1, y - 1, x + ICON_SIZE + 1, y + ICON_SIZE + 1, 0x50000000)
-        gui.flush()
-        RenderSystem.enableBlend()
-        RenderSystem.defaultBlendFunc()
-        gui.blit(icon, x, y, ICON_SIZE, ICON_SIZE, 0f, 0f, 1, 1, 1, 1)
-        RenderSystem.disableBlend()
+        blitWhiteIcon(gui, icon, x, y, ICON_SIZE, 0xDADADA, .65f)
         val distance = "${current.distance.roundToInt()}m"
         gui.drawString(mc.font, distance, x + ICON_SIZE / 2 - mc.font.width(distance) / 2, y + ICON_SIZE + 3, 0xFFFFFF, true)
         val textX = x + ICON_SIZE + 5
