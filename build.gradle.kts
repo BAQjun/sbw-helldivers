@@ -52,6 +52,7 @@ neoForge {
             if (providers.gradleProperty("laserGuardDogTests").isPresent) systemProperty("sbw_helldiver.laserGuardDogTests", "true")
             if (providers.gradleProperty("guardDogTests").isPresent) systemProperty("sbw_helldiver.guardDogTests", "true")
             if (providers.gradleProperty("effectDiagnostics").isPresent) { systemProperty("sbw_helldiver.visualOnly", "true"); systemProperty("sbw_helldiver.laserShaderSmokeTest", "true") }
+            if (providers.gradleProperty("jumpPackTests").isPresent) systemProperty("sbw_helldiver.jumpPackTests", "true")
             if (providers.gradleProperty("resupplyTests").isPresent) systemProperty("sbw_helldiver.resupplyTests", "true")
             if (providers.gradleProperty("itemDeliveryTests").isPresent) systemProperty("sbw_helldiver.itemDeliveryTests", "true")
             if (providers.gradleProperty("taczCompatTests").isPresent) systemProperty("sbw_helldiver.taczCompatTests", "true")

@@ -22,6 +22,12 @@ object StratagemBackpacks {
     internal fun createSupply(properties: Item.Properties): SupplyBackpack =
         if (usesCurios) BackpackCurios.createSupply(properties) else SupplyBackpack(properties)
 
+    internal fun createJumpPack(properties: Item.Properties): JumpPack =
+        if (usesCurios) BackpackCurios.createJumpPack(properties) else JumpPack(properties)
+
+    fun handlesBackpackKey(stack: ItemStack?): Boolean =
+        stack?.item is SupplyBackpack || stack?.item is GuardDogBackpack
+
     fun interact(player: ServerPlayer) {
         if (!player.isAlive || player.isSpectator) return
         val stack = equipped(player) ?: return

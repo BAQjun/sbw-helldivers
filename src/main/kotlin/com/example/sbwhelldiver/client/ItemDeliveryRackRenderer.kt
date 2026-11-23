@@ -3,6 +3,7 @@ package com.example.sbwhelldiver.client
 import com.example.sbwhelldiver.entity.AbstractHellpodEntity.Phase
 import com.example.sbwhelldiver.entity.ItemDeliveryHellpodEntity
 import com.example.sbwhelldiver.item.GuardDogBackpack
+import com.example.sbwhelldiver.item.JumpPack
 import com.example.sbwhelldiver.item.SupplyBackpack
 import com.example.sbwhelldiver.entity.ItemDeliveryHellpodEntity.Side
 import com.example.sbwhelldiver.entity.ItemDeliveryHellpodEntity.Companion.LIFT_START
@@ -83,6 +84,11 @@ object ItemDeliveryRackRenderer {
             val mount = side.mount
             pose.translate(mount.x, mount.y + lift, mount.z)
             if (side == Side.REAR) pose.mulPose(Axis.YP.rotationDegrees(180f))
+            if (stack.item is JumpPack) {
+                pose.scale(.85f, .85f, .85f)
+                JumpPackVisual.draw(pose, buffers, light)
+                return
+            }
             if (stack.item is SupplyBackpack) {
                 pose.scale(.85f, .85f, .85f)
                 SupplyBackpackVisual.draw(stack, pose, buffers, light)

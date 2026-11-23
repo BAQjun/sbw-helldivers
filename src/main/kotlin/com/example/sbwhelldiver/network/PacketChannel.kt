@@ -54,6 +54,9 @@ class PacketChannel {
 object PacketTargets {
     fun interface Target { fun send(payload: CustomPacketPayload) }
     object PLAYER { fun with(player: () -> ServerPlayer) = Target { PacketDistributor.sendToPlayer(player(), it) } }
+    object TRACKING_ENTITY_AND_SELF {
+        fun with(player: () -> ServerPlayer) = Target { PacketDistributor.sendToPlayersTrackingEntityAndSelf(player(), it) }
+    }
     object DIMENSION {
         fun with(dimension: () -> net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level>) = Target { payload ->
             val server = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer()

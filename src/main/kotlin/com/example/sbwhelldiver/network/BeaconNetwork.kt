@@ -91,6 +91,10 @@ data class BeaconFailurePacket(val stratagemId: String, val loadoutIds: List<Str
 object BeaconNetwork {
     val CHANNEL = PacketChannel()
     fun register() {
+        CHANNEL.registerMessage(33, JumpPackInputPacket::class.java, JumpPackInputPacket::encode,
+            JumpPackInputPacket::decode, JumpPackInputPacket::handle, Optional.of(PacketDirection.PLAY_TO_SERVER))
+        CHANNEL.registerMessage(34, JumpPackThrustPacket::class.java, JumpPackThrustPacket::encode,
+            JumpPackThrustPacket::decode, JumpPackThrustPacket::handle, Optional.of(PacketDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(31, BeaconQuickSlotPacket::class.java, BeaconQuickSlotPacket::encode,
             BeaconQuickSlotPacket::decode, BeaconQuickSlotPacket::handle, Optional.of(PacketDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(30, OpenSampleContainerPacket::class.java, { _, _ -> }, { OpenSampleContainerPacket },

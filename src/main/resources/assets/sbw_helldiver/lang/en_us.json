@@ -350,6 +350,9 @@
   "item.sbw_helldiver.guard_dog_backpack": "Guard Dog",
   "gui.sbw_helldiver.category.backpack": "Backpack Stratagems",
   "key.sbw_helldiver.guard_dog": "Interact with backpack",
+  "item.sbw_helldiver.jump_pack": "Jump Pack",
+  "item.sbw_helldiver.jump_pack_stratagem": "Jump Pack",
+  "tooltip.sbw_helldiver.jump_pack": "Hold Jump to launch. Landing thrusters engage automatically. Recharges in 15 seconds.",
   "item.sbw_helldiver.supply_backpack_stratagem": "Supply Pack",
   "item.sbw_helldiver.supply_backpack": "Supply Pack",
   "tooltip.sbw_helldiver.supply_backpack_cases": "Supply cases: %s/%s",
@@ -376,5 +379,7 @@
   "curios.identifier.sbw_sample_container": "Sample Container",
   "key.sbw_helldiver.sample_container": "Use Equipped Sample Container",
   "tooltip.sbw_helldiver.beacon_curio": "Equip in its Curios slot, then press %s to select the beacon hotbar slot",
-  "tooltip.sbw_helldiver.sample_curio": "In its Curios slot, press %s to access samples"
+  "tooltip.sbw_helldiver.sample_curio": "In its Curios slot, press %s to access samples",
+  "subtitles.sbw_helldiver.jump_pack_launch": "Jump Pack fires",
+  "subtitles.sbw_helldiver.jump_pack_brake": "Jump Pack brakes"
 }

@@ -350,6 +350,9 @@
   "item.sbw_helldiver.guard_dog_backpack": "“护卫犬”",
   "gui.sbw_helldiver.category.backpack": "背包战备",
   "key.sbw_helldiver.guard_dog": "背包交互",
+  "item.sbw_helldiver.jump_pack": "跳跃背包",
+  "item.sbw_helldiver.jump_pack_stratagem": "跳跃背包",
+  "tooltip.sbw_helldiver.jump_pack": "长按跳跃键起飞，落地前自动反推缓冲，落地后冷却 15 秒。",
   "item.sbw_helldiver.supply_backpack_stratagem": "补给背包",
   "item.sbw_helldiver.supply_backpack": "补给背包",
   "tooltip.sbw_helldiver.supply_backpack_cases": "补给箱：%s/%s",
@@ -376,5 +379,7 @@
   "curios.identifier.sbw_sample_container": "样本容器",
   "key.sbw_helldiver.sample_container": "使用饰品栏中的样本容器",
   "tooltip.sbw_helldiver.beacon_curio": "装入专属饰品栏后按 %s 选中信标快捷位",
-  "tooltip.sbw_helldiver.sample_curio": "装入专属饰品栏后按 %s 存取样本"
+  "tooltip.sbw_helldiver.sample_curio": "装入专属饰品栏后按 %s 存取样本",
+  "subtitles.sbw_helldiver.jump_pack_launch": "跳跃背包起飞",
+  "subtitles.sbw_helldiver.jump_pack_brake": "跳跃背包反推"
 }

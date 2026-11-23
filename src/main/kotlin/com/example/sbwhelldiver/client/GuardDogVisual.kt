@@ -5,6 +5,7 @@ import com.example.sbwhelldiver.entity.GuardDogMotion
 import com.example.sbwhelldiver.entity.GuardDogEntity.Flight
 import com.example.sbwhelldiver.item.GuardDogBackpack
 import com.example.sbwhelldiver.item.StratagemBackpacks
+import com.example.sbwhelldiver.item.JumpPack
 import com.example.sbwhelldiver.item.SupplyBackpack
 import com.example.sbwhelldiver.network.BeaconNetwork
 import com.example.sbwhelldiver.network.GuardDogTogglePacket
@@ -55,6 +56,7 @@ object GuardDogVisual {
         if (mc.screen != null) return
         val player = mc.player?.takeIf { it.isAlive && !it.isSpectator } ?: return
         val pack = StratagemBackpacks.equipped(player) ?: return
+        if (!StratagemBackpacks.handlesBackpackKey(pack)) return
 
         // Curios also defaults to G. Preserve that binding and let an equipped
         // stratagem backpack take priority only when both bindings match.
@@ -67,7 +69,7 @@ object GuardDogVisual {
 
     fun pollKey() {
         val mc = Minecraft.getInstance()
-        if (key.consumeClick() && mc.screen == null && mc.player?.let(StratagemBackpacks::equipped) != null)
+        if (key.consumeClick() && mc.screen == null && StratagemBackpacks.handlesBackpackKey(mc.player?.let(StratagemBackpacks::equipped)))
             BeaconNetwork.CHANNEL.sendToServer(GuardDogTogglePacket)
         while (key.consumeClick()) { /* coalesce clicks within one client tick */ }
     }
@@ -293,12 +295,22 @@ object GuardDogVisual {
         override fun render(pose: PoseStack, buffers: MultiBufferSource, light: Int, player: AbstractClientPlayer,
             swing: Float, amount: Float, partial: Float, age: Float, yaw: Float, pitch: Float) {
             val pack = StratagemBackpacks.equipped(player) ?: return
-            if (pack.item is SupplyBackpack) {
+            val item = pack.item
+            if (item is JumpPack || item is SupplyBackpack) {
                 pose.pushPose()
                 parentModel.body.translateAndRotate(pose)
-                pose.translate(0.0, .365, .23)
+                // The supply mesh places the shared shoulder straps slightly off the Guard Dog origin.
+                val supply = item is SupplyBackpack
+                val mountY = GuardDogEntity.PACK_LAYER_Y + (if (supply) .01028 else 0.0)
+                val mountZ = GuardDogEntity.PACK_LAYER_Z - (if (supply) .008 else 0.0)
+                pose.translate(0.0, mountY, mountZ)
                 pose.mulPose(Axis.XP.rotationDegrees(180f))
-                SupplyBackpackVisual.draw(pack, pose, buffers, light)
+                if (supply) {
+                    SupplyBackpackVisual.draw(pack, pose, buffers, light)
+                } else {
+                    JumpPackVisual.draw(pose, buffers, light)
+                    JumpPackVisual.exhaust(pose, player, partial, age)
+                }
                 pose.popPose()
                 return
             }
