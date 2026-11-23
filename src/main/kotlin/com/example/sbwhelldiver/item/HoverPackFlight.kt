@@ -23,7 +23,6 @@ import kotlin.math.sin
 
 @EventBusSubscriber(modid = MOD_ID)
 object HoverPackFlight {
-    const val CHARGE_TICKS = 20
     const val HOVER_TICKS = 6 * 20
     const val COOLDOWN_TICKS = 12 * 20
     private const val ASCENT_TICKS = 20
@@ -76,10 +75,10 @@ object HoverPackFlight {
             charges.remove(player)
             return
         }
-        if (player.tickCount - charge.tick < CHARGE_TICKS) return
+        if (player.tickCount - charge.tick < JumpPackFlight.HOLD_TICKS) return
         charges.remove(player)
         if (!clearAbove(player, .18)) return
-        val state = Flight(charge.stack, player.level().dimension(), player.y + LIFT_HEIGHT, player.tickCount)
+        val state = Flight(charge.stack, player.level().dimension(), charge.floor + LIFT_HEIGHT, player.tickCount)
         flights[player] = state
         setReadyAt(charge.stack, time(player) + ASCENT_TICKS + HOVER_TICKS + MAX_DESCENT_TICKS + COOLDOWN_TICKS)
         transition(player, state, Phase.ASCENT)

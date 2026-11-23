@@ -32,6 +32,8 @@ import top.theillusivec4.curios.api.CuriosApi
 object HoverPackClientTest {
     private enum class Step { EQUIP, TAP, WAIT_AFTER_TAP, HOLD, FLY, RECHARGE, RETEST }
 
+    private const val EXPECTED_HOLD_TICKS = 4
+
     private val enabled = java.lang.Boolean.getBoolean("sbw_helldiver.hoverPackTests")
     private val launchedAt = System.nanoTime()
     private var creatingWorld = false
@@ -113,7 +115,7 @@ object HoverPackClientTest {
                 }
                 Step.TAP -> {
                     check(takeoffs == 0) { "A short press activated the pack" }
-                    if (elapsed == 9) {
+                    if (elapsed == 1) {
                         jumping.isDown = false
                         next(Step.WAIT_AFTER_TAP)
                     }
@@ -127,12 +129,12 @@ object HoverPackClientTest {
                     }
                 }
                 Step.HOLD -> {
-                    if (takeoffs == 1) {
-                        check(elapsed in 20..31) { "Ascent began at tick $elapsed" }
+                    if (player.y - origin.y > 1.45) {
+                        check(elapsed in EXPECTED_HOLD_TICKS..EXPECTED_HOLD_TICKS + 7) { "Ascent began at tick $elapsed" }
                         jumping.isDown = false
                         next(Step.FLY)
                     }
-                    check(elapsed < 32) { "A full second press did not activate the hover pack" }
+                    check(elapsed < EXPECTED_HOLD_TICKS + 8) { "The jump pack hold did not activate the hover pack" }
                 }
                 Step.FLY -> {
                     if (flightSounds == 1 && hoverStarted == 0) {
@@ -164,19 +166,22 @@ object HoverPackClientTest {
                 Step.RECHARGE -> {
                     if (!cooling) {
                         check(elapsed in 235..246) { "Expected 12 seconds of cooldown, got $elapsed ticks" }
+                        origin = player.position()
                         jumping.isDown = true
                         next(Step.RETEST)
                     }
                     check(elapsed < 247)
                 }
                 Step.RETEST -> {
-                    if (takeoffs == 2) {
-                        check(elapsed in 20..31)
-                        LOGGER.info("HOVER_PACK_CLIENT_PASSED: inventory models, one-second charge, six seconds of hover, steering, native sampled audio, landing and 12-second recharge")
+                    if (player.y - origin.y > 1.45 && jumping.isDown) {
+                        check(elapsed in EXPECTED_HOLD_TICKS..EXPECTED_HOLD_TICKS + 7)
                         jumping.isDown = false
+                    }
+                    if (!jumping.isDown && takeoffs == 2) {
+                        LOGGER.info("HOVER_PACK_CLIENT_PASSED: inventory models, shared jump pack hold, six seconds of hover, steering, native sampled audio, landing and 12-second recharge")
                         mc.stop()
                     }
-                    check(elapsed < 32)
+                    check(elapsed < if (jumping.isDown) EXPECTED_HOLD_TICKS + 8 else 40)
                 }
             }
         } catch (failure: Throwable) {
