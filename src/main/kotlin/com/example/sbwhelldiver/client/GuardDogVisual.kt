@@ -17,7 +17,7 @@ import com.example.sbwhelldiver.item.SupplyBackpack
 
 import com.example.sbwhelldiver.network.BeaconNetwork
 
-import com.example.sbwhelldiver.network.GuardDogTogglePacket
+import com.example.sbwhelldiver.network.BackpackInteractPacket
 
 import com.mojang.blaze3d.platform.InputConstants
 
@@ -109,24 +109,24 @@ object GuardDogVisual {
         // stratagem backpack take priority only when both bindings match.
         mc.options.keyMappings.firstOrNull { it.name == "key.curios.open.desc" && it.isActiveAndMatches(input) }
             ?.let { while (it.consumeClick()) { /* discard the shared Curios click */ } }
-        if (event.action == GLFW.GLFW_REPEAT && pack.item is SupplyBackpack) {
-            while (key.consumeClick()) { /* one case per physical press */ }
+        if (event.action == GLFW.GLFW_REPEAT && pack.item !is GuardDogBackpack) {
+            while (key.consumeClick()) { /* one activation per physical press */ }
         }
     }
 
     fun pollKey() {
-
         val mc = Minecraft.getInstance()
-
-        if (key.consumeClick() && mc.screen == null && StratagemBackpacks.handlesBackpackKey(mc.player?.let(StratagemBackpacks::equipped)))
-
-            BeaconNetwork.CHANNEL.sendToServer(GuardDogTogglePacket)
-
+        HoverPackSteering.poll(mc)
+        if (key.consumeClick() && mc.screen == null &&
+            StratagemBackpacks.handlesBackpackKey(mc.player?.let(StratagemBackpacks::equipped))) {
+            val options = mc.options
+            BeaconNetwork.CHANNEL.sendToServer(BackpackInteractPacket(
+                movementAxis(options.keyUp, options.keyDown),
+                movementAxis(options.keyLeft, options.keyRight)
+            ))
+        }
         while (key.consumeClick()) { /* coalesce clicks within one client tick */ }
-
     }
-
-
 
     // Observes the actual rendered transform in isolated client checks, including both handoffs.
 

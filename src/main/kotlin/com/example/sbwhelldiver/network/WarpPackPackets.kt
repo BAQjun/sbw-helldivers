@@ -1,7 +1,6 @@
 package com.example.sbwhelldiver.network
 
 import com.example.sbwhelldiver.client.WarpPackBurstVisual
-import com.example.sbwhelldiver.item.WarpPackFlight
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.phys.Vec3
@@ -10,24 +9,6 @@ import net.minecraftforge.fml.DistExecutor
 import net.minecraftforge.network.NetworkEvent
 import net.minecraftforge.network.PacketDistributor
 import java.util.function.Supplier
-
-internal data class WarpPackInputPacket(val held: Boolean) {
-    fun encode(buf: FriendlyByteBuf) {
-        buf.writeBoolean(held)
-    }
-
-    companion object {
-        fun decode(buf: FriendlyByteBuf) = WarpPackInputPacket(buf.readBoolean())
-
-        fun handle(message: WarpPackInputPacket, supplier: Supplier<NetworkEvent.Context>) {
-            val context = supplier.get()
-            context.enqueueWork {
-                context.sender?.let { WarpPackFlight.input(it, message.held) }
-            }
-            context.packetHandled = true
-        }
-    }
-}
 
 internal data class WarpPackBurstPacket(val origin: Vec3, val destination: Vec3) {
     fun encode(buf: FriendlyByteBuf) {

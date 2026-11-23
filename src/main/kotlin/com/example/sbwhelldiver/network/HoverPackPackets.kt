@@ -10,20 +10,19 @@ import net.minecraftforge.network.NetworkEvent
 import net.minecraftforge.network.PacketDistributor
 import java.util.function.Supplier
 
-internal data class HoverPackInputPacket(val held: Boolean, val forward: Int, val left: Int) {
+internal data class HoverPackInputPacket(val forward: Int, val left: Int) {
     fun encode(buf: FriendlyByteBuf) {
-        buf.writeBoolean(held)
         buf.writeByte(forward)
         buf.writeByte(left)
     }
 
     companion object {
-        fun decode(buf: FriendlyByteBuf) = HoverPackInputPacket(buf.readBoolean(), buf.readByte().toInt(), buf.readByte().toInt())
+        fun decode(buf: FriendlyByteBuf) = HoverPackInputPacket(buf.readByte().toInt(), buf.readByte().toInt())
 
         fun handle(message: HoverPackInputPacket, supplier: Supplier<NetworkEvent.Context>) {
             val context = supplier.get()
             context.enqueueWork {
-                context.sender?.let { HoverPackFlight.input(it, message.held, message.forward, message.left) }
+                context.sender?.let { HoverPackFlight.input(it, message.forward, message.left) }
             }
             context.packetHandled = true
         }
