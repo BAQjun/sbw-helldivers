@@ -13,16 +13,19 @@
   },
   "perspectives": {
     "gui": {
-      "parent": "minecraft:builtin/entity",
-      "display": {
-        "gui": {
-          "rotation": [
-            25,
-            140,
-            0
-          ]
-        }
-      }
+      "parent": "sbw_helldiver:item/supply_backpack_3d"
+    },
+    "firstperson_righthand": {
+      "parent": "sbw_helldiver:item/supply_backpack_3d"
+    },
+    "firstperson_lefthand": {
+      "parent": "sbw_helldiver:item/supply_backpack_3d"
+    },
+    "thirdperson_righthand": {
+      "parent": "sbw_helldiver:item/supply_backpack_3d"
+    },
+    "thirdperson_lefthand": {
+      "parent": "sbw_helldiver:item/supply_backpack_3d"
     }
   }
 }
