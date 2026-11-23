@@ -2,6 +2,7 @@ package com.example.sbwhelldiver.porttest
 import com.atsuishio.superbwarfare.data.gun.*
 import com.example.sbwhelldiver.entity.*
 import com.example.sbwhelldiver.init.*
+import com.example.sbwhelldiver.item.BeaconItem
 import com.example.sbwhelldiver.item.GuardDogBackpack
 import com.example.sbwhelldiver.item.StratagemBackpacks
 import com.example.sbwhelldiver.item.SupplyBackpack
@@ -72,6 +73,61 @@ object ResupplyTests {
    check(SupplyBackpack.cases(unequipped) == 0) { "An unequipped pack gained a case" }
   }
   h.succeed()
+ }
+
+ @JvmStatic @GameTest(template="port_test",timeoutTicks=45)
+ fun resupplyBeaconTracksArrivalWithCooldownsOff(h: GameTestHelper) {
+  val owner = player(h)
+  val center = h.absolutePos(BlockPos(5, 7, 5))
+  val ground = (-2..2).maxOf { x -> (-2..2).maxOf { z ->
+   h.level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING, center.x + x, center.z + z)
+  } }
+  val target = BlockPos(center.x, ground + 3, center.z)
+  for (x in -2..2) for (z in -2..2) {
+   h.level.setBlockAndUpdate(target.offset(x, -1, z), net.minecraft.world.level.block.Blocks.STONE.defaultBlockState())
+  }
+  val land = Vec3.atBottomCenterOf(target)
+  owner.setPos(land.add(0.0, 2.0, 0.0))
+  val now = StratagemCooldowns.now(owner.server)
+  val ship = SuperDestroyers.state(owner)
+  check(ship.schedule(DestroyerAnchor.at(h.level.dimension().location().toString(), land, Stratagems.UP, 240.0, 180.0), now - 60))
+  check(ship.advance(now))
+  StratagemCooldowns.setEnabled(owner, false)
+  repeat(2) { check(StratagemCooldowns.purchaseResupply(owner)) }
+  val definition = Stratagems.resupply
+  val item = ModItems.BEACON.get() as BeaconItem
+  val stack = ItemStack(item)
+  owner.inventory.setItem(0, stack)
+  BeaconEnergy.set(stack, BeaconEnergy.capacity())
+  val identity = BeaconData.ensureIdentity(stack)
+  val ledger = StratagemCooldowns.state(owner)
+  fun throwAtPlatform() {
+   BeaconData.activate(stack, definition)
+   owner.setXRot(90f)
+   check(item.throwActivated(owner, InteractionHand.MAIN_HAND, identity)) { "The normal beacon throw was rejected" }
+   val status = ledger.entry(definition.id)
+   check(status.phase == CallPhase.THROWN)
+   val token = requireNotNull(status.request)
+   h.runAfterDelay(1) {
+    val beacon = h.level.getEntity(token) as? StratagemBeacon ?: error("The reserved beacon was not spawned: $token")
+    check(beacon.managedRequest == token) { "The paid throw lost its request with cooldowns disabled" }
+    beacon.setPos(land.add(0.0, 1.3, 0.0))
+    beacon.deltaMovement = Vec3(0.0, -.6, 0.0)
+   }
+  }
+  throwAtPlatform()
+  h.runAfterDelay(9) {
+   val status = ledger.entry(definition.id)
+   check(status.phase == CallPhase.ARRIVING && status.remaining == 1) { "Landing did not spend exactly one paid charge and begin the arrival: ${status.phase}/${status.remaining}" }
+   ledger.advance(status.end)
+   check(status.phase == CallPhase.READY && status.request == null) { "Arrival left a pending request or a cooldown" }
+   owner.cooldowns.removeCooldown(item)
+   throwAtPlatform()
+   h.runAfterDelay(8) {
+    check(status.phase == CallPhase.ARRIVING && status.remaining == 0) { "The remaining charge could not be called after arrival" }
+    h.succeed()
+   }
+  }
  }
 
  @JvmStatic @GameTest(template="port_test",timeoutTicks=30)
