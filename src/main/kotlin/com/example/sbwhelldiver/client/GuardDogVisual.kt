@@ -11,6 +11,7 @@ import com.example.sbwhelldiver.entity.GuardDogEntity.Flight
 import com.example.sbwhelldiver.item.GuardDogBackpack
 import com.example.sbwhelldiver.item.StratagemBackpacks
 import com.example.sbwhelldiver.item.HoverPack
+import com.example.sbwhelldiver.item.WarpPack
 import com.example.sbwhelldiver.item.JumpPack
 import com.example.sbwhelldiver.item.SupplyBackpack
 
@@ -572,19 +573,29 @@ object GuardDogVisual {
 
             val pack = StratagemBackpacks.equipped(player) ?: return
             val item = pack.item
-            if (item is JumpPack || item is HoverPack || item is SupplyBackpack) {
+            if (item is JumpPack || item is HoverPack || item is WarpPack || item is SupplyBackpack) {
                 pose.pushPose()
                 parentModel.body.translateAndRotate(pose)
                 // The supply mesh places the shared shoulder straps slightly off the Guard Dog origin.
                 val supply = item is SupplyBackpack
-                val mountY = GuardDogEntity.PACK_LAYER_Y + (if (supply) .01028 else 0.0)
-                val mountZ = GuardDogEntity.PACK_LAYER_Z - (if (supply) .008 else 0.0)
+                val mountY = GuardDogEntity.PACK_LAYER_Y + when (item) {
+                    is SupplyBackpack -> .01028
+                    is WarpPack -> .018
+                    else -> 0.0
+                }
+                val mountZ = GuardDogEntity.PACK_LAYER_Z - when (item) {
+                    is SupplyBackpack -> .008
+                    is WarpPack -> .019
+                    else -> 0.0
+                }
                 pose.translate(0.0, mountY, mountZ)
                 pose.mulPose(Axis.XP.rotationDegrees(180f))
                 if (supply) {
                     SupplyBackpackVisual.draw(pack, pose, buffers, light)
                 } else if (item is HoverPack) {
                     HoverPackVisual.draw(pose, buffers, light, player, partial, age)
+                } else if (item is WarpPack) {
+                    WarpPackVisual.draw(pack, pose, buffers, light)
                 } else {
                     JumpPackVisual.draw(pose, buffers, light)
                     JumpPackVisual.exhaust(pose, player, partial, age)

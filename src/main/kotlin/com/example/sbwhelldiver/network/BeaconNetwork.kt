@@ -112,7 +112,7 @@ data class BeaconFailurePacket(val stratagemId: String, val loadoutIds: List<Str
 }
 
 object BeaconNetwork {
-    val CHANNEL = NetworkRegistry.newSimpleChannel(ResourceLocation(MOD_ID, "beacon"), { "17" }, { it == "17" }, { it == "17" })
+    val CHANNEL = NetworkRegistry.newSimpleChannel(ResourceLocation(MOD_ID, "beacon"), { "18" }, { it == "18" }, { it == "18" })
     fun register() {
         CHANNEL.registerMessage(33, JumpPackInputPacket::class.java, JumpPackInputPacket::encode,
             JumpPackInputPacket::decode, JumpPackInputPacket::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER))
@@ -122,6 +122,10 @@ object BeaconNetwork {
             HoverPackInputPacket::decode, HoverPackInputPacket::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(36, HoverPackStatePacket::class.java, HoverPackStatePacket::encode,
             HoverPackStatePacket::decode, HoverPackStatePacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT))
+        CHANNEL.registerMessage(37, WarpPackInputPacket::class.java, WarpPackInputPacket::encode,
+            WarpPackInputPacket::decode, WarpPackInputPacket::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER))
+        CHANNEL.registerMessage(38, WarpPackBurstPacket::class.java, WarpPackBurstPacket::encode,
+            WarpPackBurstPacket::decode, WarpPackBurstPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(30, OpenSampleContainerPacket::class.java, { _, _ -> }, { OpenSampleContainerPacket },
             { _, context -> OpenSampleContainerPacket.handle(context) }, Optional.of(NetworkDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(31, BeaconQuickSlotPacket::class.java, BeaconQuickSlotPacket::encode,

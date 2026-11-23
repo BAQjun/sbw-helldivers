@@ -387,5 +387,10 @@
   "tooltip.sbw_helldiver.hover_pack": "按住跳跃键即可升空。悬浮 6 秒，期间可缓慢移动，落地后冷却 12 秒。",
   "subtitles.sbw_helldiver.hover_pack_launch": "悬浮背包起飞",
   "subtitles.sbw_helldiver.hover_pack_loop": "悬浮背包引擎运转",
-  "subtitles.sbw_helldiver.hover_pack_land": "悬浮背包降落"
+  "subtitles.sbw_helldiver.hover_pack_land": "悬浮背包降落",
+  "item.sbw_helldiver.warp_pack": "传送背包",
+  "item.sbw_helldiver.warp_pack_stratagem": "传送背包",
+  "tooltip.sbw_helldiver.warp_pack": "按住跳跃键向前传送最多 10 格，消耗 33% 能量。每秒恢复 6%。紫色安全，黄色损失 8 点生命且可能着火，红色会死亡。",
+  "subtitles.sbw_helldiver.warp_pack_depart": "传送背包启动",
+  "subtitles.sbw_helldiver.warp_pack_arrive": "传送抵达"
 }

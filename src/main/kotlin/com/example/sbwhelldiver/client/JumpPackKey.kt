@@ -5,10 +5,12 @@ import com.example.sbwhelldiver.item.HoverPack
 import com.example.sbwhelldiver.item.HoverPackFlight.Phase
 import com.example.sbwhelldiver.item.JumpPack
 import com.example.sbwhelldiver.item.JumpPackFlight
+import com.example.sbwhelldiver.item.WarpPack
 import com.example.sbwhelldiver.item.StratagemBackpacks
 import com.example.sbwhelldiver.network.BeaconNetwork
 import com.example.sbwhelldiver.network.HoverPackInputPacket
 import com.example.sbwhelldiver.network.JumpPackInputPacket
+import com.example.sbwhelldiver.network.WarpPackInputPacket
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
 import net.minecraft.client.player.LocalPlayer
@@ -25,6 +27,7 @@ internal object JumpPackKey {
     private var startedOnGround = false
     private var hoverInput: HoverPackInputPacket? = null
     private var hoverSentAt = 0
+    private var warpHeld = false
     private var suppressRepeatedJump = false
 
     @SubscribeEvent
@@ -36,9 +39,21 @@ internal object JumpPackKey {
             player = local
             held = 0
             hoverInput = null
+            warpHeld = false
             suppressRepeatedJump = false
         }
         val stack = local?.let(StratagemBackpacks::equipped)
+        val warpPressed = local != null && stack?.item is WarpPack && minecraft.screen == null &&
+            JumpPackFlight.canFly(local) && minecraft.options.keyJump.isDown
+        if (local != null && warpPressed != warpHeld) BeaconNetwork.CHANNEL.sendToServer(WarpPackInputPacket(warpPressed))
+        val repeatWarpJump = warpHeld && warpPressed
+        warpHeld = warpPressed
+        if (stack?.item is WarpPack) {
+            hoverInput = null
+            suppressRepeatedJump = repeatWarpJump
+            held = 0
+            return
+        }
         if (local != null && stack?.item is HoverPack) {
             tickHover(minecraft, local)
             held = 0

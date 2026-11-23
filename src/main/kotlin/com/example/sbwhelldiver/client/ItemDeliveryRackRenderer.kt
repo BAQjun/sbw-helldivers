@@ -8,6 +8,7 @@ import com.example.sbwhelldiver.entity.ItemDeliveryHellpodEntity
 
 import com.example.sbwhelldiver.item.GuardDogBackpack
 import com.example.sbwhelldiver.item.HoverPack
+import com.example.sbwhelldiver.item.WarpPack
 import com.example.sbwhelldiver.item.JumpPack
 import com.example.sbwhelldiver.item.SupplyBackpack
 
@@ -169,6 +170,11 @@ object ItemDeliveryRackRenderer {
 
             if (side == Side.REAR) pose.mulPose(Axis.YP.rotationDegrees(180f))
 
+            if (stack.item is WarpPack) {
+                pose.scale(.85f, .85f, .85f)
+                WarpPackVisual.draw(stack, pose, buffers, light)
+                return
+            }
             if (stack.item is HoverPack) {
                 pose.scale(.85f, .85f, .85f)
                 HoverPackVisual.draw(pose, buffers, light)
