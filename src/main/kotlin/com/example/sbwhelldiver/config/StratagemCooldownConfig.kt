@@ -8,6 +8,7 @@ object StratagemCooldownConfig {
     val baseSeconds = linkedMapOf(
         "machine_deployment_beacon" to 0.0,
         "resupply" to 0.0,
+        "supply_backpack" to 480.0,
         "guard_dog" to 480.0,
         "laser_guard_dog" to 480.0,
         "stun_guard_dog" to 480.0,

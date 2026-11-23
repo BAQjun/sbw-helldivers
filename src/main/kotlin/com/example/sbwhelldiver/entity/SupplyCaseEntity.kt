@@ -21,7 +21,7 @@ class SupplyCaseEntity(type: EntityType<*>, level: Level): Entity(type, level) {
     override fun interact(player: Player, hand: InteractionHand): InteractionResult {
         if (isRemoved || player.isSpectator) return InteractionResult.PASS
         if (player is ServerPlayer) {
-            discard(); ResupplyAmmo.refill(player)
+            discard(); ResupplyAmmo.collectCase(player)
             ResupplyAmmo.playPickupSound(level(), x, y, z)
         }
         return InteractionResult.sidedSuccess(level().isClientSide)

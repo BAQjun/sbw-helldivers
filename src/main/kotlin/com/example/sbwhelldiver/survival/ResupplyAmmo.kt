@@ -5,6 +5,7 @@ import com.atsuishio.superbwarfare.data.gun.AmmoConsumer
 import com.atsuishio.superbwarfare.data.gun.GunProp
 import com.atsuishio.superbwarfare.data.gun.toGunData
 import com.example.sbwhelldiver.item.GuardDogBackpack
+import com.example.sbwhelldiver.item.SupplyBackpack
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.item.ItemStack
 
@@ -18,7 +19,12 @@ object ResupplyAmmo {
             net.minecraft.sounds.SoundSource.PLAYERS, 1f, 1f)
     }
 
-    fun refill(player: ServerPlayer) {
+    fun collectCase(player: ServerPlayer) {
+        SupplyBackpack.restockEquipped(player)
+        refill(player)
+    }
+
+    fun refill(player: ServerPlayer, refillGuardDogs: Boolean = true) {
         val stacks = (0 until player.inventory.containerSize).map { player.inventory.getItem(it) }
         val reserves = linkedMapOf<Ammo, Int>()
         val items = mutableListOf<Pair<ItemStack, Int>>()
@@ -51,8 +57,10 @@ object ResupplyAmmo {
         }
         for ((ammo, amount) in items) give(player, ammo, amount)
         if (net.minecraftforge.fml.ModList.get().isLoaded("tacz")) com.example.sbwhelldiver.compat.TaczResupply.refill(player, stacks)
-        for (stack in stacks) if (stack.item is GuardDogBackpack) GuardDogBackpack.refill(stack)
-        GuardDogBackpack.equipped(player)?.let(GuardDogBackpack::refill)
+        if (refillGuardDogs) {
+            for (stack in stacks) if (stack.item is GuardDogBackpack) GuardDogBackpack.refill(stack)
+            GuardDogBackpack.equipped(player)?.let(GuardDogBackpack::refill)
+        }
         player.inventory.setChanged()
         player.containerMenu.broadcastChanges()
     }

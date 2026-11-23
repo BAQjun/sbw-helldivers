@@ -53,6 +53,7 @@ object TacticalTerminalOffers {
         offer(TerminalCategory.DEFENSE,"anti_tank_minefield",70,15),
         offer(TerminalCategory.DEFENSE,"anti_tank_emplacement",150,20,5),
         offer(TerminalCategory.DEFENSE,"grenadier_battlement",110,15,5),
+        offer(TerminalCategory.BACKPACK, "supply_backpack", 180, 40, 5),
         offer(TerminalCategory.BACKPACK, "guard_dog", 180, 40, 5),
         offer(TerminalCategory.BACKPACK, "laser_guard_dog", 260, 70, 10),
         offer(TerminalCategory.BACKPACK, "stun_guard_dog", 280, 80, 10),

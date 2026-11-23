@@ -7,6 +7,7 @@ import com.example.sbwhelldiver.MOD_ID
 import net.minecraft.core.registries.Registries
 
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.server.level.ServerPlayer
 
 import net.minecraft.tags.TagKey
 
@@ -37,6 +38,18 @@ object StratagemBackpacks {
         if (usesCurios) BackpackCurios.createGuardDog(properties, laser, stun, flame, gas) else GuardDogBackpack(properties, laser, stun, flame, gas)
 
 
+
+    internal fun createSupply(properties: Item.Properties): SupplyBackpack =
+        if (usesCurios) BackpackCurios.createSupply(properties) else SupplyBackpack(properties)
+
+    fun interact(player: ServerPlayer) {
+        if (!player.isAlive || player.isSpectator) return
+        val stack = equipped(player) ?: return
+        when (stack.item) {
+            is SupplyBackpack -> SupplyBackpack.useCase(player, stack)
+            is GuardDogBackpack -> GuardDogBackpack.toggle(player)
+        }
+    }
 
     internal fun chest(player: Player): ItemStack? =
 

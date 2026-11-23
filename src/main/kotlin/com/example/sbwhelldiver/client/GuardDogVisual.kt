@@ -9,6 +9,8 @@ import com.example.sbwhelldiver.entity.GuardDogMotion
 import com.example.sbwhelldiver.entity.GuardDogEntity.Flight
 
 import com.example.sbwhelldiver.item.GuardDogBackpack
+import com.example.sbwhelldiver.item.StratagemBackpacks
+import com.example.sbwhelldiver.item.SupplyBackpack
 
 import com.example.sbwhelldiver.network.BeaconNetwork
 
@@ -92,7 +94,7 @@ object GuardDogVisual {
 
         val mc = Minecraft.getInstance()
 
-        if (key.consumeClick() && mc.screen == null && mc.player?.let(GuardDogBackpack::equipped) != null)
+        if (key.consumeClick() && mc.screen == null && mc.player?.let(StratagemBackpacks::equipped) != null)
 
             BeaconNetwork.CHANNEL.sendToServer(GuardDogTogglePacket)
 
@@ -545,7 +547,17 @@ object GuardDogVisual {
 
             swing: Float, amount: Float, partial: Float, age: Float, yaw: Float, pitch: Float) {
 
-            val pack = GuardDogBackpack.equipped(player) ?: return
+            val pack = StratagemBackpacks.equipped(player) ?: return
+            if (pack.item is SupplyBackpack) {
+                pose.pushPose()
+                parentModel.body.translateAndRotate(pose)
+                pose.translate(0.0, .365, .23)
+                pose.mulPose(Axis.XP.rotationDegrees(180f))
+                SupplyBackpackVisual.draw(pack, pose, buffers, light)
+                pose.popPose()
+                return
+            }
+            if (pack.item !is GuardDogBackpack) return
 
             val active = GuardDogBackpack.active(pack)
 

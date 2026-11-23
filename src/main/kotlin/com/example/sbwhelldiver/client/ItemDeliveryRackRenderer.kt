@@ -7,6 +7,7 @@ import com.example.sbwhelldiver.entity.AbstractHellpodEntity.Phase
 import com.example.sbwhelldiver.entity.ItemDeliveryHellpodEntity
 
 import com.example.sbwhelldiver.item.GuardDogBackpack
+import com.example.sbwhelldiver.item.SupplyBackpack
 
 import com.example.sbwhelldiver.entity.ItemDeliveryHellpodEntity.Side
 
@@ -166,6 +167,11 @@ object ItemDeliveryRackRenderer {
 
             if (side == Side.REAR) pose.mulPose(Axis.YP.rotationDegrees(180f))
 
+            if (stack.item is SupplyBackpack) {
+                pose.scale(.85f, .85f, .85f)
+                SupplyBackpackVisual.draw(stack, pose, buffers, light)
+                return
+            }
             if (stack.item is GuardDogBackpack) {
 
                 pose.scale(.85f, .85f, .85f)

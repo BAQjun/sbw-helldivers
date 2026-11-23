@@ -140,7 +140,7 @@ object MachineMesh:ResourceManagerReloadListener {
         val dogs = listOf("guard_dog", "laser_guard_dog", "stun_guard_dog", "flame_guard_dog", "gas_guard_dog")
             .flatMap { listOf(it, it + "_backpack") }
         val withLod = listOf("bioprocessor", "refinery", "bioprocessor_container", "refinery_container") + dogs
-        models=(withLod.flatMap { listOf(it, it + "_lod") } + listOf("tactical_terminal", "sample_container", "item_delivery_rack", "resupply_rack", "supply_case")).associateWith { name ->
+        models=(withLod.flatMap { listOf(it, it + "_lod") } + listOf("tactical_terminal", "sample_container", "item_delivery_rack", "resupply_rack", "supply_case", "supply_backpack")).associateWith { name ->
             val json=manager.open(ResourceLocation(MOD_ID,"models/mesh/$name.mesh.json.gz")).use{GZIPInputStream(it).reader().use(JsonParser::parseReader)}.asJsonObject
             fun floats(a:JsonArray)=a.map{it.asFloat}.toFloatArray()
             fun vector(a:JsonArray)=floats(a).let{Vector3f(it[0],it[1],it[2])}

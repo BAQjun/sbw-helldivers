@@ -3,6 +3,8 @@ import com.atsuishio.superbwarfare.data.gun.*
 import com.example.sbwhelldiver.entity.*
 import com.example.sbwhelldiver.init.*
 import com.example.sbwhelldiver.item.GuardDogBackpack
+import com.example.sbwhelldiver.item.StratagemBackpacks
+import com.example.sbwhelldiver.item.SupplyBackpack
 import com.example.sbwhelldiver.stratagem.*
 import com.example.sbwhelldiver.survival.*
 import com.mojang.authlib.GameProfile
@@ -12,6 +14,7 @@ import net.minecraft.gametest.framework.*
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.InteractionHand
+import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.item.*
 import net.minecraft.world.level.GameType
 import net.minecraft.world.phys.*
@@ -37,6 +40,41 @@ object ResupplyTests {
   for(i in 6..8){val s=p.inventory.getItem(i);h.assertTrue(GuardDogBackpack.ammo(s)==GuardDogBackpack.capacity(s)&&GuardDogBackpack.spareMags(s)==GuardDogBackpack.reserveCapacity(s),"Dog not fully refilled")};h.succeed()
  }
  @JvmStatic @GameTest(template="port_test",timeoutTicks=30)
+ fun supplyBackpackUsesExactlyOneCasePerPress(h: GameTestHelper) {
+  val p = player(h)
+  val pack = ItemStack(ModItems.SUPPLY_BACKPACK.get())
+  val weapon = gun("ak_47")
+  val gunData = requireNotNull(weapon.toGunData())
+  val consumer = gunData.selectedAmmoConsumer()
+  if (!consumer.initialized()) consumer.init()
+  val ammo = requireNotNull(consumer.playerAmmoType)
+  val expected = (gunData.get(GunProp.MAGAZINE) * ResupplyAmmo.MAGAZINES_PER_GUN + consumer.loadAmount - 1) / consumer.loadAmount
+  val ammoItem = ammo.getItemStack().item
+  fun ammunition() = ammo.get(p) + p.inventory.items.filter { it.`is`(ammoItem) }.sumOf { it.count }
+  p.inventory.setItem(0, weapon)
+  p.inventory.setItem(1, pack)
+  val initialAmmo = ammunition()
+  StratagemBackpacks.interact(p)
+  check(SupplyBackpack.cases(pack) == 4 && ammunition() == initialAmmo) { "An unequipped pack responded to the key" }
+  p.inventory.setItem(1, ItemStack.EMPTY)
+  p.setItemSlot(EquipmentSlot.CHEST, pack)
+  repeat(5) { press ->
+   StratagemBackpacks.interact(p)
+   val count = (press + 1).coerceAtMost(4)
+   check(SupplyBackpack.cases(pack) == 4 - count) { "Incorrect case count after pressing the backpack key" }
+   check(ammunition() == initialAmmo + count * expected) { "Weapon ammunition was duplicated or lost" }
+  }
+  val unequipped = pack.copy()
+  p.inventory.setItem(1, unequipped)
+  repeat(5) { index ->
+   ResupplyAmmo.collectCase(p)
+   check(SupplyBackpack.cases(pack) == (index + 1).coerceAtMost(4)) { "Case collection exceeded capacity or restored the wrong count" }
+   check(SupplyBackpack.cases(unequipped) == 0) { "An unequipped pack gained a case" }
+  }
+  h.succeed()
+ }
+
+ @JvmStatic @GameTest(template="port_test",timeoutTicks=30)
  fun paidChargesCannotBeDuplicated(h:GameTestHelper){
   val state=StratagemCooldownState();check(state.entry("resupply").remaining==0);repeat(5){check(state.purchaseResupply())};check(!state.purchaseResupply());state.restoreAllUses();state.setEnabled(false,0);check(state.entry("resupply").remaining==5)
   val token=UUID.randomUUID();check(state.reserve("resupply",token,1));check(!state.reserve("resupply",UUID.randomUUID(),1));check(state.beginArrival("resupply",token,2,197));check(state.beginArrival("resupply",token,3,197));check(state.entry("resupply").remaining==4);check(!state.beginArrival("resupply",UUID.randomUUID(),3,197));state.cancel("resupply",token);check(state.entry("resupply").remaining==5)
@@ -45,11 +83,16 @@ object ResupplyTests {
  }
  @JvmStatic @GameTest(template="port_test",timeoutTicks=30)
  fun fourCasesPersistAndDropAsUsableEntities(h:GameTestHelper){
-  val p=player(h);val pod=ModEntities.RESUPPLY_HELLPOD.get().create(h.level)!!;val at=Vec3.atBottomCenterOf(h.absolutePos(BlockPos(5,5,5)));pod.moveTo(at.x,at.y,at.z,180f,0f)
+  val p=player(h)
+  val pack=ItemStack(ModItems.SUPPLY_BACKPACK.get())
+  p.setItemSlot(EquipmentSlot.CHEST,pack)
+  repeat(2){StratagemBackpacks.interact(p)}
+  check(SupplyBackpack.cases(pack)==2)
+  val pod=ModEntities.RESUPPLY_HELLPOD.get().create(h.level)!!;val at=Vec3.atBottomCenterOf(h.absolutePos(BlockPos(5,5,5)));pod.moveTo(at.x,at.y,at.z,180f,0f)
   val n=pod.saveWithoutId(CompoundTag());n.putInt("HellpodPhase",AbstractHellpodEntity.Phase.ACTIVE.ordinal);n.putDouble("HellpodRestY",at.y);pod.load(n);h.level.addFreshEntity(pod)
   p.setPos(at.add(0.0,0.0,-2.2));val target=pod.toWorld(ResupplyHellpodEntity.caseBounds(0).center);val d=target.subtract(p.eyePosition);p.yRot=Math.toDegrees(atan2(-d.x,d.z)).toFloat();p.xRot=Math.toDegrees(atan2(-d.y,d.horizontalDistance())).toFloat()
-  check(pod.interact(p,InteractionHand.MAIN_HAND).consumesAction()) { "First case click rejected, phase=${pod.phase} eye=${p.eyePosition} target=$target view=${p.getViewVector(1f)}" };check(!pod.hasCase(0)&&(1..3).all(pod::hasCase)) { "Incorrect case removed" };check(!pod.interact(p,InteractionHand.MAIN_HAND).consumesAction()) { "Repeated ray selected another case" };val saved=pod.saveWithoutId(CompoundTag());pod.load(saved);check(!pod.hasCase(0)) { "Consumed case restored by save/load" }
-  pod.destroy();pod.destroy();val boxes=h.level.getEntitiesOfClass(SupplyCaseEntity::class.java,pod.boundingBox.inflate(3.0));check(boxes.size==3) { "Dropped ${boxes.size} boxes instead of 3" };val box=boxes.first();check(box.interact(p,InteractionHand.MAIN_HAND).consumesAction()) { "Loose case rejected" };check(box.isRemoved) { "Loose case survived interaction" };check(!box.interact(p,InteractionHand.MAIN_HAND).consumesAction()) { "Loose case granted twice" };boxes.forEach{it.discard()};h.succeed()
+  check(pod.interact(p,InteractionHand.MAIN_HAND).consumesAction()) { "First case click rejected, phase=${pod.phase} eye=${p.eyePosition} target=$target view=${p.getViewVector(1f)}" };check(SupplyBackpack.cases(pack)==3);check(!pod.hasCase(0)&&(1..3).all(pod::hasCase)) { "Incorrect case removed" };check(!pod.interact(p,InteractionHand.MAIN_HAND).consumesAction()) { "Repeated ray selected another case" };val saved=pod.saveWithoutId(CompoundTag());pod.load(saved);check(!pod.hasCase(0)) { "Consumed case restored by save/load" }
+  pod.destroy();pod.destroy();val boxes=h.level.getEntitiesOfClass(SupplyCaseEntity::class.java,pod.boundingBox.inflate(3.0));check(boxes.size==3) { "Dropped ${boxes.size} boxes instead of 3" };val box=boxes.first();check(box.interact(p,InteractionHand.MAIN_HAND).consumesAction()) { "Loose case rejected" };check(SupplyBackpack.cases(pack)==4);check(box.isRemoved) { "Loose case survived interaction" };check(!box.interact(p,InteractionHand.MAIN_HAND).consumesAction()) { "Loose case granted twice" };boxes.forEach{it.discard()};h.succeed()
  }
  @JvmStatic @GameTest(template="port_test",timeoutTicks=30)
  fun boostedRecipesKeepSuperAndInputCost(h:GameTestHelper){
