@@ -1,0 +1,37 @@
+{
+  "loader": "neoforge:separate_transforms",
+  "gui_light": "side",
+  "textures": {
+    "particle": "sbw_helldiver:item/warp_pack_inventory"
+  },
+  "base": {
+    "loader": "neoforge:item_layers",
+    "parent": "minecraft:item/generated",
+    "textures": {
+      "layer0": "sbw_helldiver:item/warp_pack_inventory"
+    }
+  },
+  "perspectives": {
+    "firstperson_righthand": {
+      "parent": "sbw_helldiver:item/warp_pack_3d"
+    },
+    "firstperson_lefthand": {
+      "parent": "sbw_helldiver:item/warp_pack_3d"
+    },
+    "thirdperson_righthand": {
+      "parent": "sbw_helldiver:item/warp_pack_3d"
+    },
+    "thirdperson_lefthand": {
+      "parent": "sbw_helldiver:item/warp_pack_3d"
+    },
+    "ground": {
+      "parent": "sbw_helldiver:item/warp_pack_3d"
+    },
+    "fixed": {
+      "parent": "sbw_helldiver:item/warp_pack_3d"
+    },
+    "head": {
+      "parent": "sbw_helldiver:item/warp_pack_3d"
+    }
+  }
+}

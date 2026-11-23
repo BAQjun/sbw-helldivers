@@ -11,6 +11,7 @@ object StratagemCooldownConfig {
         "supply_backpack" to 480.0,
         "jump_pack" to 480.0,
         "hover_pack" to 480.0,
+        "warp_pack" to 480.0,
         "guard_dog" to 480.0,
         "laser_guard_dog" to 480.0,
         "stun_guard_dog" to 480.0,

@@ -384,11 +384,12 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
         val id = dropTypeId ?: return false
         val pod = if(id.path=="machine_deployment_beacon") {
             com.example.sbwhelldiver.init.ModEntities.EQUIPMENT_BEACON.get().create(server) ?: return false
-        } else if (id.path in setOf("guard_dog", "laser_guard_dog", "stun_guard_dog", "flame_guard_dog", "gas_guard_dog", "supply_backpack", "jump_pack", "hover_pack")) {
+        } else if (id.path in setOf("guard_dog", "laser_guard_dog", "stun_guard_dog", "flame_guard_dog", "gas_guard_dog", "supply_backpack", "jump_pack", "hover_pack", "warp_pack")) {
             val pack = net.minecraft.world.item.ItemStack(when (id.path) {
                 "supply_backpack" -> com.example.sbwhelldiver.init.ModItems.SUPPLY_BACKPACK.get()
                 "jump_pack" -> com.example.sbwhelldiver.init.ModItems.JUMP_PACK.get()
                 "hover_pack" -> com.example.sbwhelldiver.init.ModItems.HOVER_PACK.get()
+                "warp_pack" -> com.example.sbwhelldiver.init.ModItems.WARP_PACK.get()
                 "stun_guard_dog" -> com.example.sbwhelldiver.init.ModItems.STUN_GUARD_DOG_BACKPACK.get()
                 "gas_guard_dog" -> com.example.sbwhelldiver.init.ModItems.GAS_GUARD_DOG_BACKPACK.get()
                 "flame_guard_dog" -> com.example.sbwhelldiver.init.ModItems.FLAME_GUARD_DOG_BACKPACK.get()

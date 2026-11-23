@@ -38,7 +38,9 @@ neoForge {
     addModdingDependenciesTo(taczCompatTest)
     runs {
         create("client") { client(); gameDirectory = clientRunDirectory
-            if (providers.gradleProperty("portTests").isPresent && !providers.gradleProperty("hoverPackTests").isPresent) systemProperty("sbw_helldiver.portClientTests", "true")
+            if (providers.gradleProperty("portTests").isPresent && listOf("hoverPackTests", "warpPackTests").none { providers.gradleProperty(it).isPresent }) {
+                systemProperty("sbw_helldiver.portClientTests", "true")
+            }
             if (providers.gradleProperty("guardDogAttachmentTests").isPresent) systemProperty("sbw_helldiver.guardDogAttachmentTests", "true")
             if (providers.gradleProperty("attachedLightTests").isPresent) systemProperty("sbw_helldiver.attachedLightTests", "true")
             if (providers.gradleProperty("stunGuardDogTests").isPresent) systemProperty("sbw_helldiver.stunGuardDogTests", "true")
@@ -54,6 +56,7 @@ neoForge {
             if (providers.gradleProperty("effectDiagnostics").isPresent) { systemProperty("sbw_helldiver.visualOnly", "true"); systemProperty("sbw_helldiver.laserShaderSmokeTest", "true") }
             if (providers.gradleProperty("jumpPackTests").isPresent) systemProperty("sbw_helldiver.jumpPackTests", "true")
             if (providers.gradleProperty("hoverPackTests").isPresent) systemProperty("sbw_helldiver.hoverPackTests", "true")
+            if (providers.gradleProperty("warpPackTests").isPresent) systemProperty("sbw_helldiver.warpPackTests", "true")
             if (providers.gradleProperty("resupplyTests").isPresent && !providers.gradleProperty("hoverPackTests").isPresent) systemProperty("sbw_helldiver.resupplyTests", "true")
             if (providers.gradleProperty("itemDeliveryTests").isPresent) systemProperty("sbw_helldiver.itemDeliveryTests", "true")
             if (providers.gradleProperty("taczCompatTests").isPresent) systemProperty("sbw_helldiver.taczCompatTests", "true")

@@ -387,5 +387,10 @@
   "tooltip.sbw_helldiver.hover_pack": "Hold Jump to take off. Hover and move slowly for 6 seconds. Recharges 12 seconds after landing.",
   "subtitles.sbw_helldiver.hover_pack_launch": "Hover Pack launches",
   "subtitles.sbw_helldiver.hover_pack_loop": "Hover Pack engines hum",
-  "subtitles.sbw_helldiver.hover_pack_land": "Hover Pack lands"
+  "subtitles.sbw_helldiver.hover_pack_land": "Hover Pack lands",
+  "item.sbw_helldiver.warp_pack": "Warp Pack",
+  "item.sbw_helldiver.warp_pack_stratagem": "Warp Pack",
+  "tooltip.sbw_helldiver.warp_pack": "Hold Jump to warp up to 10 blocks forward for 33% energy. Restores 6% per second. Purple is safe, yellow costs 8 health and can ignite you, and red is fatal.",
+  "subtitles.sbw_helldiver.warp_pack_depart": "Warp Pack discharges",
+  "subtitles.sbw_helldiver.warp_pack_arrive": "Warp arrival"
 }

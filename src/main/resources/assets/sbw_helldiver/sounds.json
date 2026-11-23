@@ -6151,5 +6151,63 @@
         "attenuation_distance": 32
       }
     ]
+  },
+  "sfx_warp_pack_depart": {
+    "subtitle": "subtitles.sbw_helldiver.warp_pack_depart",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/warp_pack/depart_1",
+        "attenuation_distance": 28
+      },
+      {
+        "name": "sbw_helldiver:original/warp_pack/depart_2",
+        "attenuation_distance": 28
+      },
+      {
+        "name": "sbw_helldiver:original/warp_pack/depart_3",
+        "attenuation_distance": 28
+      },
+      {
+        "name": "sbw_helldiver:original/warp_pack/depart_4",
+        "attenuation_distance": 28
+      },
+      {
+        "name": "sbw_helldiver:original/warp_pack/depart_5",
+        "attenuation_distance": 28
+      },
+      {
+        "name": "sbw_helldiver:original/warp_pack/depart_6",
+        "attenuation_distance": 28
+      }
+    ]
+  },
+  "sfx_warp_pack_arrive": {
+    "subtitle": "subtitles.sbw_helldiver.warp_pack_arrive",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/warp_pack/arrive_1",
+        "attenuation_distance": 28
+      },
+      {
+        "name": "sbw_helldiver:original/warp_pack/arrive_2",
+        "attenuation_distance": 28
+      },
+      {
+        "name": "sbw_helldiver:original/warp_pack/arrive_3",
+        "attenuation_distance": 28
+      },
+      {
+        "name": "sbw_helldiver:original/warp_pack/arrive_4",
+        "attenuation_distance": 28
+      },
+      {
+        "name": "sbw_helldiver:original/warp_pack/arrive_5",
+        "attenuation_distance": 28
+      },
+      {
+        "name": "sbw_helldiver:original/warp_pack/arrive_6",
+        "attenuation_distance": 28
+      }
+    ]
   }
 }

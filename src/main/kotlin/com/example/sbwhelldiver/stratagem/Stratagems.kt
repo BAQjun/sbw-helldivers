@@ -55,6 +55,7 @@ object Stratagems {
         StratagemDefinition("supply_backpack", listOf(DOWN, LEFT, DOWN, UP, UP, DOWN), StratagemCategory.BLUE),
         StratagemDefinition("jump_pack", listOf(DOWN, UP, UP, DOWN, UP), StratagemCategory.BLUE),
         StratagemDefinition("hover_pack", listOf(DOWN, UP, UP, DOWN, LEFT, RIGHT), StratagemCategory.BLUE),
+        StratagemDefinition("warp_pack", listOf(DOWN, LEFT, RIGHT, DOWN, LEFT, RIGHT), StratagemCategory.BLUE),
         StratagemDefinition("guard_dog", listOf(DOWN, UP, LEFT, UP, RIGHT, DOWN), StratagemCategory.BLUE),
         StratagemDefinition("shield_generator",listOf(DOWN,UP,LEFT,RIGHT,LEFT,DOWN)),
         StratagemDefinition("grenadier_battlement",listOf(DOWN,RIGHT,DOWN,LEFT,RIGHT)),
