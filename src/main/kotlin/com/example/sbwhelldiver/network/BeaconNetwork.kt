@@ -112,8 +112,12 @@ data class BeaconFailurePacket(val stratagemId: String, val loadoutIds: List<Str
 }
 
 object BeaconNetwork {
-    val CHANNEL = NetworkRegistry.newSimpleChannel(ResourceLocation(MOD_ID, "beacon"), { "15" }, { it == "15" }, { it == "15" })
+    val CHANNEL = NetworkRegistry.newSimpleChannel(ResourceLocation(MOD_ID, "beacon"), { "16" }, { it == "16" }, { it == "16" })
     fun register() {
+        CHANNEL.registerMessage(33, JumpPackInputPacket::class.java, JumpPackInputPacket::encode,
+            JumpPackInputPacket::decode, JumpPackInputPacket::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER))
+        CHANNEL.registerMessage(34, JumpPackThrustPacket::class.java, JumpPackThrustPacket::encode,
+            JumpPackThrustPacket::decode, JumpPackThrustPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(30, OpenSampleContainerPacket::class.java, { _, _ -> }, { OpenSampleContainerPacket },
             { _, context -> OpenSampleContainerPacket.handle(context) }, Optional.of(NetworkDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(31, BeaconQuickSlotPacket::class.java, BeaconQuickSlotPacket::encode,

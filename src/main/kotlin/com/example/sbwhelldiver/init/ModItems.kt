@@ -64,6 +64,12 @@ object ModItems {
         com.example.sbwhelldiver.item.StratagemBackpacks.createGuardDog(Item.Properties().stacksTo(1), laser = true)
     }
 
+    val JUMP_PACK_STRATAGEM = ITEMS.register("jump_pack_stratagem") {
+        StratagemItem(Item.Properties().stacksTo(16), dropId("jump_pack"))
+    }
+    val JUMP_PACK = ITEMS.register("jump_pack") {
+        com.example.sbwhelldiver.item.StratagemBackpacks.createJumpPack(Item.Properties().stacksTo(1))
+    }
     val SUPPLY_BACKPACK_STRATAGEM = ITEMS.register("supply_backpack_stratagem") {
         StratagemItem(Item.Properties().stacksTo(16), dropId("supply_backpack"))
     }

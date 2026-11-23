@@ -6041,5 +6041,64 @@
         "attenuation_distance": 64
       }
     ]
+  },
+  "sfx_jump_pack_launch": {
+    "subtitle": "subtitles.sbw_helldiver.jump_pack_launch",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/jump_pack/launch_1",
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/jump_pack/launch_2",
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/jump_pack/launch_3",
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/jump_pack/launch_4",
+        "stream": false,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_jump_pack_brake": {
+    "subtitle": "subtitles.sbw_helldiver.jump_pack_brake",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/jump_pack/brake_1",
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/jump_pack/brake_2",
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/jump_pack/brake_3",
+        "stream": false,
+        "attenuation_distance": 48
+      },
+      {
+        "name": "sbw_helldiver:original/jump_pack/brake_4",
+        "stream": false,
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "sfx_jump_pack_flight": {
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/jump_pack/flight",
+        "stream": false,
+        "attenuation_distance": 48
+      }
+    ]
   }
 }

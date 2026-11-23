@@ -15,12 +15,12 @@ internal object GuardDogThrusters {
     fun beginFrame() = plumes.clear()
 
     fun capture(pose: PoseStack, origin: Vector3f, axis: Vector3f,
-        power: Float, age: Float) {
+        power: Float, age: Float, lengthScale: Float = 1f, widthScale: Float = 1f) {
         if (ShaderPackCompat.shadowPass()) return
         val camera = Minecraft.getInstance().gameRenderer.mainCamera.position
         val pulse = 1f + .045f * sin(age * 2.7f + origin.x * 17f)
-        val length = .22f * power * pulse
-        val width = .034f * (.65f + .35f * power)
+        val length = .22f * lengthScale * power * pulse
+        val width = .034f * widthScale * (.65f + .35f * power)
         val right = Vector3f(axis).cross(if (abs(axis.z) > .9f) Vector3f(1f, 0f, 0f) else Vector3f(0f, 0f, 1f)).normalize().mul(width)
         val other = Vector3f(axis).cross(right).normalize().mul(width)
         val end = Vector3f(origin).fma(length, axis)

@@ -50,6 +50,8 @@ object ModCreativeTabs {
                 output.accept(ModItems.EAGLE_STRAFING_RUN.get())
                 output.accept(ModItems.SUPPLY_BACKPACK_STRATAGEM.get())
                 output.accept(ModItems.SUPPLY_BACKPACK.get())
+                output.accept(ModItems.JUMP_PACK_STRATAGEM.get())
+                output.accept(ModItems.JUMP_PACK.get())
                 output.accept(ModItems.GUARD_DOG.get())
                 output.accept(ModItems.LASER_GUARD_DOG.get())
                 output.accept(ModItems.STUN_GUARD_DOG.get())
