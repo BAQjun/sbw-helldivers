@@ -22,6 +22,7 @@ import net.minecraft.client.Screenshot
 import net.minecraft.client.gui.screens.TitleScreen
 import net.minecraft.client.gui.screens.inventory.InventoryScreen
 import net.minecraft.core.BlockPos
+import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.nbt.CompoundTag
@@ -32,6 +33,7 @@ import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.component.CustomData
 import net.minecraft.world.level.GameRules
 import net.minecraft.world.level.GameType
 import net.minecraft.world.level.LevelSettings
@@ -72,6 +74,7 @@ object ResupplyClientTest {
  @Volatile private var testPlayer:UUID?=null
  private var standUnderPodAt=Long.MAX_VALUE
  private var packBeforeImpact:ItemStack?=null
+ private var packBeforeHudChecks = ItemStack.EMPTY
  @SubscribeEvent fun standUnderPod(event:PlayerTickEvent.Pre) {
   val victim=event.entity as? ServerPlayer ?:return
   val level=victim.serverLevel()
@@ -185,6 +188,61 @@ object ResupplyClientTest {
     check(mc.screen == null) {"The backpack key also opened Curios"}
     check(pack?.item is SupplyBackpack && SupplyBackpack.cases(pack) == 3) {"Back slot did not synchronize after pressing G"}
     capture(mc,"supply-backpack-three-cases.png")
+   }
+   if (ticks == 70 || ticks == 90 || ticks == 110) {
+    val cases = when (ticks) {
+     70 -> 2
+     90 -> 1
+     else -> 3
+    }
+    server.execute {
+     val host = server.playerList.getPlayer(player.uuid) ?: return@execute
+     val back = CuriosApi.getCuriosInventory(host).orElseThrow().getStacksHandler("back").orElseThrow().stacks
+     val testPack = back.getStackInSlot(0).copy()
+     CustomData.update(DataComponents.CUSTOM_DATA, testPack) { it.putInt("SupplyCases", cases) }
+     back.setStackInSlot(0, testPack)
+    }
+   }
+   if (ticks == 86 || ticks == 106) {
+    val cases = if (ticks == 86) 2 else 1
+    check(pack?.item is SupplyBackpack && SupplyBackpack.cases(pack) == cases)
+    capture(mc, if (cases == 2) "backpack-hud-half.png" else "backpack-hud-below-half.png")
+   }
+   val hudStep = ticks
+   if (hudStep in listOf(115, 140, 159, 167, 175)) server.execute {
+    val host = server.playerList.getPlayer(player.uuid) ?: return@execute
+    val back = CuriosApi.getCuriosInventory(host).orElseThrow().getStacksHandler("back").orElseThrow().stacks
+    if (hudStep == 115) packBeforeHudChecks = back.getStackInSlot(0).copy()
+    val testPack = when (hudStep) {
+     115 -> ItemStack(ModItems.JUMP_PACK.get()).also { stack ->
+      CustomData.update(DataComponents.CUSTOM_DATA, stack) { it.putLong("JumpPackReadyAt", level.gameTime + 15) }
+     }
+     140 -> ItemStack(ModItems.HOVER_PACK.get()).also { stack ->
+      CustomData.update(DataComponents.CUSTOM_DATA, stack) { it.putLong("HoverPackReadyAt", level.gameTime + 13) }
+     }
+     159, 167 -> ItemStack(ModItems.WARP_PACK.get()).also { stack ->
+      CustomData.update(DataComponents.CUSTOM_DATA, stack) {
+       it.putInt("WarpPackEnergy", if (hudStep == 159) 559 else 560)
+       it.putLong("WarpPackUsedAt", level.gameTime + 40)
+      }
+     }
+     else -> packBeforeHudChecks
+    }
+    back.setStackInSlot(0, testPack)
+   }
+   val hudSnapshot = when (hudStep) {
+    121 -> "jump-cooling" to ModItems.JUMP_PACK.get()
+    136 -> "jump-ready" to ModItems.JUMP_PACK.get()
+    146 -> "hover-cooling" to ModItems.HOVER_PACK.get()
+    157 -> "hover-ready" to ModItems.HOVER_PACK.get()
+    165 -> "warp-lethal" to ModItems.WARP_PACK.get()
+    173 -> "warp-risk" to ModItems.WARP_PACK.get()
+    else -> null
+   }
+   if (hudSnapshot != null) {
+    val (name, item) = hudSnapshot
+    check(pack?.item === item) { "Back slot did not synchronize for $name" }
+    capture(mc, "backpack-hud-$name.png")
    }
    if (ticks == 75) mc.options.cameraType = CameraType.FIRST_PERSON
    if(verified){

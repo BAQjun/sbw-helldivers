@@ -155,7 +155,7 @@ object HoverPackFlight {
     }
 
     private fun time(player: ServerPlayer) = player.serverLevel().server.overworld().gameTime
-    private fun readyAt(stack: ItemStack) = stack.get(DataComponents.CUSTOM_DATA)?.copyTag()?.getLong(READY_AT) ?: 0L
+    internal fun readyAt(stack: ItemStack) = stack.get(DataComponents.CUSTOM_DATA)?.copyTag()?.getLong(READY_AT) ?: 0L
     private fun setReadyAt(stack: ItemStack, readyAt: Long) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack) { it.putLong(READY_AT, readyAt) }
     }

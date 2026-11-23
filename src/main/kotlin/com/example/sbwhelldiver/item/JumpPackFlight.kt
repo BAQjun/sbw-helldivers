@@ -24,7 +24,7 @@ import kotlin.math.sin
 @EventBusSubscriber(modid = MOD_ID)
 internal object JumpPackFlight {
     private const val READY_AT = "JumpPackReadyAt"
-    private const val RECHARGE_TICKS = 15 * 20
+    const val RECHARGE_TICKS = 15 * 20
     private const val LAUNCH_TICKS = 10
     private const val BRAKE_TICKS = 20
     private const val FLIGHT_LIMIT = 20 * 20
@@ -182,7 +182,7 @@ internal object JumpPackFlight {
 
     private fun time(player: ServerPlayer) = player.serverLevel().server.overworld().gameTime
 
-    private fun readyAt(stack: ItemStack): Long = stack.get(DataComponents.CUSTOM_DATA)?.copyTag()?.getLong(READY_AT) ?: 0L
+    internal fun readyAt(stack: ItemStack): Long = stack.get(DataComponents.CUSTOM_DATA)?.copyTag()?.getLong(READY_AT) ?: 0L
     private fun setReadyAt(stack: ItemStack, readyAt: Long) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack) { it.putLong(READY_AT, readyAt) }
     }
