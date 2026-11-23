@@ -31,11 +31,11 @@ internal object HoverPackVisual {
     private class EngineSound(private val player: AbstractClientPlayer) : AbstractTickableSoundInstance(
         ModSounds.EVENTS.getValue("sfx_hover_pack_loop").get(), SoundSource.PLAYERS, RandomSource.create()
     ) {
-        private val fullVolume = .42f
+        private val fullVolume = .24f
 
         init {
             looping = true
-            volume = .08f
+            volume = .025f
             follow()
         }
 
@@ -50,13 +50,13 @@ internal object HoverPackVisual {
             val phase = phase(player)
             if (phase == Phase.IDLE || phase == Phase.DESCENT || !player.isAlive || player.isRemoved ||
                 Minecraft.getInstance().level !== player.level() || StratagemBackpacks.equipped(player)?.item !is HoverPack) {
-                volume -= .08f
+                volume -= .12f
                 if (volume <= 0f) {
                     stop()
                     if (engines[player]?.get() === this) engines.remove(player)
                 }
             } else {
-                volume = (volume + .08f).coerceAtMost(fullVolume)
+                volume = (volume + .025f).coerceAtMost(fullVolume)
             }
         }
     }

@@ -99,9 +99,9 @@ internal object WarpPackFlight {
         val burst = WarpPackBurstPacket(origin.add(0.0, .95, 0.0), destination.add(0.0, .95, 0.0))
         burst.send(level)
         level.playSound(null, burst.origin.x, burst.origin.y, burst.origin.z,
-            ModSounds.EVENTS.getValue("sfx_warp_pack_depart").get(), SoundSource.PLAYERS, .90f, 1f)
+            ModSounds.EVENTS.getValue("sfx_warp_pack_depart").get(), SoundSource.PLAYERS, .75f, 1f)
         level.playSound(null, burst.destination.x, burst.destination.y, burst.destination.z,
-            ModSounds.EVENTS.getValue("sfx_warp_pack_arrive").get(), SoundSource.PLAYERS, .68f, 1f)
+            ModSounds.EVENTS.getValue("sfx_warp_pack_arrive").get(), SoundSource.PLAYERS, .70f, 1f)
 
         when (phase) {
             Phase.SAFE -> Unit

@@ -133,7 +133,7 @@ object HoverPackFlight {
             else -> return
         }
         player.level().playSound(null, player.x, player.y, player.z, ModSounds.EVENTS.getValue(cue).get(),
-            SoundSource.PLAYERS, if (phase == Phase.ASCENT) .65f else .55f, 1f)
+            SoundSource.PLAYERS, if (phase == Phase.ASCENT) .56f else .49f, 1f)
     }
 
     private fun clearAbove(player: ServerPlayer, rise: Double) =
