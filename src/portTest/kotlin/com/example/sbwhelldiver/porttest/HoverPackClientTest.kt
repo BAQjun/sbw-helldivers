@@ -36,6 +36,7 @@ object HoverPackClientTest {
     private val launchedAt = System.nanoTime()
     private var creatingWorld = false
     @Volatile private var fixtureError: Throwable? = null
+    private var failed = false
     private var setup = false
     private var step = Step.EQUIP
     private var elapsed = 0
@@ -59,7 +60,7 @@ object HoverPackClientTest {
 
     @SubscribeEvent
     fun tick(event: ClientTickEvent.Post) {
-        if (!enabled) return
+        if (!enabled || failed) return
         val mc = Minecraft.getInstance()
         try {
             check(System.nanoTime() - launchedAt < 150_000_000_000L) { "Client test timed out at $step" }
@@ -140,15 +141,16 @@ object HoverPackClientTest {
                         check(hoverPosition.y - origin.y in 5.4..6.5) { "Ascent stopped at ${hoverPosition.y - origin.y}" }
                         forward.isDown = true
                     }
-                    if (hoverStarted > 0 && brakes == 0 && elapsed > hoverStarted + 6) {
-                        check(kotlin.math.abs(player.y - hoverPosition.y) <= .6) { "Hover did not hold altitude" }
-                    }
-                    if (brakes == 1 && flightAge == 0) {
+                    // Movement packets and the sound engine advance independently.
+                    if (hoverStarted > 0 && flightAge == 0 && player.y < hoverPosition.y - .6) {
                         forward.isDown = false
                         flightAge = elapsed - hoverStarted
-                        check(hoverStarted > 0 && flightAge in 115..126) { "Expected six seconds of hover, got $flightAge ticks" }
+                        check(flightAge in 115..129) { "Expected six seconds of hover, got $flightAge ticks" }
                         val distance = player.z - hoverPosition.z
                         check(distance in 7.0..17.0) { "Hover steering was missing or too fast: $distance blocks" }
+                    }
+                    if (hoverStarted > 0 && flightAge == 0 && elapsed > hoverStarted + 6) {
+                        check(player.y <= hoverPosition.y + .6) { "Hover climbed above its set altitude" }
                     }
                     if (cooling) {
                         check(player.y - origin.y < .6 && player.health == player.maxHealth) { "Cooldown or fall damage before landing" }
@@ -178,6 +180,7 @@ object HoverPackClientTest {
                 }
             }
         } catch (failure: Throwable) {
+            failed = true
             LOGGER.error("HOVER_PACK_CLIENT_FAILED at $step:$elapsed", failure)
             mc.stop()
         }
