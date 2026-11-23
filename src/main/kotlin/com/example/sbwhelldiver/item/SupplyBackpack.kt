@@ -8,6 +8,12 @@ import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 
 open class SupplyBackpack(properties: Properties) : BackpackStratagemItem(properties) {
+    override fun initializeClient(consumer: java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions>) {
+        consumer.accept(object : net.minecraftforge.client.extensions.common.IClientItemExtensions {
+            override fun getCustomRenderer() = com.example.sbwhelldiver.client.SupplyBackpackVisual.itemRenderer
+        })
+    }
+
     override fun appendHoverText(stack: ItemStack, level: Level?, tooltip: MutableList<Component>, flag: TooltipFlag) {
         tooltip.add(Component.translatable("tooltip.sbw_helldiver.supply_backpack_cases", cases(stack), CAPACITY))
     }

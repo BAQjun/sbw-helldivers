@@ -66,6 +66,7 @@ import java.util.UUID
 
 import kotlin.math.sin
 
+import net.minecraftforge.client.event.InputEvent
 import net.minecraftforge.client.settings.KeyConflictContext
 
 import org.lwjgl.glfw.GLFW
@@ -89,6 +90,25 @@ object GuardDogVisual {
         GLFW.GLFW_KEY_G, "key.categories.sbw_helldiver")
 
 
+
+    @net.minecraftforge.eventbus.api.SubscribeEvent
+    fun onBackpackKey(event: InputEvent.Key) {
+        if (event.action == GLFW.GLFW_RELEASE) return
+        val input = InputConstants.getKey(event.key, event.scanCode)
+        if (!key.isActiveAndMatches(input)) return
+        val mc = Minecraft.getInstance()
+        if (mc.screen != null) return
+        val player = mc.player?.takeIf { it.isAlive && !it.isSpectator } ?: return
+        val pack = StratagemBackpacks.equipped(player) ?: return
+
+        // Curios also defaults to G. Preserve that binding and let an equipped
+        // stratagem backpack take priority only when both bindings match.
+        mc.options.keyMappings.firstOrNull { it.name == "key.curios.open.desc" && it.isActiveAndMatches(input) }
+            ?.let { while (it.consumeClick()) { /* discard the shared Curios click */ } }
+        if (event.action == GLFW.GLFW_REPEAT && pack.item is SupplyBackpack) {
+            while (key.consumeClick()) { /* one case per physical press */ }
+        }
+    }
 
     fun pollKey() {
 

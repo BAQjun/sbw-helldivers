@@ -1,1 +1,28 @@
-{"parent":"minecraft:item/generated","textures":{"layer0":"sbw_helldiver:item/supply_backpack"}}
+{
+  "loader": "forge:separate_transforms",
+  "gui_light": "side",
+  "textures": {
+    "particle": "sbw_helldiver:item/supply_backpack"
+  },
+  "base": {
+    "loader": "forge:item_layers",
+    "parent": "minecraft:item/generated",
+    "textures": {
+      "layer0": "sbw_helldiver:item/supply_backpack"
+    }
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "minecraft:builtin/entity",
+      "display": {
+        "gui": {
+          "rotation": [
+            25,
+            140,
+            0
+          ]
+        }
+      }
+    }
+  }
+}
