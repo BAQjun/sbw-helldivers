@@ -37,7 +37,7 @@ class ResupplyHellpodEntity(type: EntityType<*>, level: Level) : ItemDeliveryHel
         if (player is ServerPlayer) {
             // Consume before granting: two interactions in the same tick cannot duplicate a case.
             removeCase(target.first)
-            ResupplyAmmo.refill(player)
+            ResupplyAmmo.collectCase(player)
             ResupplyAmmo.playPickupSound(level(), x, y + 1, z)
             val side = if (target.first % 2 == 0) Side.FRONT else Side.REAR
             if ((0..3).none { it % 2 == target.first % 2 && hasCase(it) }) closeSide(side)

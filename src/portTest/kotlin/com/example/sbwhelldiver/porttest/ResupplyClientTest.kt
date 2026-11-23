@@ -11,9 +11,15 @@ import com.example.sbwhelldiver.entity.HellpodCapEntity
 import com.example.sbwhelldiver.entity.ItemDeliveryHellpodEntity
 import com.example.sbwhelldiver.entity.ItemDeliveryHellpodEntity.Side
 import com.example.sbwhelldiver.init.ModEntities
+import com.example.sbwhelldiver.init.ModItems
+import com.example.sbwhelldiver.item.StratagemBackpacks
+import com.example.sbwhelldiver.item.SupplyBackpack
+import com.mojang.blaze3d.vertex.PoseStack
+import net.minecraft.client.CameraType
 import net.minecraft.client.Minecraft
 import net.minecraft.client.Screenshot
 import net.minecraft.client.gui.screens.TitleScreen
+import net.minecraft.client.gui.screens.inventory.InventoryScreen
 import net.minecraft.core.BlockPos
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
@@ -23,6 +29,7 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.Difficulty
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.item.ItemEntity
+import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.GameRules
 import net.minecraft.world.level.GameType
@@ -39,6 +46,8 @@ import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.neoforge.client.event.ClientTickEvent
 import net.neoforged.neoforge.client.event.sound.PlaySoundSourceEvent
+import org.lwjgl.glfw.GLFW
+import top.theillusivec4.curios.api.CuriosApi
 import java.util.UUID
 import kotlin.math.atan2
 
@@ -71,21 +80,51 @@ object ResupplyClientTest {
     level.gameRules.getRule(GameRules.RULE_DAYLIGHT).set(false,server);level.dayTime=6000
     for(x in -12..12)for(z in -12..12)for(y in 76..79)level.setBlock(BlockPos(x,y,z),Blocks.SMOOTH_STONE.defaultBlockState(),3)
     level.setDefaultSpawnPos(BlockPos(0,80,-4),0f)
-    server.playerList.getPlayer(player.uuid)!!.teleportTo(level,.5,80.0,-2.1,0f,0f)
+    val serverPlayer=server.playerList.getPlayer(player.uuid)!!
+    serverPlayer.teleportTo(level,.5,80.0,-2.1,0f,0f)
+    val back=CuriosApi.getCuriosInventory(serverPlayer).orElseThrow().getStacksHandler("back").orElseThrow().stacks
+    check(back.insertItem(0,ItemStack(ModItems.SUPPLY_BACKPACK.get()),false).isEmpty){"Supply pack could not be equipped in Curios"}
+    serverPlayer.inventory.setItem(1, ItemStack(ModItems.GUARD_DOG_BACKPACK.get()))
+    serverPlayer.inventory.setItem(2, ItemStack(ModItems.SUPPLY_BACKPACK.get()))
+    serverPlayer.inventory.setItem(3, ItemStack(ModItems.SUPPLY_BACKPACK_STRATAGEM.get()))
+    serverPlayer.containerMenu.broadcastChanges()
     val marker=ModEntities.STRATAGEM_MARKER.get().create(level)!!
     marker.moveTo(.5,80.0,.5,180f,0f)
     marker.configure(com.example.sbwhelldiver.stratagem.Stratagems.resupply.dropId,197,player.uuid,groundY=80.0)
     check(level.addFreshEntity(marker))
 
    }catch(e:Throwable){failure=e}}
+   val pack = StratagemBackpacks.equipped(player)
+   if (ticks == 25) {
+    check(pack?.item is SupplyBackpack && SupplyBackpack.cases(pack) == 4)
+    check(MachineMesh.batchCount("supply_backpack") == 5)
+    val model = mc.itemRenderer.getModel(pack, client, player, 0)
+    check(model.applyTransform(ItemDisplayContext.GUI, PoseStack(), false).isCustomRenderer)
+    check(!model.applyTransform(ItemDisplayContext.FIRST_PERSON_RIGHT_HAND, PoseStack(), false).isCustomRenderer)
+    check(!model.applyTransform(ItemDisplayContext.GROUND, PoseStack(), false).isCustomRenderer)
+    mc.options.cameraType = CameraType.THIRD_PERSON_BACK
+   }
+   if (ticks == 28) mc.setScreen(InventoryScreen(player))
+   if (ticks == 30) capture(mc,"supply-backpack-item-and-stratagem.png")
+   if (ticks == 32) mc.setScreen(null)
+   if (ticks == 35) capture(mc,"supply-backpack-four-cases.png")
+   if (ticks == 40) mc.keyboardHandler.keyPress(mc.window.window, GLFW.GLFW_KEY_G, 0, GLFW.GLFW_PRESS, 0)
+   if (ticks in 45..55 step 5) mc.keyboardHandler.keyPress(mc.window.window, GLFW.GLFW_KEY_G, 0, GLFW.GLFW_REPEAT, 0)
+   if (ticks == 60) mc.keyboardHandler.keyPress(mc.window.window, GLFW.GLFW_KEY_G, 0, GLFW.GLFW_RELEASE, 0)
+   if (ticks == 65) {
+    check(mc.screen == null) {"The backpack key also opened Curios"}
+    check(pack?.item is SupplyBackpack && SupplyBackpack.cases(pack) == 3) {"Back slot did not synchronize after pressing G"}
+    capture(mc,"supply-backpack-three-cases.png")
+   }
+   if (ticks == 75) mc.options.cameraType = CameraType.FIRST_PERSON
    if(verified){
     val loose=client.entitiesForRendering().filterIsInstance<com.example.sbwhelldiver.entity.SupplyCaseEntity>()
     if(!looseRequested&&loose.size==2){
-     check(pickupSounds==2&&vanillaPickups==0){"Wrong rack audio: native=$pickupSounds vanilla=$vanillaPickups"}
+     check(pickupSounds==3&&vanillaPickups==0){"Wrong rack audio: native=$pickupSounds vanilla=$vanillaPickups"}
      capture(mc,"resupply-dropped-cases.png");looseRequested=true
      check(mc.gameMode!!.interact(player,loose.first(),InteractionHand.MAIN_HAND).consumesAction())
     }
-    if(looseRequested&&loose.size==1&&pickupSounds==3){
+    if(looseRequested&&loose.size==1&&pickupSounds==4){
      check(vanillaPickups==0);LOGGER.info("RESUPPLY_CLIENT_PASSED: rack and loose case native event heard exactly once per pickup; four-case lifecycle verified");mc.stop()
     }
     return
@@ -107,7 +146,12 @@ object ResupplyClientTest {
     val d=target.subtract(player.eyePosition);player.yRot=Math.toDegrees(atan2(-d.x,d.z)).toFloat();player.xRot=Math.toDegrees(atan2(-d.y,d.horizontalDistance())).toFloat();player.yRotO=player.yRot;player.xRotO=player.xRot
     if(active==30){check(hudSeen){"Resupply HUD never displayed"};check(braking&&cap);check((0..3).all(pod::hasCase));check(MachineMesh.batchCount("resupply_rack")==7);capture(mc,"resupply-four-cases.png")}
     if(active==50||active==100){check(mc.gameMode!!.interactAt(player,pod,EntityHitResult(pod),InteractionHand.MAIN_HAND).consumesAction());picked++}
-    if(active==70){check(!pod.hasCase(0)&&pod.hasCase(2));capture(mc,"resupply-one-consumed.png")}
+    if(active==70){
+     check(!pod.hasCase(0)&&pod.hasCase(2))
+     check(pack?.item is SupplyBackpack && SupplyBackpack.cases(pack) == 4) {"Rack pickup did not restock the Curios slot"}
+     LOGGER.info("SUPPLY_BACKPACK_CLIENT_PASSED: G consumed a case in Curios and the rack restored it")
+     capture(mc,"resupply-one-consumed.png")
+    }
     if(active==120){check(!pod.hasCase(0)&&!pod.hasCase(2)&&pod.hasCase(1)&&pod.hasCase(3));capture(mc,"resupply-front-empty.png")
      server.execute{try{val actual=level.getEntity(podId!!) as com.example.sbwhelldiver.entity.ResupplyHellpodEntity;actual.destroy();val cases=level.getEntitiesOfClass(com.example.sbwhelldiver.entity.SupplyCaseEntity::class.java,actual.boundingBox.inflate(5.0));check(cases.size==2);verified=true}catch(e:Throwable){failure=e}}
     }

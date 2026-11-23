@@ -64,6 +64,13 @@ object ModItems {
         com.example.sbwhelldiver.item.StratagemBackpacks.createGuardDog(Item.Properties().stacksTo(1), laser = true)
     }
 
+    val SUPPLY_BACKPACK_STRATAGEM = ITEMS.register("supply_backpack_stratagem") { _ ->
+        StratagemItem(Item.Properties().stacksTo(16), dropId("supply_backpack"))
+    }
+    val SUPPLY_BACKPACK = ITEMS.register("supply_backpack") { _ ->
+        com.example.sbwhelldiver.item.StratagemBackpacks.createSupply(Item.Properties().stacksTo(1))
+    }
+
     val GUARD_DOG = ITEMS.register("guard_dog_stratagem") { _ -> StratagemItem(Item.Properties().stacksTo(16), dropId("guard_dog")) }
     val GUARD_DOG_BACKPACK = ITEMS.register("guard_dog_backpack") { _ ->
         com.example.sbwhelldiver.item.StratagemBackpacks.createGuardDog(Item.Properties().stacksTo(1))

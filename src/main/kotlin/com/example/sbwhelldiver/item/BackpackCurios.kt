@@ -23,6 +23,8 @@ internal object BackpackCurios {
 
     fun createGuardDog(properties: Item.Properties, laser: Boolean, stun: Boolean, flame: Boolean, gas: Boolean): GuardDogBackpack = CurioGuardDogBackpack(properties, laser, stun, flame, gas)
 
+    fun createSupply(properties: Item.Properties): SupplyBackpack = CurioSupplyBackpack(properties)
+
     private fun slots(player: Player) =
         CuriosApi.getCuriosInventory(player).orElse(null)?.getStacksHandler(BACK)?.orElse(null)?.stacks
 
@@ -73,6 +75,10 @@ internal object BackpackCurios {
             player.inventory.placeItemBackInInventory(chest)
         }
     }
+}
+
+private class CurioSupplyBackpack(properties: Item.Properties) : SupplyBackpack(properties), ICurioItem {
+    override fun canEquipFromUse(slotContext: SlotContext, stack: ItemStack) = true
 }
 
 private class CurioGuardDogBackpack(properties: Item.Properties, laser: Boolean, stun: Boolean, flame: Boolean, gas: Boolean) : GuardDogBackpack(properties, laser, stun, flame, gas), ICurioItem {

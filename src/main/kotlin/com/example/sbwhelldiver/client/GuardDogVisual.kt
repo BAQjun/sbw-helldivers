@@ -4,6 +4,8 @@ import com.example.sbwhelldiver.entity.GuardDogEntity
 import com.example.sbwhelldiver.entity.GuardDogMotion
 import com.example.sbwhelldiver.entity.GuardDogEntity.Flight
 import com.example.sbwhelldiver.item.GuardDogBackpack
+import com.example.sbwhelldiver.item.StratagemBackpacks
+import com.example.sbwhelldiver.item.SupplyBackpack
 import com.example.sbwhelldiver.network.BeaconNetwork
 import com.example.sbwhelldiver.network.GuardDogTogglePacket
 import com.mojang.blaze3d.platform.InputConstants
@@ -31,6 +33,7 @@ import org.joml.Quaternionf
 import org.joml.Vector3f
 import java.util.UUID
 import kotlin.math.sin
+import net.neoforged.neoforge.client.event.InputEvent
 import net.neoforged.neoforge.client.settings.KeyConflictContext
 import org.lwjgl.glfw.GLFW
 
@@ -43,9 +46,28 @@ object GuardDogVisual {
     val key = KeyMapping("key.sbw_helldiver.guard_dog", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM,
         GLFW.GLFW_KEY_G, "key.categories.sbw_helldiver")
 
+    @net.neoforged.bus.api.SubscribeEvent
+    fun onBackpackKey(event: InputEvent.Key) {
+        if (event.action == GLFW.GLFW_RELEASE) return
+        val input = InputConstants.getKey(event.key, event.scanCode)
+        if (!key.isActiveAndMatches(input)) return
+        val mc = Minecraft.getInstance()
+        if (mc.screen != null) return
+        val player = mc.player?.takeIf { it.isAlive && !it.isSpectator } ?: return
+        val pack = StratagemBackpacks.equipped(player) ?: return
+
+        // Curios also defaults to G. Preserve that binding and let an equipped
+        // stratagem backpack take priority only when both bindings match.
+        mc.options.keyMappings.firstOrNull { it.name == "key.curios.open.desc" && it.isActiveAndMatches(input) }
+            ?.let { while (it.consumeClick()) { /* discard the shared Curios click */ } }
+        if (event.action == GLFW.GLFW_REPEAT && pack.item is SupplyBackpack) {
+            while (key.consumeClick()) { /* one case per physical press */ }
+        }
+    }
+
     fun pollKey() {
         val mc = Minecraft.getInstance()
-        if (key.consumeClick() && mc.screen == null && mc.player?.let(GuardDogBackpack::equipped) != null)
+        if (key.consumeClick() && mc.screen == null && mc.player?.let(StratagemBackpacks::equipped) != null)
             BeaconNetwork.CHANNEL.sendToServer(GuardDogTogglePacket)
         while (key.consumeClick()) { /* coalesce clicks within one client tick */ }
     }
@@ -270,7 +292,17 @@ object GuardDogVisual {
         RenderLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>>(parent) {
         override fun render(pose: PoseStack, buffers: MultiBufferSource, light: Int, player: AbstractClientPlayer,
             swing: Float, amount: Float, partial: Float, age: Float, yaw: Float, pitch: Float) {
-            val pack = GuardDogBackpack.equipped(player) ?: return
+            val pack = StratagemBackpacks.equipped(player) ?: return
+            if (pack.item is SupplyBackpack) {
+                pose.pushPose()
+                parentModel.body.translateAndRotate(pose)
+                pose.translate(0.0, .365, .23)
+                pose.mulPose(Axis.XP.rotationDegrees(180f))
+                SupplyBackpackVisual.draw(pack, pose, buffers, light)
+                pose.popPose()
+                return
+            }
+            if (pack.item !is GuardDogBackpack) return
             val active = GuardDogBackpack.active(pack)
             val drone = packDrone(player, active)
             pose.pushPose()

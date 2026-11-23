@@ -3,6 +3,7 @@ package com.example.sbwhelldiver.client
 import com.example.sbwhelldiver.entity.AbstractHellpodEntity.Phase
 import com.example.sbwhelldiver.entity.ItemDeliveryHellpodEntity
 import com.example.sbwhelldiver.item.GuardDogBackpack
+import com.example.sbwhelldiver.item.SupplyBackpack
 import com.example.sbwhelldiver.entity.ItemDeliveryHellpodEntity.Side
 import com.example.sbwhelldiver.entity.ItemDeliveryHellpodEntity.Companion.LIFT_START
 import com.example.sbwhelldiver.entity.ItemDeliveryHellpodEntity.Companion.LIFT_END
@@ -82,6 +83,11 @@ object ItemDeliveryRackRenderer {
             val mount = side.mount
             pose.translate(mount.x, mount.y + lift, mount.z)
             if (side == Side.REAR) pose.mulPose(Axis.YP.rotationDegrees(180f))
+            if (stack.item is SupplyBackpack) {
+                pose.scale(.85f, .85f, .85f)
+                SupplyBackpackVisual.draw(stack, pose, buffers, light)
+                return
+            }
             if (stack.item is GuardDogBackpack) {
                 pose.scale(.85f, .85f, .85f)
                 val reduced = ModelLod.reduced(pod.distanceToSqr(Minecraft.getInstance().gameRenderer.mainCamera.position))
