@@ -34,7 +34,6 @@ import top.theillusivec4.curios.api.CuriosApi
 object HoverPackClientTest {
     private enum class Step { EQUIP, VANILLA_JUMP, WAIT_FOR_GROUND, LAUNCH, FLY, RECHARGE, RETEST }
 
-
     private val enabled = java.lang.Boolean.getBoolean("sbw_helldiver.hoverPackTests")
     private val launchedAt = System.nanoTime()
     private var creatingWorld = false
@@ -44,6 +43,7 @@ object HoverPackClientTest {
     private var step = Step.EQUIP
     private var elapsed = 0
     private var origin = Vec3.ZERO
+    private var rechargedAt: Int? = null
     private var hoverStarted = 0
     private var hoverPosition = Vec3.ZERO
     private var flightAge = 0
@@ -170,20 +170,25 @@ object HoverPackClientTest {
                     check(elapsed < 220) { "Hover never landed and recharged" }
                 }
                 Step.RECHARGE -> {
-                    if (!cooling) {
+                    if (!cooling && rechargedAt == null) {
                         check(elapsed in 235..246) { "Expected 12 seconds of cooldown, got $elapsed ticks" }
+                        rechargedAt = elapsed
+                    }
+                    // Give the server time to reach its own cooldown expiry.
+                    val ready = rechargedAt
+                    if (ready != null && elapsed >= ready + 5 && player.onGround()) {
                         origin = player.position()
                         pressBackpackKey(mc)
                         next(Step.RETEST)
                     }
-                    check(elapsed < 247)
+                    check(elapsed < 260) { "Hover pack didn't become ready on the ground" }
                 }
                 Step.RETEST -> {
                     if (takeoffs == 2 && player.y - origin.y > 1.45) {
                         LOGGER.info("HOVER_PACK_CLIENT_PASSED: inventory models, backpack key activation, six seconds of hover, steering, native sampled audio, landing and 12-second recharge")
                         mc.stop()
                     }
-                    check(elapsed < 15) { "Backpack key did not relaunch the hover pack" }
+                    check(elapsed < 15) { "Hover relaunch failed: takeoffs=$takeoffs rise=${player.y - origin.y} grounded=${player.onGround()} screen=${mc.screen}" }
                 }
             }
         } catch (failure: Throwable) {
