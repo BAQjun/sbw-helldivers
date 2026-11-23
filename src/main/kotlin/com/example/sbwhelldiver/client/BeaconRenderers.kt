@@ -31,7 +31,7 @@ class BeaconProjectileRenderer(context: EntityRendererProvider.Context) : Entity
 class BeaconMarkerRenderer(context: EntityRendererProvider.Context) : EntityRenderer<StratagemMarker>(context) {
     override fun getTextureLocation(entity: StratagemMarker) = BeaconModel.TEXTURE
     override fun shouldRender(entity: StratagemMarker, frustum: Frustum, x: Double, y: Double, z: Double) =
-        frustum.isVisible(entity.boundingBox.expandTowards(0.0, com.example.sbwhelldiver.entity.AbstractHellpodEntity.descentSpawnHeight().toDouble(), 0.0).inflate(1.0))
+        !entity.landingMarkerExpired && frustum.isVisible(entity.boundingBox.expandTowards(0.0, com.example.sbwhelldiver.entity.AbstractHellpodEntity.descentSpawnHeight().toDouble(), 0.0).inflate(1.0))
     override fun render(entity: StratagemMarker, yaw: Float, partial: Float, pose: PoseStack, buffers: MultiBufferSource, light: Int) {
         val seconds = (entity.elapsedTicks + partial) / 20f
         pose.pushPose()

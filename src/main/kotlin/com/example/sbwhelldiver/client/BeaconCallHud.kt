@@ -114,7 +114,8 @@ object BeaconCallHud : ResourceManagerReloadListener {
     fun draw(gui: GuiGraphics, partial: Float) {
         val mc = Minecraft.getInstance()
         val current = label ?: return
-        if (mc.options.hideGui || mc.screen != null || current.entity.isRemoved) return
+        if (mc.options.hideGui || mc.screen != null || current.entity.isRemoved || current.entity.level() !== mc.level) return
+        if ((current.entity as? StratagemMarker)?.hasBeaconBeam == false) return
         val icon = whiteIcons[current.iconKey] ?: return
         val x = current.x + 10
         val y = current.y - ICON_SIZE / 2

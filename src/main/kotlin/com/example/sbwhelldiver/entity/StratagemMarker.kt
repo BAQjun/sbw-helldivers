@@ -49,7 +49,10 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     private var activationPlayed = false
     val isOrbital get()=(dropTypeId?.path ?: entityData.get(STRATAGEM)).startsWith("orbital_")
     val isOrbitalLaser get()=(dropTypeId?.path ?: entityData.get(STRATAGEM))=="orbital_laser"
-    val hasBeaconBeam get() = !isOrbitalRailcannon && (!isOrbitalLaser || elapsedTicks<duration)
+    // A respawn or chunk transition can leave the client tracking the marker past landing.
+    val landingMarkerExpired get() = !isEagle && !isOrbital && callStartedAt >= 0 &&
+        elapsedTicks >= duration + landingGraceTicks
+    val hasBeaconBeam get() = !landingMarkerExpired && !isOrbitalRailcannon && (!isOrbitalLaser || elapsedTicks<duration)
     val isOrbitalRailcannon get()=(dropTypeId?.path ?: entityData.get(STRATAGEM))=="orbital_railcannon_strike"
     val railcannonSettings get()=com.example.sbwhelldiver.config.RailcannonSettings.load(entityData.get(RAIL_SETTINGS))
     val railLockStartedAt get()=entityData.get(RAIL_LOCK_START)
@@ -155,7 +158,7 @@ class StratagemMarker(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
     val orbitalImpactAt get()=orbitalFiredAt+orbitalFlightTicks
     fun orbitalProgress(partial:Float=0f)=if(orbitalFiredAt<0)-1.0 else (level().gameTime-orbitalFiredAt+partial.toDouble())/orbitalFlightTicks
-    private val isEagle get()=dropTypeId?.path?.startsWith("eagle_")==true
+    private val isEagle get()=(dropTypeId?.path ?: entityData.get(STRATAGEM)).startsWith("eagle_")
     private val eagleCallTicks get()=EagleAttack.fromId(dropTypeId?.path).callTicks
     private var descentTicks = AbstractHellpodEntity.FALL_TICKS
 
