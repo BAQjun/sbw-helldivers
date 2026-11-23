@@ -22,6 +22,7 @@ import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.entity.player.Player
 
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.TooltipFlag
 
 
 import net.minecraft.world.level.Level
@@ -43,6 +44,11 @@ open class GuardDogBackpack(properties: Properties, val laser: Boolean = false, 
     }
 
 
+
+    override fun appendHoverText(stack: ItemStack, level: Level?, tooltip: MutableList<Component>, flag: TooltipFlag) {
+        if (isEnergy(stack)) return
+        tooltip.add(Component.translatable("tooltip.sbw_helldiver.guard_dog_reloads", spareMags(stack), reserveCapacity(stack)))
+    }
 
     override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slot: Int, selected: Boolean) {
 

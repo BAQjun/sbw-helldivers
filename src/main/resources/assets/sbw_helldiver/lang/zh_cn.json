@@ -357,6 +357,7 @@
   "item.sbw_helldiver.supply_backpack": "补给背包",
   "tooltip.sbw_helldiver.supply_backpack_cases": "补给箱：%s/%s",
   "message.sbw_helldiver.supply_backpack_empty": "背包没有剩余补给箱",
+  "tooltip.sbw_helldiver.guard_dog_reloads": "剩余换弹次数：%s/%s",
   "message.sbw_helldiver.guard_dog_no_ammo": "护卫犬弹药已耗尽",
   "message.sbw_helldiver.guard_dog_servicing": "护卫犬正在补给",
   "entity.sbw_helldiver.item_delivery_hellpod": "物品投送空投仓",

@@ -357,6 +357,7 @@
   "item.sbw_helldiver.supply_backpack": "Supply Pack",
   "tooltip.sbw_helldiver.supply_backpack_cases": "Supply cases: %s/%s",
   "message.sbw_helldiver.supply_backpack_empty": "Supply pack is empty",
+  "tooltip.sbw_helldiver.guard_dog_reloads": "Reloads remaining: %s/%s",
   "message.sbw_helldiver.guard_dog_no_ammo": "Guard Dog is out of ammunition",
   "message.sbw_helldiver.guard_dog_servicing": "Guard Dog is rearming",
   "entity.sbw_helldiver.item_delivery_hellpod": "Item Delivery Hellpod",
