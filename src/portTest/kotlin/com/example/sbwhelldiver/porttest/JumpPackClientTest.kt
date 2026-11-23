@@ -137,7 +137,7 @@ object JumpPackClientTest {
                     }
                     if (cooling) {
                         val distance = player.z - origin.z
-                        check(peak >= 3.0 && distance >= 5.0 && kotlin.math.abs(player.x - origin.x) < 1.5) {
+                        check(peak >= 3.0 && distance >= 12.0 && kotlin.math.abs(player.x - origin.x) < 1.5) {
                             "Wrong launch trajectory: rise=$peak forward=$distance"
                         }
                         check(player.y - origin.y < .6 && player.health == player.maxHealth) {
