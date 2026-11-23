@@ -1,7 +1,7 @@
 package com.example.sbwhelldiver.client;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexMultiConsumer;
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import java.lang.invoke.MethodHandle;
@@ -12,7 +12,7 @@ import java.nio.ByteBuffer;
 /** Optional Embeddium bulk writer. Keep the normal consumer fallback when absent.
  * Iris' own serializer still generates all extended shader attributes. */
 public final class PackedEntityVertices {
-    private static final int STRIDE=36, CAPACITY=4096;
+    private static final int STRIDE=36, CAPACITY=1024;
     private static final ThreadLocal<ByteBuffer> SCRATCH=ThreadLocal.withInitial(()->org.lwjgl.BufferUtils.createByteBuffer(STRIDE*CAPACITY));
     private static MethodHandle of,push;
     private static Object format;
@@ -32,9 +32,9 @@ public final class PackedEntityVertices {
     private int count;
     private PackedEntityVertices(Object writer){this.writer=writer;}
     public static PackedEntityVertices create(VertexConsumer consumer){
-        // Composite consumers copy bulk data onto LWJGL's small native stack for each delegate.
-        // Emit individual vertices there so block damage can still render both passes.
-        if (of == null || consumer.getClass().getEnclosingClass() == VertexMultiConsumer.class) return null;
+        // Wrapped render consumers can duplicate bulk data on LWJGL's native stack.
+        // Only the direct buffer uses bulk writes so crack and overlay passes stay safe.
+        if (of == null || !(consumer instanceof BufferBuilder)) return null;
         try {Object writer=(Object)of.invokeExact(consumer);return writer==null?null:new PackedEntityVertices(writer);}
         catch(Throwable error){throw new IllegalStateException("Cannot obtain Embeddium vertex writer",error);}
     }

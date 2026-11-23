@@ -10,6 +10,7 @@ import net.minecraft.client.Screenshot
 import net.minecraft.client.gui.screens.TitleScreen
 import net.minecraft.core.*
 import net.minecraft.core.registries.Registries
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.*
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
@@ -119,10 +120,53 @@ object TacticalClientTests {
                     .`is`(ModBlocks.TACTICAL_TERMINAL.get())
             }) {"Mining the powered terminal did not remove all parts"}
             LOGGER.info("TACTICAL_CLIENT_POWERED_BREAK_VERIFIED")
+        }
+        if (ticks == 380) server.execute {
+            val level = server.overworld()
+            for ((index, kind) in MachineDeployment.entries.withIndex()) {
+                val position = machineRoot(index)
+                val machine = checkNotNull(MachineStructure.place(level, position, kind, Direction.NORTH, CompoundTag(), null))
+                val data = machine.contents()
+                data.putInt("Energy", machine.capacity)
+                machine.restoreContents(data)
+                machine.readyAt = 0
+                machine.inventory.setStackInSlot(0, ItemStack(if (kind == MachineDeployment.BIOPROCESSOR) Items.ROTTEN_FLESH else Items.RAW_IRON, 64))
+            }
+        }
+        for ((index, kind) in MachineDeployment.entries.withIndex()) {
+            val start = 410 + index * 300
+            val position = machineRoot(index)
+            if (ticks == start) server.execute {
+                val host = server.playerList.getPlayer(p.uuid)!!
+                host.teleportTo(server.overworld(), position.x + .5, 80.0, -3.0, 0f, 15f)
+                host.inventory.setItem(0, ItemStack(Items.NETHERITE_PICKAXE))
+            }
+            if (ticks == start + 15 && hasInspectCommand) mc.connection!!.sendCommand("grieflogger inspect")
+            if (ticks == start + 16) {
+                check((mc.level!!.getBlockEntity(position) as SampleMachineBlockEntity).working) { "${kind.id} was not running" }
+                check(mc.gameMode!!.startDestroyBlock(position, Direction.NORTH)) { "Failed to start mining ${kind.id}" }
+            }
+            if (ticks in start + 17..start + 270 && mc.level!!.getBlockState(position).`is`(ModBlocks.SAMPLE_MACHINE.get())) {
+                mc.gameMode!!.continueDestroyBlock(position, Direction.NORTH)
+            }
+            if (ticks == start + 70 && hasInspectCommand) {
+                mc.connection!!.sendCommand("grieflogger inspect")
+                LOGGER.info("MACHINE_CLIENT_INSPECT_VERIFIED {}", kind.id)
+            }
+            if (ticks == start + 275) {
+                check(MachineLayout.shapes(kind, Direction.NORTH).keys.none { offset ->
+                    mc.level!!.getBlockState(position.offset(offset)).`is`(ModBlocks.SAMPLE_MACHINE.get())
+                }) { "Mining ${kind.id} left machine parts" }
+                LOGGER.info("MACHINE_CLIENT_WORKING_BREAK_VERIFIED {}", kind.id)
+            }
+        }
+        if (ticks == 990) {
             LOGGER.info("TACTICAL_CLIENT_COMPLETED")
             mc.stop()
         }
     }
+    private fun machineRoot(index: Int) = BlockPos(-4 + index * 8, 80, 1)
+
     private fun click(x:Double,y:Double){
         val mc=Minecraft.getInstance();val s=mc.screen as TacticalTerminalScreen
         val be=mc.level!!.getBlockEntity(root) as TacticalTerminalBlockEntity

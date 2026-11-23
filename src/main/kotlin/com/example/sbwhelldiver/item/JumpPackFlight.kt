@@ -29,6 +29,7 @@ internal object JumpPackFlight {
     private const val BRAKE_TICKS = 20
     private const val FLIGHT_LIMIT = 20 * 20
     private const val FORWARD_SHARE = .4
+    private const val HORIZONTAL_BOOST = 1.5
     // Convert the extracted 40 and 60 accelerations by matching their ratio to gravity.
     private const val LAUNCH_ACCELERATION = 40.0 / 9.81 * .08
     private const val BRAKE_ACCELERATION = 60.0 / 9.81 * .08
@@ -120,8 +121,9 @@ internal object JumpPackFlight {
             val force = LAUNCH_ACCELERATION * (1.0 - progress * progress)
             val forward = if (flight.direction == Vec3.ZERO) 0.0 else FORWARD_SHARE
             val lift = if (age == 0) maxOf(velocity.y, .18) else velocity.y
-            applyVelocity(player, flight, velocity.x + flight.direction.x * force * forward,
-                lift + force * (1.0 - forward), velocity.z + flight.direction.z * force * forward)
+            val horizontalThrust = force * forward * HORIZONTAL_BOOST
+            applyVelocity(player, flight, velocity.x + flight.direction.x * horizontalThrust,
+                lift + force * (1.0 - forward), velocity.z + flight.direction.z * horizontalThrust)
             if (age % 3 == 0) JumpPackThrustPacket.send(player, false)
             return
         }

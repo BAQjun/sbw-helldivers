@@ -21,6 +21,8 @@ import net.minecraftforge.client.event.ClientPlayerNetworkEvent
 import net.minecraftforge.client.event.RenderLevelStageEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
+import org.joml.Matrix3f
+import org.joml.Matrix4f
 import org.joml.Vector3f
 
 @Mod.EventBusSubscriber(modid=MOD_ID,value=[Dist.CLIENT])
@@ -86,7 +88,9 @@ object DestroyerClient:ResourceManagerReloadListener {
   if(ShaderPackCompat.active()){
    if(e.stage==RenderLevelStageEvent.Stage.AFTER_LEVEL){
     val dimension=level.dimension().location().toString()
-    DestroyerPostRenderer.render(e.projectionMatrix,e.poseStack.last().pose(),ships.flatMap{DestroyerWarp.poses(it,dimension,now(e.partialTick))},e.camera.position)
+    // Forge supplies a projection pose at AFTER_LEVEL, so get the world camera rotation separately.
+    val view=Matrix4f(Matrix3f(RenderSystem.getInverseViewRotationMatrix()).invert())
+    DestroyerPostRenderer.render(e.projectionMatrix,view,ships.flatMap{DestroyerWarp.poses(it,dimension,now(e.partialTick))},e.camera.position)
    }
    return
   }
