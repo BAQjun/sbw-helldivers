@@ -1,5 +1,6 @@
 package com.example.sbwhelldiver.client
 
+import com.example.sbwhelldiver.config.GuardDogConfigs
 import com.example.sbwhelldiver.MOD_ID
 import com.example.sbwhelldiver.entity.GuardDogEntity
 import com.example.sbwhelldiver.entity.GuardDogGas
@@ -24,7 +25,6 @@ object GasGuardDogVisual {
     private const val SPRAY_EDGE = .85
     private const val SPRAY_DROP = .40
     private const val EMISSION_INTERVAL = GuardDogGas.CLOUD_INTERVAL_TICKS.toLong()
-    private const val MIST_LIFETIME = GuardDogGas.CLOUD_LIFETIME_TICKS.toLong()
     private val clouds = WeakHashMap<GuardDogEntity, ArrayDeque<Cloud>>()
 
     private class Cloud(val center: Vec3, val flow: Vec3, val born: Long, var lastEmission: Long = born)
@@ -69,8 +69,9 @@ object GasGuardDogVisual {
         val camera = Minecraft.getInstance().gameRenderer.mainCamera.position
         if (camera.distanceToSqr(dog.position()) > 64.0 * 64.0) return
         val now = dog.level().gameTime
+        val lifetime = GuardDogConfigs.gasCloudLifetime()
         val trail = clouds.getOrPut(dog) { ArrayDeque(4) }
-        trail.removeAll { now - it.lastEmission >= MIST_LIFETIME }
+        trail.removeAll { now - it.lastEmission >= lifetime }
         val last = trail.maxOfOrNull { it.lastEmission }
         if (last != null && now - last < EMISSION_INTERVAL) return
 
@@ -89,11 +90,13 @@ object GasGuardDogVisual {
     @Synchronized
     fun mistVolumes(level: ClientLevel, partial: Float, camera: Vec3, frustum: Frustum): List<MistVolume> {
         val now = level.gameTime
+        val lifetime = GuardDogConfigs.gasCloudLifetime()
+        val fadeDelay = minOf(20f, lifetime / 3f)
         val volumes = ArrayList<MistVolume>()
         val active = clouds.entries.iterator()
         while (active.hasNext()) {
             val (dog, trail) = active.next()
-            trail.removeAll { now - it.lastEmission >= MIST_LIFETIME }
+            trail.removeAll { now - it.lastEmission >= lifetime }
             if (dog.level() !== level || trail.isEmpty()) {
                 active.remove()
                 continue
@@ -105,7 +108,7 @@ object GasGuardDogVisual {
                         center.x + MIST_RADIUS, center.y + MIST_HEIGHT, center.z + MIST_RADIUS))) continue
                 val age = (now - cloud.born + partial).coerceAtLeast(0f)
                 val fill = (age / 5f).coerceAtMost(1f)
-                val tail = 1f - ((now - cloud.lastEmission + partial - 20f) / (MIST_LIFETIME - 20f)).coerceIn(0f, 1f)
+                val tail = 1f - ((now - cloud.lastEmission + partial - fadeDelay) / (lifetime - fadeDelay)).coerceIn(0f, 1f)
                 volumes += MistVolume(center, cloud.flow, cloud, fill * fill * (3f - 2f * fill) * tail, age / 20f)
             }
         }

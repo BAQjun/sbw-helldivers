@@ -1,5 +1,6 @@
 package com.example.sbwhelldiver
 
+import com.example.sbwhelldiver.config.TargetingConfig
 import com.example.sbwhelldiver.config.HelldiversConfig
 import com.example.sbwhelldiver.init.ModCreativeTabs
 import com.example.sbwhelldiver.init.ModEntities
@@ -71,10 +72,19 @@ class Mod(container: net.neoforged.fml.ModContainer) {
         container.registerConfig(ModConfig.Type.SERVER, HelldiversConfig.SPEC)
         container.registerConfig(ModConfig.Type.CLIENT, com.example.sbwhelldiver.config.ClientModelConfig.SPEC)
         bus.addListener<net.neoforged.fml.event.config.ModConfigEvent.Loading> { event ->
-            if (event.config.modId == MOD_ID && event.config.type == ModConfig.Type.SERVER) com.example.sbwhelldiver.config.TurretConfigs.changed()
+            if (event.config.modId == MOD_ID && event.config.type == ModConfig.Type.SERVER) {
+                com.example.sbwhelldiver.config.TurretConfigs.changed()
+                TargetingConfig.reload()
+            }
         }
         bus.addListener<net.neoforged.fml.event.config.ModConfigEvent.Reloading> { event ->
-            if (event.config.modId == MOD_ID && event.config.type == ModConfig.Type.SERVER) com.example.sbwhelldiver.config.TurretConfigs.changed()
+            if (event.config.modId == MOD_ID && event.config.type == ModConfig.Type.SERVER) {
+                com.example.sbwhelldiver.config.TurretConfigs.changed()
+                TargetingConfig.reload()
+            }
+        }
+        bus.addListener<net.neoforged.fml.event.config.ModConfigEvent.Unloading> { event ->
+            if (event.config.modId == MOD_ID && event.config.type == ModConfig.Type.SERVER) TargetingConfig.clear()
         }
     }
 }

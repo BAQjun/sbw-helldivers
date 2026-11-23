@@ -22,9 +22,9 @@ object GuardDogGas {
         return bounds.inflate(along * slope).clip(start, start.add(axis.scale(range))).isPresent
     }
 
-    fun poison(target: LivingEntity, owner: ServerPlayer) {
-        target.addEffect(MobEffectInstance(ModEffects.GAS, EFFECT_TICKS, 0, false, true, true), owner)
+    fun poison(target: LivingEntity, owner: ServerPlayer, duration: Int) {
+        target.addEffect(MobEffectInstance(ModEffects.GAS, duration, 0, false, true, true), owner)
         if (target !is net.minecraft.world.entity.player.Player)
-            target.addEffect(MobEffectInstance(ModEffects.CONFUSION, EFFECT_TICKS, 0, false, true, true), owner)
+            target.addEffect(MobEffectInstance(ModEffects.CONFUSION, duration, 0, false, true, true), owner)
     }
 }

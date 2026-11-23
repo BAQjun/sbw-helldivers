@@ -1,5 +1,6 @@
 package com.example.sbwhelldiver.entity
 
+import com.example.sbwhelldiver.config.TargetingConfig
 import com.atsuishio.superbwarfare.tools.CustomExplosion
 import com.atsuishio.superbwarfare.tools.forceHurt
 import com.atsuishio.superbwarfare.data.gun.GunProp
@@ -548,11 +549,20 @@ class SentryHellpodEntity(type: EntityType<*>, level: Level) : AbstractHellpodEn
 
     private fun seekRange() = turretConfig?.range?.get() ?: data().compute().seekInfo?.maxSeekRange ?: 48.0
     private fun minRange() = (turretConfig?.minimumRange?.get() ?: data().compute().seekInfo?.minSeekRange ?: 0.0).coerceAtMost(seekRange())
+    internal fun targetListDecision(candidate: LivingEntity) = TargetingConfig.decision(EntityType.getKey(type), candidate)
     internal fun validTarget(candidate: LivingEntity, marked:Boolean=false): Boolean {
         if (profile.isTesla && !TeslaArc.eligible(candidate)) return false
         if (!candidate.isAlive || candidate.isRemoved || candidate is Player || candidate === owner || candidate.isAlliedTo(this)) return false
         if (candidate is TamableAnimal && candidate.isTame) return false
-        if (!marked && !CombatHostility.isHostileTo(candidate, owner as? LivingEntity, HelldiversConfig.attackNeutralMobs.get())) return false
+        if (!marked) {
+            val deployer = owner
+            val allowed = when (targetListDecision(candidate)) {
+                true -> deployer == null || !deployer.isAlliedTo(candidate) && !candidate.isAlliedTo(deployer)
+                false -> false
+                null -> CombatHostility.isHostileTo(candidate, deployer as? LivingEntity, HelldiversConfig.attackNeutralMobs.get())
+            }
+            if (!allowed) return false
+        }
         if (!marked && profile.isGasMortar && candidate.hasEffect(com.example.sbwhelldiver.init.ModEffects.GAS)) return false
         val distance = distanceToSqr(candidate)
         if (!marked && profile.isLaser && candidate === target) return distance <= LaserClock.BEAM_RANGE.pow(2)

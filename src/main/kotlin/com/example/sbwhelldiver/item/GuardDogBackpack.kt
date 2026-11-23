@@ -1,5 +1,6 @@
 package com.example.sbwhelldiver.item
 
+import com.example.sbwhelldiver.config.GuardDogConfigs
 import com.example.sbwhelldiver.entity.GuardDogEntity
 import com.example.sbwhelldiver.init.ModEntities
 import net.minecraft.core.component.DataComponents
@@ -62,8 +63,10 @@ open class GuardDogBackpack(properties: Properties, val laser: Boolean = false, 
         fun isStun(stack: ItemStack) = (stack.item as? GuardDogBackpack)?.stun == true
         fun isFlame(stack: ItemStack) = (stack.item as? GuardDogBackpack)?.flame == true
         fun isGas(stack: ItemStack) = (stack.item as? GuardDogBackpack)?.gas == true
-        fun capacity(stack: ItemStack) = if (isGas(stack)) GuardDogEntity.GAS_MAGAZINE else if (isFlame(stack)) GuardDogEntity.FLAME_MAGAZINE else GuardDogEntity.MAGAZINE
-        fun reserveCapacity(stack: ItemStack) = if (isGas(stack)) GuardDogEntity.GAS_RESERVES else if (isFlame(stack)) GuardDogEntity.FLAME_RESERVES else GuardDogEntity.SPARE_MAGAZINES
+        private fun variant(stack: ItemStack) = GuardDogConfigs.Variant.of(isLaser(stack), isStun(stack), isFlame(stack), isGas(stack))
+
+        fun capacity(stack: ItemStack) = GuardDogConfigs.ammoCapacity(variant(stack))
+        fun reserveCapacity(stack: ItemStack) = GuardDogConfigs.reserveCapacity(variant(stack))
         fun isEnergy(stack: ItemStack) = isLaser(stack) || isStun(stack)
 
         fun equipped(player: Player): ItemStack? =
@@ -96,7 +99,8 @@ open class GuardDogBackpack(properties: Properties, val laser: Boolean = false, 
         }
 
         fun health(stack: ItemStack): Float = data(stack).let {
-            if (it.contains(HEALTH)) it.getFloat(HEALTH).coerceIn(0f, GuardDogEntity.MAX_HEALTH) else GuardDogEntity.MAX_HEALTH
+            val maximum = GuardDogConfigs.get(variant(stack)).maxHealth.get().toFloat()
+            if (it.contains(HEALTH)) it.getFloat(HEALTH).coerceIn(0f, maximum) else maximum
         }
 
         fun refill(stack: ItemStack) = update(stack) {
@@ -111,8 +115,11 @@ open class GuardDogBackpack(properties: Properties, val laser: Boolean = false, 
         fun dock(stack: ItemStack, now: Long, emptyFold: Boolean = false) = update(stack) { tag ->
             tag.remove(ACTIVE)
             if (emptyFold) tag.putBoolean(EMPTY_FOLD, true) else tag.remove(EMPTY_FOLD)
-            if (!isEnergy(stack) && tag.contains(HEALTH) && tag.getFloat(HEALTH) < GuardDogEntity.MAX_HEALTH) {
-                tag.putLong(READY_AT, now + GuardDogEntity.REARM_TICKS)
+            val settings = GuardDogConfigs.get(variant(stack))
+            if (settings.damageable.get() && tag.contains(HEALTH) && tag.getFloat(HEALTH) < settings.maxHealth.get()) {
+                val repairTicks = settings.repairTicks.get()
+                if (repairTicks == 0) tag.remove(HEALTH)
+                else tag.putLong(READY_AT, now + repairTicks)
             }
         }
 

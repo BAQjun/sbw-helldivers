@@ -1,5 +1,8 @@
 package com.example.sbwhelldiver.entity
 
+import com.example.sbwhelldiver.config.GuardDogConfigs
+import com.example.sbwhelldiver.config.TargetingConfig
+import com.example.sbwhelldiver.config.TurretConfigs
 import com.example.sbwhelldiver.init.ModEntities
 import com.example.sbwhelldiver.item.GuardDogBackpack
 import net.minecraft.nbt.CompoundTag
@@ -25,6 +28,7 @@ import net.minecraft.world.phys.Vec3
 import java.util.UUID
 import kotlin.math.atan2
 import kotlin.math.hypot
+import kotlin.math.roundToInt
 import kotlin.math.sin
 
 class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
@@ -72,6 +76,13 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     val flameState get() = FlameClock.State.entries[entityData.get(FLAME_STATE)]
     private val flameClock = FlameClock()
     val isEnergy get() = isLaser || isStun
+
+    private val variant get() = GuardDogConfigs.Variant.of(isLaser, isStun, isFlame, isGas)
+    internal val settings get() = GuardDogConfigs.get(variant)
+    private val flightSpeed get() = settings.flightSpeed.get() / 20.0
+
+    internal fun targetListDecision(candidate: LivingEntity) = TargetingConfig.decision(variant.targetingId, candidate)
+
     val arcData get() = entityData.get(ARC_DATA)
     var arcReceivedTick = -1000
         private set
@@ -240,7 +251,8 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             return
         }
         // Catch up after teleports and let a blocked return end in the backpack.
-        if (distanceToSqr(owner) > SENSOR_RANGE * SENSOR_RANGE || flight == Flight.RETURN && phaseAge >= 160) {
+        val detachRange = if (isSprayer) maxOf(50.0, settings.targetRange.get() + 4.0) else 50.0
+        if (distanceToSqr(owner) > detachRange * detachRange || flight == Flight.RETURN && phaseAge >= 160) {
             GuardDogBackpack.dock(pack, server.gameTime)
             discard()
             return
@@ -263,7 +275,7 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             }
             Flight.RETURN -> {
                 val staging = freePosition(owner, false)
-                val approachSpeed = (position().distanceTo(staging) * .35).coerceIn(FLIGHT_SPEED, .8)
+                val approachSpeed = (position().distanceTo(staging) * .35).coerceIn(flightSpeed, .8)
                 flyTo(staging, approachSpeed, .7)
                 aim(owner.yBodyRot, 0f)
                 val aligned = phaseAge >= 4 && position().distanceToSqr(staging) < .18 &&
@@ -276,9 +288,9 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
                     val plan = when {
                         isEnergy || isSprayer && GuardDogBackpack.ammo(pack) >= (if (isGas) 1 else FlameClock.AMMO_PER_JET) -> Reload.NONE
                         isSprayer && spares == 0 -> Reload.NONE
+                        GuardDogBackpack.ammo(pack) == GuardDogBackpack.capacity(pack) -> Reload.NONE
                         spares == 0 -> Reload.EMPTY
-                        GuardDogBackpack.ammo(pack) == MAGAZINE -> Reload.NONE
-                        (GuardDogBackpack.reserveCapacity(pack) - spares) % 2 == 0 -> Reload.RIGHT
+                        (SPARE_MAGAZINES - spares) % 2 == 0 -> Reload.RIGHT
                         else -> Reload.LEFT
                     }
                     dockApproachOffset = position().subtract(dockPosition(owner))
@@ -337,7 +349,7 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             destination = pivot.lerp(destination, .3)
             if (!clear(pivot, destination)) destination = pivot
         }
-        if (flyTo(destination, if (distanceToSqr(owner) > 100.0) .46 else FLIGHT_SPEED) && target == null) {
+        if (flyTo(destination, if (distanceToSqr(owner) > 100.0) maxOf(.46, flightSpeed) else flightSpeed) && target == null) {
             aim(owner.yBodyRot, 0f)
         }
     }
@@ -351,8 +363,14 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     }
 
     private fun selectTarget(server: ServerLevel, owner: ServerPlayer, origin: Vec3, radius: Double) {
-        fun hostile(enemy: LivingEntity) = enemy.isAlive && enemy !is Player &&
-            CombatHostility.isHostileTo(enemy, owner) && (!isGas || !enemy.hasEffect(com.example.sbwhelldiver.init.ModEffects.GAS))
+        fun hostile(enemy: LivingEntity): Boolean {
+            if (!enemy.isAlive || enemy is Player || (isGas && enemy.hasEffect(com.example.sbwhelldiver.init.ModEffects.GAS))) return false
+            return when (targetListDecision(enemy)) {
+                true -> !owner.isAlliedTo(enemy) && !enemy.isAlliedTo(owner)
+                false -> false
+                null -> CombatHostility.isHostileTo(enemy, owner)
+            }
+        }
         fun visible(enemy: LivingEntity) = enemy.distanceToSqr(owner) <= radius * radius &&
             clear(origin, enemy.boundingBox.center)
         if (target?.let { hostile(it) && visible(it) } != true) target = null
@@ -365,7 +383,9 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
     private fun tickGas(server: ServerLevel, owner: ServerPlayer, pack: ItemStack) {
         val ammo = GuardDogBackpack.ammo(pack)
         if (ammo <= 0) { recall(); return }
-        selectTarget(server, owner, position().add(0.0, MODEL_HEIGHT, 0.0), FLAME_LEASH)
+        val leash = settings.targetRange.get()
+        val sprayRange = settings.sprayRange!!.get()
+        selectTarget(server, owner, position().add(0.0, MODEL_HEIGHT, 0.0), leash)
         val enemy = target
         if (enemy == null) {
             entityData.set(GAS_SPRAY_LENGTH, 0f)
@@ -374,20 +394,13 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             return
         }
         val point = enemy.boundingBox.center
-        if (muzzleOrigin().distanceToSqr(point) > 5.5 * 5.5 || distanceToSqr(owner) > FLAME_LEASH * FLAME_LEASH) {
-            val delta = position().subtract(point)
-            val horizontal = Vec3(delta.x, 0.0, delta.z).normalize()
-            val wanted = point.add(horizontal.scale(5.0)).add(0.0, 1.6, 0.0)
-            val relative = wanted.subtract(owner.position())
-            flyTo(if (relative.lengthSqr() <= FLAME_LEASH * FLAME_LEASH) wanted
-                else owner.position().add(relative.normalize().scale(FLAME_LEASH)), FLIGHT_SPEED)
-        }
+        pursueSprayer(owner, point, sprayRange, leash)
         val offset = point.subtract(muzzleOrigin())
         val yaw = Math.toDegrees(atan2(-offset.x, offset.z)).toFloat()
         val pitch = Math.toDegrees(atan2(-offset.y, hypot(offset.x, offset.z))).toFloat()
         aim(yaw, pitch)
         val muzzle = muzzleOrigin()
-        val ready = muzzle.distanceToSqr(point) <= GAS_RANGE * GAS_RANGE &&
+        val ready = muzzle.distanceToSqr(point) <= sprayRange * sprayRange &&
             kotlin.math.abs(Mth.wrapDegrees(yaw - yRot)) <= 3f && kotlin.math.abs(pitch - xRot) <= 3f &&
             clear(position().add(0.0, MODEL_HEIGHT, 0.0), muzzle) && clear(muzzle, point)
         entityData.set(GAS_SPRAY_LENGTH, if (ready) muzzle.distanceTo(point).toFloat() else 0f)
@@ -405,13 +418,16 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         }
 
         if (shotClock-- > 0) return
-        shotClock = GAS_INTERVAL_TICKS - 1
+        shotClock = (1200.0 / settings.rpm.get()).roundToInt() - 1
         GuardDogBackpack.updateAmmo(pack, ammo - 1)
         if (ammo == 1) recall()
     }
 
     private fun tickGasClouds(server: ServerLevel, owner: ServerPlayer) {
-        gasClouds.removeAll { server.gameTime - it.born >= GuardDogGas.CLOUD_LIFETIME_TICKS }
+        val settings = settings
+        val lifetime = settings.gasCloudTicks!!.get()
+        val exposure = settings.gasExposureTicks!!.get()
+        gasClouds.removeAll { server.gameTime - it.born >= lifetime }
         val exposed = mutableSetOf<UUID>()
         for (cloud in gasClouds) {
             val box = AABB.ofSize(cloud.center, 4.0, 3.6, 4.0)
@@ -430,8 +446,8 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         gasExposure.keys.retainAll(exposed)
         for (id in exposed) {
             val ticks = (gasExposure[id] ?: 0) + 1
-            if (ticks >= GuardDogGas.EXPOSURE_TICKS) {
-                (server.getEntity(id) as? LivingEntity)?.let { GuardDogGas.poison(it, owner) }
+            if (ticks >= exposure) {
+                (server.getEntity(id) as? LivingEntity)?.let { GuardDogGas.poison(it, owner, settings.gasEffectTicks!!.get()) }
                 gasExposure.remove(id)
             } else gasExposure[id] = ticks
         }
@@ -444,38 +460,45 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             return
         }
         val origin = position().add(0.0, MODEL_HEIGHT, 0.0)
-        selectTarget(server, owner, origin, FLAME_LEASH)
+        val leash = settings.targetRange.get()
+        val sprayRange = settings.sprayRange!!.get()
+        selectTarget(server, owner, origin, leash)
         val enemy = target
         var inRange = false
         var aligned = false
         if (enemy == null) patrol(owner) else {
             val point = enemy.boundingBox.center
-            val muzzle = muzzleOrigin()
-            if (muzzle.distanceToSqr(point) > 5.5 * 5.5 || distanceToSqr(owner) > FLAME_LEASH * FLAME_LEASH) {
-                val delta = position().subtract(point)
-                val horizontal = Vec3(delta.x, 0.0, delta.z).normalize()
-                val wanted = point.add(horizontal.scale(5.0)).add(0.0, 1.6, 0.0)
-                val fromOwner = wanted.subtract(owner.position())
-                val destination = if (fromOwner.lengthSqr() <= FLAME_LEASH * FLAME_LEASH) wanted
-                    else owner.position().add(fromOwner.normalize().scale(FLAME_LEASH))
-                flyTo(destination, FLIGHT_SPEED)
-            }
+            pursueSprayer(owner, point, sprayRange, leash)
             val toTarget = point.subtract(muzzleOrigin())
             val yaw = Math.toDegrees(atan2(-toTarget.x, toTarget.z)).toFloat()
             val pitch = Math.toDegrees(atan2(-toTarget.y, hypot(toTarget.x, toTarget.z))).toFloat()
             aim(yaw, pitch)
             val barrel = muzzleOrigin()
-            inRange = barrel.distanceToSqr(point) <= FLAME_RANGE * FLAME_RANGE &&
+            inRange = barrel.distanceToSqr(point) <= sprayRange * sprayRange &&
                 clear(position().add(0.0, MODEL_HEIGHT, 0.0), barrel) && clear(barrel, point)
             aligned = kotlin.math.abs(Mth.wrapDegrees(yaw - yRot)) <= 3f && kotlin.math.abs(pitch - xRot) <= 3f
         }
-        val fire = flameClock.advance(server.gameTime, inRange, aligned, ammo)
+        val rpm = settings.rpm.get()
+        val interval = if (rpm == 0) FlameClock.JET_INTERVAL else 1200.0 / rpm
+        val fire = flameClock.advance(server.gameTime, inRange, aligned, ammo, interval)
         entityData.set(FLAME_STATE, flameClock.state.ordinal)
         if (fire) {
             FlameJet.spray(server, this, muzzleOrigin(), Vec3.directionFromRotation(xRot, yRot),
-                FLAME_RANGE, FlameClock.DIRECT_DAMAGE_PER_JET * .25f, owner)
+                sprayRange, FlameClock.DIRECT_DAMAGE_PER_JET * settings.damageMultiplier!!.get().toFloat(), owner)
             GuardDogBackpack.updateAmmo(pack, ammo - FlameClock.AMMO_PER_JET)
         }
+    }
+
+    private fun pursueSprayer(owner: Player, point: Vec3, sprayRange: Double, leash: Double) {
+        val standoff = minOf(5.0, sprayRange * .5)
+        val approachDistance = standoff + .5
+        if (muzzleOrigin().distanceToSqr(point) <= approachDistance * approachDistance && distanceToSqr(owner) <= leash * leash) return
+        val delta = position().subtract(point)
+        val horizontal = Vec3(delta.x, 0.0, delta.z).normalize()
+        val wanted = point.add(horizontal.scale(standoff)).add(0.0, minOf(1.6, sprayRange * .25), 0.0)
+        val relative = wanted.subtract(owner.position())
+        val destination = if (relative.lengthSqr() <= leash * leash) wanted else owner.position().add(relative.normalize().scale(leash))
+        flyTo(destination, flightSpeed)
     }
 
     private fun attack(server: ServerLevel, owner: ServerPlayer, pack: ItemStack) {
@@ -485,7 +508,8 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             return
         }
         val origin = position().add(0.0, MODEL_HEIGHT + when { isStun -> STUN_MUZZLE.y; isLaser -> LASER_MUZZLE.y; else -> -.2125 }, 0.0)
-        selectTarget(server, owner, origin, SENSOR_RANGE)
+        val range = settings.targetRange.get()
+        selectTarget(server, owner, origin, range)
         val enemy = target
         if (enemy == null) {
             stopBeam()
@@ -503,13 +527,13 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
             return
         }
         if (isStun) {
-            // Native ArcWeapon: 12 rounds/minute, independent of target changes.
+            // Retain the discharge cooldown across target changes.
             if (shotClock > 0) return
             val muzzle = muzzleOrigin()
             if (!clear(origin, muzzle) || !clear(muzzle, point)) return
             val links = GuardDogArc.discharge(this, owner, enemy)
             if (links.isEmpty()) return
-            shotClock = GuardDogArc.INTERVAL_TICKS
+            shotClock = (1200.0 / settings.rpm.get()).roundToInt()
             val tag = CompoundTag()
             tag.putInt("Serial", arcData.getInt("Serial") + 1)
             tag.putLong("Time", server.gameTime)
@@ -525,19 +549,22 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         if (isLaser) {
             val muzzle = laserOrigin()
             if (!clear(origin, muzzle)) { stopBeam(); return }
-            val hit = LaserBeam.trace(this, muzzle, Vec3.directionFromRotation(xRot, yRot), SENSOR_RANGE)
+            val hit = LaserBeam.trace(this, muzzle, Vec3.directionFromRotation(xRot, yRot), range)
             entityData.set(BEAM_LENGTH, muzzle.distanceTo(hit.end).toFloat())
             hit.mine?.detonate()
             val pulse = laserDamageClock <= 0.0
-            if (pulse) laserDamageClock += 1200.0 / com.example.sbwhelldiver.config.TurretConfigs.get("laser_sentry").rpm.get()
+            if (pulse) {
+                val rpm = settings.rpm.get().takeUnless { it == 0 } ?: TurretConfigs.get("laser_sentry").rpm.get()
+                laserDamageClock += 1200.0 / rpm
+            }
             laserDamageClock -= 1.0
             hit.target?.let {
-                if (pulse) it.hurt(com.example.sbwhelldiver.effect.FlameDamage.source(it, "laser_beam", owner), LaserClock.DIRECT_DAMAGE * LASER_DAMAGE_MULTIPLIER)
+                if (pulse) it.hurt(com.example.sbwhelldiver.effect.FlameDamage.source(it, "laser_beam", owner), LaserClock.DIRECT_DAMAGE * settings.damageMultiplier!!.get().toFloat())
                 com.example.sbwhelldiver.effect.FlameDamage.ignite(it, owner)
             }
             return
         }
-        shotClock += ROUNDS_PER_MINUTE
+        shotClock += settings.rpm.get()
         if (shotClock < 1200) return
         shotClock -= 1200
 
@@ -548,7 +575,7 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         bullet.owner = owner
         bullet.emitterId = id
         bullet.setPos(muzzle)
-        bullet.setDamage(10f)
+        bullet.setDamage(settings.damage!!.get().toFloat())
         bullet.setHeadShot(1f)
         bullet.setLegShot(1f)
         // SBW compares actual impact speed to this baseline to apply damage falloff.
@@ -583,7 +610,7 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
 
     override fun isPickable() = isAlive
     override fun hurt(source: DamageSource, amount: Float): Boolean {
-        if (isEnergy || isSprayer) return false
+        if (level().isClientSide || !settings.damageable.get()) return false
         val server = level() as? ServerLevel ?: return false
         if (!amount.isFinite() || amount <= 0f || isInvulnerableTo(source)) return false
         val player = ownerId?.let { server.getPlayerByUUID(it) } ?: return false
@@ -634,20 +661,13 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
 
     companion object {
         const val CALL_TICKS = 195 // 9.75 seconds at 20 ticks per second
-        const val LASER_DAMAGE_MULTIPLIER = .6f
         const val GAS_MAGAZINE = 100
-        const val GAS_RESERVES = 6
-        const val GAS_RANGE = 10.0
         const val GAS_INTERVAL_TICKS = 2
         val GAS_MUZZLE = Vec3(-.00486 / 16, -4.73624 / 16, -7.24159 / 16)
         private val GAS = SynchedEntityData.defineId(GuardDogEntity::class.java, EntityDataSerializers.BOOLEAN)
         private val GAS_SPRAY_LENGTH = SynchedEntityData.defineId(GuardDogEntity::class.java, EntityDataSerializers.FLOAT)
-        const val FLAME_MAGAZINE = 80
-        const val FLAME_RESERVES = 6
         const val FLAME_RELOAD_TICKS = 40
         const val FLAME_REFILL_TICK = 20
-        const val FLAME_RANGE = 10.0
-        private const val FLAME_LEASH = 20.0
         val FLAME_MUZZLE = Vec3(-.004862 / 16, -4.703468 / 16, -9.312246 / 16)
         private val FLAME = SynchedEntityData.defineId(GuardDogEntity::class.java, EntityDataSerializers.BOOLEAN)
         private val FLAME_STATE = SynchedEntityData.defineId(GuardDogEntity::class.java, EntityDataSerializers.INT)
@@ -668,8 +688,6 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         // Native ProjectileWeapon, WeaponMagazine, Health, Rotation, SensorEye, Motion and Boids components.
         const val MAGAZINE = 45
         const val SPARE_MAGAZINES = 8
-        const val MAX_HEALTH = 100f
-        const val REARM_TICKS = 50L
         const val TRANSITION_TICKS = 67
         const val IGNITION_TICK = 29
         const val LIFT_TICK = 31
@@ -681,10 +699,7 @@ class GuardDogEntity(type: EntityType<*>, level: Level) : Entity(type, level) {
         const val PACK_LAYER_Z = .27
         const val MODEL_HEIGHT = .24
         private val DRONE_MOUNT = Vec3(0.0, -.01, -.23)
-        private const val ROUNDS_PER_MINUTE = 660
         private const val TURN_PER_TICK = 360f / 20f
-        private const val FLIGHT_SPEED = 6.0 / 20.0
-        private const val SENSOR_RANGE = 50.0
         private const val BULLET_SPEED = 18f
 
         fun dockPosition(player: Player, partial: Float? = null): Vec3 {

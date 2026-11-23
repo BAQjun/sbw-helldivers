@@ -9,7 +9,7 @@ class FlameClock {
     private var lastCombat = 0L
     private var nextJet = 0.0
 
-    fun advance(now: Long, hasTarget: Boolean, aligned: Boolean, ammo: Int): Boolean {
+    fun advance(now: Long, hasTarget: Boolean, aligned: Boolean, ammo: Int, jetInterval: Double = JET_INTERVAL): Boolean {
         if (ammo < AMMO_PER_JET) { reset(); return false }
         if (state == State.OFF) {
             if (!hasTarget) return false
@@ -26,7 +26,7 @@ class FlameClock {
         state = if (hasTarget && (aligned || state == State.SPRAYING)) State.SPRAYING else State.READY
         if (state != State.SPRAYING || now < nextJet) return false
         val remainder = (now-nextJet).takeIf { it >= 0.0 && it < 1.0 } ?: 0.0
-        nextJet = now + JET_INTERVAL - remainder
+        nextJet = now + jetInterval - remainder
         return true
     }
     fun reset() { state = State.OFF; readyAt = 0; lastCombat = 0; nextJet = 0.0 }
