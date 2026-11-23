@@ -1,5 +1,6 @@
 package com.example.sbwhelldiver.client
 
+import com.example.sbwhelldiver.config.GuardDogConfigs
 import com.example.sbwhelldiver.entity.AbstractHellpodEntity.Phase
 import com.example.sbwhelldiver.entity.FlameClock
 import com.example.sbwhelldiver.entity.GuardDogEntity
@@ -29,7 +30,7 @@ object FlameSentryClient {
         SoundTimeline.tick(dog)
         if (dog.flameState == FlameClock.State.OFF) return
         FlameJetVisual.tick(dog,dog.flameState,GuardDogVisual.firingMuzzle(dog,1f),
-            Vec3.directionFromRotation(dog.xRot,dog.yRot),GuardDogEntity.FLAME_RANGE)
+            Vec3.directionFromRotation(dog.xRot,dog.yRot),GuardDogConfigs.flameRange())
     }
     private fun updateAudio(sentry: Entity, state: FlameClock.State) {
         val local=states.getOrPut(sentry) { State() }

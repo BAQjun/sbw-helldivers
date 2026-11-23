@@ -1,6 +1,6 @@
 package com.example.sbwhelldiver.item
 
-
+import com.example.sbwhelldiver.config.GuardDogConfigs
 
 import com.example.sbwhelldiver.entity.GuardDogEntity
 
@@ -124,9 +124,11 @@ open class GuardDogBackpack(properties: Properties, val laser: Boolean = false, 
 
         fun isGas(stack: ItemStack) = (stack.item as? GuardDogBackpack)?.gas == true
 
-        fun capacity(stack: ItemStack) = if (isGas(stack)) GuardDogEntity.GAS_MAGAZINE else if (isFlame(stack)) GuardDogEntity.FLAME_MAGAZINE else GuardDogEntity.MAGAZINE
+        private fun variant(stack: ItemStack) = GuardDogConfigs.Variant.of(isLaser(stack), isStun(stack), isFlame(stack), isGas(stack))
 
-        fun reserveCapacity(stack: ItemStack) = if (isGas(stack)) GuardDogEntity.GAS_RESERVES else if (isFlame(stack)) GuardDogEntity.FLAME_RESERVES else GuardDogEntity.SPARE_MAGAZINES
+        fun capacity(stack: ItemStack) = GuardDogConfigs.ammoCapacity(variant(stack))
+
+        fun reserveCapacity(stack: ItemStack) = GuardDogConfigs.reserveCapacity(variant(stack))
 
         fun isEnergy(stack: ItemStack) = isLaser(stack) || isStun(stack)
 
@@ -192,7 +194,8 @@ open class GuardDogBackpack(properties: Properties, val laser: Boolean = false, 
 
         fun health(stack: ItemStack): Float = data(stack).let {
 
-            if (it.contains(HEALTH)) it.getFloat(HEALTH).coerceIn(0f, GuardDogEntity.MAX_HEALTH) else GuardDogEntity.MAX_HEALTH
+            val maximum = GuardDogConfigs.get(variant(stack)).maxHealth.get().toFloat()
+            if (it.contains(HEALTH)) it.getFloat(HEALTH).coerceIn(0f, maximum) else maximum
 
         }
 
@@ -222,9 +225,12 @@ open class GuardDogBackpack(properties: Properties, val laser: Boolean = false, 
 
             if (emptyFold) tag.putBoolean(EMPTY_FOLD, true) else tag.remove(EMPTY_FOLD)
 
-            if (!isEnergy(stack) && tag.contains(HEALTH) && tag.getFloat(HEALTH) < GuardDogEntity.MAX_HEALTH) {
+            val settings = GuardDogConfigs.get(variant(stack))
+            if (settings.damageable.get() && tag.contains(HEALTH) && tag.getFloat(HEALTH) < settings.maxHealth.get()) {
 
-                tag.putLong(READY_AT, now + GuardDogEntity.REARM_TICKS)
+                val repairTicks = settings.repairTicks.get()
+                if (repairTicks == 0) tag.remove(HEALTH)
+                else tag.putLong(READY_AT, now + repairTicks)
 
             }
 

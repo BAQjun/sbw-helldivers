@@ -43,13 +43,13 @@ object GuardDogGas {
 
 
 
-    fun poison(target: LivingEntity, owner: ServerPlayer) {
+    fun poison(target: LivingEntity, owner: ServerPlayer, duration: Int) {
 
-        target.addEffect(MobEffectInstance(ModEffects.GAS.get(), EFFECT_TICKS, 0, false, true, true), owner)
+        target.addEffect(MobEffectInstance(ModEffects.GAS.get(), duration, 0, false, true, true), owner)
 
         if (target !is net.minecraft.world.entity.player.Player)
 
-            target.addEffect(MobEffectInstance(ModEffects.CONFUSION.get(), EFFECT_TICKS, 0, false, true, true), owner)
+            target.addEffect(MobEffectInstance(ModEffects.CONFUSION.get(), duration, 0, false, true, true), owner)
 
     }
 

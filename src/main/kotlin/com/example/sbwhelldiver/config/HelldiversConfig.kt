@@ -45,7 +45,14 @@ object HelldiversConfig {
         .define("attackPlayers", false)
     val attackNeutralMobs = builder.comment("是否允许自动索敌选中非敌对生物。哨戒炮按部署者的敌对关系判断，并排除已驯服宠物。")
         .define("attackNeutralMobs", false)
-    init { TurretConfigs.register(builder); StratagemCooldownConfig.register(builder); EagleConfig.register(builder); OrbitalConfig.register(builder) }
+    init {
+        TurretConfigs.register(builder)
+        GuardDogConfigs.register(builder)
+        TargetingConfig.register(builder)
+        StratagemCooldownConfig.register(builder)
+        EagleConfig.register(builder)
+        OrbitalConfig.register(builder)
+    }
     val SPEC: ForgeConfigSpec = builder.build()
 
     fun effectiveSentryLifetimeTicks(): Int = sentryLifetimeTicks.get().let { if (it == 12000) 3000 else it }

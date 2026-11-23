@@ -1,5 +1,6 @@
 package com.example.sbwhelldiver
 
+import com.example.sbwhelldiver.config.TargetingConfig
 import com.example.sbwhelldiver.config.HelldiversConfig
 import com.example.sbwhelldiver.init.ModCreativeTabs
 import com.example.sbwhelldiver.init.ModEntities
@@ -80,10 +81,19 @@ class Mod {
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, HelldiversConfig.SPEC)
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, com.example.sbwhelldiver.config.ClientModelConfig.SPEC)
         bus.addListener<net.minecraftforge.fml.event.config.ModConfigEvent.Loading> { event ->
-            if (event.config.modId == MOD_ID && event.config.type == ModConfig.Type.SERVER) com.example.sbwhelldiver.config.TurretConfigs.changed()
+            if (event.config.modId == MOD_ID && event.config.type == ModConfig.Type.SERVER) {
+                com.example.sbwhelldiver.config.TurretConfigs.changed()
+                TargetingConfig.reload()
+            }
         }
         bus.addListener<net.minecraftforge.fml.event.config.ModConfigEvent.Reloading> { event ->
-            if (event.config.modId == MOD_ID && event.config.type == ModConfig.Type.SERVER) com.example.sbwhelldiver.config.TurretConfigs.changed()
+            if (event.config.modId == MOD_ID && event.config.type == ModConfig.Type.SERVER) {
+                com.example.sbwhelldiver.config.TurretConfigs.changed()
+                TargetingConfig.reload()
+            }
+        }
+        bus.addListener<net.minecraftforge.fml.event.config.ModConfigEvent.Unloading> { event ->
+            if (event.config.modId == MOD_ID && event.config.type == ModConfig.Type.SERVER) TargetingConfig.clear()
         }
     }
 

@@ -23,7 +23,7 @@ object TeslaArc {
         while(victims.size<TeslaClock.MAX_VICTIMS) {
             val previous=victims.last();val start=previous.boundingBox.center
             val next=sentry.level().getEntitiesOfClass(LivingEntity::class.java,AABB(start,start).inflate(TeslaClock.JUMP_RANGE)) {
-                eligible(it) && victims.none { v -> v.uuid==it.uuid } &&
+                eligible(it) && sentry.targetListDecision(it) != false && victims.none { v -> v.uuid==it.uuid } &&
                     start.distanceToSqr(it.boundingBox.center)<=TeslaClock.JUMP_RANGE*TeslaClock.JUMP_RANGE &&
                     clear(sentry,start,it.boundingBox.center)
             }.minWithOrNull(compareBy<LivingEntity> { start.distanceToSqr(it.boundingBox.center) }.thenBy { it.id }) ?: break

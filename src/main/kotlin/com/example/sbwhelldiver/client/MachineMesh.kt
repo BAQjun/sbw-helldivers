@@ -1,5 +1,6 @@
 package com.example.sbwhelldiver.client
 
+import com.example.sbwhelldiver.config.GuardDogConfigs
 import com.example.sbwhelldiver.MOD_ID
 import com.google.gson.*
 import com.mojang.blaze3d.vertex.PoseStack
@@ -218,17 +219,20 @@ object MachineMesh:ResourceManagerReloadListener {
                 it.startsWith("feed_arm_") || it.startsWith("piston_") || it.startsWith("sleeve_")
             }.toMutableList()
             val hidden = mutableSetOf<Int>()
-            val displayed = (spares - if (reload != null && reloadTime >= com.example.sbwhelldiver.entity.GuardDogEntity.FLAME_REFILL_TICK / 20f) 1 else 0)
-                .coerceIn(0, com.example.sbwhelldiver.entity.GuardDogEntity.FLAME_RESERVES)
-            val spent = com.example.sbwhelldiver.entity.GuardDogEntity.FLAME_RESERVES - displayed
-            for ((side, used) in listOf("r" to (spent + 1) / 2, "l" to spent / 2)) {
+            val variant = if (gas) GuardDogConfigs.Variant.GAS else GuardDogConfigs.Variant.FLAME
+            val capacity = GuardDogConfigs.reserveCapacity(variant)
+            val consumed = reload != null && reloadTime >= com.example.sbwhelldiver.entity.GuardDogEntity.FLAME_REFILL_TICK / 20f
+            val spent = capacity - (spares - if (consumed) 1 else 0).coerceIn(0, capacity)
+            for (side in listOf("r", "l")) {
+                val first = if (side == "r") 1 else 0
+                val sideCapacity = (capacity + first) / 2
+                val spentFraction = if (sideCapacity == 0) 1f else ((spent + first) / 2).toFloat() / sideCapacity
                 val index = model.nodes.indexOfFirst { it.name == "fuel_gauge_$side" }
                 if (index < 0) continue
                 // The animated mesh is a grey cover over the coloured tank stripe.
                 // Cover the spent portion from the top; leave remaining fuel coloured below.
-                if (used == 0) hidden.add(index)
+                if (spentFraction == 0f) hidden.add(index)
                 else {
-                    val spentFraction = used / 3f
                     val height = model.meshCenter(index).y * 2f
                     transforms[index] = Matrix4f(transforms[index])
                         .translate(0f, height * (1f - spentFraction), 0f).scale(1f, spentFraction, 1f)
