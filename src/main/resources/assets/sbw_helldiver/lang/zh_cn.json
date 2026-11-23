@@ -381,5 +381,11 @@
   "tooltip.sbw_helldiver.beacon_curio": "装入专属饰品栏后按 %s 选中信标快捷位",
   "tooltip.sbw_helldiver.sample_curio": "装入专属饰品栏后按 %s 存取样本",
   "subtitles.sbw_helldiver.jump_pack_launch": "跳跃背包起飞",
-  "subtitles.sbw_helldiver.jump_pack_brake": "跳跃背包反推"
+  "subtitles.sbw_helldiver.jump_pack_brake": "跳跃背包反推",
+  "item.sbw_helldiver.hover_pack": "悬浮背包",
+  "item.sbw_helldiver.hover_pack_stratagem": "悬浮背包",
+  "tooltip.sbw_helldiver.hover_pack": "按住跳跃键 1 秒升空。悬浮 6 秒，期间可缓慢移动，落地后冷却 12 秒。",
+  "subtitles.sbw_helldiver.hover_pack_launch": "悬浮背包起飞",
+  "subtitles.sbw_helldiver.hover_pack_loop": "悬浮背包引擎运转",
+  "subtitles.sbw_helldiver.hover_pack_land": "悬浮背包降落"
 }

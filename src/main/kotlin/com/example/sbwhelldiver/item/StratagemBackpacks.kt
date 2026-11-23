@@ -25,6 +25,9 @@ object StratagemBackpacks {
     internal fun createJumpPack(properties: Item.Properties): JumpPack =
         if (usesCurios) BackpackCurios.createJumpPack(properties) else JumpPack(properties)
 
+    internal fun createHoverPack(properties: Item.Properties): HoverPack =
+        if (usesCurios) BackpackCurios.createHoverPack(properties) else HoverPack(properties)
+
     fun handlesBackpackKey(stack: ItemStack?): Boolean =
         stack?.item is SupplyBackpack || stack?.item is GuardDogBackpack
 

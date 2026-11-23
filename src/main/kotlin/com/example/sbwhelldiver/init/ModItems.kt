@@ -70,6 +70,12 @@ object ModItems {
     val JUMP_PACK = ITEMS.register("jump_pack") { _ ->
         com.example.sbwhelldiver.item.StratagemBackpacks.createJumpPack(Item.Properties().stacksTo(1))
     }
+    val HOVER_PACK_STRATAGEM = ITEMS.register("hover_pack_stratagem") { _ ->
+        StratagemItem(Item.Properties().stacksTo(16), dropId("hover_pack"))
+    }
+    val HOVER_PACK = ITEMS.register("hover_pack") { _ ->
+        com.example.sbwhelldiver.item.StratagemBackpacks.createHoverPack(Item.Properties().stacksTo(1))
+    }
     val SUPPLY_BACKPACK_STRATAGEM = ITEMS.register("supply_backpack_stratagem") { _ ->
         StratagemItem(Item.Properties().stacksTo(16), dropId("supply_backpack"))
     }

@@ -73,7 +73,9 @@ class BeaconItem(properties: Properties) : Item(properties), com.atsuishio.super
         projectile.shootFromRotation(player, player.xRot, player.yRot, 0f, 1.5f, 0.5f)
         val cooldowns = com.example.sbwhelldiver.stratagem.StratagemCooldowns
         if (!cooldowns.reserve(player, selected.id, projectile.uuid)) return false
-        if (cooldowns.state(player).enabled) projectile.managedRequest = projectile.uuid
+        if (cooldowns.state(player).entries[selected.id]?.request == projectile.uuid) {
+            projectile.managedRequest = projectile.uuid
+        }
         if (!level.addFreshEntity(projectile)) {
             cooldowns.cancel(player.server, player.uuid, selected.id, projectile.uuid)
             return false

@@ -95,6 +95,10 @@ object BeaconNetwork {
             JumpPackInputPacket::decode, JumpPackInputPacket::handle, Optional.of(PacketDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(34, JumpPackThrustPacket::class.java, JumpPackThrustPacket::encode,
             JumpPackThrustPacket::decode, JumpPackThrustPacket::handle, Optional.of(PacketDirection.PLAY_TO_CLIENT))
+        CHANNEL.registerMessage(35, HoverPackInputPacket::class.java, HoverPackInputPacket::encode,
+            HoverPackInputPacket::decode, HoverPackInputPacket::handle, Optional.of(PacketDirection.PLAY_TO_SERVER))
+        CHANNEL.registerMessage(36, HoverPackStatePacket::class.java, HoverPackStatePacket::encode,
+            HoverPackStatePacket::decode, HoverPackStatePacket::handle, Optional.of(PacketDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(31, BeaconQuickSlotPacket::class.java, BeaconQuickSlotPacket::encode,
             BeaconQuickSlotPacket::decode, BeaconQuickSlotPacket::handle, Optional.of(PacketDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(30, OpenSampleContainerPacket::class.java, { _, _ -> }, { OpenSampleContainerPacket },

@@ -140,7 +140,7 @@ object MachineMesh:ResourceManagerReloadListener {
         val dogs = listOf("guard_dog", "laser_guard_dog", "stun_guard_dog", "flame_guard_dog", "gas_guard_dog")
             .flatMap { listOf(it, it + "_backpack") }
         val withLod = listOf("bioprocessor", "refinery", "bioprocessor_container", "refinery_container") + dogs
-        models=(withLod.flatMap { listOf(it, it + "_lod") } + listOf("tactical_terminal", "sample_container", "item_delivery_rack", "resupply_rack", "supply_case", "supply_backpack", "jump_pack")).associateWith { name ->
+        models=(withLod.flatMap { listOf(it, it + "_lod") } + listOf("tactical_terminal", "sample_container", "item_delivery_rack", "resupply_rack", "supply_case", "supply_backpack", "jump_pack", "hover_pack")).associateWith { name ->
             val json=manager.open(ResourceLocation.fromNamespaceAndPath(MOD_ID,"models/mesh/$name.mesh.json.gz")).use{GZIPInputStream(it).reader().use(JsonParser::parseReader)}.asJsonObject
             fun floats(a:JsonArray)=a.map{it.asFloat}.toFloatArray()
             fun vector(a:JsonArray)=floats(a).let{Vector3f(it[0],it[1],it[2])}
@@ -174,6 +174,17 @@ object MachineMesh:ResourceManagerReloadListener {
             Model(nodes,meshes,clips,List(count+1){ResourceLocation.fromNamespaceAndPath(MOD_ID,"textures/mesh/${name.removeSuffix("_lod")}_$it.png")},json.getAsJsonArray("nozzles").map{raw->val a=raw.asJsonArray;net.minecraft.world.phys.Vec3(a[0].asDouble,a[1].asDouble,a[2].asDouble)},exhausts)
         }
     }
+    fun drawHoverPack(clip: String, time: Float, pose: PoseStack, buffers: MultiBufferSource, light: Int,
+                      thrust: Boolean, exhaust: (Vector3f, Vector3f) -> Unit) {
+        val model = models["hover_pack"] ?: return
+        val matrices = model.pose(clip, time)
+        draw(model, clip, time, pose, buffers, light, matrices = matrices)
+        if (thrust) for (nozzle in model.exhausts) {
+            val matrix = matrices[nozzle.node]
+            exhaust(matrix.transformPosition(Vector3f(nozzle.origin)), matrix.transformDirection(Vector3f(nozzle.axis)).normalize())
+        }
+    }
+
     fun jumpPackNozzles() = models["jump_pack"]?.nozzles.orEmpty()
 
     fun nozzles(machine:com.example.sbwhelldiver.survival.MachineDeployment)=models[machine.id+"_container"]?.nozzles.orEmpty()

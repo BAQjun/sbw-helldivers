@@ -55,6 +55,7 @@ class StratagemCooldownState {
             if (e.phase == CallPhase.ARRIVING && now >= e.end) {
                 val arrivedAt = e.end
                 e.phase = if (enabled) CallPhase.COOLDOWN else CallPhase.READY
+                if (!enabled) e.request = null
                 e.start = arrivedAt; e.end = arrivedAt + if (enabled) StratagemCooldownConfig.ticks(e.id) else 0
                 if (e.id.startsWith("eagle_") && !rearming(now)) {
                     turnaroundStart = arrivedAt; turnaroundEnd = e.end

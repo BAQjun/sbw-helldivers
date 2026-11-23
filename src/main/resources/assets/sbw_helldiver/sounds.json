@@ -6100,5 +6100,56 @@
         "attenuation_distance": 48
       }
     ]
+  },
+  "sfx_hover_pack_launch": {
+    "subtitle": "subtitles.sbw_helldiver.hover_pack_launch",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/hover_pack/launch_1",
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/hover_pack/launch_2",
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/hover_pack/launch_3",
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/hover_pack/launch_4",
+        "attenuation_distance": 32
+      }
+    ]
+  },
+  "sfx_hover_pack_loop": {
+    "subtitle": "subtitles.sbw_helldiver.hover_pack_loop",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/hover_pack/loop",
+        "attenuation_distance": 32
+      }
+    ]
+  },
+  "sfx_hover_pack_land": {
+    "subtitle": "subtitles.sbw_helldiver.hover_pack_land",
+    "sounds": [
+      {
+        "name": "sbw_helldiver:original/hover_pack/land_1",
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/hover_pack/land_2",
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/hover_pack/land_3",
+        "attenuation_distance": 32
+      },
+      {
+        "name": "sbw_helldiver:original/hover_pack/land_4",
+        "attenuation_distance": 32
+      }
+    ]
   }
 }

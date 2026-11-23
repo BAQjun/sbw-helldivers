@@ -7,6 +7,7 @@
     "tacz.TaczEntityUtilMixin",
     "tacz.TaczBulletMixin",
     "AttackGoalAccess",
+    "HoverPackFloatingMixin",
     "BeaconInventoryMixin",
     "BeaconPlayerMixin",
     "CreativeHostilityPlayerMixin",

@@ -381,5 +381,11 @@
   "tooltip.sbw_helldiver.beacon_curio": "Equip in its Curios slot, then press %s to select the beacon hotbar slot",
   "tooltip.sbw_helldiver.sample_curio": "In its Curios slot, press %s to access samples",
   "subtitles.sbw_helldiver.jump_pack_launch": "Jump Pack fires",
-  "subtitles.sbw_helldiver.jump_pack_brake": "Jump Pack brakes"
+  "subtitles.sbw_helldiver.jump_pack_brake": "Jump Pack brakes",
+  "item.sbw_helldiver.hover_pack": "Hover Pack",
+  "item.sbw_helldiver.hover_pack_stratagem": "Hover Pack",
+  "tooltip.sbw_helldiver.hover_pack": "Hold Jump for 1 second to take off. Hover and move slowly for 6 seconds. Recharges 12 seconds after landing.",
+  "subtitles.sbw_helldiver.hover_pack_launch": "Hover Pack launches",
+  "subtitles.sbw_helldiver.hover_pack_loop": "Hover Pack engines hum",
+  "subtitles.sbw_helldiver.hover_pack_land": "Hover Pack lands"
 }

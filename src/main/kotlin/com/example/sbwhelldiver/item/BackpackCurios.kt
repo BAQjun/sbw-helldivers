@@ -27,6 +27,8 @@ internal object BackpackCurios {
 
     fun createJumpPack(properties: Item.Properties): JumpPack = CurioJumpPack(properties)
 
+    fun createHoverPack(properties: Item.Properties): HoverPack = CurioHoverPack(properties)
+
 
     private fun slots(player: Player) =
         CuriosApi.getCuriosInventory(player).orElse(null)?.getStacksHandler(BACK)?.orElse(null)?.stacks
@@ -81,6 +83,10 @@ internal object BackpackCurios {
 }
 
 private class CurioJumpPack(properties: Item.Properties) : JumpPack(properties), ICurioItem {
+    override fun canEquipFromUse(slotContext: SlotContext, stack: ItemStack) = true
+}
+
+private class CurioHoverPack(properties: Item.Properties) : HoverPack(properties), ICurioItem {
     override fun canEquipFromUse(slotContext: SlotContext, stack: ItemStack) = true
 }
 
