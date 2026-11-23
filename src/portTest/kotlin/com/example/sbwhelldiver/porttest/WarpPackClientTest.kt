@@ -209,9 +209,9 @@ object WarpPackClientTest {
         if (!enabled || step != Step.KEEP_HOLDING) return
         val mc = Minecraft.getInstance()
         val age = (mc.level?.gameTime ?: return) - burstAt
-        if (age == 1L) capture(mc, "warp-departure-ring")
-        if (age == 3L) capture(mc, "warp-release-flash")
-        if (age == 7L) capture(mc, "warp-residual-sparks")
+        if (age in 1L..5L) capture(mc, "warp-departure-ring")
+        if (age in 3L..8L) capture(mc, "warp-release-flash")
+        if (age in 7L..13L) capture(mc, "warp-residual-sparks")
     }
 
     private fun capture(mc: Minecraft, name: String) {

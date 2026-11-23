@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.client.CameraType
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.screens.TitleScreen
+import net.minecraft.client.resources.sounds.SoundInstance
 import net.minecraft.core.BlockPos
 import net.minecraft.core.registries.Registries
 import net.minecraft.world.Difficulty
@@ -48,6 +49,7 @@ object HoverPackClientTest {
     private var flightAge = 0
     private var takeoffs = 0
     private var flightSounds = 0
+    private var engineSound: SoundInstance? = null
     private var brakes = 0
 
     @SubscribeEvent
@@ -55,7 +57,10 @@ object HoverPackClientTest {
         if (!enabled) return
         when (event.sound.location.path) {
             "sfx_hover_pack_launch" -> takeoffs++
-            "sfx_hover_pack_loop" -> flightSounds++
+            "sfx_hover_pack_loop" -> {
+                flightSounds++
+                engineSound = event.sound
+            }
             "sfx_hover_pack_land" -> brakes++
         }
     }
@@ -156,6 +161,9 @@ object HoverPackClientTest {
                     }
                     if (cooling) {
                         check(player.y - origin.y < .6 && player.health == player.maxHealth) { "Cooldown or fall damage before landing" }
+                        check(engineSound?.let(mc.soundManager::isActive) == false) {
+                            "Hover engine loop continued after descent"
+                        }
                         check(flightAge > 0 && takeoffs == 1 && flightSounds == 1 && brakes == 1) {
                             "Expected ascent, hover loop and descent sounds once, got $takeoffs/$flightSounds/$brakes"
                         }
