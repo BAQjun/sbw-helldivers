@@ -138,6 +138,7 @@
   "block.sbw_helldiver.sentry_fire": "HD2 Fire",
   "death.attack.sbw_helldiver.hellpod_impact": "%1$s was crushed by a hellpod",
   "death.attack.sbw_helldiver.hellpod_impact.player": "%1$s was crushed by a hellpod",
+  "death.attack.sbw_helldiver.warp_pack": "%1$s found %2$s",
   "hud.sbw_helldiver.cooldown": "Cooldown %s",
   "hud.sbw_helldiver.rearming": "Rearming %s",
   "hud.sbw_helldiver.waiting_beacon": "Awaiting beacon",
