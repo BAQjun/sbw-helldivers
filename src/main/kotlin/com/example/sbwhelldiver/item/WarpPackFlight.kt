@@ -1,12 +1,16 @@
 package com.example.sbwhelldiver.item
 
 import com.example.sbwhelldiver.network.WarpPackBurstPacket
+import net.minecraft.ChatFormatting
 import net.minecraft.core.BlockPos
 import net.minecraft.core.component.DataComponents
 import net.minecraft.nbt.Tag
+import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
 import com.example.sbwhelldiver.init.ModSounds
 import net.minecraft.sounds.SoundSource
+import net.minecraft.world.damagesource.DamageSource
+import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.component.CustomData
 import net.minecraft.world.phys.Vec3
@@ -72,7 +76,7 @@ internal object WarpPackFlight {
             Phase.SAFE -> Unit
             Phase.RISK -> {
                 if (player.health <= 8f) {
-                    player.kill()
+                    killWithWarpMessage(player)
                 } else {
                     player.health -= 8f
                     if (player.random.nextFloat() < .2f) player.remainingFireTicks = maxOf(player.remainingFireTicks, 60)
@@ -80,9 +84,21 @@ internal object WarpPackFlight {
             }
             Phase.LETHAL -> {
                 pack.shrink(1)
-                player.kill()
+                killWithWarpMessage(player)
             }
         }
+    }
+
+    private fun killWithWarpMessage(player: ServerPlayer) {
+        val source = object : DamageSource(player.damageSources().genericKill().typeHolder()) {
+            override fun getLocalizedDeathMessage(victim: LivingEntity): Component =
+                Component.translatable(
+                    "death.attack.sbw_helldiver.warp_pack",
+                    victim.displayName,
+                    Component.literal("Eli Anderson").withStyle(ChatFormatting.BOLD),
+                )
+        }
+        player.hurt(source, Float.MAX_VALUE)
     }
 
     private fun findLanding(player: ServerPlayer, origin: Vec3): Vec3? {

@@ -138,6 +138,7 @@
   "block.sbw_helldiver.sentry_fire": "HD2火焰",
   "death.attack.sbw_helldiver.hellpod_impact": "%1$s 被空投仓砸扁了",
   "death.attack.sbw_helldiver.hellpod_impact.player": "%1$s 被空投仓砸扁了",
+  "death.attack.sbw_helldiver.warp_pack": "%1$s找到安德森少校了",
   "hud.sbw_helldiver.cooldown": "冷却倒计时 %s",
   "hud.sbw_helldiver.rearming": "重新武装中 %s",
   "hud.sbw_helldiver.waiting_beacon": "等待信标落地",

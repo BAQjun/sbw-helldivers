@@ -15,6 +15,8 @@ import net.minecraft.client.gui.screens.TitleScreen
 import net.minecraft.core.BlockPos
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.Registries
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.world.Difficulty
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.item.ItemDisplayContext
@@ -31,6 +33,7 @@ import net.minecraft.world.phys.Vec3
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.neoforge.client.event.ClientChatReceivedEvent
 import net.neoforged.neoforge.client.event.ClientTickEvent
 import net.neoforged.neoforge.client.event.RenderGuiEvent
 import net.neoforged.neoforge.client.event.sound.PlaySoundSourceEvent
@@ -53,6 +56,7 @@ object WarpPackClientTest {
     private var arrivals = 0
     private val captures = mutableSetOf<String>()
     private var failed = false
+    private var deathMessage: Component? = null
     @Volatile private var preparationError: Throwable? = null
 
     @SubscribeEvent
@@ -209,6 +213,12 @@ object WarpPackClientTest {
                 Step.DONE -> if (elapsed >= 6) {
                     check(pack == null) { "The used Warp Pack survived lethal activation with Keep Inventory enabled" }
                     check(player.inventory.getItem(8).item === ModItems.WARP_PACK.get()) { "The spare Warp Pack was destroyed" }
+                    val message = checkNotNull(deathMessage) { "The lethal warp did not broadcast its death message" }
+                    val contents = message.contents as TranslatableContents
+                    val victim = contents.args[0] as Component
+                    val major = contents.args[1] as Component
+                    check(victim.string == player.displayName?.string && major.string == "Eli Anderson" && major.style.isBold)
+                    LOGGER.info("WARP_PACK_DEATH_MESSAGE_PASSED: {}", message.string)
                     check(departures >= 2 && arrivals >= 2) { "Missing warp sound: $departures departures and $arrivals arrivals" }
                     check("warp-departure-ring" in captures && "warp-release-flash" in captures)
                     LOGGER.info("WARP_PACK_CLIENT_PASSED: Curios, item transforms, backpack key activation, 10-block travel, 33% cost, recharge, risk damage, lethal warp consumes only the equipped pack, spatial audio and capture")
@@ -220,6 +230,13 @@ object WarpPackClientTest {
             LOGGER.error("WARP_PACK_CLIENT_FAILED at $step:$elapsed", failure)
             mc.stop()
         }
+    }
+
+    @SubscribeEvent
+    fun deathBroadcast(event: ClientChatReceivedEvent.System) {
+        if (!enabled || event.isOverlay) return
+        val contents = event.message.contents as? TranslatableContents ?: return
+        if (contents.key == "death.attack.sbw_helldiver.warp_pack") deathMessage = event.message
     }
 
     @SubscribeEvent
