@@ -164,7 +164,7 @@ object TacticalTerminalDisplay {
             p.popPose()
         }
         private fun quad(texture:ResourceLocation,x:Int,y:Int,w:Int,h:Int,color:Int,z:Float){
-            val v=b.getBuffer(RenderType.entityCutoutNoCull(texture));val pose=p.last()
+            val v=b.getBuffer(TacticalTerminalRenderTypes.display(texture));val pose=p.last()
             for(q in arrayOf(floatArrayOf(x.toFloat(),y.toFloat(),0f,0f),floatArrayOf(x.toFloat(),(y+h).toFloat(),0f,1f),floatArrayOf((x+w).toFloat(),(y+h).toFloat(),1f,1f),floatArrayOf((x+w).toFloat(),y.toFloat(),1f,0f))){
                 v.vertex(pose.pose(),q[0],q[1],z).color((color ushr 16 and 255)/255f,(color ushr 8 and 255)/255f,(color and 255)/255f,1f)
                     .uv(q[2],q[3]).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(pose.normal(),0f,0f,1f).endVertex()
