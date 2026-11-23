@@ -1,6 +1,7 @@
 package com.example.sbwhelldiver.client;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import java.lang.invoke.MethodHandle;
@@ -31,7 +32,9 @@ public final class PackedEntityVertices {
     private int count;
     private PackedEntityVertices(Object writer){this.writer=writer;}
     public static PackedEntityVertices create(VertexConsumer consumer){
-        if(of==null)return null;
+        // Composite consumers copy bulk data onto LWJGL's small native stack for each delegate.
+        // Emit individual vertices there so block damage can still render both passes.
+        if (of == null || consumer.getClass().getEnclosingClass() == VertexMultiConsumer.class) return null;
         try {Object writer=(Object)of.invokeExact(consumer);return writer==null?null:new PackedEntityVertices(writer);}
         catch(Throwable error){throw new IllegalStateException("Cannot obtain Embeddium vertex writer",error);}
     }

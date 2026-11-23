@@ -12,6 +12,8 @@ import net.minecraft.core.*
 import net.minecraft.core.registries.Registries
 import net.minecraft.world.*
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
+import org.lwjgl.glfw.GLFW
 import net.minecraft.world.level.*
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.levelgen.WorldOptions
@@ -42,6 +44,7 @@ object TacticalClientTests {
             for(x in -7..7)for(z in -7..7)l.setBlock(BlockPos(x,79,z),Blocks.SMOOTH_STONE.defaultBlockState(),3)
             l.setDefaultSpawnPos(BlockPos(1,80,-4),0f)
             val player=server.playerList.getPlayer(p.uuid)!!;player.setGameMode(GameType.CREATIVE);player.teleportTo(l,1.0,80.0,-3.0,0f,8f);player.inventory.clearContent()
+            if (server.commands.dispatcher.root.getChild("grieflogger") != null) server.playerList.op(player.gameProfile)
             val state=ModBlocks.TACTICAL_TERMINAL.get().defaultBlockState().setValue(TacticalTerminalBlock.FACING,Direction.NORTH)
             for(i in 0..3)l.setBlock(TacticalTerminalBlock.position(root,Direction.NORTH,i),state.setValue(TacticalTerminalBlock.PART,i),3)
             player.inventory.setItem(8,ItemStack(ModItems.TACTICAL_TERMINAL.get()));player.inventory.setItem(0,ItemStack(ModItems.COMMON_SAMPLE.get(),50));player.inventory.setItem(1,ItemStack(ModItems.RARE_SAMPLE.get(),15))
@@ -77,12 +80,47 @@ object TacticalClientTests {
         }
         if(ticks==240)capture("tactical-success.png")
         if(ticks==250){
-            mc.screen?.onClose()
+            check((mc.screen as TacticalTerminalScreen).keyPressed(GLFW.GLFW_KEY_ESCAPE, 0, 0))
+            check(mc.screen == null && mc.cameraEntity === p) {"Esc did not restore the player camera"}
             server.execute{val player=server.playerList.getPlayer(p.uuid)!!;player.inventory.setItem(0,ItemStack(ModItems.BEACON.get()));player.inventory.selected=0}
         }
         if(ticks in 260..287)com.example.sbwhelldiver.client.StratagemClient.ALT.isDown=true
         if(ticks==285)capture("tactical-hud-count.png")
-        if(ticks==290){com.example.sbwhelldiver.client.StratagemClient.ALT.isDown=false;LOGGER.info("TACTICAL_CLIENT_COMPLETED");mc.stop()}
+        if (ticks == 290) {
+            com.example.sbwhelldiver.client.StratagemClient.ALT.isDown = false
+            server.execute {
+                val player = server.playerList.getPlayer(p.uuid)!!
+                check(TacticalTerminalSessions.token(player) == null) {"Esc left a terminal session active"}
+                player.inventory.setItem(0, ItemStack(Items.DIAMOND_PICKAXE))
+                player.setGameMode(GameType.SURVIVAL)
+            }
+        }
+        val hasInspectCommand = mc.connection?.commands?.root?.getChild("grieflogger")?.getChild("inspect") != null
+        if (hasInspectCommand && ticks == 300) mc.connection!!.sendCommand("grieflogger inspect")
+        if (hasInspectCommand && ticks == 305) mc.gameMode!!.startDestroyBlock(root, Direction.NORTH)
+        if (hasInspectCommand && ticks == 308) {
+            check((mc.level!!.getBlockEntity(root) as TacticalTerminalBlockEntity).screenOn)
+            mc.gameMode!!.stopDestroyBlock()
+            mc.connection!!.sendCommand("grieflogger inspect")
+            LOGGER.info("TACTICAL_CLIENT_INSPECT_VERIFIED")
+        }
+        if (ticks == 320) {
+            val terminal = mc.level!!.getBlockEntity(root) as TacticalTerminalBlockEntity
+            check(terminal.screenOn) {"Terminal must remain powered after Esc"}
+            check(mc.gameMode!!.startDestroyBlock(root, Direction.NORTH)) {"Failed to start mining terminal"}
+        }
+        if (ticks in 321..370 && mc.level!!.getBlockState(root).`is`(ModBlocks.TACTICAL_TERMINAL.get())) {
+            mc.gameMode!!.continueDestroyBlock(root, Direction.NORTH)
+        }
+        if (ticks == 375) {
+            check((0..3).none { part ->
+                mc.level!!.getBlockState(TacticalTerminalBlock.position(root, Direction.NORTH, part))
+                    .`is`(ModBlocks.TACTICAL_TERMINAL.get())
+            }) {"Mining the powered terminal did not remove all parts"}
+            LOGGER.info("TACTICAL_CLIENT_POWERED_BREAK_VERIFIED")
+            LOGGER.info("TACTICAL_CLIENT_COMPLETED")
+            mc.stop()
+        }
     }
     private fun click(x:Double,y:Double){
         val mc=Minecraft.getInstance();val s=mc.screen as TacticalTerminalScreen
