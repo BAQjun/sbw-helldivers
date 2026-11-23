@@ -29,7 +29,10 @@ internal object JumpPackVisual {
         private var age = 0
         var fading = false
 
-        init { updatePosition() }
+        init {
+            volume = .63f
+            updatePosition()
+        }
 
         private fun updatePosition() {
             x = player.x
@@ -43,7 +46,7 @@ internal object JumpPackVisual {
             if (player.isRemoved || !player.isAlive || Minecraft.getInstance().level !== player.level() ||
                 StratagemBackpacks.equipped(player)?.item !is JumpPack || (age > 5 && player.onGround())) fading = true
             if (fading) {
-                volume -= .25f
+                volume -= .1575f
                 if (volume <= 0f) stop()
             }
             if ((age > 155 || isStopped) && flightSounds[player]?.get() === this) flightSounds.remove(player)

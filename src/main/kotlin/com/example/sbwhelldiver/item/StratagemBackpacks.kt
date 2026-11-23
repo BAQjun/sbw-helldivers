@@ -30,15 +30,20 @@ object StratagemBackpacks {
     internal fun createWarpPack(properties: Item.Properties): WarpPack =
         if (usesCurios) BackpackCurios.createWarpPack(properties) else WarpPack(properties)
 
-    fun handlesBackpackKey(stack: ItemStack?): Boolean =
-        stack?.item is SupplyBackpack || stack?.item is GuardDogBackpack
+    fun handlesBackpackKey(stack: ItemStack?): Boolean = when (stack?.item) {
+        is GuardDogBackpack, is SupplyBackpack, is JumpPack, is HoverPack, is WarpPack -> true
+        else -> false
+    }
 
-    fun interact(player: ServerPlayer) {
-        if (!player.isAlive || player.isSpectator) return
+    fun interact(player: ServerPlayer, forward: Int = 0, left: Int = 0) {
+        if (!player.isAlive || player.isSpectator || forward !in -1..1 || left !in -1..1) return
         val stack = equipped(player) ?: return
         when (stack.item) {
             is SupplyBackpack -> SupplyBackpack.useCase(player, stack)
             is GuardDogBackpack -> GuardDogBackpack.toggle(player)
+            is JumpPack -> JumpPackFlight.start(player, stack, forward, left)
+            is HoverPack -> HoverPackFlight.start(player, stack, forward, left)
+            is WarpPack -> WarpPackFlight.start(player, stack)
         }
     }
 

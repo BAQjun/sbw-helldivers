@@ -1,6 +1,7 @@
 package com.example.sbwhelldiver.porttest
 
 import com.example.sbwhelldiver.LOGGER
+import org.lwjgl.glfw.GLFW
 import com.example.sbwhelldiver.MOD_ID
 import com.example.sbwhelldiver.init.ModItems
 import com.example.sbwhelldiver.item.StratagemBackpacks
@@ -29,7 +30,7 @@ import top.theillusivec4.curios.api.CuriosApi
 
 @EventBusSubscriber(modid = MOD_ID, value = [Dist.CLIENT])
 object JumpPackClientTest {
-    private enum class Step { EQUIP, TAP, WAIT_AFTER_TAP, HOLD, FLY, RECHARGE, RETEST }
+    private enum class Step { EQUIP, VANILLA_JUMP, WAIT_FOR_GROUND, LAUNCH, FLY, RECHARGE, RETEST }
 
     private val enabled = java.lang.Boolean.getBoolean("sbw_helldiver.jumpPackTests")
     private val launchedAt = System.nanoTime()
@@ -105,26 +106,30 @@ object JumpPackClientTest {
                     StratagemBackpacks.equipped(player)?.item === item) {
                     origin = player.position()
                     jumping.isDown = true
-                    next(Step.TAP)
+                    next(Step.VANILLA_JUMP)
                 }
-                Step.TAP -> {
-                    jumping.isDown = false
-                    next(Step.WAIT_AFTER_TAP)
-                }
-                Step.WAIT_AFTER_TAP -> {
-                    check(player.y - origin.y < 1.4 && !cooling && takeoffs == 0) { "Short tap triggered the pack" }
-                    if (elapsed > 24 && player.onGround()) {
-                        origin = player.position()
-                        jumping.isDown = true
-                        forward.isDown = true
-                        next(Step.HOLD)
+                Step.VANILLA_JUMP -> {
+                    check(takeoffs == 0) { "Vanilla jumping started the pack" }
+                    if (elapsed == 6) {
+                        jumping.isDown = false
+                        next(Step.WAIT_FOR_GROUND)
                     }
                 }
-                Step.HOLD -> {
+                Step.WAIT_FOR_GROUND -> {
+                    check(player.y - origin.y < 1.4 && !cooling && takeoffs == 0) { "Vanilla jumping started the pack" }
+                    if (elapsed > 24 && player.onGround()) {
+                        origin = player.position()
+                        forward.isDown = true
+                        pressBackpackKey(mc)
+                        next(Step.LAUNCH)
+                    }
+                }
+                Step.LAUNCH -> {
+                    check(mc.screen == null) { "Backpack key opened another screen" }
                     peak = maxOf(peak, player.y - origin.y)
                     if (elapsed == 8) capture(mc, "launch")
                     if (elapsed >= 9) {
-                        jumping.isDown = false
+                        check(takeoffs == 1) { "Backpack key did not launch the pack" }
                         forward.isDown = false
                         next(Step.FLY)
                     }
@@ -152,23 +157,20 @@ object JumpPackClientTest {
                     if (elapsed == 20) check(takeoffs == 1 && flightSounds == 1 && brakes == 1) {
                         "Expected one launch, flight and brake cue; got $takeoffs, $flightSounds, $brakes"
                     }
-                    // A long press in cooldown does not launch.
-                    if (elapsed == 25) jumping.isDown = true
-                    if (elapsed == 33) jumping.isDown = false
+                    if (elapsed == 25) pressBackpackKey(mc)
                     if (elapsed <= 290) check(cooling && takeoffs == 1)
                     if (!cooling && elapsed > 290 && player.onGround()) {
                         check(elapsed in 297..305) { "Expected 300 cooldown ticks, got $elapsed" }
                         peak = 0.0
                         origin = player.position()
-                        jumping.isDown = true
+                        pressBackpackKey(mc)
                         next(Step.RETEST)
                     }
                 }
                 Step.RETEST -> {
-                    if (elapsed == 8) jumping.isDown = false
                     peak = maxOf(peak, player.y - origin.y)
                     if (peak >= 3.0 && takeoffs == 2) {
-                        LOGGER.info("JUMP_PACK_CLIENT_PASSED: short tap, directional flight, three native cues, safe landing and 15-second recharge")
+                        LOGGER.info("JUMP_PACK_CLIENT_PASSED: backpack key activation, directional flight, three native cues, safe landing and 15-second recharge")
                         mc.stop()
                     }
                     check(elapsed < 50) { "Pack did not recharge" }
@@ -178,6 +180,12 @@ object JumpPackClientTest {
             LOGGER.error("JUMP_PACK_CLIENT_FAILED at $step:$elapsed", failure)
             mc.stop()
         }
+    }
+
+    private fun pressBackpackKey(mc: Minecraft) {
+        val window = mc.window.window
+        mc.keyboardHandler.keyPress(window, GLFW.GLFW_KEY_G, 0, GLFW.GLFW_PRESS, 0)
+        mc.keyboardHandler.keyPress(window, GLFW.GLFW_KEY_G, 0, GLFW.GLFW_RELEASE, 0)
     }
 
     private fun capture(mc: Minecraft, phase: String) {

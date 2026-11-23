@@ -91,24 +91,20 @@ data class BeaconFailurePacket(val stratagemId: String, val loadoutIds: List<Str
 object BeaconNetwork {
     val CHANNEL = PacketChannel()
     fun register() {
-        CHANNEL.registerMessage(33, JumpPackInputPacket::class.java, JumpPackInputPacket::encode,
-            JumpPackInputPacket::decode, JumpPackInputPacket::handle, Optional.of(PacketDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(34, JumpPackThrustPacket::class.java, JumpPackThrustPacket::encode,
             JumpPackThrustPacket::decode, JumpPackThrustPacket::handle, Optional.of(PacketDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(35, HoverPackInputPacket::class.java, HoverPackInputPacket::encode,
             HoverPackInputPacket::decode, HoverPackInputPacket::handle, Optional.of(PacketDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(36, HoverPackStatePacket::class.java, HoverPackStatePacket::encode,
             HoverPackStatePacket::decode, HoverPackStatePacket::handle, Optional.of(PacketDirection.PLAY_TO_CLIENT))
-        CHANNEL.registerMessage(37, WarpPackInputPacket::class.java, WarpPackInputPacket::encode,
-            WarpPackInputPacket::decode, WarpPackInputPacket::handle, Optional.of(PacketDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(38, WarpPackBurstPacket::class.java, WarpPackBurstPacket::encode,
             WarpPackBurstPacket::decode, WarpPackBurstPacket::handle, Optional.of(PacketDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(31, BeaconQuickSlotPacket::class.java, BeaconQuickSlotPacket::encode,
             BeaconQuickSlotPacket::decode, BeaconQuickSlotPacket::handle, Optional.of(PacketDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(30, OpenSampleContainerPacket::class.java, { _, _ -> }, { OpenSampleContainerPacket },
             { _, context -> OpenSampleContainerPacket.handle(context) }, Optional.of(PacketDirection.PLAY_TO_SERVER))
-        CHANNEL.registerMessage(29, GuardDogTogglePacket::class.java, { _, _ -> }, { GuardDogTogglePacket },
-            { _, context -> GuardDogTogglePacket.handle(context) }, Optional.of(PacketDirection.PLAY_TO_SERVER))
+        CHANNEL.registerMessage(29, BackpackInteractPacket::class.java, BackpackInteractPacket::encode,
+            BackpackInteractPacket::decode, BackpackInteractPacket::handle, Optional.of(PacketDirection.PLAY_TO_SERVER))
         CHANNEL.registerMessage(28,TacticalTerminalResultPacket::class.java,{p,b->p.encode(b)},TacticalTerminalResultPacket::decode,TacticalTerminalResultPacket::handle,Optional.of(PacketDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(26,TacticalTerminalOpenPacket::class.java,{p,b->p.encode(b)},TacticalTerminalOpenPacket::decode,TacticalTerminalOpenPacket::handle,Optional.of(PacketDirection.PLAY_TO_CLIENT))
         CHANNEL.registerMessage(27,TacticalTerminalActionPacket::class.java,{p,b->p.encode(b)},TacticalTerminalActionPacket::decode,TacticalTerminalActionPacket::handle,Optional.of(PacketDirection.PLAY_TO_SERVER))

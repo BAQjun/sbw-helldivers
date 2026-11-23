@@ -1,6 +1,7 @@
 package com.example.sbwhelldiver.porttest
 
 import com.example.sbwhelldiver.LOGGER
+import org.lwjgl.glfw.GLFW
 import com.example.sbwhelldiver.MOD_ID
 import com.example.sbwhelldiver.init.ModItems
 import com.example.sbwhelldiver.item.StratagemBackpacks
@@ -31,9 +32,8 @@ import top.theillusivec4.curios.api.CuriosApi
 
 @EventBusSubscriber(modid = MOD_ID, value = [Dist.CLIENT])
 object HoverPackClientTest {
-    private enum class Step { EQUIP, TAP, WAIT_AFTER_TAP, HOLD, FLY, RECHARGE, RETEST }
+    private enum class Step { EQUIP, VANILLA_JUMP, WAIT_FOR_GROUND, LAUNCH, FLY, RECHARGE, RETEST }
 
-    private const val EXPECTED_HOLD_TICKS = 4
 
     private val enabled = java.lang.Boolean.getBoolean("sbw_helldiver.hoverPackTests")
     private val launchedAt = System.nanoTime()
@@ -116,30 +116,27 @@ object HoverPackClientTest {
                     verifyInventoryModels(mc)
                     origin = player.position()
                     jumping.isDown = true
-                    next(Step.TAP)
+                    next(Step.VANILLA_JUMP)
                 }
-                Step.TAP -> {
-                    check(takeoffs == 0) { "A short press activated the pack" }
-                    if (elapsed == 1) {
+                Step.VANILLA_JUMP -> {
+                    check(takeoffs == 0) { "Vanilla jumping started the pack" }
+                    if (elapsed == 6) {
                         jumping.isDown = false
-                        next(Step.WAIT_AFTER_TAP)
+                        next(Step.WAIT_FOR_GROUND)
                     }
                 }
-                Step.WAIT_AFTER_TAP -> {
+                Step.WAIT_FOR_GROUND -> {
                     check(takeoffs == 0 && player.y - origin.y < 1.4 && !cooling)
                     if (elapsed > 24 && player.onGround()) {
                         origin = player.position()
-                        jumping.isDown = true
-                        next(Step.HOLD)
+                        pressBackpackKey(mc)
+                        next(Step.LAUNCH)
                     }
                 }
-                Step.HOLD -> {
-                    if (player.y - origin.y > 1.45) {
-                        check(elapsed in EXPECTED_HOLD_TICKS..EXPECTED_HOLD_TICKS + 7) { "Ascent began at tick $elapsed" }
-                        jumping.isDown = false
-                        next(Step.FLY)
-                    }
-                    check(elapsed < EXPECTED_HOLD_TICKS + 8) { "The jump pack hold did not activate the hover pack" }
+                Step.LAUNCH -> {
+                    check(mc.screen == null) { "Backpack key opened another screen" }
+                    if (player.y - origin.y > 1.45) next(Step.FLY)
+                    check(elapsed < 15) { "Backpack key did not launch the hover pack" }
                 }
                 Step.FLY -> {
                     if (flightSounds == 1 && hoverStarted == 0) {
@@ -148,6 +145,7 @@ object HoverPackClientTest {
                         check(hoverPosition.y - origin.y in 5.4..6.5) { "Ascent stopped at ${hoverPosition.y - origin.y}" }
                         forward.isDown = true
                     }
+                    if (hoverStarted > 0 && flightAge == 0) check(forward.isDown) { "Hover test lost its steering input" }
                     // Movement packets and the sound engine advance independently.
                     if (hoverStarted > 0 && flightAge == 0 && player.y < hoverPosition.y - .6) {
                         forward.isDown = false
@@ -175,21 +173,17 @@ object HoverPackClientTest {
                     if (!cooling) {
                         check(elapsed in 235..246) { "Expected 12 seconds of cooldown, got $elapsed ticks" }
                         origin = player.position()
-                        jumping.isDown = true
+                        pressBackpackKey(mc)
                         next(Step.RETEST)
                     }
                     check(elapsed < 247)
                 }
                 Step.RETEST -> {
-                    if (player.y - origin.y > 1.45 && jumping.isDown) {
-                        check(elapsed in EXPECTED_HOLD_TICKS..EXPECTED_HOLD_TICKS + 7)
-                        jumping.isDown = false
-                    }
-                    if (!jumping.isDown && takeoffs == 2) {
-                        LOGGER.info("HOVER_PACK_CLIENT_PASSED: inventory models, shared jump pack hold, six seconds of hover, steering, native sampled audio, landing and 12-second recharge")
+                    if (takeoffs == 2 && player.y - origin.y > 1.45) {
+                        LOGGER.info("HOVER_PACK_CLIENT_PASSED: inventory models, backpack key activation, six seconds of hover, steering, native sampled audio, landing and 12-second recharge")
                         mc.stop()
                     }
-                    check(elapsed < if (jumping.isDown) EXPECTED_HOLD_TICKS + 8 else 40)
+                    check(elapsed < 15) { "Backpack key did not relaunch the hover pack" }
                 }
             }
         } catch (failure: Throwable) {
@@ -197,6 +191,12 @@ object HoverPackClientTest {
             LOGGER.error("HOVER_PACK_CLIENT_FAILED at $step:$elapsed", failure)
             mc.stop()
         }
+    }
+
+    private fun pressBackpackKey(mc: Minecraft) {
+        val window = mc.window.window
+        mc.keyboardHandler.keyPress(window, GLFW.GLFW_KEY_G, 0, GLFW.GLFW_PRESS, 0)
+        mc.keyboardHandler.keyPress(window, GLFW.GLFW_KEY_G, 0, GLFW.GLFW_RELEASE, 0)
     }
 
     private fun verifyInventoryModels(mc: Minecraft) {

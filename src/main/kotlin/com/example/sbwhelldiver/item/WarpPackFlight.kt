@@ -1,26 +1,18 @@
 package com.example.sbwhelldiver.item
 
-import com.example.sbwhelldiver.MOD_ID
 import com.example.sbwhelldiver.network.WarpPackBurstPacket
 import net.minecraft.core.BlockPos
 import net.minecraft.core.component.DataComponents
 import net.minecraft.nbt.Tag
-import net.minecraft.resources.ResourceKey
 import net.minecraft.server.level.ServerPlayer
 import com.example.sbwhelldiver.init.ModSounds
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.component.CustomData
-import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
-import net.neoforged.bus.api.SubscribeEvent
-import net.neoforged.fml.common.EventBusSubscriber
-import net.neoforged.neoforge.event.tick.PlayerTickEvent
-import java.util.WeakHashMap
 import kotlin.math.cos
 import kotlin.math.sin
 
-@EventBusSubscriber(modid = MOD_ID)
 internal object WarpPackFlight {
     const val FULL = 1000
     private const val COST = 330
@@ -32,37 +24,6 @@ internal object WarpPackFlight {
 
     enum class Phase(val color: Int) {
         SAFE(0xC080FF), RISK(0xFFD34F), LETHAL(0xFF4649)
-    }
-
-    private class Press(val stack: ItemStack, val dimension: ResourceKey<Level>, val tick: Int) {
-        var attempted = false
-    }
-
-    private val presses = WeakHashMap<ServerPlayer, Press>()
-
-    fun input(player: ServerPlayer, held: Boolean) {
-        if (!held) {
-            presses.remove(player)
-            return
-        }
-        if (player in presses || !JumpPackFlight.canFly(player)) return
-        val pack = StratagemBackpacks.equipped(player)?.takeIf { it.item is WarpPack } ?: return
-        presses[player] = Press(pack, player.level().dimension(), player.tickCount)
-    }
-
-    @SubscribeEvent
-    fun tick(event: PlayerTickEvent.Post) {
-        val player = event.entity as? ServerPlayer ?: return
-        val press = presses[player] ?: return
-        if (press.attempted) return
-        if (player.level().dimension() != press.dimension || !JumpPackFlight.canFly(player) ||
-            StratagemBackpacks.equipped(player) !== press.stack) {
-            press.attempted = true
-            return
-        }
-        if (player.tickCount - press.tick < JumpPackFlight.HOLD_TICKS) return
-        press.attempted = true
-        warp(player, press.stack)
     }
 
     fun phase(energy: Int): Phase = when {
@@ -81,7 +42,8 @@ internal object WarpPackFlight {
     internal fun recharge(energy: Int, ticks: Long): Int =
         (energy.coerceIn(0, FULL) + ticks.coerceIn(0L, 334L).toInt() * RECHARGE).coerceAtMost(FULL)
 
-    private fun warp(player: ServerPlayer, pack: ItemStack) {
+    fun start(player: ServerPlayer, pack: ItemStack) {
+        if (!JumpPackFlight.canFly(player)) return
         val level = player.serverLevel()
         val origin = player.position()
         val destination = findLanding(player, origin) ?: return
@@ -102,9 +64,9 @@ internal object WarpPackFlight {
         val burst = WarpPackBurstPacket(origin.add(0.0, .95, 0.0), destination.add(0.0, .95, 0.0))
         burst.send(level)
         level.playSound(null, burst.origin.x, burst.origin.y, burst.origin.z,
-            ModSounds.EVENTS.getValue("sfx_warp_pack_depart").get(), SoundSource.PLAYERS, .75f, 1f)
+            ModSounds.EVENTS.getValue("sfx_warp_pack_depart").get(), SoundSource.PLAYERS, .47f, 1f)
         level.playSound(null, burst.destination.x, burst.destination.y, burst.destination.z,
-            ModSounds.EVENTS.getValue("sfx_warp_pack_arrive").get(), SoundSource.PLAYERS, .70f, 1f)
+            ModSounds.EVENTS.getValue("sfx_warp_pack_arrive").get(), SoundSource.PLAYERS, .44f, 1f)
 
         when (phase) {
             Phase.SAFE -> Unit
@@ -116,7 +78,10 @@ internal object WarpPackFlight {
                     if (player.random.nextFloat() < .2f) player.remainingFireTicks = maxOf(player.remainingFireTicks, 60)
                 }
             }
-            Phase.LETHAL -> player.kill()
+            Phase.LETHAL -> {
+                pack.shrink(1)
+                player.kill()
+            }
         }
     }
 

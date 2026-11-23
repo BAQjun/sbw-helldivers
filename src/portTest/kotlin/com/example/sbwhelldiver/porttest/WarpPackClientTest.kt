@@ -1,9 +1,12 @@
 package com.example.sbwhelldiver.porttest
 
 import com.example.sbwhelldiver.LOGGER
+import org.lwjgl.glfw.GLFW
 import com.example.sbwhelldiver.MOD_ID
 import com.example.sbwhelldiver.init.ModItems
 import com.example.sbwhelldiver.item.StratagemBackpacks
+import net.minecraft.server.MinecraftServer
+import java.util.UUID
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.CameraType
 import net.minecraft.client.Minecraft
@@ -36,7 +39,7 @@ import top.theillusivec4.curios.api.CuriosApi
 
 @EventBusSubscriber(modid = MOD_ID, value = [Dist.CLIENT])
 object WarpPackClientTest {
-    private enum class Step { EQUIP, TAP, RELEASE, SAFE, KEEP_HOLDING, WAIT_RISK, RISK, WAIT_LETHAL, LETHAL, DONE }
+    private enum class Step { EQUIP, VANILLA_JUMP, RELEASE, SAFE, CHECK_SINGLE_WARP, WAIT_RISK, RISK, WAIT_LETHAL, LETHAL, DONE }
 
     private val enabled = java.lang.Boolean.getBoolean("sbw_helldiver.warpPackTests")
     private val started = System.nanoTime()
@@ -81,6 +84,7 @@ object WarpPackClientTest {
                         level.dayTime = 13000
                         level.gameRules.getRule(GameRules.RULE_DAYLIGHT).set(false, server)
                         level.gameRules.getRule(GameRules.RULE_NATURAL_REGENERATION).set(false, server)
+                        level.gameRules.getRule(GameRules.RULE_KEEPINVENTORY).set(true, server)
                         for (x in -5..12) for (z in -5..35) {
                             level.setBlock(BlockPos(x, 79, z), Blocks.SMOOTH_STONE.defaultBlockState(), 3)
                         }
@@ -92,6 +96,7 @@ object WarpPackClientTest {
                         host.teleportTo(level, .5, 80.0, .5, 0f, 0f)
                         val back = CuriosApi.getCuriosInventory(host).orElseThrow().getStacksHandler("back").orElseThrow().stacks
                         check(back.insertItem(0, ItemStack(ModItems.WARP_PACK.get()), false).isEmpty)
+                        host.inventory.setItem(8, ItemStack(ModItems.WARP_PACK.get()))
                         host.setGameMode(GameType.SURVIVAL)
                     } catch (failure: Throwable) {
                         preparationError = failure
@@ -112,11 +117,14 @@ object WarpPackClientTest {
                     capture(mc, "warp-pack-mounted")
                     origin = player.position()
                     jump.isDown = true
-                    next(Step.TAP)
+                    next(Step.VANILLA_JUMP)
                 }
-                Step.TAP -> {
-                    jump.isDown = false
-                    next(Step.RELEASE)
+                Step.VANILLA_JUMP -> {
+                    check(player.position().subtract(origin).horizontalDistanceSqr() < 1.0e-6)
+                    if (elapsed == 6) {
+                        jump.isDown = false
+                        next(Step.RELEASE)
+                    }
                 }
                 Step.RELEASE -> {
                     check(player.position().subtract(origin).horizontalDistanceSqr() < 1.0e-6)
@@ -130,7 +138,7 @@ object WarpPackClientTest {
                         camera.setOldPosAndRot()
                         camera.yHeadRotO = 90f
                         mc.setCameraEntity(camera)
-                        jump.isDown = true
+                        pressBackpackKey(mc)
                         next(Step.SAFE)
                     }
                 }
@@ -139,52 +147,71 @@ object WarpPackClientTest {
                         check(abs(player.z - origin.z - 10) < .01 && abs(player.x - origin.x) < .01)
                         check(player.health == player.maxHealth)
                         burstAt = clientLevel.gameTime
-                        next(Step.KEEP_HOLDING)
+                        next(Step.CHECK_SINGLE_WARP)
                     }
-                    check(elapsed <= 18) { "Holding jump did not warp the player" }
+                    check(elapsed <= 18) { "Backpack key did not warp the player" }
                 }
-                Step.KEEP_HOLDING -> {
-                    check(abs(player.z - origin.z - 10) < .01) { "A single hold triggered multiple warps" }
+                Step.CHECK_SINGLE_WARP -> {
+                    check(abs(player.z - origin.z - 10) < .01) { "A single key press triggered multiple warps" }
                     if (elapsed == 22) {
                         val tag = checkNotNull(pack?.get(DataComponents.CUSTOM_DATA)).copyTag()
                         check(tag.getInt("WarpPackEnergy") == 670) { "First warp did not cost 33%" }
                         val age = clientLevel.gameTime - tag.getLong("WarpPackUsedAt")
                         val expectedBar = kotlin.math.round((670 + 3 * age) * 13.0 / 1000).toInt()
                         check(pack!!.item.getBarWidth(pack) == expectedBar) { "Item bar did not recharge" }
-                        jump.isDown = false
                         origin = player.position()
+                        mc.setCameraEntity(player)
+                        setEnergy(server, player.uuid, 670)
                         next(Step.WAIT_RISK)
                     }
                 }
-                Step.WAIT_RISK -> if (elapsed >= 3) {
-                    jump.isDown = true
-                    next(Step.RISK)
+                Step.WAIT_RISK -> {
+                    if (pack?.get(DataComponents.CUSTOM_DATA)?.copyTag()?.getInt("WarpPackEnergy") == 670) {
+                        pressBackpackKey(mc)
+                        next(Step.RISK)
+                    }
+                    check(elapsed < 30) { "The test did not receive the risk energy state" }
                 }
                 Step.RISK -> {
                     if (player.z - origin.z > 8 && player.health < player.maxHealth) {
-                        check(abs(player.z - origin.z - 10) < .01 && player.health == 12f) { "Risk warp did not cost exactly 8 HP" }
-                        jump.isDown = false
+                        check(abs(player.z - origin.z - 10) < .01)
+                        check(player.health == 12f || (player.isOnFire && player.health == 11f)) {
+                            "Risk warp did not cost 8 HP before vanilla fire damage"
+                        }
                         origin = player.position()
+                        setEnergy(server, player.uuid, 330)
                         next(Step.WAIT_LETHAL)
                     }
-                    check(elapsed <= 20) { "Risk warp did not finish" }
+                    check(elapsed <= 20) {
+                        "Risk warp did not finish: delta=${player.position().subtract(origin)}, health=${player.health}, " +
+                            "energy=${pack?.get(DataComponents.CUSTOM_DATA)?.copyTag()}, " +
+                            "sounds=$departures/$arrivals, screen=${mc.screen}"
+                    }
                 }
-                Step.WAIT_LETHAL -> if (elapsed >= 3) {
-                    jump.isDown = true
-                    next(Step.LETHAL)
+                Step.WAIT_LETHAL -> {
+                    if (pack?.get(DataComponents.CUSTOM_DATA)?.copyTag()?.getInt("WarpPackEnergy") == 330) {
+                        pressBackpackKey(mc)
+                        next(Step.LETHAL)
+                    }
+                    check(elapsed < 30) { "The test did not receive the lethal energy state" }
                 }
                 Step.LETHAL -> {
                     if (!player.isAlive) {
                         check(abs(player.z - origin.z - 10) < .01) { "The lethal warp did not move the player" }
-                        jump.isDown = false
                         next(Step.DONE)
                     }
-                    check(elapsed <= 23) { "Low-energy warp did not kill the player" }
+                    check(elapsed <= 23) {
+                        "Lethal warp did not kill the player: delta=${player.position().subtract(origin)}, health=${player.health}, " +
+                            "energy=${pack?.get(DataComponents.CUSTOM_DATA)?.copyTag()}, " +
+                            "sounds=$departures/$arrivals, screen=${mc.screen}"
+                    }
                 }
                 Step.DONE -> if (elapsed >= 6) {
+                    check(pack == null) { "The used Warp Pack survived lethal activation with Keep Inventory enabled" }
+                    check(player.inventory.getItem(8).item === ModItems.WARP_PACK.get()) { "The spare Warp Pack was destroyed" }
                     check(departures >= 2 && arrivals >= 2) { "Missing warp sound: $departures departures and $arrivals arrivals" }
                     check("warp-departure-ring" in captures && "warp-release-flash" in captures)
-                    LOGGER.info("WARP_PACK_CLIENT_PASSED: Curios, item transforms, tap and hold, 10-block travel, 33% cost, recharge, risk damage, lethal warp, spatial audio and capture")
+                    LOGGER.info("WARP_PACK_CLIENT_PASSED: Curios, item transforms, backpack key activation, 10-block travel, 33% cost, recharge, risk damage, lethal warp consumes only the equipped pack, spatial audio and capture")
                     mc.stop()
                 }
             }
@@ -206,12 +233,33 @@ object WarpPackClientTest {
 
     @SubscribeEvent
     fun captureBurst(event: RenderGuiEvent.Post) {
-        if (!enabled || step != Step.KEEP_HOLDING) return
+        if (!enabled || step != Step.CHECK_SINGLE_WARP) return
         val mc = Minecraft.getInstance()
         val age = (mc.level?.gameTime ?: return) - burstAt
         if (age in 1L..5L) capture(mc, "warp-departure-ring")
         if (age in 3L..8L) capture(mc, "warp-release-flash")
         if (age in 7L..13L) capture(mc, "warp-residual-sparks")
+    }
+
+    private fun setEnergy(server: MinecraftServer, playerId: UUID, energy: Int) {
+        server.execute {
+            try {
+                val player = checkNotNull(server.playerList.getPlayer(playerId))
+                val pack = checkNotNull(StratagemBackpacks.equipped(player))
+                CustomData.update(DataComponents.CUSTOM_DATA, pack) {
+                    it.putInt("WarpPackEnergy", energy)
+                    it.putLong("WarpPackUsedAt", server.overworld().gameTime)
+                }
+            } catch (failure: Throwable) {
+                preparationError = failure
+            }
+        }
+    }
+
+    private fun pressBackpackKey(mc: Minecraft) {
+        val window = mc.window.window
+        mc.keyboardHandler.keyPress(window, GLFW.GLFW_KEY_G, 0, GLFW.GLFW_PRESS, 0)
+        mc.keyboardHandler.keyPress(window, GLFW.GLFW_KEY_G, 0, GLFW.GLFW_RELEASE, 0)
     }
 
     private fun capture(mc: Minecraft, name: String) {

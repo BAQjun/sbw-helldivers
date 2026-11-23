@@ -8,19 +8,18 @@ import net.neoforged.api.distmarker.Dist
 import com.example.sbwhelldiver.platform.ClientDispatch
 import net.neoforged.neoforge.network.handling.IPayloadContext
 
-internal data class HoverPackInputPacket(val held: Boolean, val forward: Int, val left: Int) {
+internal data class HoverPackInputPacket(val forward: Int, val left: Int) {
     fun encode(buf: FriendlyByteBuf) {
-        buf.writeBoolean(held)
         buf.writeByte(forward)
         buf.writeByte(left)
     }
 
     companion object {
-        fun decode(buf: FriendlyByteBuf) = HoverPackInputPacket(buf.readBoolean(), buf.readByte().toInt(), buf.readByte().toInt())
+        fun decode(buf: FriendlyByteBuf) = HoverPackInputPacket(buf.readByte().toInt(), buf.readByte().toInt())
 
         fun handle(message: HoverPackInputPacket, context: IPayloadContext) {
             context.enqueueWork {
-                context.sender?.let { HoverPackFlight.input(it, message.held, message.forward, message.left) }
+                context.sender?.let { HoverPackFlight.input(it, message.forward, message.left) }
             }
         }
     }

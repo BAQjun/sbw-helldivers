@@ -24,7 +24,6 @@ import kotlin.math.sin
 @EventBusSubscriber(modid = MOD_ID)
 internal object JumpPackFlight {
     private const val READY_AT = "JumpPackReadyAt"
-    const val HOLD_TICKS = 4
     private const val RECHARGE_TICKS = 15 * 20
     private const val LAUNCH_TICKS = 10
     private const val BRAKE_TICKS = 20
@@ -39,7 +38,6 @@ internal object JumpPackFlight {
     private const val BRAKE_MIN_SPEED = 1.0 / 20
     private const val MAX_LANDING_PROBE = 2.6
 
-    private data class GroundContact(val tick: Int, val y: Double)
     private class Flight(
         val stack: ItemStack, val dimension: net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level>,
         val started: Int, val direction: Vec3, var position: Vec3
@@ -49,21 +47,15 @@ internal object JumpPackFlight {
         var brakeStarted = -1
     }
 
-    private val ground = WeakHashMap<ServerPlayer, GroundContact>()
     private val flights = WeakHashMap<ServerPlayer, Flight>()
 
     fun canFly(player: Player): Boolean =
         player.isAlive && !player.isSpectator && !player.abilities.flying && !player.isPassenger &&
             !player.isFallFlying && !player.isInWaterOrBubble && !player.isInLava && !player.onClimbable()
 
-    fun start(player: ServerPlayer, forward: Int, left: Int) {
-        if (forward !in -1..1 || left !in -1..1 || player in flights || !canFly(player)) return
-        val stack = StratagemBackpacks.equipped(player)?.takeIf { it.item is JumpPack } ?: return
+    fun start(player: ServerPlayer, stack: ItemStack, forward: Int, left: Int) {
+        if (player in flights || !player.onGround() || !canFly(player)) return
         if (readyAt(stack) > time(player) || player.cooldowns.isOnCooldown(stack.item)) return
-        if (!player.onGround()) {
-            val contact = ground[player] ?: return
-            if (player.tickCount - contact.tick > HOLD_TICKS + 4 || player.y - contact.y !in -.25..1.65) return
-        }
         val yaw = Math.toRadians(player.yRot.toDouble())
         val direction = Vec3(left * cos(yaw) - forward * sin(yaw), 0.0, forward * cos(yaw) + left * sin(yaw)).normalize()
         if (!clearAbove(player)) return
@@ -71,7 +63,6 @@ internal object JumpPackFlight {
         setReadyAt(stack, time(player) + FLIGHT_LIMIT + RECHARGE_TICKS)
         val flight = Flight(stack, player.level().dimension(), player.tickCount, direction, player.position())
         flights[player] = flight
-        ground.remove(player)
         sound(player, "sfx_jump_pack_launch")
         thrust(player, flight, 0, player.deltaMovement)
     }
@@ -79,13 +70,7 @@ internal object JumpPackFlight {
     @SubscribeEvent
     fun tick(event: PlayerTickEvent.Post) {
         val player = event.entity as? ServerPlayer ?: return
-        val flight = flights[player]
-        if (flight == null) {
-            if (player.onGround() && StratagemBackpacks.equipped(player)?.item is JumpPack) {
-                ground[player] = GroundContact(player.tickCount, player.y)
-            }
-            return
-        }
+        val flight = flights[player] ?: return
         val age = player.tickCount - flight.started
         if (flight.dimension != player.level().dimension() || !canFly(player) ||
             StratagemBackpacks.equipped(player) !== flight.stack || age >= FLIGHT_LIMIT) {
@@ -95,7 +80,6 @@ internal object JumpPackFlight {
         if (age <= 0) return
         if (player.onGround() && (age >= LAUNCH_TICKS || flight.launchBlocked)) {
             finish(player)
-            ground[player] = GroundContact(player.tickCount, player.y)
             return
         }
         val position = player.position()
@@ -153,7 +137,7 @@ internal object JumpPackFlight {
 
     private fun sound(player: ServerPlayer, event: String) {
         player.level().playSound(null, player.x, player.y, player.z,
-            ModSounds.EVENTS.getValue(event).get(), SoundSource.PLAYERS, 1f, 1f)
+            ModSounds.EVENTS.getValue(event).get(), SoundSource.PLAYERS, .63f, 1f)
     }
 
     private fun applyVelocity(player: ServerPlayer, flight: Flight, x: Double, y: Double, z: Double) {
@@ -188,7 +172,6 @@ internal object JumpPackFlight {
     fun logout(event: PlayerEvent.PlayerLoggedOutEvent) {
         val player = event.entity as? ServerPlayer ?: return
         finish(player)
-        ground.remove(player)
     }
 
     private fun finish(player: ServerPlayer) {

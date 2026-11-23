@@ -33,7 +33,7 @@ class PacketChannel {
             override fun decode(buf: RegistryFriendlyByteBuf) = Message(kind, this@Registration.decode(buf))
         }
         fun register(event: RegisterPayloadHandlersEvent) {
-            val registrar = event.registrar("1")
+            val registrar = event.registrar("2")
             if (direction == PacketDirection.PLAY_TO_SERVER) registrar.playToServer(kind, codec) { payload, context -> handle(payload.value, context) }
             else registrar.playToClient(kind, codec) { payload, context -> handle(payload.value, context) }
         }

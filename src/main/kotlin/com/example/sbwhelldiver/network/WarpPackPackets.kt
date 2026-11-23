@@ -1,29 +1,12 @@
 package com.example.sbwhelldiver.network
 
 import com.example.sbwhelldiver.client.WarpPackBurstVisual
-import com.example.sbwhelldiver.item.WarpPackFlight
 import com.example.sbwhelldiver.platform.ClientDispatch
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.phys.Vec3
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.neoforge.network.handling.IPayloadContext
-
-internal data class WarpPackInputPacket(val held: Boolean) {
-    fun encode(buf: FriendlyByteBuf) {
-        buf.writeBoolean(held)
-    }
-
-    companion object {
-        fun decode(buf: FriendlyByteBuf) = WarpPackInputPacket(buf.readBoolean())
-
-        fun handle(message: WarpPackInputPacket, context: IPayloadContext) {
-            context.enqueueWork {
-                context.sender?.let { WarpPackFlight.input(it, message.held) }
-            }
-        }
-    }
-}
 
 internal data class WarpPackBurstPacket(val origin: Vec3, val destination: Vec3) {
     fun encode(buf: FriendlyByteBuf) {
