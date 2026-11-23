@@ -12,6 +12,8 @@ import com.example.sbwhelldiver.item.WarpPack
 import com.example.sbwhelldiver.item.WarpPackFlight
 import net.minecraft.client.Minecraft
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.world.item.Item
+import net.minecraft.world.item.ItemCooldowns
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.RenderGuiEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
@@ -25,6 +27,8 @@ object BackpackStatusHud {
     private const val BAR_WIDTH = 3
     private const val LOW_COLOR = 0xFF4949
 
+    private data class Meter(val remaining: Float, val red: Boolean = remaining < .5f)
+
     @SubscribeEvent
     fun draw(event: RenderGuiEvent.Post) {
         val mc = Minecraft.getInstance()
@@ -34,15 +38,23 @@ object BackpackStatusHud {
         val item = stack.item
         val gameTime = player.level().gameTime
         val partial = event.partialTick
-        val remaining = when (item) {
-            is GuardDogBackpack -> if (GuardDogBackpack.isEnergy(stack)) 1f else {
+        val meter = when (item) {
+            is GuardDogBackpack -> {
                 val maximum = GuardDogBackpack.reserveCapacity(stack)
-                if (maximum == 0) 0f else GuardDogBackpack.spareMags(stack).toFloat() / maximum
+                val remaining = when {
+                    GuardDogBackpack.isEnergy(stack) -> 1f
+                    maximum == 0 -> 0f
+                    else -> GuardDogBackpack.spareMags(stack).toFloat() / maximum
+                }
+                Meter(remaining)
             }
-            is SupplyBackpack -> SupplyBackpack.cases(stack).toFloat() / SupplyBackpack.CAPACITY
-            is WarpPack -> WarpPackVisual.displayEnergy(stack).toFloat() / WarpPackFlight.FULL
-            is JumpPack -> charge(JumpPackFlight.readyAt(stack), JumpPackFlight.RECHARGE_TICKS, gameTime, partial)
-            is HoverPack -> charge(HoverPackFlight.readyAt(stack), HoverPackFlight.COOLDOWN_TICKS, gameTime, partial)
+            is SupplyBackpack -> Meter(SupplyBackpack.cases(stack).toFloat() / SupplyBackpack.CAPACITY)
+            is WarpPack -> {
+                val energy = WarpPackVisual.displayEnergy(stack)
+                Meter(energy.toFloat() / WarpPackFlight.FULL, WarpPackFlight.phase(energy) == WarpPackFlight.Phase.LETHAL)
+            }
+            is JumpPack -> charge(item, player.cooldowns, JumpPackFlight.readyAt(stack), JumpPackFlight.RECHARGE_TICKS, gameTime, partial)
+            is HoverPack -> charge(item, player.cooldowns, HoverPackFlight.readyAt(stack), HoverPackFlight.COOLDOWN_TICKS, gameTime, partial)
             else -> return
         }
 
@@ -51,18 +63,20 @@ object BackpackStatusHud {
         val gui = event.guiGraphics
         val top = gui.guiHeight() - MARGIN - ICON_SIZE
         val bottom = top + ICON_SIZE
-        val low = remaining < .5f
-        val tint = if (low) LOW_COLOR else 0xFFFFFF
+        val tint = if (meter.red) LOW_COLOR else 0xFFFFFF
         if (!BeaconCallHud.drawWhiteIcon(gui, iconId, MARGIN, top, ICON_SIZE, tint)) return
 
         val left = MARGIN + ICON_SIZE + 3
         val right = left + BAR_WIDTH
         gui.fill(left - 1, top - 1, right + 1, bottom + 1, 0x80000000.toInt())
         gui.fill(left, top, right, bottom, 0x60000000 or tint)
-        val filled = (ICON_SIZE * remaining).roundToInt()
+        val filled = (ICON_SIZE * meter.remaining).roundToInt()
         if (filled > 0) gui.fill(left, bottom - filled, right, bottom, 0xFF000000.toInt() or tint)
     }
 
-    private fun charge(readyAt: Long, duration: Int, gameTime: Long, partial: Float): Float =
-        1f - ((readyAt - gameTime - partial) / duration).coerceIn(0f, 1f)
+    private fun charge(item: Item, cooldowns: ItemCooldowns, readyAt: Long, duration: Int, gameTime: Long, partial: Float): Meter {
+        val stackCooldown = ((readyAt - gameTime - partial) / duration).coerceIn(0f, 1f)
+        val playerCooldown = cooldowns.getCooldownPercent(item, partial)
+        return Meter(1f - maxOf(stackCooldown, playerCooldown), readyAt > gameTime || cooldowns.isOnCooldown(item))
+    }
 }
