@@ -29,6 +29,7 @@ internal object WarpPackFlight {
     private const val MAX_DISTANCE = 10.0
     private const val LANDING_STEP = .5
     private const val MAX_STEP_HEIGHT = 1.0
+    private const val MAX_WALL_THICKNESS = 1.0
     private const val SURFACE_EPSILON = 1.0e-6
 
     enum class Phase(val color: Int) {
@@ -115,28 +116,46 @@ internal object WarpPackFlight {
         val followsGround = player.onGround() || level.getBlockCollisions(player, box.move(0.0, -SURFACE_EPSILON * 2, 0.0))
             .iterator().hasNext()
         val steps = (MAX_DISTANCE / LANDING_STEP).toInt()
-        if (!followsGround) {
-            for (step in steps downTo 1) {
-                val offset = direction.scale(step * LANDING_STEP)
-                val moved = box.move(offset)
-                if (isLoadedAndInsideBorder(level, moved) && level.noCollision(player, moved)) {
-                    return origin.add(offset)
-                }
-            }
-            return null
-        }
-
         var destination: Vec3? = null
         var height = origin.y
+        var wall: AABB? = null
         for (step in 1..steps) {
             val offset = direction.scale(step * LANDING_STEP)
             val moved = box.move(offset.x, height - origin.y, offset.z)
             if (!isLoadedAndInsideBorder(level, moved)) break
-            height = stepSurface(level, player, moved) ?: break
-            destination = Vec3(origin.x + offset.x, height, origin.z + offset.z)
+
+            val landingHeight = if (followsGround) stepSurface(level, player, moved)
+                else height.takeIf { level.noCollision(player, moved) }
+            if (landingHeight == null) {
+                // Probe above the tallest permitted step, so the floor does not count as wall thickness.
+                val probe = if (followsGround) moved.move(0.0, MAX_STEP_HEIGHT, 0.0) else moved
+                val obstruction = collisionBounds(level, player, probe) ?: break
+                wall = wall?.minmax(obstruction) ?: obstruction
+                continue
+            }
+
+            val target = Vec3(origin.x + offset.x, landingHeight, origin.z + offset.z)
+            if (wall != null && !crossesThinWall(wall, destination ?: origin, target)) break
+            wall = null
+            height = landingHeight
+            destination = target
         }
         return destination
     }
+
+    private fun collisionBounds(level: ServerLevel, player: ServerPlayer, box: AABB): AABB? =
+        level.getBlockCollisions(player, box).asSequence()
+            .flatMap { it.toAabbs().asSequence() }
+            .filter { it.intersects(box) }
+            .reduceOrNull { bounds, shape -> bounds.minmax(shape) }
+
+    private fun crossesThinWall(wall: AABB, from: Vec3, to: Vec3): Boolean =
+        crossesWallStrip(wall.minX, wall.maxX, from.x, to.x) ||
+            crossesWallStrip(wall.minZ, wall.maxZ, from.z, to.z)
+
+    private fun crossesWallStrip(min: Double, max: Double, from: Double, to: Double): Boolean =
+        max - min <= MAX_WALL_THICKNESS + SURFACE_EPSILON &&
+            minOf(from, to) <= min + SURFACE_EPSILON && maxOf(from, to) >= max - SURFACE_EPSILON
 
     private fun stepSurface(level: ServerLevel, player: ServerPlayer, box: AABB): Double? {
         val height = box.minY

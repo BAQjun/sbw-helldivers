@@ -103,6 +103,19 @@ object WarpPackClientTest {
                                 level.setBlock(BlockPos(x, y, index + 1), Blocks.SMOOTH_STONE.defaultBlockState(), 3)
                             }
                         }
+                        // A thin wall on the ascent and one on the descent.
+                        for (x in -1..1) {
+                            for (y in 82..84) {
+                                level.setBlock(BlockPos(x, y, 3), Blocks.SMOOTH_STONE.defaultBlockState(), 3)
+                            }
+                            for (y in 83..85) {
+                                level.setBlock(BlockPos(x, y, 11), Blocks.SMOOTH_STONE.defaultBlockState(), 3)
+                            }
+                        }
+                        // A flat lane with a thin wall followed by a two-block-thick wall.
+                        for (x in 4..12) for (y in 80..82) for (z in listOf(4, 7, 8)) {
+                            level.setBlock(BlockPos(x, y, z), Blocks.SMOOTH_STONE.defaultBlockState(), 3)
+                        }
                         for (z in -4..34 step 4) {
                             level.setBlock(BlockPos(-4, 79, z), Blocks.SHROOMLIGHT.defaultBlockState(), 3)
                             level.setBlock(BlockPos(8, 79, z), Blocks.SHROOMLIGHT.defaultBlockState(), 3)
@@ -123,6 +136,20 @@ object WarpPackClientTest {
                             check(back.getStackInSlot(0).isEmpty == (energy == 330)) { "Creative warp changed the lethal pack cost" }
                             back.extractItem(0, 1, false)
                         }
+                        fun checkWallLane(startY: Double, yaw: Float, expectedZ: Double) {
+                            host.teleportTo(level, 5.5, startY, .5, yaw, 0f)
+                            host.setOnGround(false)
+                            check(back.insertItem(0, ItemStack(ModItems.WARP_PACK.get()), false).isEmpty)
+                            StratagemBackpacks.interact(host)
+                            check(abs(host.z - expectedZ) < .01 && abs(host.y - startY) < .01) {
+                                "Expected to cross the thin wall and stop at the thick one, reached " + host.position()
+                            }
+                            back.extractItem(0, 1, false)
+                        }
+                        checkWallLane(80.0, 0f, 6.5)
+                        checkWallLane(81.0, 0f, 6.5)
+                        checkWallLane(80.0, -45f, .5 + 8.5 / kotlin.math.sqrt(2.0))
+
                         host.teleportTo(level, .5, 80.0, .5, 0f, 0f)
                         check(back.insertItem(0, ItemStack(ModItems.WARP_PACK.get()), false).isEmpty)
                         host.inventory.setItem(8, ItemStack(ModItems.WARP_PACK.get()))
@@ -253,7 +280,7 @@ object WarpPackClientTest {
                     LOGGER.info("WARP_PACK_DEATH_MESSAGE_PASSED: {}", message.string)
                     check(departures >= 2 && arrivals >= 2) { "Missing warp sound: $departures departures and $arrivals arrivals" }
                     check("warp-departure-ring" in captures && "warp-release-flash" in captures)
-                    LOGGER.info("WARP_PACK_CLIENT_PASSED: Curios, item transforms, backpack key activation, ascending and mixed steps, stopping before a two-block rise, 33% cost, recharge, Creative immunity, Survival risk damage, lethal warp consumes only the equipped pack, spatial audio and capture")
+                    LOGGER.info("WARP_PACK_CLIENT_PASSED: Curios, item transforms, backpack key activation, thin walls on slopes and on flat ground, thick walls at several angles and heights, stopping before a two-block rise, 33% cost, recharge, Creative immunity, Survival risk damage, lethal warp consumes only the equipped pack, spatial audio and capture")
                     mc.stop()
                 }
             }
