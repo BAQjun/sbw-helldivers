@@ -80,6 +80,7 @@ internal object WarpPackFlight {
         when (phase) {
             Phase.SAFE -> Unit
             Phase.RISK -> {
+                if (player.isCreative) return
                 if (player.health <= 8f) {
                     killWithWarpMessage(player)
                 } else {
@@ -89,7 +90,7 @@ internal object WarpPackFlight {
             }
             Phase.LETHAL -> {
                 pack.shrink(1)
-                killWithWarpMessage(player)
+                if (!player.isCreative) killWithWarpMessage(player)
             }
         }
     }

@@ -108,8 +108,22 @@ object WarpPackClientTest {
                             level.setBlock(BlockPos(8, 79, z), Blocks.SHROOMLIGHT.defaultBlockState(), 3)
                         }
                         val host = checkNotNull(server.playerList.getPlayer(player.uuid))
-                        host.teleportTo(level, .5, 80.0, .5, 0f, 0f)
                         val back = CuriosApi.getCuriosInventory(host).orElseThrow().getStacksHandler("back").orElseThrow().stacks
+                        check(host.isCreative)
+                        for (energy in listOf(670, 330)) {
+                            host.teleportTo(level, .5, 80.0, .5, 0f, 0f)
+                            val testPack = ItemStack(ModItems.WARP_PACK.get())
+                            writeEnergy(testPack, level.gameTime, energy)
+                            check(back.insertItem(0, testPack, false).isEmpty)
+                            StratagemBackpacks.interact(host)
+                            check(abs(host.z - 10.5) < .01 && abs(host.y - 84.0) < .01) { "Creative warp did not complete" }
+                            check(host.isAlive && host.health == host.maxHealth && !host.isOnFire) {
+                                "Creative warp inflicted harm at energy $energy"
+                            }
+                            check(back.getStackInSlot(0).isEmpty == (energy == 330)) { "Creative warp changed the lethal pack cost" }
+                            back.extractItem(0, 1, false)
+                        }
+                        host.teleportTo(level, .5, 80.0, .5, 0f, 0f)
                         check(back.insertItem(0, ItemStack(ModItems.WARP_PACK.get()), false).isEmpty)
                         host.inventory.setItem(8, ItemStack(ModItems.WARP_PACK.get()))
                         host.setGameMode(GameType.SURVIVAL)
@@ -175,6 +189,7 @@ object WarpPackClientTest {
                         val tag = checkNotNull(pack?.get(DataComponents.CUSTOM_DATA)).copyTag()
                         check(tag.getInt("WarpPackEnergy") == 670) { "First warp did not cost 33%" }
                         val age = clientLevel.gameTime - tag.getLong("WarpPackUsedAt")
+                        capture(mc, "warp-risk-hud")
                         val expectedBar = kotlin.math.round((670 + 3 * age) * 13.0 / 1000).toInt()
                         check(pack!!.item.getBarWidth(pack) == expectedBar) { "Item bar did not recharge" }
                         origin = player.position()
@@ -238,7 +253,7 @@ object WarpPackClientTest {
                     LOGGER.info("WARP_PACK_DEATH_MESSAGE_PASSED: {}", message.string)
                     check(departures >= 2 && arrivals >= 2) { "Missing warp sound: $departures departures and $arrivals arrivals" }
                     check("warp-departure-ring" in captures && "warp-release-flash" in captures)
-                    LOGGER.info("WARP_PACK_CLIENT_PASSED: Curios, item transforms, backpack key activation, ascending and mixed steps, stopping before a two-block rise, 33% cost, recharge, risk damage, lethal warp consumes only the equipped pack, spatial audio and capture")
+                    LOGGER.info("WARP_PACK_CLIENT_PASSED: Curios, item transforms, backpack key activation, ascending and mixed steps, stopping before a two-block rise, 33% cost, recharge, Creative immunity, Survival risk damage, lethal warp consumes only the equipped pack, spatial audio and capture")
                     mc.stop()
                 }
             }
@@ -280,13 +295,17 @@ object WarpPackClientTest {
             try {
                 val player = checkNotNull(server.playerList.getPlayer(playerId))
                 val pack = checkNotNull(StratagemBackpacks.equipped(player))
-                CustomData.update(DataComponents.CUSTOM_DATA, pack) {
-                    it.putInt("WarpPackEnergy", energy)
-                    it.putLong("WarpPackUsedAt", server.overworld().gameTime)
-                }
+                writeEnergy(pack, server.overworld().gameTime, energy)
             } catch (failure: Throwable) {
                 preparationError = failure
             }
+        }
+    }
+
+    private fun writeEnergy(pack: ItemStack, gameTime: Long, energy: Int) {
+        CustomData.update(DataComponents.CUSTOM_DATA, pack) {
+            it.putInt("WarpPackEnergy", energy)
+            it.putLong("WarpPackUsedAt", gameTime)
         }
     }
 
