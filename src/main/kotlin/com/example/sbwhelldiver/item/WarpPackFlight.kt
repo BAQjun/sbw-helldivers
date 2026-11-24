@@ -5,13 +5,16 @@ import net.minecraft.ChatFormatting
 import net.minecraft.core.BlockPos
 import net.minecraft.nbt.Tag
 import net.minecraft.network.chat.Component
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import com.example.sbwhelldiver.init.ModSounds
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.damagesource.DamageSource
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -23,6 +26,8 @@ internal object WarpPackFlight {
     private const val USED_AT = "WarpPackUsedAt"
     private const val MAX_DISTANCE = 10.0
     private const val LANDING_STEP = .5
+    private const val MAX_STEP_HEIGHT = 1.0
+    private const val SURFACE_EPSILON = 1.0e-6
 
     enum class Phase(val color: Int) {
         SAFE(0xC080FF), RISK(0xFFD34F), LETHAL(0xFF4649)
@@ -71,6 +76,7 @@ internal object WarpPackFlight {
         when (phase) {
             Phase.SAFE -> Unit
             Phase.RISK -> {
+                if (player.isCreative) return
                 if (player.health <= 8f) {
                     killWithWarpMessage(player)
                 } else {
@@ -80,7 +86,7 @@ internal object WarpPackFlight {
             }
             Phase.LETHAL -> {
                 pack.shrink(1)
-                killWithWarpMessage(player)
+                if (!player.isCreative) killWithWarpMessage(player)
             }
         }
     }
@@ -102,19 +108,50 @@ internal object WarpPackFlight {
         val yaw = Math.toRadians(player.yRot.toDouble())
         val direction = Vec3(-sin(yaw), 0.0, cos(yaw))
         val box = player.boundingBox
+        val followsGround = player.onGround() || level.getBlockCollisions(player, box.move(0.0, -SURFACE_EPSILON * 2, 0.0))
+            .iterator().hasNext()
         val steps = (MAX_DISTANCE / LANDING_STEP).toInt()
-        for (step in steps downTo 1) {
-            val offset = direction.scale(step * LANDING_STEP)
-            val target = origin.add(offset)
-            val moved = box.move(offset)
-            val min = BlockPos.containing(moved.minX, moved.minY, moved.minZ)
-            val max = BlockPos.containing(moved.maxX, moved.maxY, moved.maxZ)
-            if (target.y < level.minBuildHeight || !level.worldBorder.isWithinBounds(moved) ||
-                !level.hasChunkAt(min) || !level.hasChunkAt(max) ||
-                !level.hasChunkAt(BlockPos(min.x, min.y, max.z)) ||
-                !level.hasChunkAt(BlockPos(max.x, max.y, min.z))) continue
-            if (level.noCollision(player, moved)) return target
+        if (!followsGround) {
+            for (step in steps downTo 1) {
+                val offset = direction.scale(step * LANDING_STEP)
+                val moved = box.move(offset)
+                if (isLoadedAndInsideBorder(level, moved) && level.noCollision(player, moved)) {
+                    return origin.add(offset)
+                }
+            }
+            return null
         }
-        return null
+
+        var destination: Vec3? = null
+        var height = origin.y
+        for (step in 1..steps) {
+            val offset = direction.scale(step * LANDING_STEP)
+            val moved = box.move(offset.x, height - origin.y, offset.z)
+            if (!isLoadedAndInsideBorder(level, moved)) break
+            height = stepSurface(level, player, moved) ?: break
+            destination = Vec3(origin.x + offset.x, height, origin.z + offset.z)
+        }
+        return destination
+    }
+
+    private fun stepSurface(level: ServerLevel, player: ServerPlayer, box: AABB): Double? {
+        val height = box.minY
+        val reach = MAX_STEP_HEIGHT + SURFACE_EPSILON
+        val feet = AABB(box.minX, height - reach, box.minZ, box.maxX, height + reach, box.maxZ)
+        return level.getBlockCollisions(player, feet).asSequence()
+            .flatMap { it.toAabbs().asSequence() }
+            .filter { it.intersects(feet) && abs(it.maxY - height) <= reach && it.maxY >= level.minBuildHeight }
+            .map { it.maxY }
+            .distinct()
+            .sortedBy { abs(it - height) }
+            .firstOrNull { level.noCollision(player, box.move(0.0, it - height, 0.0)) }
+    }
+
+    private fun isLoadedAndInsideBorder(level: ServerLevel, box: AABB): Boolean {
+        val min = BlockPos.containing(box.minX, box.minY, box.minZ)
+        val max = BlockPos.containing(box.maxX, box.maxY, box.maxZ)
+        return min.y >= level.minBuildHeight && level.worldBorder.isWithinBounds(box) &&
+            level.hasChunkAt(min) && level.hasChunkAt(max) &&
+            level.hasChunkAt(BlockPos(min.x, min.y, max.z)) && level.hasChunkAt(BlockPos(max.x, max.y, min.z))
     }
 }

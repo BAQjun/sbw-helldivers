@@ -26,8 +26,9 @@ object BackpackStatusHud {
     private const val MARGIN = 8
     private const val BAR_WIDTH = 3
     private const val LOW_COLOR = 0xFF4949
+    private const val READY_COLOR = 0xFFFFFF
 
-    private data class Meter(val remaining: Float, val red: Boolean = remaining < .5f)
+    private data class Meter(val remaining: Float, val tint: Int = if (remaining < .5f) LOW_COLOR else READY_COLOR)
 
     @SubscribeEvent
     fun draw(event: RenderGuiEvent.Post) {
@@ -51,7 +52,12 @@ object BackpackStatusHud {
             is SupplyBackpack -> Meter(SupplyBackpack.cases(stack).toFloat() / SupplyBackpack.CAPACITY)
             is WarpPack -> {
                 val energy = WarpPackVisual.displayEnergy(stack)
-                Meter(energy.toFloat() / WarpPackFlight.FULL, WarpPackFlight.phase(energy) == WarpPackFlight.Phase.LETHAL)
+                val tint = when (WarpPackFlight.phase(energy)) {
+                    WarpPackFlight.Phase.SAFE -> READY_COLOR
+                    WarpPackFlight.Phase.RISK -> WarpPackFlight.Phase.RISK.color
+                    WarpPackFlight.Phase.LETHAL -> LOW_COLOR
+                }
+                Meter(energy.toFloat() / WarpPackFlight.FULL, tint)
             }
             is JumpPack -> charge(item, player.cooldowns, JumpPackFlight.readyAt(stack), JumpPackFlight.RECHARGE_TICKS, gameTime, partial)
             is HoverPack -> charge(item, player.cooldowns, HoverPackFlight.readyAt(stack), HoverPackFlight.COOLDOWN_TICKS, gameTime, partial)
@@ -63,7 +69,7 @@ object BackpackStatusHud {
         val gui = event.guiGraphics
         val top = gui.guiHeight() - MARGIN - ICON_SIZE
         val bottom = top + ICON_SIZE
-        val tint = if (meter.red) LOW_COLOR else 0xFFFFFF
+        val tint = meter.tint
         if (!BeaconCallHud.drawWhiteIcon(gui, iconId, MARGIN, top, ICON_SIZE, tint)) return
 
         val left = MARGIN + ICON_SIZE + 3
@@ -77,6 +83,7 @@ object BackpackStatusHud {
     private fun charge(item: Item, cooldowns: ItemCooldowns, readyAt: Long, duration: Int, gameTime: Long, partial: Float): Meter {
         val stackCooldown = ((readyAt - gameTime - partial) / duration).coerceIn(0f, 1f)
         val playerCooldown = cooldowns.getCooldownPercent(item, partial)
-        return Meter(1f - maxOf(stackCooldown, playerCooldown), readyAt > gameTime || cooldowns.isOnCooldown(item))
+        val tint = if (readyAt > gameTime || cooldowns.isOnCooldown(item)) LOW_COLOR else READY_COLOR
+        return Meter(1f - maxOf(stackCooldown, playerCooldown), tint)
     }
 }
