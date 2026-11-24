@@ -92,6 +92,17 @@ object WarpPackClientTest {
                         for (x in -5..12) for (z in -5..35) {
                             level.setBlock(BlockPos(x, 79, z), Blocks.SMOOTH_STONE.defaultBlockState(), 3)
                         }
+                        // Three 10-block sections: ascent, mixed steps, and a blocked rise.
+                        val surfaceHeights = listOf(
+                            81, 81, 82, 82, 82, 83, 83, 83, 84, 84,
+                            83, 83, 84, 84, 85, 85, 86, 86, 86, 86,
+                            87, 87, 89, 89, 89, 90, 90, 90, 90, 90,
+                        )
+                        for ((index, surfaceY) in surfaceHeights.withIndex()) {
+                            for (x in -1..1) for (y in 80 until surfaceY) {
+                                level.setBlock(BlockPos(x, y, index + 1), Blocks.SMOOTH_STONE.defaultBlockState(), 3)
+                            }
+                        }
                         for (z in -4..34 step 4) {
                             level.setBlock(BlockPos(-4, 79, z), Blocks.SHROOMLIGHT.defaultBlockState(), 3)
                             level.setBlock(BlockPos(8, 79, z), Blocks.SHROOMLIGHT.defaultBlockState(), 3)
@@ -148,7 +159,10 @@ object WarpPackClientTest {
                 }
                 Step.SAFE -> {
                     if (player.z - origin.z > 8) {
-                        check(abs(player.z - origin.z - 10) < .01 && abs(player.x - origin.x) < .01)
+                        check(abs(player.z - origin.z - 10) < .01 && abs(player.x - origin.x) < .01) {
+                            "Expected 10 blocks forward from $origin, reached " + player.position() + " (yaw " + player.yRot + ")"
+                        }
+                        check(abs(player.y - origin.y - 4) < .01) { "Expected to land four blocks higher" }
                         check(player.health == player.maxHealth)
                         burstAt = clientLevel.gameTime
                         next(Step.CHECK_SINGLE_WARP)
@@ -179,6 +193,7 @@ object WarpPackClientTest {
                 Step.RISK -> {
                     if (player.z - origin.z > 8 && player.health < player.maxHealth) {
                         check(abs(player.z - origin.z - 10) < .01)
+                        check(abs(player.y - origin.y - 2) < .01) { "Expected the mixed steps to end two blocks higher" }
                         check(player.health == 12f || (player.isOnFire && player.health == 11f)) {
                             "Risk warp did not cost 8 HP before vanilla fire damage"
                         }
@@ -201,7 +216,9 @@ object WarpPackClientTest {
                 }
                 Step.LETHAL -> {
                     if (!player.isAlive) {
-                        check(abs(player.z - origin.z - 10) < .01) { "The lethal warp did not move the player" }
+                        check(abs(player.z - origin.z - 2) < .01 && abs(player.y - origin.y - 1) < .01) {
+                            "The warp did not stop before the two-block rise"
+                        }
                         next(Step.DONE)
                     }
                     check(elapsed <= 23) {
@@ -221,7 +238,7 @@ object WarpPackClientTest {
                     LOGGER.info("WARP_PACK_DEATH_MESSAGE_PASSED: {}", message.string)
                     check(departures >= 2 && arrivals >= 2) { "Missing warp sound: $departures departures and $arrivals arrivals" }
                     check("warp-departure-ring" in captures && "warp-release-flash" in captures)
-                    LOGGER.info("WARP_PACK_CLIENT_PASSED: Curios, item transforms, backpack key activation, 10-block travel, 33% cost, recharge, risk damage, lethal warp consumes only the equipped pack, spatial audio and capture")
+                    LOGGER.info("WARP_PACK_CLIENT_PASSED: Curios, item transforms, backpack key activation, ascending and mixed steps, stopping before a two-block rise, 33% cost, recharge, risk damage, lethal warp consumes only the equipped pack, spatial audio and capture")
                     mc.stop()
                 }
             }
