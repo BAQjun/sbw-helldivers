@@ -40,6 +40,10 @@
       "getSelected": "Lnet/minecraft/world/entity/player/Inventory;m_36056_()Lnet/minecraft/world/item/ItemStack;",
       "removeFromSelected": "Lnet/minecraft/world/entity/player/Inventory;m_182403_(Z)Lnet/minecraft/world/item/ItemStack;"
     },
+    "com/example/sbwhelldiver/mixin/HoverPackFloatingMixin": {
+      "tick": "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;m_9933_()V",
+      "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;clientIsFloating:Z": "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;f_9736_:Z"
+    },
     "com/example/sbwhelldiver/mixin/BeaconPlayerMixin": {
       "setItemSlot": "Lnet/minecraft/world/entity/player/Player;m_8061_(Lnet/minecraft/world/entity/EquipmentSlot;Lnet/minecraft/world/item/ItemStack;)V"
     },
@@ -89,6 +93,10 @@
       "com/example/sbwhelldiver/mixin/BeaconInventoryMixin": {
         "getSelected": "Lnet/minecraft/world/entity/player/Inventory;m_36056_()Lnet/minecraft/world/item/ItemStack;",
         "removeFromSelected": "Lnet/minecraft/world/entity/player/Inventory;m_182403_(Z)Lnet/minecraft/world/item/ItemStack;"
+      },
+      "com/example/sbwhelldiver/mixin/HoverPackFloatingMixin": {
+        "tick": "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;m_9933_()V",
+        "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;clientIsFloating:Z": "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;f_9736_:Z"
       },
       "com/example/sbwhelldiver/mixin/BeaconPlayerMixin": {
         "setItemSlot": "Lnet/minecraft/world/entity/player/Player;m_8061_(Lnet/minecraft/world/entity/EquipmentSlot;Lnet/minecraft/world/item/ItemStack;)V"
