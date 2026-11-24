@@ -117,13 +117,17 @@ object HoverPackFlight {
         flight.phase = phase
         flight.since = player.tickCount
         HoverPackStatePacket.send(player, phase, 0)
-        val cue = when (phase) {
-            Phase.ASCENT -> "sfx_hover_pack_launch"
-            Phase.DESCENT -> "sfx_hover_pack_land"
-            else -> return
+        when (phase) {
+            Phase.ASCENT -> {
+                val sound = ModSounds.EVENTS.getValue("sfx_hover_pack_launch").get()
+                player.level().playSound(null, player, sound, SoundSource.PLAYERS, .56f, 1f)
+            }
+            Phase.DESCENT -> {
+                val sound = ModSounds.EVENTS.getValue("sfx_hover_pack_land").get()
+                player.level().playSound(null, player.x, player.y, player.z, sound, SoundSource.PLAYERS, .31f, 1f)
+            }
+            else -> Unit
         }
-        player.level().playSound(null, player.x, player.y, player.z, ModSounds.EVENTS.getValue(cue).get(),
-            SoundSource.PLAYERS, if (phase == Phase.ASCENT) .35f else .31f, 1f)
     }
 
     private fun clearAbove(player: ServerPlayer, rise: Double) =

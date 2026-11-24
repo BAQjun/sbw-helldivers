@@ -30,7 +30,7 @@ internal object JumpPackVisual {
         var fading = false
 
         init {
-            volume = .63f
+            volume = .08f
             updatePosition()
         }
 
@@ -48,6 +48,9 @@ internal object JumpPackVisual {
             if (fading) {
                 volume -= .1575f
                 if (volume <= 0f) stop()
+            } else {
+                // Leave room for the initial burst before the sustained flight sound reaches full volume.
+                volume = (volume + .055f).coerceAtMost(.63f)
             }
             if ((age > 155 || isStopped) && flightSounds[player]?.get() === this) flightSounds.remove(player)
         }

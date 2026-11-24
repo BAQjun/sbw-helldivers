@@ -62,7 +62,8 @@ internal object JumpPackFlight {
         setReadyAt(stack, time(player) + FLIGHT_LIMIT + RECHARGE_TICKS)
         val flight = Flight(stack, player.level().dimension(), player.tickCount, direction, player.position())
         flights[player] = flight
-        sound(player, "sfx_jump_pack_launch")
+        val launchSound = ModSounds.EVENTS.getValue("sfx_jump_pack_launch").get()
+        player.level().playSound(null, player, launchSound, SoundSource.PLAYERS, .85f, 1f)
         thrust(player, flight, 0, player.deltaMovement)
     }
 
